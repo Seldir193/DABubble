@@ -1,0 +1,137 @@
+@import "./../../styles.scss";
+
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh; 
+    opacity: 1;
+    //animation: fadeOut 1s ease-in-out forwards;
+    animation-delay: 3s;
+}
+
+@keyframes fadeOut {
+    to {
+      opacity: 0;
+    }
+  }
+
+h1{
+    color:white;
+    font-size: 90px;
+    font-family: 'Nunito', sans-serif;
+    font-weight:700;
+    position: absolute;
+    opacity: 0;
+    transform: translateX(-100%);
+    animation: moveRight 500ms ease-in-out forwards;
+    animation-delay: 2000ms;
+    z-index: 1;
+}
+
+.container-box{
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    transform: translateX(0);
+    animation: moveLeft 0.25s ease-in-out forwards;
+    animation-delay: 1.5s;
+    z-index: 2;
+}
+
+
+
+.vector {
+    display: flex;
+    align-items: flex-end;
+    gap:20px;
+}
+
+.vector-box{
+    display: flex;
+    gap:20px;
+    flex-direction: row-reverse;
+}
+
+.background {
+    width: 113.48px; 
+    height: 83.51px; 
+    background-color: #92C83E;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px 16px 16px 0; 
+    text-decoration: none; 
+}
+
+.inner-vectors {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+}
+
+.inner-box {
+    width: 13.52px; 
+    height: 13.30px; 
+    background-color: white; 
+    border-radius: 50%; 
+}
+
+.background-orange{
+    width: 113.48px; 
+    height: 83.51px;
+    background-color: #FBB03B;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px 0 16px 16px; 
+    text-decoration: none; 
+}
+
+.inner-box-orange {
+    width: 13.52px; 
+    height: 13.30px; 
+    background-color: white; 
+    border-radius: 50%; 
+}
+
+.background-pink{
+    width: 57.1px;
+    height: 56.33px;
+    background-color: #ED1E79;
+    display: flex;
+    border-radius: 50% 50% 0 50%;
+}
+
+.background-blue{
+    width: 57.1px;
+    height: 56.33px;
+    background-color: #3FA9F5;
+    display: flex;
+    border-radius: 0 50% 50% 50%;
+}
+
+@keyframes moveLeft {
+    from {
+        opacity: 0;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes moveRight {
+    from {
+        opacity: 0;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(40%);
+    }
+}
