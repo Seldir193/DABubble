@@ -1,7 +1,5 @@
 <app-header></app-header>
 
-
-
 <div class="container">
   <div class="login-container">
     <div class="login">
@@ -20,7 +18,7 @@
 
       <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
         <div class="input-container">
-          <input 
+          <input
             [ngClass]="{
               'name-icon': true,
               filled: filledStates['nameFilled']
@@ -29,7 +27,7 @@
             id="name"
             name="name"
             placeholder="Name und Nachname"
-            [(ngModel)]="user.name" 
+            [(ngModel)]="user.name"
             required
             (input)="onInputChange($event, 'name')"
           />
@@ -45,9 +43,8 @@
             id="email"
             name="email"
             placeholder="beispielname@email.com"
-            [(ngModel)]="user.email" 
+            [(ngModel)]="user.email"
             required
-            
             (input)="onInputChange($event, 'email')"
           />
         </div>
@@ -62,12 +59,12 @@
             name="password"
             placeholder="Passwort"
             ngModel
-            [(ngModel)]="user.password" 
+            [(ngModel)]="user.password"
             required
             (input)="onInputChange($event, 'password')"
           />
         </div>
-        <div class="privacy-box" >
+        <div class="privacy-box">
           <div class="checkbox" (click)="toggleCheckbox()">
             <div class="checkmark" *ngIf="isChecked"></div>
           </div>
@@ -79,24 +76,30 @@
         </div>
 
         <div class="button-container">
-          <div *ngIf="errorMessage" [ngClass]="{'error-message': errorMessage}">
-            <p  >{{ errorMessage }}</p>
+          <div
+            *ngIf="errorMessage"
+            [ngClass]="{ 'error-message': errorMessage }"
+          >
+            <p>{{ errorMessage }}</p>
           </div>
-          <div *ngIf="successMessage" [ngClass]="{'success-message': successMessage}">
+          <div
+            *ngIf="successMessage"
+            [ngClass]="{ 'success-message': successMessage }"
+          >
             <p>{{ successMessage }}</p>
-          </div> 
+          </div>
           <button
             class="button-anmelden"
             type="submit"
-            [ngClass]="{'ng-invalid': !loginForm.form.valid}"
-           >Weiter
-           {{ loginForm.form.valid || !isChecked ? '': ""}}     
+            [ngClass]="{ 'ng-invalid': !loginForm.form.valid }"
+          >
+            Weiter
+            {{ loginForm.form.valid || !isChecked ? "" : "" }}
           </button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
 
 <app-footer></app-footer>

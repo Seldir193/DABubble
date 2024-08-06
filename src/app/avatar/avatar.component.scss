@@ -6,124 +6,118 @@
   background-color: $lightblue;
   padding: 160px 0;
   flex-direction: column;
-  min-height: 100vh; 
+  min-height: 100vh;
   align-items: center;
 }
 
-.avatar-selection{
-    display: flex;
-    gap:8px;
-   
+.avatar-selection {
+  display: flex;
+  gap: 8px;
 }
 
-.avatar-container{
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-width:472px;
-    width:100%;
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 472px;
 }
 
-  .profile-avatar {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
+.profile-avatar {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 50%;
+
+  img {
     border-radius: 50%;
-    
-    img {
-      border-radius: 50%;
-      transition: 0.3s ease;
-      width: 168px;
-      height: 100%;
-      object-fit: cover;
-    }
-  
-    &:hover img {
-        filter: brightness(0.9);
-      }
-    
-      &:hover::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 30%;
-        width: 40%;
-        height: 100%;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.1); 
-        z-index: 1;
-        box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
-      }
+    transition: 0.3s ease;
+    width: 168px;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .avatar {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-   
-    
-    img {
-      border-radius: 50%;
-      transition: 0.3s ease;
-     
-    }
-  
-    &:hover img {
-      filter: brightness(0.9);
-      
-    }
-  
-    &:hover::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.1);
-      z-index: 1;
-      box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
-    }
+  &:hover img {
+    filter: brightness(0.9);
   }
-  
-  
-.headline p   {
-    display: flex;
-    
-    p{
-        margin: 0;
-    }
+
+  &:hover::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 30%;
+    width: 40%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
+  }
 }
 
-.headline  h3{
-    font-size:32px;
-    font-weight: 700;
+.avatar {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+
+  img {
+    border-radius: 50%;
+    transition: 0.3s ease;
+  }
+
+  &:hover img {
+    filter: brightness(0.9);
+  }
+
+  &:hover::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.headline p {
+  display: flex;
+
+  p {
+    margin: 0;
+  }
+}
+
+.headline h3 {
+  font-size: 32px;
+  font-weight: 700;
 }
 
 .login-container {
   text-align: center;
-  padding: 40px 67px;
+  padding: 40px 63.5px;
   max-height: 669px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0px 2px 10px 0px #00000014;
   max-width: 606px;
- // width: 100%;
+  // width: 100%;
 
-  .errorMessage{
+  .errorMessage {
     width: 100%;
     display: flex;
     align-items: center;
   }
 
   .login {
-    max-width:500px;
-    width:100%;
+    max-width: 500px;
+    width: 100%;
     .box {
       @include dFlex(null, null, 20px);
       flex-direction: column;
-      padding-bottom:20px;
+      padding-bottom: 20px;
     }
 
     .konto-container {
@@ -132,9 +126,9 @@
     }
 
     .image-container {
-      @include dFlex(center, center, null);
+      @include dFlex(null, center, null);
       border-radius: 50%;
-     // width: 30px;
+      width: 30px;
       height: 30px;
       transition: background-color 0.3s;
       overflow: hidden;
@@ -158,15 +152,13 @@
     }
 
     h2 {
+      @include dFlex(center,null,0px);
       color: $button-blue;
       font-size: 46px;
       font-weight: 700;
       margin: 0;
       flex-grow: 1;
       text-align: center;
-      display: flex;
-      justify-content: center;
-      //width:486px;
     }
 
     p {
@@ -212,23 +204,21 @@
         font-size: 18px;
         font-weight: 700;
         max-width: 187px;
-        width:100%;
+        width: 100%;
         height: 49px;
         cursor: pointer;
         transition: background-color 0.3s, color 0.3s;
-  
+
         &:hover {
           background: $button-blue;
           color: white;
         }
-    }
-
-    .file-upload {
-        display: flex;
-        align-items: center;
-        gap:20px;
       }
-      
+
+      .file-upload {
+        @include dFlex(null,center,20px);
+      }
+
       .file-upload input[type="file"] {
         font-size: 100px;
         position: absolute;
@@ -236,15 +226,15 @@
         top: 0;
         opacity: 0;
       }
-      
+
       .file-upload button {
         border: 1px solid $middleblue;
         border-radius: 100px;
         cursor: pointer;
-    
+
         .file-upload button:hover {
-            background: $button-blue;
-            color: white;
+          background: $button-blue;
+          color: white;
         }
       }
     }
@@ -252,101 +242,99 @@
 }
 
 .button-anmelden {
-    width: 107px;
-}  
-
+  width: 107px;
+}
 
 @media (max-width: 780px) {
   .container {
-     padding: 150px 38px;
-     overflow: hidden;
-   }
+    padding: 10rem 2rem;
+    box-sizing: border-box;
+  }
 
-   .profile-avatar{
-    img{
-      width:138px;
-    }
-   }
- 
-   .login-container .login p {
-     margin: 0 auto;
-     width: unset;
-     padding: unset;
-     font-size: 16px;
-     display: flex;
-     align-items: center;
-     width:unset;
-   }
- 
-   .login-container .login {
-     form {
-       .privacy-box {
-         display: none;
-       }
-     }
-   }
-
-   .login-container .login .image-container{
-      width:30px;
-   }
- 
-   .button-container{
-     gap:30px;
-   }
- 
-   .box {
-     @include dFlex(null, null, 10px);
-     flex-direction: column;
-     padding-bottom: 20px;
-   }
- }
- 
- @media (max-width: 520px) {
-   .container {
-     min-height: unset;
-   }
- 
-   .login-container {
-     padding: 20px;
-     width:100%;
-   }
- 
-   .login-container .login h2 {
-     font-size: 30px;
-   }
- 
-   .login-container .login form {
-     gap: 20px;
-   }
- 
-   .login-container .login .button-container {
-     gap: 20px;
-   }
-
-   .avatar {
-    img{
-        width:80%;
+  .profile-avatar {
+    img {
+      width: 138px;
     }
   }
 
-  .button-anmelden{
+  .login-container .login p {
+    margin: 0 auto;
+    width: unset;
+    padding: unset;
+    font-size: 16px;
+    width: unset;
+    display: flex;
+    align-items: center;
+  }
+
+  .login-container .login {
+    form {
+      .privacy-box {
+        display: none;
+      }
+    }
+  }
+
+  .login-container .login .image-container {
+    width: 30px;
+  }
+
+  .button-container {
+    gap: 30px;
+  }
+
+  .box {
+    @include dFlex(null, null, 10px);
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+}
+
+@media (max-width: 620px) {
+  .container {
+    align-items: unset;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    min-height: unset;
+    align-items: center;
+  }
+
+  .login-container {
+    padding: 20px;
+    width: 100%;
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+  }
+
+  .login-container .login form {
+    gap: 20px;
+  }
+
+  .login-container .login .button-container {
+    gap: 20px;
+  }
+
+  .avatar {
+    img {
+      width: 80%;
+    }
+  }
+
+  .button-anmelden {
     font-size: 16px;
   }
 
-  .login-container .login form .button-gäste-login{
+  .login-container .login form .button-gäste-login {
     font-size: 16px;
     width: 140px;
   }
 
- 
-  .login-container .login form .file-upload{
-    gap:10px;
- }
-
- }
- 
-
-
-
-
- 
+  .login-container .login form .file-upload {
+    gap: 10px;
+  }
+}

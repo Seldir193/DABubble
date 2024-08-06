@@ -2,8 +2,6 @@
 
 <div class="container">
   <div class="login-container">
-
-    
     <div class="login">
       <div class="box">
         <h2>Anmeldung</h2>
@@ -24,12 +22,12 @@
             id="email"
             name="email"
             placeholder="beispielname@email.com"
-            [(ngModel)]="email" 
+            [(ngModel)]="email"
             required
             (input)="onInputChange($event, 'email')"
           />
         </div>
-        
+
         <div class="input-container">
           <input
             [ngClass]="{
@@ -45,48 +43,52 @@
             (input)="onInputChange($event, 'password')"
           />
         </div>
-        
+
         <div>
           <a class="forgot-password" href="#">Passwort vergessen?</a>
         </div>
-      
+
         <div class="line-container">
           <span class="lineleft">ODER</span>
         </div>
 
         <div class="google-container">
-          <button 
+          <button
             class="google-icon"
             type="button"
-            (click)="signInWithGoogle()">
+            (click)="signInWithGoogle()"
+          >
             Anmelden mit Google
           </button>
         </div>
-      
+
         <div class="button-container">
-          <button 
+          <button
             class="button-anmelden button-anmelden-mobile"
             type="submit"
-            [ngClass]="{'ng-invalid': !loginForm.form.valid}"
-            >
+            [ngClass]="{ 'ng-invalid': !loginForm.form.valid }"
+          >
             Anmelden
           </button>
           <button
             class="button-gäste-login button-gäste-mobile"
-            type="button"  
-            (click)="navigateToGuestLogin()" 
-            [disabled]="!loginForm.form.valid">
+            type="button"
+            (click)="navigateToGuestLogin()"
+            [disabled]="!loginForm.form.valid"
+          >
             Gäste-Login
           </button>
         </div>
       </form>
-      
     </div>
-    <div *ngIf="errorMessage" [ngClass]="{'error-message': errorMessage}">
-      <p >{{ errorMessage }}</p>
+    <div *ngIf="errorMessage" [ngClass]="{ 'error-message': errorMessage }">
+      <p>{{ errorMessage }}</p>
     </div>
-  
-    <div *ngIf="successMessage" [ngClass]="{'success-message': successMessage}">
+
+    <div
+      *ngIf="successMessage"
+      [ngClass]="{ 'success-message': successMessage }"
+    >
       <p>{{ successMessage }}</p>
     </div>
   </div>

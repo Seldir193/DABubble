@@ -1,7 +1,7 @@
 @import "./../../styles.scss";
 
 .container {
-  @include dFlex(center,center,null);
+  @include dFlex(center, center, null);
   width: 100%;
   background-color: $lightblue;
   padding: 160px 0;
@@ -11,23 +11,23 @@
 
 .login-container {
   text-align: center;
-  padding:40px 53px;
+  padding: 40px 53px;
   //padding: 50px;
   max-height: 769px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0px 2px 10px 0px #00000014;
 
-  max-width:609px;
+  max-width: 609px;
 
   .login {
-    max-width:500px;
-    width:100%;
+    max-width: 500px;
+    width: 100%;
     h2 {
       color: $button-blue;
       font-size: 46px;
       font-weight: 700;
-      margin:0;
+      margin: 0;
     }
 
     p {
@@ -48,10 +48,10 @@
     }
 
     .forgot-password:hover {
-      background-color: $lightblue; 
+      background-color: $lightblue;
       border-radius: 100px;
       color: $button-blue;
-      font-weight: 700; 
+      font-weight: 700;
     }
 
     img {
@@ -61,7 +61,7 @@
     }
 
     .button-container {
-      @include dFlex(center,null,30px);
+      @include dFlex(center, null, 30px);
     }
 
     .button-gäste-login {
@@ -83,21 +83,21 @@
     }
 
     form {
-      @include dFlex(null,center,40px);
+      @include dFlex(null, center, 40px);
       flex-direction: column;
-     
+
       input {
         background: $lightblue;
         border-radius: 100px;
         color: #686868;
         font-size: 18px;
         font-weight: 500;
-        height:60px;
+        height: 60px;
         width: 100%;
         border: 1px solid transparent;
         cursor: pointer;
         box-sizing: border-box;
-        max-width:500px;
+        max-width: 500px;
 
         &:hover {
           border-color: #686868;
@@ -117,24 +117,24 @@
         }
       }
 
-      .input-container{
-        max-width:500px;
-        width:100%;
+      .input-container {
+        max-width: 500px;
+        width: 100%;
       }
-      
-      .google-container{
-        @include dFlex(center,center,20px);
+
+      .google-container {
+        @include dFlex(center, center, 20px);
         background-color: $lightblue;
         border-radius: 100px;
-        transition:  border-color 0.3s ease-in-out;
+        transition: border-color 0.3s ease-in-out;
         border: 1px solid transparent;
-        max-width: 500px; 
+        max-width: 500px;
         width: 100%;
         height: 60px;
 
-        &:hover{
+        &:hover {
           border-color: $button-blue;
-      }
+        }
 
         button {
           color: $button-blue;
@@ -142,32 +142,31 @@
           font-weight: 400;
           text-align: center;
           border: 1px solid transparent;
-          height:70%;
+          height: 70%;
           cursor: pointer;
           background-color: $lightblue;
         }
-        
+
         button:hover {
           font-weight: 700;
         }
-        
       }
 
       .email-icon,
       .passwort-icon,
       .google-icon {
-        background-image: url("/assets/img/mail.png ") ;
+        background-image: url("/assets/img/mail.png ");
         background-repeat: no-repeat;
         background-position: 15px center;
         background-size: 24px 24px;
         color: black;
-        transition: background-image 0.3s ease; 
+        transition: background-image 0.3s ease;
         padding-left: 70px;
-    
+
         &.filled {
-            background-image: url('/assets/img/black-mail.png');
+          background-image: url("/assets/img/black-mail.png");
         }
-        
+
         &.passwort-icon {
           background-image: url("/assets/img/passwort.png");
 
@@ -180,10 +179,10 @@
           background-image: url("/assets/img/google.png");
           background-position: -2px center;
           background-size: 38px 38px;
-          padding-left:50px;
+          padding-left: 50px;
 
           &:hover {
-            transform: scale(1.02); 
+            transform: scale(1.02);
             transition: transform 0.3s ease-in-out;
           }
         }
@@ -197,22 +196,22 @@
   font-weight: bold;
 }
 
-.success-message{
+.success-message {
   color: green;
   font-weight: bold;
 }
 
 .line-container {
-  @include dFlex(center,center,null);
-  width:100%;
-  max-width:500px;
+  @include dFlex(center, center, null);
+  width: 100%;
+  max-width: 500px;
   span {
     color: black;
   }
 }
 
 .lineleft {
-  @include dFlex(null,center,null);
+  @include dFlex(null, center, null);
   font-size: 18px;
   font-weight: 400;
   flex-grow: 1;
@@ -232,41 +231,40 @@
 
 @media (max-width: 780px) {
   .container {
-    padding:10rem 2rem;
+    padding: 10rem 2rem;
     box-sizing: border-box;
   }
 
-  .login-container .login p{
-    margin:0 auto;
-    width:unset;
-    padding:unset;
-    font-size:14px;
+  .login-container .login p {
+    margin: 0 auto;
+    width: unset;
+    padding: unset;
+    font-size: 14px;
   }
 
   .login-container .login form .input-container input {
     font-size: 14px;
-   
- }
+  }
 
- .login-container .login a{
-   font-size: 14px;
- }
+  .login-container .login a {
+    font-size: 14px;
+  }
 
- .login-container .login form .google-container  button{
-   font-size: 16px;
- }
+  .login-container .login form .google-container button {
+    font-size: 16px;
+  }
 
-  .box{
-    @include dFlex(null,null,10px);
+  .box {
+    @include dFlex(null, null, 10px);
     flex-direction: column;
     padding-bottom: 20px;
   }
 }
 
 .register {
-  @include dFlex(null,flex-end,10px);
+  @include dFlex(null, flex-end, 10px);
   flex-direction: column;
-  padding-top:20px;
+  padding-top: 20px;
 
   h3 {
     color: black;
@@ -288,76 +286,60 @@
   }
 }
 
-@media (min-width: 850px){
-   .register{
+@media (min-width: 850px) {
+  .register {
     display: none;
-   }
+  }
 }
 
 @media (max-width: 520px) {
-  .login-container{
-    padding:20px;
-    width:100%;
-   }
+  .login-container {
+    padding: 20px;
+    width: 100%;
+  }
 
-   .login-container .login{
-     font-size: 36px;
-   }
+  .login-container .login {
+    font-size: 36px;
+  }
 
-   .login-container .login form{
-     gap:20px;
-   }
+  .login-container .login form {
+    gap: 20px;
+  }
 
-   .login-container .login .button-container{
-     gap:10px;
-   }
+  .login-container .login .button-container {
+    gap: 10px;
+  }
 
-   .login-container .login h2 {
+  .login-container .login h2 {
     font-size: 30px;
   }
 
-  .login-container .login  form .button-gäste-mobile{
-    font-size:16px;
-    width:120px;
+  .login-container .login form .button-gäste-mobile {
+    font-size: 16px;
+    width: 120px;
   }
 
-  .button-anmelden-mobile{
-    font-size:16px;
-    width:100px;
-    padding:12px 12px;
+  .button-anmelden-mobile {
+    font-size: 16px;
+    width: 100px;
+    padding: 12px 12px;
   }
 
-  .login-container .login form .google-container  button{
-    
-    height:90%;
+  .login-container .login form .google-container button {
+    height: 90%;
   }
- 
-  .login-container .login form .google-container  {
-    height:40px;
- }
+
+  .login-container .login form .google-container {
+    height: 40px;
+  }
 
   .login-container .login form .input-container input {
-   height:40px;
-}
+    height: 40px;
+  }
 
-.line-container{
-  .lineleft{
-    font-size:16px;
-
+  .line-container {
+    .lineleft {
+      font-size: 16px;
+    }
   }
 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-

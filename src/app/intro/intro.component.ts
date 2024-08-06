@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -7,14 +7,14 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './intro.component.html',
-  styleUrl: './intro.component.scss'
+  styleUrl: './intro.component.scss',
 })
-export class IntroComponent implements OnInit   {
-  constructor(private router: Router) { }
+export class IntroComponent implements OnInit {
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     setTimeout(() => {
       this.router.navigate(['/login']);
-    }, 4000); 
+    }, 4000);
   }
 }

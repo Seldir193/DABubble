@@ -1,23 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { Firestore, updateDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { getAuth} from '@angular/fire/auth';
+import { getAuth } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { PrivacyComponent } from '../privacy/privacy.component';
-import {  query, where, getDocs, collection} from '@angular/fire/firestore';
+import { query, where, getDocs, collection } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-avatar',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, CommonModule, FormsModule, PrivacyComponent, RouterLink],
+  imports: [
+    HeaderComponent,
+    FooterComponent,
+    CommonModule,
+    FormsModule,
+    PrivacyComponent,
+    RouterLink,
+  ],
   templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.scss']
+  styleUrls: ['./avatar.component.scss'],
 })
-
 export class AvatarComponent implements OnInit {
   avatars: string[] = [
     'assets/img/elise.png',
@@ -25,7 +31,7 @@ export class AvatarComponent implements OnInit {
     'assets/img/frederik.png',
     'assets/img/steffen.png',
     'assets/img/sofia.png',
-    'assets/img/noah.png'
+    'assets/img/noah.png',
   ];
 
   selectedAvatar: string | null = null;
@@ -33,8 +39,8 @@ export class AvatarComponent implements OnInit {
   userName: string = 'User';
   userAvatarUrl: string = 'assets/img/avatar.png';
 
-  constructor(private firestore: Firestore, private router: Router) { }
-  
+  constructor(private firestore: Firestore, private router: Router) {}
+
   ngOnInit(): void {
     this.loadUserData();
   }
@@ -62,7 +68,7 @@ export class AvatarComponent implements OnInit {
   selectAvatar(avatar: string): void {
     this.selectedAvatar = avatar;
     this.errorMessage = '';
-  
+
     // Aktualisieren Sie das Firestore-Dokument sofort
     this.confirmSelection();
   }
@@ -81,8 +87,10 @@ export class AvatarComponent implements OnInit {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // Maximal 5 MB
-      this.errorMessage = 'Die Datei ist zu groß. Bitte wählen Sie eine Datei, die kleiner als 5 MB ist.';
+    if (file.size > 5 * 1024 * 1024) {
+      // Maximal 5 MB
+      this.errorMessage =
+        'Die Datei ist zu groß. Bitte wählen Sie eine Datei, die kleiner als 5 MB ist.';
       return;
     }
 
@@ -93,7 +101,6 @@ export class AvatarComponent implements OnInit {
       this.selectedAvatar = reader.result as string;
     };
     reader.readAsDataURL(file);
-
   }
 
   async confirmSelection(): Promise<void> {
@@ -101,27 +108,26 @@ export class AvatarComponent implements OnInit {
       this.errorMessage = 'Bitte wählen Sie ein Avatar-Bild aus.';
       return;
     }
-  
+
     try {
       const auth = getAuth();
       const user = auth.currentUser;
-  
+
       if (user && user.email) {
         const usersCollection = collection(this.firestore, 'users');
         const q = query(usersCollection, where('email', '==', user.email));
         const querySnapshot = await getDocs(q);
-  
+
         if (!querySnapshot.empty) {
           const userDoc = querySnapshot.docs[0].ref;
           await updateDoc(userDoc, {
             avatarUrl: this.selectedAvatar,
-            name: this.userName // Hier auch den Namen aktualisieren
+            name: this.userName, // Hier auch den Namen aktualisieren
           });
           console.log('Benutzer-Avatar und Name aktualisiert.');
-  
+
           // Aktualisieren Sie den Benutzernamen und das Avatar-Bild in der Komponente
           this.loadUserData();
-  
         } else {
           this.errorMessage = 'Benutzer nicht gefunden.';
         }
@@ -131,9 +137,4 @@ export class AvatarComponent implements OnInit {
       this.errorMessage = 'Fehler beim Bestätigen der Auswahl.';
     }
   }
-
-
-
-
-
 }

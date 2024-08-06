@@ -1,18 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, query, where, getDocs, collection, addDoc, updateDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  query,
+  where,
+  getDocs,
+  collection,
+  addDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { NgForm, FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { Router } from '@angular/router';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, CommonModule, FooterComponent, HeaderComponent],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   emailFilled = false;
@@ -23,9 +36,9 @@ export class LoginComponent implements OnInit {
   password: string = '';
   successMessage: string = '';
 
-  constructor(private firestore: Firestore, private router: Router) { }
+  constructor(private firestore: Firestore, private router: Router) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   onInputChange(event: Event, type: string) {
     const target = event.target as HTMLInputElement;
@@ -85,7 +98,11 @@ export class LoginComponent implements OnInit {
 
       if (user && user.email) {
         console.log('User signed in with Google:', user);
-        await this.loadUserData(user.email, user.displayName || undefined, user.photoURL || undefined); // Ensure email, name, and avatar are loaded
+        await this.loadUserData(
+          user.email,
+          user.displayName || undefined,
+          user.photoURL || undefined
+        ); // Ensure email, name, and avatar are loaded
         this.router.navigate(['/avatar']);
       } else {
         throw new Error('Google sign-in result does not contain user email.');
@@ -96,7 +113,11 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  async loadUserData(email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
+  async loadUserData(
+    email: string,
+    name: string | undefined = undefined,
+    avatarUrl: string | undefined = undefined
+  ) {
     try {
       const usersCollection = collection(this.firestore, 'users');
       const q = query(usersCollection, where('email', '==', email));
@@ -117,13 +138,17 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  async saveNewUser(email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
+  async saveNewUser(
+    email: string,
+    name: string | undefined = undefined,
+    avatarUrl: string | undefined = undefined
+  ) {
     try {
       const user = {
         email: email,
         name: name,
         avatarUrl: avatarUrl,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
       await addDoc(collection(this.firestore, 'users'), user);
       console.log('New user created:', email);
@@ -148,14 +173,3 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/guest-login']);
   }
 }
-
-
-
-
-
-
-
-
-
-
-

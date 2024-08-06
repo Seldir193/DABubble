@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, addDoc, collectionData, query, where, getDocs } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  addDoc,
+} from '@angular/fire/firestore';
 import { NgForm, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
@@ -12,9 +16,16 @@ import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, CommonModule, FormsModule, PrivacyComponent, RouterLink],
+  imports: [
+    HeaderComponent,
+    FooterComponent,
+    CommonModule,
+    FormsModule,
+    PrivacyComponent,
+    RouterLink,
+  ],
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss']
+  styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit {
   nameFilled = false;
@@ -26,20 +37,27 @@ export class SignupComponent implements OnInit {
   successMessage: string = '';
   emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  constructor(private auth: Auth, private firestore: Firestore, private router: Router) { }
-  ngOnInit(): void {
-  }
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore,
+    private router: Router
+  ) {}
+  ngOnInit(): void {}
 
-  user: { name: string; email: string; password: string; } = { name: '', email: '', password: '' };
+  user: { name: string; email: string; password: string } = {
+    name: '',
+    email: '',
+    password: '',
+  };
   isValidEmail(email: string): boolean {
     return this.emailPattern.test(email);
   }
-    
+
   onInputChange(event: Event, type: string) {
     const target = event.target as HTMLInputElement;
     this.filledStates[type + 'Filled'] = Boolean(target.value);
     this.errorMessage = '';
-    this.successMessage = ''; 
+    this.successMessage = '';
   }
 
   updateFilledState(type: string, value: string) {
@@ -50,10 +68,9 @@ export class SignupComponent implements OnInit {
     this.isChecked = !this.isChecked;
   }
 
-  
   async onSubmit(signupForm: NgForm) {
     this.errorMessage = '';
-    this.successMessage = ''; 
+    this.successMessage = '';
     if (!signupForm.form.valid) {
       this.errorMessage = 'Bitte füllen Sie alle Felder aus.';
       return;
@@ -75,7 +92,11 @@ export class SignupComponent implements OnInit {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, this.user.email, this.user.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        this.user.email,
+        this.user.password
+      );
       const user = userCredential.user;
 
       // Benutzerinformationen in Firestore speichern
@@ -83,25 +104,31 @@ export class SignupComponent implements OnInit {
         uid: user.uid,
         email: this.user.email,
         name: this.user.name,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       await this.saveUser(userData);
 
-      this.successMessage  = 'Registrierung erfolgreich!';
+      this.successMessage = 'Registrierung erfolgreich!';
       setTimeout(() => {
-        this.successMessage = ''; 
+        this.successMessage = '';
         this.router.navigate(['/login']);
       }, 2000);
     } catch (error) {
       console.error('Fehler bei der Registrierung:', error);
-      this.errorMessage = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+      this.errorMessage =
+        'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
     }
 
     signupForm.resetForm();
   }
 
-  async saveUser(user: { uid: string; email: string; name: string; timestamp: Date; }): Promise<void> {
+  async saveUser(user: {
+    uid: string;
+    email: string;
+    name: string;
+    timestamp: Date;
+  }): Promise<void> {
     try {
       const userRef = await addDoc(collection(this.firestore, 'users'), user);
       console.log('Benutzer erfolgreich gespeichert mit ID: ', userRef.id);
@@ -110,10 +137,3 @@ export class SignupComponent implements OnInit {
     }
   }
 }
-
-
-
-
-
-  
-

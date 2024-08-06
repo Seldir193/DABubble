@@ -11,7 +11,7 @@
 
 .login-container {
   text-align: center;
-  padding:40px 53px;
+  padding: 40px 53px;
   //padding: 50px;
   max-height: 669px;
   background-color: white;
@@ -20,15 +20,15 @@
   max-width: 606px;
   //width: 100%;
 
-  .errorMessage{
+  .errorMessage {
     width: 100%;
     display: flex;
     align-items: center;
   }
 
   .login {
-    max-width:500px;
-    width:100%;
+    max-width: 500px;
+    width: 100%;
     .box {
       @include dFlex(null, null, 20px);
       flex-direction: column;
@@ -100,15 +100,15 @@
       @include dFlex(flex-end, null, null);
       max-width: 500px;
       width: 100%;
-      gap:140px;
+      gap: 140px;
 
       .error-message p {
         color: red !important;
         font-weight: bold;
-        width:70%;
+        width: 70%;
       }
 
-      .success-message p{
+      .success-message p {
         color: green;
         font-weight: bold;
       }
@@ -152,7 +152,7 @@
       .privacy-box {
         @include dFlex(null, center, 8px);
         padding-left: 20px;
-        width:100%;
+        width: 100%;
 
         p {
           @include dFlex(null, center, 4px);
@@ -235,95 +235,77 @@
 
 .button-anmelden {
   width: 107px;
-  font-size:16px;
+  font-size: 16px;
 }
-
 
 @media (max-width: 780px) {
   .container {
-    padding:10rem 2rem;
+    padding: 10rem 2rem;
     box-sizing: border-box;
   }
- 
-   .login-container .login p {
-     margin: 0 auto;
-     width: unset;
-     padding: unset;
-     font-size: 14px;
-     display: flex;
-     align-items: center;
-     width:unset;
-   }
- 
-   .login-container .login {
-     form {
-       .privacy-box {
-         display: none;
-       }
-     }
-   }
 
-   .login-container .login  .image-container {
-      width:unset;
+  .login-container .login p {
+    margin: 0 auto;
+    width: unset;
+    padding: unset;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    width: unset;
+  }
 
+  .login-container .login {
+    form {
+      .privacy-box {
+        display: none;
+      }
     }
+  }
 
-   .login-container .login form .input-container input {
-      font-size: 14px;
-   }
- 
-   .button-container{
-     gap:30px;
-   }
+  .login-container .login .image-container {
+    width: unset;
+  }
 
-   .login-container .login .button-container {
+  .login-container .login form .input-container input {
+    font-size: 14px;
+  }
+
+  .button-container {
+    gap: 30px;
+  }
+
+  .login-container .login .button-container {
     gap: 220px;
     align-items: center;
   }
 
- 
-   .box {
-     @include dFlex(null, null, 10px);
-     flex-direction: column;
-     padding-bottom: 20px;
-   }
- }
- 
- @media (max-width: 520px) {
-   
- 
-   .login-container {
-     padding: 20px;
-     width:100%;
-   }
- 
-   .login-container .login h2 {
-     font-size: 30px;
-   }
- 
-   .login-container .login form {
-     gap: 20px;
-   }
- 
-   .login-container .login .button-container {
-     gap: 50px;
-     align-items: center;
-   }
+  .box {
+    @include dFlex(null, null, 10px);
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+}
 
-   .login-container .login form .input-container input {
-    height:40px;
-  
- }
- }
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+@media (max-width: 520px) {
+  .login-container {
+    padding: 20px;
+    width: 100%;
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+  }
+
+  .login-container .login form {
+    gap: 20px;
+  }
+
+  .login-container .login .button-container {
+    gap: 50px;
+    align-items: center;
+  }
+
+  .login-container .login form .input-container input {
+    height: 40px;
+  }
+}

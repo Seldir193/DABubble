@@ -1,166 +1,152 @@
 @import "./../../styles.scss";
 
+.container {
+  .register {
+    @include dFlex(null, flex-end, 10px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 75px;
+    flex-direction: column;
 
+    h3 {
+      margin: 0;
+      color: black;
+      font-size: 18px;
+      font-weight: 400;
+    }
 
-.container{
-    .register {
-      @include dFlex(null,flex-end,10px);
-      position: absolute;
-      top: 0;
-      right: 0;
-      padding: 75px;
-      flex-direction: column;
-  
-      h3 {
-        margin: 0;
-        color: black;
-        font-size: 18px;
-        font-weight: 400;
-      }
-  
-      button {
-        color: $middleblue;
-        border: none;
-        border-radius: 100px;
-        padding: 10px 15px;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: 400;
-        background-color: $lightblue;
-        transition: border-color 0.3s ease-in-out ;
-        border: 1px solid transparent;
-  
-        &:hover {
-          border-color: $button-blue;
-          transform: scale(1.01);
-          transition: transform 0.3s ease-in-out;
-        }
+    button {
+      color: $middleblue;
+      border: none;
+      border-radius: 100px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 400;
+      background-color: $lightblue;
+      transition: border-color 0.3s ease-in-out;
+      border: 1px solid transparent;
+
+      &:hover {
+        border-color: $button-blue;
+        transform: scale(1.01);
+        transition: transform 0.3s ease-in-out;
       }
     }
+  }
 }
-
-
 
 .content-container {
   @include dFlex(null);
-    padding: 75px;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    opacity: 0;
-    animation: moveDiagonal 1s ease-in-out forwards;
-  }
-
-  h1 {
-    color: black;
-    font-size: 32px;
-    font-family: "Nunito", sans-serif;
-    font-weight: 700;
-    margin-left: 20px;
-  }
-  
-  .container-box {
-    @include dFlex(null,null,8px);
-    flex-direction: column;
-  }
-  
-  .vector {
-    @include dFlex(null,flex-end,8px);
-  }
-  
-  .vector-box {
-    @include dFlex(null,null,8px);
-    flex-direction: row-reverse;
-  }
-  
-  .inner-vectors {
-    @include dFlex(center,center,10px);
-  }
-  
-  .inner-box {
-    width: 5.06px;
-    height: 5.06px;
-    background-color: white;
-    border-radius: 50%;
-  }
-  
-  .background,
-  .background-orange,
-  .background-pink,
-  .background-blue {
-    @include dFlex(center);
-  }
-  
-  .background {
-    width: 42.49px;
-    height: 31.77px;
-    background-color: #92c83e;
-    border-radius: 16px 16px 16px 0;
-  }
-  
-  .background-orange {
-    width: 42.49px;
-    height: 31.77px;
-    background-color: #fbb03b;
-    border-radius: 16px 0 16px 16px;
-  }
-  
-  .background-pink {
-    width: 21.38px;
-    height: 21.43px;
-    background-color: #ed1e79;
-    border-radius: 50% 50% 0 50%;
-  }
-  
-  .background-blue {
-    width: 21.38px;
-    height: 21.43px;
-    background-color: #3fa9f5;
-    border-radius: 0 50% 50% 50%;
-  }
-  
-  @keyframes moveDiagonal {
-    from {
-      opacity: 0;
-      transform: translate(0, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50vw, -50vh);
-    }
-  }
-
-  @keyframes moveVertical {
-    from {
-      opacity: 0;
-      transform: translateY(0); 
-    }
-    to {
-      opacity: 1;
-      transform: translateY(-50vh); 
-    }
+  padding: 75px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  animation: moveDiagonal 1s ease-in-out forwards;
 }
 
-  @media (max-width:850px){
-    .content-container{
-      @include dFlex(center,center,null);
-      max-width:0px;
-      padding: 4rem 0rem;
-      animation: moveVertical 1s ease-in-out forwards;
-   }
+h1 {
+  color: black;
+  font-size: 32px;
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  margin-left: 20px;
+}
 
-     .container
-     .register{
-        display: none;
-     }
+.container-box {
+  @include dFlex(null, null, 8px);
+  flex-direction: column;
+}
+
+.vector {
+  @include dFlex(null, flex-end, 8px);
+}
+
+.vector-box {
+  @include dFlex(null, null, 8px);
+  flex-direction: row-reverse;
+}
+
+.inner-vectors {
+  @include dFlex(center, center, 10px);
+}
+
+.inner-box {
+  width: 5.06px;
+  height: 5.06px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.background,
+.background-orange,
+.background-pink,
+.background-blue {
+  @include dFlex(center);
+}
+
+.background {
+  width: 42.49px;
+  height: 31.77px;
+  background-color: #92c83e;
+  border-radius: 16px 16px 16px 0;
+}
+
+.background-orange {
+  width: 42.49px;
+  height: 31.77px;
+  background-color: #fbb03b;
+  border-radius: 16px 0 16px 16px;
+}
+
+.background-pink {
+  width: 21.38px;
+  height: 21.43px;
+  background-color: #ed1e79;
+  border-radius: 50% 50% 0 50%;
+}
+
+.background-blue {
+  width: 21.38px;
+  height: 21.43px;
+  background-color: #3fa9f5;
+  border-radius: 0 50% 50% 50%;
+}
+
+@keyframes moveDiagonal {
+  from {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50vw, -50vh);
+  }
+}
+
+@keyframes moveVertical {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50vh);
+  }
+}
+
+@media (max-width: 850px) {
+  .content-container {
+    @include dFlex(center, center, null);
+    max-width: 0px;
+    padding: 4rem 0rem;
+    animation: moveVertical 1s ease-in-out forwards;
   }
 
-
-
-
-  
-
-
-
-  
+  .container .register {
+    display: none;
+  }
+}

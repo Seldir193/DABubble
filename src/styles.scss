@@ -1,47 +1,42 @@
-$button-blue:  #444DF2;
-$lightblue:  #ECEEFE;
-$middleblue: #797EF3;
-$hoverColor: #535AF1;
+$button-blue: #444df2;
+$lightblue: #eceefe;
+$middleblue: #797ef3;
+$hoverColor: #535af1;
 
 @mixin dFlex($jc: null, $ai: center, $g: 0px) {
-    display: flex;
-    align-items: $ai;
-    gap: $g;
-  
-    @if $jc != null {
-      justify-content: $jc;
-    }
+  display: flex;
+  align-items: $ai;
+  gap: $g;
+
+  @if $jc != null {
+    justify-content: $jc;
   }
+}
 
-  html, body {
-    margin: 0;
+html,
+body {
+  margin: 0;
+}
+body {
+  font-family: "Nunito", sans-serif;
+  height: 100vh;
+  width: 100%;
+}
+
+.button-anmelden {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+  width: 137px;
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: #5b5ffc;
   }
-  body {
-    font-family: 'Nunito', sans-serif;
-    height: 100vh;
-    width: 100%;
-  }
-  
-
-     .button-anmelden {
-        background: $button-blue;
-        border:none;
-        border-radius: 100px;
-        color: white;
-        font-size: 18px;
-        font-weight: 700;
-        padding: 12px 25px;
-        width: 137px;
-        height: 49px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-  
-        &:hover {
-          background: #5b5ffc;
-        }
-      }
-    
-
-     
-     
-
+}
