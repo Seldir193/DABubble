@@ -1,0 +1,61 @@
+<app-header></app-header>
+
+<div class="container">
+  <div class="login-container">
+    <div class="login">
+      <div class="box">
+        <div class="konto-container">
+          <h2>Wähle deinen Avatar</h2>
+          <div class="image-container">
+            <img [routerLink]="['/login']" src="assets/img/leftfile.png" />
+          </div>
+        </div>
+       
+    </div>
+       
+<form (ngSubmit)="confirmSelection()" #avatarForm="ngForm">
+  
+    <div class="avatar-container">
+      <div class="profile-avatar">
+        <img [src]="selectedAvatar || 'assets/img/avatar.png'" alt="Profilbild"/>
+      </div>
+      <div class="headline">
+        <h3>{{ userName }}</h3>
+        <p>Aus der Liste wählen</p>
+      </div>
+      <div class="avatar-selection">
+        <div
+          class="avatar"
+          *ngFor="let avatar of avatars"
+          (click)="selectAvatar(avatar)"
+          [class.selected]="avatar === selectedAvatar"
+        >
+          <img [src]="avatar" alt="Avatar" />
+        </div>
+      </div>
+
+
+      <div class="file-upload">
+        <input type="file" (change)="validateAndUploadProfilePicture($event)" #fileInput>
+        eigenes Bild verwenden
+        <button (click)="fileInput.click()" class="button-gäste-login">Datei hochladen</button>
+      </div>
+
+      <div class="button-container">
+        <div class="errorMessage" *ngIf="errorMessage">
+          <p style="color: red; font-size: 16px">{{ errorMessage }}</p>
+        </div>
+        <button
+          class="button-anmelden"
+          type="submit"
+          [ngClass]="{'ng-invalid': !avatarForm.form.valid}"
+         >Weiter
+         {{ avatarForm.form.valid  ? '': ""}}     
+        </button>
+    </div>
+    </div>
+  </form>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

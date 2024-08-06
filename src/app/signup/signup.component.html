@@ -1,0 +1,102 @@
+<app-header></app-header>
+
+
+
+<div class="container">
+  <div class="login-container">
+    <div class="login">
+      <div class="box">
+        <div class="konto-container">
+          <h2>Konto erstellen</h2>
+          <div class="image-container">
+            <img [routerLink]="['/login']" src="assets/img/leftfile.png" />
+          </div>
+        </div>
+        <p>
+          Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
+          DABubble-Konto.
+        </p>
+      </div>
+
+      <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
+        <div class="input-container">
+          <input 
+            [ngClass]="{
+              'name-icon': true,
+              filled: filledStates['nameFilled']
+            }"
+            type="name"
+            id="name"
+            name="name"
+            placeholder="Name und Nachname"
+            [(ngModel)]="user.name" 
+            required
+            (input)="onInputChange($event, 'name')"
+          />
+        </div>
+
+        <div class="input-container">
+          <input
+            [ngClass]="{
+              'email-icon': true,
+              filled: filledStates['emailFilled']
+            }"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="beispielname@email.com"
+            [(ngModel)]="user.email" 
+            required
+            
+            (input)="onInputChange($event, 'email')"
+          />
+        </div>
+        <div class="input-container">
+          <input
+            [ngClass]="{
+              'passwort-icon': true,
+              filled: filledStates['passwordFilled']
+            }"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Passwort"
+            ngModel
+            [(ngModel)]="user.password" 
+            required
+            (input)="onInputChange($event, 'password')"
+          />
+        </div>
+        <div class="privacy-box" >
+          <div class="checkbox" (click)="toggleCheckbox()">
+            <div class="checkmark" *ngIf="isChecked"></div>
+          </div>
+          <p>
+            Ich stimme der<a class="forgot-password" [routerLink]="['/privacy']"
+              >Datenschutzerklärung</a
+            >zu.
+          </p>
+        </div>
+
+        <div class="button-container">
+          <div *ngIf="errorMessage" [ngClass]="{'error-message': errorMessage}">
+            <p  >{{ errorMessage }}</p>
+          </div>
+          <div *ngIf="successMessage" [ngClass]="{'success-message': successMessage}">
+            <p>{{ successMessage }}</p>
+          </div> 
+          <button
+            class="button-anmelden"
+            type="submit"
+            [ngClass]="{'ng-invalid': !loginForm.form.valid}"
+           >Weiter
+           {{ loginForm.form.valid || !isChecked ? '': ""}}     
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<app-footer></app-footer>

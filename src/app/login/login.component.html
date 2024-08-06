@@ -1,42 +1,98 @@
+<app-header></app-header>
 
 <div class="container">
+  <div class="login-container">
 
-<div class="login-container">
+    
     <div class="login">
-        <h1>Anmeldung</h1>
-        <p>Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</p>
-    </div>
-</div>
+      <div class="box">
+        <h2>Anmeldung</h2>
+        <p>
+          Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit
+          verwendest.
+        </p>
+      </div>
 
-
-    <div class="content-container">
-    
-    <div class="container-box  ">
-
-        <div class="vector">
-            <div class="background-pink"></div>
-              <div class="background">
-                <div class="inner-vectors">
-                    <div class="inner-box"></div>
-                    <div class="inner-box"></div>
-                    <div class="inner-box"></div>
-                </div>
-            </div>
-        </div>
-    
-        <div class="vector-box">
-            <div class="background-blue"></div> 
-              <div class="background-orange">
-                <div class="inner-vectors">
-                    <div class="inner-box"></div>
-                    <div class="inner-box"></div>
-                    <div class="inner-box"></div>
-                </div>
-            </div>
+      <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+        <div class="input-container">
+          <input
+            [ngClass]="{
+              'email-icon': true,
+              filled: filledStates['emailFilled']
+            }"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="beispielname@email.com"
+            [(ngModel)]="email" 
+            required
+            (input)="onInputChange($event, 'email')"
+          />
         </div>
         
-    </div> 
-    
-    <h1>DABubble</h1>
+        <div class="input-container">
+          <input
+            [ngClass]="{
+              'passwort-icon': true,
+              filled: filledStates['passwordFilled']
+            }"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Passwort"
+            [(ngModel)]="password"
+            required
+            (input)="onInputChange($event, 'password')"
+          />
+        </div>
+        
+        <div>
+          <a class="forgot-password" href="#">Passwort vergessen?</a>
+        </div>
+      
+        <div class="line-container">
+          <span class="lineleft">ODER</span>
+        </div>
+
+        <div class="google-container">
+          <button 
+            class="google-icon"
+            type="button"
+            (click)="signInWithGoogle()">
+            Anmelden mit Google
+          </button>
+        </div>
+      
+        <div class="button-container">
+          <button 
+            class="button-anmelden button-anmelden-mobile"
+            type="submit"
+            [ngClass]="{'ng-invalid': !loginForm.form.valid}"
+            >
+            Anmelden
+          </button>
+          <button
+            class="button-gäste-login button-gäste-mobile"
+            type="button"  
+            (click)="navigateToGuestLogin()" 
+            [disabled]="!loginForm.form.valid">
+            Gäste-Login
+          </button>
+        </div>
+      </form>
+      
+    </div>
+    <div *ngIf="errorMessage" [ngClass]="{'error-message': errorMessage}">
+      <p >{{ errorMessage }}</p>
+    </div>
+  
+    <div *ngIf="successMessage" [ngClass]="{'success-message': successMessage}">
+      <p>{{ successMessage }}</p>
+    </div>
+  </div>
+  <div class="register">
+    <h3>Neu bei DABubble?</h3>
+    <button (click)="navigateToSignup()">Konto erstellen</button>
+  </div>
 </div>
-</div>
+<app-footer></app-footer>
