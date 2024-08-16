@@ -11,7 +11,7 @@
         </p>
       </div>
 
-      <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+      <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
         <div class="input-container">
           <input
             [ngClass]="{
@@ -22,10 +22,32 @@
             id="email"
             name="email"
             placeholder="beispielname@email.com"
+            formControlName="email"
+            (focus)="onFocus('email')"
+            (blur)="onBlur('email')"
             [(ngModel)]="email"
             required
-            (input)="onInputChange($event, 'email')"
           />
+        </div>
+
+        <div class="error-message">
+          <ng-container *ngIf="errorMessage">
+            {{ errorMessage }}
+          </ng-container>
+        
+          <ng-container *ngIf="!errorMessage">
+            <ng-container *ngIf="myForm.get('email')?.touched">
+              <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
+                *Bitte füllen Sie das E-Mail-Feld aus.
+              </ng-container>
+        
+          <ng-container
+            *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
+          >
+            Diese E-Mail-Adresse ist leider ungültig.
+          </ng-container>
+          </ng-container>
+          </ng-container>
         </div>
 
         <div class="input-container">
@@ -40,14 +62,40 @@
             placeholder="Passwort"
             [(ngModel)]="password"
             required
-            (input)="onInputChange($event, 'password')"
+            formControlName="password"
+            (focus)="onFocus('password')"
+            (blur)="onBlur('password')"
           />
         </div>
 
-        <div>
-          <a class="forgot-password" href="#">Passwort vergessen?</a>
+        <div class="error-message">
+          <ng-container *ngIf="errorPassword">
+            {{ errorPassword }}
+          </ng-container>
+  
+        
+          <ng-container *ngIf="!errorPassword">
+            <ng-container  *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
+              <ng-container *ngIf="myForm.get('password')?.errors?.['required']">
+                *Bitte füllen Sie das Passwordfeld aus.
+              </ng-container>
+              <ng-container *ngIf="myForm.get('password')?.errors?.['minlength']"
+              >Das Passwort muss mindestens 6 Zeichen lang sein.</ng-container>
+        
+          <ng-container
+            *ngIf="!myForm.get('password')?.errors?.['required'] && myForm.get('password')?.errors?.['invalid-password']"
+          >
+            Passwort ist falsch.
+          </ng-container>
+          </ng-container>
+          </ng-container>
         </div>
-
+        <div class="passwort-vergessen-box">
+          <a class="forgot-password" [routerLink]="['/passwort-reset']"
+            >Passwort vergessen?</a
+          >
+        </div>
+ 
         <div class="line-container">
           <span class="lineleft">ODER</span>
         </div>
@@ -66,7 +114,7 @@
           <button
             class="button-anmelden button-anmelden-mobile"
             type="submit"
-            [ngClass]="{ 'ng-invalid': !loginForm.form.valid }"
+            [ngClass]="{ 'ng-invalid': !myForm.valid }"
           >
             Anmelden
           </button>
@@ -74,22 +122,16 @@
             class="button-gäste-login button-gäste-mobile"
             type="button"
             (click)="navigateToGuestLogin()"
-            [disabled]="!loginForm.form.valid"
           >
             Gäste-Login
           </button>
         </div>
       </form>
-    </div>
-    <div *ngIf="errorMessage" [ngClass]="{ 'error-message': errorMessage }">
-      <p>{{ errorMessage }}</p>
-    </div>
-
-    <div
-      *ngIf="successMessage"
-      [ngClass]="{ 'success-message': successMessage }"
-    >
-      <p>{{ successMessage }}</p>
+      <div class="registration-ok" *ngIf="successMessage">
+        <p style="color: white; font-size: 36px; font-weight: 700">
+          {{ successMessage }}
+        </p>
+      </div>
     </div>
   </div>
   <div class="register">

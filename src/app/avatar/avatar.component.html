@@ -22,7 +22,8 @@
           </div>
           <div class="headline">
             <h3>{{ userName }}</h3>
-            <p>Aus der Liste wählen</p>
+            <p *ngIf="!isSmallScreen">Aus der Liste wählen</p>
+            <p *ngIf="isSmallScreen">Choose your avatar....</p>
           </div>
           <div class="avatar-selection">
             <div
@@ -40,10 +41,25 @@
               type="file"
               (change)="validateAndUploadProfilePicture($event)"
               #fileInput
+              style="display: none"
             />
-            eigenes Bild verwenden
-            <button (click)="fileInput.click()" class="button-gäste-login">
+            <span *ngIf="!isSmallScreen">eigenes Bild verwenden</span>
+            <span *ngIf="isSmallScreen">or you can</span>
+            <button
+              type="button"
+              (click)="fileInput.click()"
+              class="button-gäste-login button-gäste-login-mobile"
+              *ngIf="!isSmallScreen"
+            >
               Datei hochladen
+            </button>
+            <button
+              type="button"
+              (click)="fileInput.click()"
+              class="button-gäste-login button-gäste-login-mobile"
+              *ngIf="isSmallScreen"
+            >
+              Upload foto
             </button>
           </div>
 
@@ -57,11 +73,15 @@
               [ngClass]="{ 'ng-invalid': !avatarForm.form.valid }"
             >
               Weiter
-              {{ avatarForm.form.valid ? "" : "" }}
             </button>
           </div>
         </div>
       </form>
+      <div class="registration-ok" *ngIf="successMessage">
+        <p style="color: white; font-size: 36px; font-weight: 700">
+          {{ successMessage }}
+        </p>
+      </div>
     </div>
   </div>
 </div>

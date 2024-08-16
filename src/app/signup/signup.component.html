@@ -7,7 +7,9 @@
         <div class="konto-container">
           <h2>Konto erstellen</h2>
           <div class="image-container">
-            <img [routerLink]="['/login']" src="assets/img/leftfile.png" />
+            <a [routerLink]="['/login']">
+              <img src="assets/img/leftfile.png" alt="Zurück zum Login" />
+            </a>
           </div>
         </div>
         <p>
@@ -16,21 +18,26 @@
         </p>
       </div>
 
-      <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
+      <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
         <div class="input-container">
           <input
             [ngClass]="{
               'name-icon': true,
               filled: filledStates['nameFilled']
             }"
-            type="name"
+            type="text"
             id="name"
-            name="name"
+            formControlName="name"
             placeholder="Name und Nachname"
-            [(ngModel)]="user.name"
-            required
-            (input)="onInputChange($event, 'name')"
+            (focus)="onFocus('name')"
+            (blur)="onBlur('name')"
           />
+        </div>
+        <div
+          class="error-message"
+          *ngIf="myForm.get('name')?.invalid && myForm.get('name')?.touched"
+        >
+          Bitte fülle das Feld aus.
         </div>
 
         <div class="input-container">
@@ -41,13 +48,32 @@
             }"
             type="email"
             id="email"
-            name="email"
+            formControlName="email"
             placeholder="beispielname@email.com"
-            [(ngModel)]="user.email"
-            required
-            (input)="onInputChange($event, 'email')"
+            (focus)="onFocus('email')"
+            (blur)="onBlur('email')"
           />
         </div>
+        <div class="error-message">
+          <ng-container *ngIf="errorMessage">
+            {{ errorMessage }}
+          </ng-container>
+        
+          <ng-container *ngIf="!errorMessage">
+            <ng-container *ngIf="myForm.get('email')?.touched">
+              <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
+                *Bitte füllen Sie das E-Mail-Feld aus.
+              </ng-container>
+        
+          <ng-container
+            *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
+          >
+            Diese E-Mail-Adresse ist leider ungültig.
+          </ng-container>
+          </ng-container>
+          </ng-container>
+        </div>
+      
         <div class="input-container">
           <input
             [ngClass]="{
@@ -56,48 +82,61 @@
             }"
             type="password"
             id="password"
-            name="password"
+            formControlName="password"
             placeholder="Passwort"
-            ngModel
-            [(ngModel)]="user.password"
-            required
-            (input)="onInputChange($event, 'password')"
+            (focus)="onFocus('password')"
+            (blur)="onBlur('password')"
           />
         </div>
+        <div
+          class="error-message"
+          *ngIf="
+            myForm.get('password')?.touched && myForm.get('password')?.invalid
+          "
+        >
+          <ng-container *ngIf="myForm.get('password')?.errors?.['required']">
+            Bitte fülle das Passwortfeld aus.
+          </ng-container>
+        </div>
+
         <div class="privacy-box">
           <div class="checkbox" (click)="toggleCheckbox()">
-            <div class="checkmark" *ngIf="isChecked"></div>
+            <input
+              type="checkbox"
+              formControlName="checkbox"
+              [checked]="isChecked"
+              style="display: none"
+            />
+            <div class="checkmark" *ngIf="myForm.get('checkbox')?.value"></div>
           </div>
           <p>
-            Ich stimme der<a class="forgot-password" [routerLink]="['/privacy']"
+            Ich stimme der
+            <a class="forgot-password" [routerLink]="['/privacy']"
               >Datenschutzerklärung</a
-            >zu.
+            >
+            zu.
           </p>
         </div>
 
         <div class="button-container">
-          <div
-            *ngIf="errorMessage"
-            [ngClass]="{ 'error-message': errorMessage }"
-          >
-            <p>{{ errorMessage }}</p>
-          </div>
-          <div
-            *ngIf="successMessage"
-            [ngClass]="{ 'success-message': successMessage }"
-          >
-            <p>{{ successMessage }}</p>
-          </div>
           <button
             class="button-anmelden"
             type="submit"
-            [ngClass]="{ 'ng-invalid': !loginForm.form.valid }"
+            [disabled]="!myForm.valid || (!isSmallScreen && !isChecked)"
+            [ngClass]="{
+              'btn-blue': isSubmitButtonEnabled(),
+              'disabled-button': !myForm.valid || (!isSmallScreen && !isChecked)
+            }"
           >
             Weiter
-            {{ loginForm.form.valid || !isChecked ? "" : "" }}
           </button>
         </div>
       </form>
+      <div class="registration-ok" *ngIf="successMessage">
+        <p style="color: white; font-size: 36px; font-weight: 700">
+          {{ successMessage }}
+        </p>
+      </div>
     </div>
   </div>
 </div>

@@ -12,17 +12,16 @@
 .login-container {
   text-align: center;
   padding: 40px 53px;
-  //padding: 50px;
   max-height: 769px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0px 2px 10px 0px #00000014;
-
-  max-width: 609px;
+  max-width: 606px;
 
   .login {
     max-width: 500px;
     width: 100%;
+
     h2 {
       color: $button-blue;
       font-size: 46px;
@@ -34,8 +33,7 @@
       color: black;
       font-size: 20px;
       font-weight: 400;
-      //width: 486px;
-      //padding: 0 60px;
+      margin: 0;
     }
 
     a {
@@ -45,6 +43,11 @@
       text-decoration: none;
       transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
       padding: 10px;
+    }
+
+    .box {
+      @include dFlex(null,null,30px);
+      flex-direction: column;
     }
 
     .forgot-password:hover {
@@ -62,6 +65,7 @@
 
     .button-container {
       @include dFlex(center, null, 30px);
+      margin-top: 40px;
     }
 
     .button-gäste-login {
@@ -83,13 +87,9 @@
     }
 
     form {
-      @include dFlex(null, center, 40px);
-      flex-direction: column;
-
       input {
         background: $lightblue;
         border-radius: 100px;
-        color: #686868;
         font-size: 18px;
         font-weight: 500;
         height: 60px;
@@ -120,6 +120,11 @@
       .input-container {
         max-width: 500px;
         width: 100%;
+        margin-top: 40px;
+      }
+
+      .passwort-vergessen-box {
+        margin-top: 40px;
       }
 
       .google-container {
@@ -131,6 +136,7 @@
         max-width: 500px;
         width: 100%;
         height: 60px;
+        margin-top: 40px;
 
         &:hover {
           border-color: $button-blue;
@@ -150,6 +156,15 @@
         button:hover {
           font-weight: 700;
         }
+      }
+
+      .error-message {
+        font-size: 14px;
+        color: #ed1e79;
+        font-weight: 400;
+        margin: 0;
+        text-align: left;
+        position: absolute;
       }
 
       .email-icon,
@@ -205,6 +220,7 @@
   @include dFlex(center, center, null);
   width: 100%;
   max-width: 500px;
+  margin-top: 40px;
   span {
     color: black;
   }
@@ -229,6 +245,10 @@
   }
 }
 
+.registration-ok {
+  max-width: 273px;
+}
+
 @media (max-width: 780px) {
   .container {
     padding: 10rem 2rem;
@@ -237,17 +257,49 @@
 
   .login-container .login p {
     margin: 0 auto;
-    width: unset;
+    width: 300px;
     padding: unset;
     font-size: 14px;
+  }
+
+  .login-container .login h2 {
+    font-size: 36px;
   }
 
   .login-container .login form .input-container input {
     font-size: 14px;
   }
 
+  .login-container .login form .error-message {
+    font-size: 11px;
+  }
+
+  .login-container .login form .passwort-vergessen-box {
+    margin-top: 20px;
+  }
+
+  .login-container .login form .google-container {
+    margin-top: 20px;
+  }
+
+  .line-container {
+    margin-top: 20px;
+  }
+
+  .login-container .login form .input-container {
+    margin-top: 20px;
+  }
+
+  .login-container .login .button-container {
+    margin-top: 20px;
+  }
+
   .login-container .login a {
     font-size: 14px;
+  }
+
+  .login-container .login .box {
+    gap: 10px;
   }
 
   .login-container .login form .google-container button {
@@ -257,12 +309,11 @@
   .box {
     @include dFlex(null, null, 10px);
     flex-direction: column;
-    padding-bottom: 20px;
   }
 }
 
 .register {
-  @include dFlex(null, flex-end, 10px);
+  @include dFlex(null, flex-end, 20px);
   flex-direction: column;
   padding-top: 20px;
 
@@ -270,6 +321,7 @@
     color: black;
     font-size: 16px;
     font-weight: 400;
+    margin: 0;
   }
 
   button {
@@ -295,15 +347,15 @@
 @media (max-width: 520px) {
   .login-container {
     padding: 20px;
-    width: 100%;
+    overflow: hidden;
   }
 
-  .login-container .login {
-    font-size: 36px;
+  .registration-ok{
+    top:60%;
   }
 
-  .login-container .login form {
-    gap: 20px;
+  .login-container .login p {
+    width: 300px;
   }
 
   .login-container .login .button-container {
@@ -312,6 +364,10 @@
 
   .login-container .login h2 {
     font-size: 30px;
+  }
+
+  .login-container .login {
+    overflow: hidden;
   }
 
   .login-container .login form .button-gäste-mobile {
@@ -341,5 +397,11 @@
     .lineleft {
       font-size: 16px;
     }
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container .login p {
+    width: 260px;
   }
 }

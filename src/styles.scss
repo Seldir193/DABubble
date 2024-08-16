@@ -13,9 +13,16 @@ $hoverColor: #535af1;
   }
 }
 
+@media (max-width: 780px) {
+  body {
+    overflow: hidden;
+  }
+}
+
 html,
 body {
   margin: 0;
+ 
 }
 body {
   font-family: "Nunito", sans-serif;
@@ -39,4 +46,42 @@ body {
   &:hover {
     background: #5b5ffc;
   }
+
+  &:disabled {
+    background-color:#686868;
+    cursor: not-allowed;
+  }
 }
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.registration-ok {
+  @include dFlex(center, center, 0px);
+  width: 100%;
+  max-width: 531px;
+  height: auto;
+  padding: 50px;
+  border-radius: 30px 30px 0px 30px;
+  background-color: $button-blue;
+  line-height: 49.1px;
+  text-align: center;
+  box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
+  border: 2px solid $button-blue;
+  margin: 20px auto;
+  position: absolute;
+  right: 0;
+  animation: slideInFromRight 1s ease-out;
+  top: 60%;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');

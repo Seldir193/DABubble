@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Firestore, updateDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
@@ -38,11 +38,23 @@ export class AvatarComponent implements OnInit {
   errorMessage: string = '';
   userName: string = 'User';
   userAvatarUrl: string = 'assets/img/avatar.png';
+  successMessage: string = '';
+  isSmallScreen: boolean = window.innerWidth < 780;
 
   constructor(private firestore: Firestore, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUserData();
+    this.updateScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.updateScreenSize();
+  }
+
+  updateScreenSize() {
+    this.isSmallScreen = window.innerWidth < 780;
   }
 
   async loadUserData() {
@@ -56,11 +68,16 @@ export class AvatarComponent implements OnInit {
 
       if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0].data();
+        console.log('Geladenes Benutzer-Dokument:', userDoc);
         this.userName = userDoc['name'] || 'User';
         this.userAvatarUrl = userDoc['avatarUrl'] || 'assets/img/avatar.png';
-        this.selectedAvatar = this.userAvatarUrl; // Preselect the user's avatar
+        this.selectedAvatar = this.userAvatarUrl;
+      } else {
+        console.log('Benutzer nicht gefunden.');
+        this.router.navigate(['/login']);
       }
     } else {
+      console.log('Kein Benutzer angemeldet.');
       this.router.navigate(['/login']);
     }
   }
@@ -68,9 +85,6 @@ export class AvatarComponent implements OnInit {
   selectAvatar(avatar: string): void {
     this.selectedAvatar = avatar;
     this.errorMessage = '';
-
-    // Aktualisieren Sie das Firestore-Dokument sofort
-    this.confirmSelection();
   }
 
   validateAndUploadProfilePicture(event: Event): void {
@@ -88,13 +102,12 @@ export class AvatarComponent implements OnInit {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      // Maximal 5 MB
       this.errorMessage =
         'Die Datei ist zu groß. Bitte wählen Sie eine Datei, die kleiner als 5 MB ist.';
       return;
     }
 
-    this.errorMessage = ''; // Fehlernachricht zurücksetzen
+    this.errorMessage = '';
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -122,12 +135,18 @@ export class AvatarComponent implements OnInit {
           const userDoc = querySnapshot.docs[0].ref;
           await updateDoc(userDoc, {
             avatarUrl: this.selectedAvatar,
-            name: this.userName, // Hier auch den Namen aktualisieren
+            name: this.userName,
           });
-          console.log('Benutzer-Avatar und Name aktualisiert.');
+          console.log('Benutzer-Avatar und Name erfolgreich aktualisiert.');
 
-          // Aktualisieren Sie den Benutzernamen und das Avatar-Bild in der Komponente
-          this.loadUserData();
+          const updatedDoc = await getDocs(q);
+          console.log('Aktualisiertes Dokument:', updatedDoc.docs[0].data());
+
+          this.successMessage = 'Konto erfolgreich erstellt!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.router.navigate(['/login']);
+          }, 3000);
         } else {
           this.errorMessage = 'Benutzer nicht gefunden.';
         }

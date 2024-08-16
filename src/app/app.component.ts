@@ -8,11 +8,14 @@ import { SignupComponent } from './signup/signup.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { ImprintComponent } from './imprint/imprint.component';
 import { AvatarComponent } from './avatar/avatar.component';
+import { ChatComponent } from './chat/chat.component';
 import { RouterLink } from '@angular/router';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PasswortResetComponent } from './passwort-reset/passwort-reset.component';
+import { NewPasswortComponent } from './new-passwort/new-passwort.component';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +33,9 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
     SignupComponent,
     RouterLink,
+    ChatComponent,
+    PasswortResetComponent,
+    NewPasswortComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
