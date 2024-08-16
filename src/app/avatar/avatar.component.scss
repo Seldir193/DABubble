@@ -178,10 +178,10 @@
     }
 
     p {
-      color: black;
-      font-size: 20px;
+      //color: black;
+      //font-size: 20px;
       font-weight: 400;
-      width: 486px;
+      //width: 486px;
       margin: 0px;
       margin-top: 16px;
     }
@@ -321,7 +321,7 @@
 
   .login-container .login p {
     padding: unset;
-    font-size: 20px;
+    //font-size: 20px;
     display: flex;
     align-items: center;
     max-width: 300px;
@@ -420,9 +420,9 @@
       width:unset;      
     }
 
-    p {
-      width: 300px;
-    }
+    //p {
+      //width: 300px;
+    //}
 
     .button-container {
       gap: 10px;
@@ -464,8 +464,8 @@
   .login-container .login {
     width: 260px;
 
-    p {
-      width: 260px;
-    }
+    //p {
+      //width: 260px;
+    //}
   }
 }
