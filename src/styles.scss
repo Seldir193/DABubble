@@ -15,7 +15,7 @@ $hoverColor: #535af1;
 
 @media (max-width: 780px) {
   body {
-    overflow: hidden;
+    overflow: auto;
   }
 }
 
@@ -26,7 +26,7 @@ body {
 }
 body {
   font-family: "Nunito", sans-serif;
-  height: 100vh;
+  height: 100%;
   width: 100%;
 }
 
