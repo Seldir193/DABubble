@@ -1,0 +1,116 @@
+<div class="container">
+    <div class="content-container">
+        <div class="container-box">
+            <div class="vector">
+                <div class="background-pink"></div>
+                <div class="background">
+                    <div class="inner-vectors">
+                        <div class="inner-box"></div>
+                        <div class="inner-box"></div>
+                        <div class="inner-box"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vector-box">
+                <div class="background-blue"></div>
+                <div class="background-orange">
+                    <div class="inner-vectors">
+                        <div class="inner-box"></div>
+                        <div class="inner-box"></div>
+                        <div class="inner-box"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h1>DABubble</h1>
+    </div>
+
+    <div class="center-section">
+        <input type="text" placeholder="Devspace durchsuchen" class="search-input">
+        <img src="assets/img/search.png" class="search-icon" alt="Suche">
+    </div>
+
+    <div class="right-section" (click)="stopPropagation($event)">
+        <span class="user-name">{{ userName }}</span>
+        <img [src]="userAvatar" class="avatar" (click)="toggleMenu()" alt="User Avatar"/>
+
+        <div class="menu-dropdown" (click)="stopPropagation($event)">
+            <button class="menu-toggle"></button>
+            <div class="menu-toggle" (click)="toggleMenu()">
+                <img src="assets/img/keyboard_arrow_down-1.png">
+            </div>
+
+            <div class="menu-content" [ngClass]="{ 'show': menuOpen }">
+                <button class="menu-item" (click)="openProfileCard()">Profile</button>
+                <button class="menu-item" (click)="logoutAndCloseMenu()">Logout</button>
+            </div>
+        </div>
+
+        <div class="profile-card-container" [ngClass]="{ 'show': profileOpen }" (click)="stopPropagation($event)">
+            <div class="profile-card">
+                <div class="profil-container">
+                    <h2 *ngIf="!isEditingProfile">Profil</h2>
+                    <h2 *ngIf="isEditingProfile">Dein Profil bearbeiten</h2>
+                    <div class="img-wrapper">
+                        <img (click)="closeProfileCard()" src="assets/img/close.png" alt="Schließen">
+                    </div>
+                </div>
+                <div class="profile-avatar">
+                    <img [src]="userAvatar"  alt="User Avatar">
+                </div>
+                <div class="profile-info" *ngIf="!isEditingProfile">
+                    <div class="profil-settings">
+                        <p><strong>{{ userName }}</strong></p>
+                        <div class="profil-settings-button" (click)="openSettingCard()">Bearbeiten</div>
+                    </div>
+                    <div class="online-aktiv-passiv">
+                        <img *ngIf="userStatus === 'Aktiv'" src="assets/img/online.png" alt="Online">
+                        <img *ngIf="userStatus === 'Abwesend'" src="assets/img/offline.png" alt="Offline">
+                        <p [ngStyle]="{ color: userStatus === 'Abwesend' ? 'gray' : '#92C83E' }">{{ userStatus }}</p>
+                    </div>
+                    <div class="email-container">
+                        <img src="assets/img/pmail.png">
+                        <p>E-Mail-Adresse</p>
+                    </div>
+                    <p class="secondary-text">{{ userEmail }}</p>
+                </div>
+
+                <div class="profile-edit" *ngIf="isEditingProfile">
+                    <div class="name-box">
+                        <img src="assets/img/vollständigername.png">
+                        <label for="name">Vollständiger Name:</label>
+                    </div>
+                    <input
+                        placeholder="Name"
+                        type="text"
+                        id="name"
+                        [(ngModel)]="editableUserName"
+                        (focus)="onInputFocus('name')"
+                        (blur)="onInputBlur('name', editableUserName)"
+                        [ngClass]="{'active': inputStates['name']}"
+                    />
+
+                    <div class="email-box">
+                        <img src="assets/img/pmail.png">
+                        <label for="email">E-Mail-Adresse:</label>
+                    </div>
+                    <input
+                        placeholder="E-Mail"
+                        type="email"
+                        id="email"
+                        [(ngModel)]="editableUserEmail"
+                        (focus)="onInputFocus('email')"
+                        (blur)="onInputBlur('email', editableUserEmail)"
+                        [ngClass]="{'active': inputStates['email']}"
+                    />
+
+                    <div class="button-box">
+                        <button class="button-abbrechen" (click)="cancelEditing()">Abbrechen</button>
+                        <button (click)="saveProfileChanges()">Speichern</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

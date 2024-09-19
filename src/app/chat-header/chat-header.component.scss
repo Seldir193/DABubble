@@ -1,0 +1,421 @@
+@import "./../../styles.scss";
+
+.container {
+  @include dFlex(space-between, null, 0);
+  padding: 25px 45px;
+  background-color: $lightblue;
+}
+
+.content-container {
+  @include dFlex(null);
+}
+
+h1 {
+  color: black;
+  font-size: 32px;
+  font-weight: 700;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.container-box {
+  @include dFlex(null, null, 8px);
+  flex-direction: column;
+}
+
+.vector {
+  @include dFlex(null, flex-end, 8px);
+}
+
+.vector-box {
+  @include dFlex(null, null, 8px);
+  flex-direction: row-reverse;
+}
+
+.inner-vectors {
+  @include dFlex(center, center, 10px);
+}
+
+.inner-box {
+  width: 5.06px;
+  height: 5.06px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.background,
+.background-orange,
+.background-pink,
+.background-blue {
+  @include dFlex(center);
+}
+
+.background {
+  width: 42.49px;
+  height: 31.77px;
+  background-color: #92c83e;
+  border-radius: 16px 16px 16px 0;
+}
+
+.background-orange {
+  width: 42.49px;
+  height: 31.77px;
+  background-color: #fbb03b;
+  border-radius: 16px 0 16px 16px;
+}
+
+.background-pink {
+  width: 21.38px;
+  height: 21.43px;
+  background-color: #ed1e79;
+  border-radius: 50% 50% 0 50%;
+}
+
+.background-blue {
+  width: 21.38px;
+  height: 21.43px;
+  background-color: #3fa9f5;
+  border-radius: 0 50% 50% 50%;
+}
+
+.center-section {
+  @include dFlex(center, null, 0);
+  width: 100%;
+  max-width: 989px;
+  position: relative;
+
+  .search-input {
+    width: 100%;
+    height: 70px;
+    padding: 10px 45px;
+    border-radius: 45px;
+    border: 2px solid #ccc;
+    font-size: 24px;
+    outline: none;
+    &::placeholder {
+      font-size: 24px;
+      color: $lightgray;
+    }
+
+    &:focus {
+      border-color: #007bff;
+    }
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 35px;
+    pointer-events: none;
+  }
+}
+
+.right-section {
+  @include dFlex(null, center, 15px);
+
+  .user-name {
+    font-size: 32px;
+    font-weight: 700;
+    color: black;
+    margin-left: 20px;
+  }
+
+  .avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .menu-dropdown {
+    position: relative;
+    display: flex;
+
+    .menu-toggle {
+      background-color: $lightblue;
+      border: none;
+      cursor: pointer;
+    }
+
+    .menu-content {
+      display: none;
+      position: absolute;
+      right: -25px;
+      background-color: white;
+      z-index: 1000;
+      padding: 30px;
+      gap: 15px;
+      border-radius: 30px 0px 30px 30px;
+      box-shadow: 0px 6px 10px 0px #00000033;
+      top: 80px;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+
+      &.show {
+        display: block;
+      }
+
+      .menu-item {
+        padding: 10px 45px;
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        width: 100%;
+        text-align: center;
+        max-width: 222px;
+        transition: color 0.3s ease, transform 0.3s ease;
+        color: 24px;
+        font-weight: 600;
+
+        &:hover {
+          background-color: $lightblue;
+          border-radius: 100px;
+          color: $hoverColor;
+          max-width: 222px;
+          width: 100%;
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+}
+
+.profile-card-container {
+  display: none;
+  position: fixed;
+  top: 140px;
+  right: -500px;
+  background-color: white;
+  box-shadow: -2px 0px 8px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 1001;
+  display: flex;
+  padding: 45px 40px;
+
+  &.show {
+    right: 0;
+    border-radius: 30px;
+    display: block;
+  }
+
+  .profile-card {
+    @include dFlex(space-between, center, 45px);
+    flex-direction: column;
+  }
+
+  .profile-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .profile-info {
+    @include dFlex(null, null, 15px);
+    flex-direction: column;
+
+    p {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .secondary-text {
+      font-size: 18px;
+      color: $hoverColor;
+      font-weight: 500;
+      float: left;
+      padding-left: 50px;
+      margin: 0;
+    }
+  }
+
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+.profil-container {
+  @include dFlex(space-between, center, 0);
+  width: 420px;
+  height: 40px;
+
+  .img-wrapper {
+    width: 30px; 
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; 
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+
+    &:hover {
+      background-color: $lightblue; 
+      transform: scale(1.1); 
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+      border-radius: 50%; 
+      transition: filter 0.3s ease; 
+      cursor: pointer;
+
+      &:hover {
+        filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg) brightness(94%) contrast(86%);
+      }
+    }
+  }
+}
+
+.profil-settings {
+  @include dFlex(space-between, center, 0);
+  width: 420px;
+  height: 44px;
+
+  p {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+  }
+
+  .profil-settings-button {
+    font-size: 18px;
+    font-weight: 600;
+    color: $hoverColor;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.6s ease;
+
+    &:hover {
+      color: $hoverColor;
+      font-weight: 700;
+      transform: scale(1.05);
+    }
+  }
+}
+
+.email-container {
+  @include dFlex(null, center, 20px);
+  margin-top: 9px;
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.online-aktiv-passiv {
+  @include dFlex(null, center, 15px);
+  img {
+    width: 16px;
+    height: 16px;
+  }
+
+  p {
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    color: #92c83e;
+  }
+}
+
+.profile-edit {
+  @include dFlex(null, null, 9px);
+  flex-direction: column;
+  width: 420px;
+
+  label {
+    font-weight: 600;
+  }
+
+  input {
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    padding: 15px 20px;
+
+    &:hover {
+      border: 1px solid $button-border;
+    }
+
+    &.active {
+      border-color: blue;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $button-blue;
+    }
+  }
+
+  button,
+    .button-abbrechen {
+        border-radius: 50px;
+        cursor: pointer;
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        height: 49px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    button {
+        background-color: $button-blue;
+        color: white;
+        border: none;
+
+        &:hover {
+            background: #5b5ffc;
+          }
+    }
+
+    .button-abbrechen {
+        background-color: white;
+        color: $button-blue;
+        border: 1px solid $middleblue;
+    
+        &:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+    }
+}
+
+.email-box,
+.name-box {
+  @include dFlex(null, center, 20px);
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+
+  label {
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
+.button-box {
+  @include dFlex(center, null, 32px);
+  margin-top:20px;
+}
+
+@import 'chat-header-mobile.component.scss';

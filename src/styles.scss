@@ -2,6 +2,8 @@ $button-blue: #444df2;
 $lightblue: #eceefe;
 $middleblue: #797ef3;
 $hoverColor: #535af1;
+$lightgray: #686868;
+$button-border: #ADB0D9;
 
 @mixin dFlex($jc: null, $ai: center, $g: 0px) {
   display: flex;
