@@ -33,15 +33,24 @@
 
     <div class="right-section" (click)="stopPropagation($event)">
         <span class="user-name">{{ userName }}</span>
-        <img [src]="userAvatar" class="avatar" (click)="toggleMenu()" alt="User Avatar"/>
+
+        <div class="avatar-container">
+            <img [src]="userAvatarUrl" class="avatar" (click)="toggleMenu()" alt="User Avatar"/>
+            
+            <!-- Online/Offline Icon, basierend auf dem userStatus -->
+            <img *ngIf="userStatus === 'Aktiv'" src="assets/img/online.png" class="status-icon" alt="Online">
+            <img *ngIf="userStatus === 'Abwesend'" src="assets/img/offline.png" class="status-icon" alt="Offline">
+          </div>
+
+        
+        
 
         <div class="menu-dropdown" (click)="stopPropagation($event)">
-            <button class="menu-toggle"></button>
             <div class="menu-toggle" (click)="toggleMenu()">
-                <img src="assets/img/keyboard_arrow_down-1.png">
+                <img class="menu-img" src="assets/img/keyboard_arrow_down-1.png">
             </div>
 
-            <div class="menu-content" [ngClass]="{ 'show': menuOpen }">
+            <div class="menu-content" [ngClass]="{ 'show': menuOpen }"(click)="stopPropagation($event)" >
                 <button class="menu-item" (click)="openProfileCard()">Profile</button>
                 <button class="menu-item" (click)="logoutAndCloseMenu()">Logout</button>
             </div>
@@ -55,11 +64,35 @@
                     <div class="img-wrapper">
                         <img (click)="closeProfileCard()" src="assets/img/close.png" alt="Schließen">
                     </div>
+                   
+
                 </div>
+
                 <div class="profile-avatar">
-                    <img [src]="userAvatar"  alt="User Avatar">
+                    <!-- Profilansicht: Nur Bild anzeigen -->
+                    <img
+                        *ngIf="!isEditingProfile"
+                        [src]="userAvatarUrl"
+                        alt="User Avatar"
+                    />
+                    <!-- Bearbeitungsansicht: Bild anklickbar zum Ändern -->
+                    <div *ngIf="isEditingProfile">
+                        <img
+                            [src]="userAvatarUrl"
+                            alt="User Avatar"
+                            (click)="onAvatarClick()"
+                        />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            #fileInput
+                            style="display: none;"
+                            (change)="onFileSelected($event)"
+                        />
+                    </div>
                 </div>
                 <div class="profile-info" *ngIf="!isEditingProfile">
+                <div class="profil-box">
                     <div class="profil-settings">
                         <p><strong>{{ userName }}</strong></p>
                         <div class="profil-settings-button" (click)="openSettingCard()">Bearbeiten</div>
@@ -69,11 +102,14 @@
                         <img *ngIf="userStatus === 'Abwesend'" src="assets/img/offline.png" alt="Offline">
                         <p [ngStyle]="{ color: userStatus === 'Abwesend' ? 'gray' : '#92C83E' }">{{ userStatus }}</p>
                     </div>
+                </div>
+                <div class="profil-email-box">
                     <div class="email-container">
                         <img src="assets/img/pmail.png">
                         <p>E-Mail-Adresse</p>
                     </div>
                     <p class="secondary-text">{{ userEmail }}</p>
+                </div>
                 </div>
 
                 <div class="profile-edit" *ngIf="isEditingProfile">
@@ -104,11 +140,17 @@
                         (blur)="onInputBlur('email', editableUserEmail)"
                         [ngClass]="{'active': inputStates['email']}"
                     />
-
                     <div class="button-box">
                         <button class="button-abbrechen" (click)="cancelEditing()">Abbrechen</button>
                         <button (click)="saveProfileChanges()">Speichern</button>
                     </div>
+
+                    <div *ngIf="errorMessage" class="error-message">
+                        {{ errorMessage }}
+                      </div>
+                      <div *ngIf="successMessage" class="success-message">
+                        {{ successMessage }}
+                      </div>
                 </div>
             </div>
         </div>

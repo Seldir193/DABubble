@@ -1,4 +1,38 @@
-.chat{
-    display: none;
+@import "./../../styles.scss";
 
+section {
+  display: flex;
+  background-color: #eceefe;
+  gap: 20px;
+  padding: 0 20px 20px 20px;
+
+  /* Allgemeiner Container für Devspace */
+  .container {
+    width: 100%;
+    max-width: 366px;
+    min-height: 100vh;
+    border-radius: 30px;
+    background-color: white;
+    padding: 32px 30px;
+    overflow: auto;
+    opacity: 1;
+    gap: 25px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Spezifischer Stil für den Team-Container */
+  .team-container {
+    
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 30px;
+    background-color: white;
+    padding: 32px 30px;
+    opacity: 1;
+  }
 }
+
+
+
+

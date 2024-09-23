@@ -121,6 +121,13 @@ h1 {
     font-weight: 700;
     color: black;
     margin-left: 20px;
+    transition: color 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+      border-radius: 100px;
+      color: $hoverColor;
+      cursor: pointer;
+    }
   }
 
   .avatar {
@@ -130,6 +137,7 @@ h1 {
     object-fit: cover;
   }
 
+
   .menu-dropdown {
     position: relative;
     display: flex;
@@ -138,6 +146,23 @@ h1 {
       background-color: $lightblue;
       border: none;
       cursor: pointer;
+      transition: color 0.3s ease, transform 0.3s ease;
+
+      .menu-img {
+        transition: transform 0.3s ease;
+      }
+
+      .menu-img {
+        object-fit: cover;
+        border-radius: 50%;
+        transition: filter 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
+            brightness(94%) contrast(86%);
+        }
+      }
     }
 
     .menu-content {
@@ -150,7 +175,7 @@ h1 {
       gap: 15px;
       border-radius: 30px 0px 30px 30px;
       box-shadow: 0px 6px 10px 0px #00000033;
-      top: 80px;
+      top: 85px;
       transition: opacity 0.3s ease, visibility 0.3s ease;
 
       &.show {
@@ -185,7 +210,7 @@ h1 {
 .profile-card-container {
   display: none;
   position: fixed;
-  top: 140px;
+  top: 145px;
   right: -500px;
   background-color: white;
   box-shadow: -2px 0px 8px rgba(0, 0, 0, 0.1);
@@ -206,20 +231,40 @@ h1 {
   }
 
   .profile-avatar {
-    width: 200px;
-    height: 200px;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
     border-radius: 50%;
-    overflow: hidden;
 
     img {
-      width: 100%;
-      height: 100%;
+      border-radius: 50%;
+      transition: 0.3s ease;
+      width: 200px;
+      height: 200px;
       object-fit: cover;
+    }
+
+    &:hover img {
+      filter: brightness(0.9);
+    }
+
+    &:hover::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      width: 105%;
+      height: 105%;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: -1;
+      box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
+      transform: translate(-50%, -50%);
     }
   }
 
   .profile-info {
-    @include dFlex(null, null, 15px);
+    @include dFlex(null, null, 45px);
     flex-direction: column;
 
     p {
@@ -259,29 +304,30 @@ h1 {
   height: 40px;
 
   .img-wrapper {
-    width: 30px; 
+    width: 30px;
     height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%; 
-    transition: background-color 0.3s ease, transform 0.3s ease; 
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 
     &:hover {
-      background-color: $lightblue; 
-      transform: scale(1.1); 
+      background-color: $lightblue;
+      transform: scale(1.1);
     }
 
     img {
-      width: 24px;
-      height: 24px;
+      width: 40px;
+      height: 40px;
       object-fit: cover;
-      border-radius: 50%; 
-      transition: filter 0.3s ease; 
+      border-radius: 50%;
+      transition: filter 0.3s ease;
       cursor: pointer;
 
       &:hover {
-        filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg) brightness(94%) contrast(86%);
+        filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
+          brightness(94%) contrast(86%);
       }
     }
   }
@@ -314,7 +360,6 @@ h1 {
 
 .email-container {
   @include dFlex(null, center, 20px);
-  margin-top: 9px;
 
   img {
     width: 30px;
@@ -365,37 +410,37 @@ h1 {
   }
 
   button,
-    .button-abbrechen {
-        border-radius: 50px;
-        cursor: pointer;
-        padding: 10px 20px;
-        font-size: 18px;
-        font-weight: 700;
-        text-align: center;
-        height: 49px;
-        transition: background-color 0.3s, color 0.3s;
-    }
+  .button-abbrechen {
+    border-radius: 50px;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    height: 49px;
+    transition: background-color 0.3s, color 0.3s;
+  }
 
-    button {
-        background-color: $button-blue;
-        color: white;
-        border: none;
+  button {
+    background-color: $button-blue;
+    color: white;
+    border: none;
 
-        &:hover {
-            background: #5b5ffc;
-          }
+    &:hover {
+      background: #5b5ffc;
     }
+  }
 
-    .button-abbrechen {
-        background-color: white;
-        color: $button-blue;
-        border: 1px solid $middleblue;
-    
-        &:hover {
-            background-color: #0056b3;
-            color: white;
-        }
+  .button-abbrechen {
+    background-color: white;
+    color: $button-blue;
+    border: 1px solid $middleblue;
+
+    &:hover {
+      background-color: #0056b3;
+      color: white;
     }
+  }
 }
 
 .email-box,
@@ -415,7 +460,36 @@ h1 {
 
 .button-box {
   @include dFlex(center, null, 32px);
-  margin-top:20px;
+  margin-top: 20px;
 }
 
-@import 'chat-header-mobile.component.scss';
+.profil-box,
+.profil-email-box {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.status-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid white;
+}
+
+@import "chat-header-mobile.component.scss";

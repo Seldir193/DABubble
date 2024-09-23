@@ -1,0 +1,16 @@
+@import "./../../styles.scss";
+
+
+  mat-form-field {
+    width: 100%;  // Eingabefelder nehmen die volle Breite des Dialogs ein
+  }
+  
+  mat-dialog-content {
+    padding-bottom: 20px;  // Platz unter dem Inhalt des Dialogs
+  }
+  
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;  // Der Button wird rechts ausgerichtet
+  }
+  

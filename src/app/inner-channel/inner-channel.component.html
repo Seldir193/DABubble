@@ -1,0 +1,20 @@
+<div class="selection">
+    <div  class="channel-box">
+        <div class="hover-container">
+           <img class="channel-left" src="assets/img/channel-left.png" alt="Channel"> 
+           <img class="edit-workspace" src="assets/img/workspaces.png" alt="Workspace">
+           <h1>Channels</h1>
+        </div>
+        <div class="edit-channel">
+            <img  src="assets/img/channel-add.png" alt="Add" (click)="openDialog()">
+         </div>
+        
+    </div>
+    <div *ngFor="let team of entwicklerTeams" class="entwickler-box">
+        <img  src="assets/img/tag-black.png"> 
+        <h1>{{ team.name }}</h1>
+    </div>
+    
+</div>
+  
+

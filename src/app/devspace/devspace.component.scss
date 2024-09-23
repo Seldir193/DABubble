@@ -1,0 +1,54 @@
+@import "./../../styles.scss";
+
+.dev-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 30px;
+  background-color: white;
+  
+  img {
+    width: 60px;
+    height: 60px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-left:15px;
+  }
+
+  .edit-square {
+    width: 40px;
+    height: 40px;
+    margin-left:auto;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: $lightblue;
+
+        img {
+            filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
+              brightness(94%) contrast(86%);
+          }
+
+      }
+  
+    img {
+        width: 24px;
+        height: 24px;
+        object-fit: cover;
+        transition: filter 0.3s ease;
+        cursor: pointer;
+
+        
+      }
+  }
+}
+
+

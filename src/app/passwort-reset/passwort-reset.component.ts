@@ -107,10 +107,11 @@ export class PasswortResetComponent implements OnInit {
       }
 
       const actionCodeSettings = {
-        url: 'http://localhost:4200/new-passwort',
+        url: 'http://localhost:4200/new-passwort', 
         handleCodeInApp: true,
       };
 
+      
       try {
         await this.resetPassword(email, actionCodeSettings);
         this.successMessage = 'E-Mail gesendet';

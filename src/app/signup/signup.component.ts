@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc,setDoc,doc } from '@angular/fire/firestore';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { PrivacyComponent } from '../privacy/privacy.component';
@@ -144,8 +144,9 @@ export class SignupComponent implements OnInit {
     timestamp: Date;
   }) {
     try {
-      const userRef = await addDoc(collection(this.firestore, 'users'), user);
-      console.log('Benutzer erfolgreich gespeichert mit ID: ', userRef.id);
+      const userRef = doc(this.firestore, 'users', user.uid);
+      await setDoc(userRef, user);
+      console.log('Benutzer erfolgreich gespeichert mit UID als Dokument-ID.');
     } catch (e) {
       console.error('Fehler beim Speichern des Benutzers: ', e);
     }

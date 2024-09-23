@@ -18,6 +18,8 @@ import {
   addDoc,
   updateDoc,
   getDoc,
+  setDoc,
+  doc,
 } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
@@ -145,72 +147,68 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  async loadUserData(
-    email: string,
-    name: string | undefined = undefined,
-    avatarUrl: string | undefined = undefined
-  ) {
-    try {
-      const usersCollection = collection(this.firestore, 'users');
-      const q = query(usersCollection, where('email', '==', email));
-      const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) {
-        await this.saveNewUser(email, name, avatarUrl);
-      } else {
-        const userDoc = querySnapshot.docs[0].ref;
-        await this.updateExistingUser(userDoc, {
-          lastLogin: new Date(),
-          name: name,
-          avatarUrl: avatarUrl,
-        });
+  async loadUserData(email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (user && user.uid) {
+      try {
+        const userDocRef = doc(this.firestore, 'users', user.uid); // Verwende die UID
+        const userDocSnap = await getDoc(userDocRef);
+  
+        if (userDocSnap.exists()) {
+          // Update the existing user data in Firestore
+          await this.updateExistingUser(userDocRef, {
+            lastLogin: new Date(),
+            name: name,
+            avatarUrl: avatarUrl,
+          });
+        } else {
+          // Save a new user if it doesn't exist in Firestore
+          await this.saveNewUser(user.uid, email, name, avatarUrl);
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
       }
-    } catch (error) {
-      console.error('Error loading user data:', error);
+    } else {
+      console.error('No authenticated user found.');
     }
   }
-
-  async saveNewUser(
-    email: string,
-    name: string | undefined = undefined,
-    avatarUrl: string | undefined = undefined
-  ) {
+  
+  async saveNewUser(uid: string, email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
     try {
       const user = {
+        uid: uid,
         email: email,
         name: name || 'Unbekannt',
         avatarUrl: avatarUrl || '',
         createdAt: new Date(),
         lastLogin: new Date(),
       };
-      await addDoc(collection(this.firestore, 'users'), user);
-      console.log('New user created:', email);
+      // Verwende setDoc mit der UID des Benutzers
+      await setDoc(doc(this.firestore, 'users', uid), user);
+      console.log('New user created with UID:', uid);
     } catch (error) {
       console.error('Error creating new user:', error);
     }
   }
-
-  async updateExistingUser(
-    userDoc: any,
-    data: Partial<{ lastLogin: Date; name?: string; avatarUrl?: string }>
-  ) {
+  
+  async updateExistingUser(userDoc: any, data: Partial<{ lastLogin: Date; name?: string; avatarUrl?: string }>) {
     try {
       const updateData = {
         ...data,
         lastLogin: data.lastLogin || new Date(),
       };
-
+  
       console.log('Updating user data with:', updateData);
       await updateDoc(userDoc, updateData);
       console.log('User data updated:', userDoc.id);
-
-      const updatedDoc = await getDoc(userDoc);
-      console.log('Updated document data:', updatedDoc.data());
     } catch (error) {
       console.error('Error updating user data:', error);
     }
   }
-
+  
   async signInWithGoogle() {
     try {
       const provider = new GoogleAuthProvider();

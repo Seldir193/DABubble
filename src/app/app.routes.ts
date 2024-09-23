@@ -8,6 +8,9 @@ import { AvatarComponent } from './avatar/avatar.component';
 import { ChatComponent } from './chat/chat.component';
 import { PasswortResetComponent } from './passwort-reset/passwort-reset.component';
 import { NewPasswortComponent } from './new-passwort/new-passwort.component';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { AuthActionComponent } from './auth-action/auth-action.component';
+
 
 export const routes: Routes = [
     { path: '', redirectTo: '/intro', pathMatch: 'full' },
@@ -19,7 +22,10 @@ export const routes: Routes = [
     { path: 'avatar', component: AvatarComponent },
     { path: 'chat', component: ChatComponent},
     { path: 'passwort-reset', component: PasswortResetComponent},
-    { path: 'new-passwort', component: NewPasswortComponent}
+    { path: 'auth-action', component: AuthActionComponent }, 
+    { path: 'new-passwort', component: NewPasswortComponent},
+    { path: 'verify-email', component: VerifyEmailComponent },
+    
 ];
 
 

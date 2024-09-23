@@ -38,7 +38,7 @@ import { NewPasswortComponent } from './new-passwort/new-passwort.component';
     NewPasswortComponent
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'DABubble';

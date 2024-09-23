@@ -1,0 +1,24 @@
+@import "./../../styles.scss";
+
+.entwickler-box {
+  display: flex;
+  justify-content: space-between;
+  padding: 32px 30px;
+  border-radius: 30px;
+  background-color: white;
+  align-items: center;
+ 
+  img {
+    width: 14px;
+    height: 14px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  div {
+    font-size: 18px;
+  }
+}

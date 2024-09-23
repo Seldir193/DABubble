@@ -1,0 +1,24 @@
+
+
+<h1 mat-dialog-title>Channel erstellen</h1>
+<div mat-dialog-content>
+  <p>Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein, z. B. #marketing.</p>
+
+  <!-- Eingabefelder -->
+  <mat-form-field appearance="fill">
+    <mat-label>Channel Name</mat-label>
+    <input matInput [(ngModel)]="channelName" placeholder="#Marketing" >
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Beschreibung</mat-label>
+    <input matInput placeholder="Channel Beschreibung">
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCreate()">Erstellen</button>
+</div>
+
+
+
