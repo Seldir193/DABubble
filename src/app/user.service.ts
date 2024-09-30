@@ -1,41 +1,49 @@
 import { Injectable } from '@angular/core';
-import { Firestore, updateDoc, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, updateDoc, doc, getDoc, collection, getDocs } from '@angular/fire/firestore';
 import { getAuth, EmailAuthProvider, reauthenticateWithCredential, User, onAuthStateChanged, sendEmailVerification,updateEmail } from 'firebase/auth';
 import { Storage } from '@angular/fire/storage';
-
-
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
-  constructor(private firestore: Firestore, private storage: Storage) {}
+export class UserService {constructor(private firestore: Firestore, private storage: Storage) {};
 
-  async getCurrentUserData(): Promise<any> {
-    const auth = getAuth();
+async getCurrentUserData(): Promise<any> {
+  const auth = getAuth();
 
-    return new Promise((resolve, reject) => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user && user.uid) {
-          try {
-            const userDocRef = doc(this.firestore, 'users', user.uid);
-            const userDocSnap = await getDoc(userDocRef);
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user && user.uid) {
+        try {
+          const userDocRef = doc(this.firestore, 'users', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
 
-            if (userDocSnap.exists()) {
-              resolve(userDocSnap.data());
-            } else {
-              reject(new Error('Benutzer nicht gefunden.'));
-            }
-          } catch (error) {
-            reject(error);
+          // Setze den Online-Status, wenn der Benutzer angemeldet ist
+          await updateDoc(userDocRef, { isOnline: true });
+
+          if (userDocSnap.exists()) {
+            resolve(userDocSnap.data());
+          } else {
+            reject(new Error('Benutzer nicht gefunden.'));
           }
-        } else {
-          reject(new Error('Kein Benutzer angemeldet.'));
+        } catch (error) {
+          reject(error);
         }
-      });
+      } else {
+        // Wenn kein Benutzer angemeldet ist, setze den Offline-Status
+        try {
+          const userRef = doc(this.firestore, 'users', user?.uid || '');  // Verwende die letzte bekannte UID, falls verfügbar
+          if (userRef) {
+            await updateDoc(userRef, { isOnline: false });
+          }
+        } catch (error) {
+          console.error('Fehler beim Setzen des Offline-Status:', error);
+        }
+        reject(new Error('Kein Benutzer angemeldet.'));
+      }
     });
-  }
-
+  });
+}
 
   async updateUserEmail(newEmail: string): Promise<void> {
     const auth = getAuth();
@@ -126,6 +134,19 @@ export class UserService {
     } else {
       throw new Error('Kein Benutzer angemeldet.');
     }
+  }
+
+  async getAllUsers(): Promise<any[]> {
+    const usersCollection = collection(this.firestore, 'users'); // Holen wir die 'users' Collection
+    const querySnapshot = await getDocs(usersCollection); // Firebase Firestore Abfrage
+    const users: any[] = [];
+    
+    // Iteriere durch die Ergebnisse und füge sie in ein Array
+    querySnapshot.forEach((doc) => {
+      users.push(doc.data()); // Füge jedes Dokument zur users-Liste hinzu
+    });
+
+    return users; // Gebe die Liste der Benutzer zurück
   }
 }
   

@@ -5,6 +5,11 @@ $hoverColor: #535af1;
 $lightgray: #686868;
 $button-border: #ADB0D9;
 
+
+
+
+@import '@ctrl/ngx-emoji-mart/picker';
+
 @mixin dFlex($jc: null, $ai: center, $g: 0px) {
   display: flex;
   align-items: $ai;
@@ -21,10 +26,10 @@ $button-border: #ADB0D9;
   }
 }
 
-html,
-body {
+html,body
+ {
   margin: 0;
- 
+  
 }
 body {
   font-family: "Nunito", sans-serif;
@@ -86,11 +91,15 @@ body {
 }
 
 
+
+
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.cdk-overlay-container {
-  z-index: 2000; /* Stelle sicher, dass der Dialog über allem anderen ist */
-}
+
+
+
+
+
+
+

@@ -1,0 +1,139 @@
+@import "./../../styles.scss";
+
+.selection{
+    display: flex;
+    flex-direction: column;
+
+.channel-box {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  gap:25px;
+
+
+  .hover-container {
+    display: flex; 
+    align-items: center;
+    gap:15px;
+  
+    &:hover {
+      img  {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+  
+      h1 {
+        color: $hoverColor; 
+      }
+    }
+  
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+  
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+  }
+
+  .work-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+  }
+  
+
+  .channel-left {
+    transition: transform 0.3s ease; // Animationszeit und -art
+    
+   
+    &.rotate-down {
+      transform: rotate(180deg); // Zurück zur Ausgangsposition
+    }
+  }
+}
+
+
+
+.mitglieder {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 35px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+    width: fit-content; 
+    height: 58px;
+
+    .avatar-container {
+        position: relative; /* Container erhält relative Position, um die Status-Icons absolut zu platzieren */
+        display: inline-block;
+      }
+    
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    
+      /* Status-Icons (Online/Offline) unten rechts auf dem Avatar-Bild */
+      .status-icon {
+        position: absolute;
+        bottom: 0; /* Setzt das Icon an den unteren Rand des Containers */
+        right: 0; /* Setzt das Icon an den rechten Rand des Containers */
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: white;
+        border: 2px solid white; /* Weißer Rand um das Icon */
+      }
+    
+
+    img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%; 
+      }
+    
+      h2 {
+        font-size: 18px;
+        font-weight: 400;
+        display: inline-flex; /* Flexbox für das h2, um die Breite nur so groß wie den Text zu machen */
+        padding: 10px 15px; /* Optional: Padding für den Textbereich, um den Hover besser aussehen zu lassen */
+        transition: background-color 0.3s ease;
+        border-radius: 50px; 
+        //margin-left: 55px;
+      }
+      &:hover {
+          background-color: $lightblue;
+          padding-right: 30px;
+          border-radius: 100px;
+        }
+    }
+  
+   
+}
+
+
+.mitglieder-box{
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+
+
+
+
+
+
+
+

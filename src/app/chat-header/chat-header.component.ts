@@ -2,7 +2,7 @@ import { Component,OnInit,HostListener, ViewChild,ElementRef} from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { getAuth, onAuthStateChanged ,signOut,updateEmail,reauthenticateWithCredential,EmailAuthProvider,sendSignInLinkToEmail} from '@angular/fire/auth';
-import { Firestore } from '@angular/fire/firestore';
+import { Firestore,doc,updateDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service'; // Pfad ggf. anpassen
 
@@ -274,18 +274,30 @@ resetInputBorders() {
     });
   }
   
-
-  logout() {
+  async logout() {
     const auth = getAuth();
-    signOut(auth).then(() => {
-      // Benutzer wurde erfolgreich abgemeldet
-      console.log('User logged out');
-      // Nach dem Logout zur Login-Seite weiterleiten
-      this.router.navigate(['/login']);
-    }).catch((error) => {
-      // Bei einem Fehler während des Logouts
-      console.error('Logout failed', error);
-    });
+    const user = auth.currentUser; // Speichere den Benutzer vor dem Abmelden
+  
+    if (user) {
+      try {
+        const userDocRef = doc(this.firestore, 'users', user.uid);
+  
+        // Setze den Benutzer auf offline, bevor du ihn abmeldest
+        await updateDoc(userDocRef, { isOnline: false });
+  
+        // Benutzer abmelden
+        await signOut(auth);
+        console.log('Benutzer wurde erfolgreich abgemeldet und als offline markiert.');
+  
+        // Weiterleitung zur Login-Seite oder eine andere Seite
+        this.router.navigate(['/login']);
+        
+      } catch (error) {
+        console.error('Fehler beim Abmelden oder beim Setzen des Offline-Status:', error);
+      }
+    } else {
+      console.error('Kein Benutzer angemeldet.');
+    }
   }
 
 }

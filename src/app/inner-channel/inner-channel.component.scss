@@ -3,17 +3,12 @@
 .selection{
     display: flex;
     flex-direction: column;
-    gap:13px;
 
 .channel-box {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-
-  .channel-left{
-    padding-right:15px;
-  }
 
   h1{
     margin-left:10px;
@@ -22,11 +17,11 @@
   .hover-container {
     display: flex; 
     align-items: center;
+    gap:15px;
   
     &:hover {
       img  {
-        filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
-          brightness(94%) contrast(86%);
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
       }
   
       h1 {
@@ -47,6 +42,12 @@
       transition: color 0.3s ease, transform 0.3s ease;
     }
   }
+
+  .work-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   
   .edit-channel {
     width: 40px;
@@ -63,8 +64,7 @@
         background-color: $lightblue;
 
         img {
-            filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
-              brightness(94%) contrast(86%);
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
           }
       }
   
@@ -89,15 +89,12 @@
     height:33px;
     max-width:206px;
     cursor: pointer;
-
-
+    margin-top: 13px;
 
     &:hover {
         background-color: $lightblue;
-
         img {
-            filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
-              brightness(94%) contrast(86%);
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
           }
       }
   
@@ -108,14 +105,74 @@
         transition: filter 0.3s ease;
         cursor: pointer;
       }
-  
-
-
-
-    h1{
+    p{
         font-size: 18px;
-       
     }
+}
+
+.first-channel  {
+  background-color: $lightblue !important; // Dauerhafte Hintergrundfarbe
+
+  img {
+    filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+  }
+
+  p{
+    color:$hoverColor !important;
+  }
+}
+
+.add-channel{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding:0 0 0 40px;
+  cursor: pointer;
+  font-size:18px;
+
+  &:hover {
+
+    img  {
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        scale:(1.1);
+    }
+
+    p {
+      color: $hoverColor; 
+    }
+  }
+  img{
+    width:24px;
+    height:24px;
+  }
+}
+
+.entwickler-box, .add-channel {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+  max-height: 500px; // Platzhalter für die volle Höhe
+  opacity: 1;
+}
+
+.entwickler-box.ng-leave, .add-channel.ng-leave {
+  max-height: 0;
+  opacity: 0;
+}
+
+.entwickler-box.ng-enter, .add-channel.ng-enter {
+  max-height: 500px;
+  opacity: 1;
+}
+
+
+
+.channel-left {
+  transition: transform 0.3s ease; // Animationszeit und -art
+  
+ 
+  &.rotate-down {
+    transform: rotate(180deg); // Zurück zur Ausgangsposition
+  }
 }
 
 }

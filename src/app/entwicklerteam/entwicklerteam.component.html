@@ -1,5 +1,112 @@
-<div class="entwickler-box">
-    <h1># Entwicklerteam</h1>
-    <img src="assets/img/keyboard_arrow_down-1.png">
-    <div>3</div>
+<div class="entwickler-box" >
+  <div class="office-box">
+    <img src="assets/img/tag-black.png" alt="Tag Icon" />
+    <h1>Office-team</h1> 
+    <img src="assets/img/keyboard_arrow_down-1.png" />
+  </div>
+</div>
+
+<div class="channel-input-box">
+  <div class="channel-box">
+    <div class="channel-info">
+      <img src="assets/img/tag-black.png" alt="Tag Icon" />
+      <h1>Office-team</h1>
+      <img src="assets/img/keyboard_arrow_down-1.png" />
+    </div>
+    <div class="channel-info-detail">
+      <h2>
+        Du hast diesen Channel heute erstellt.Das ist der Anfang des Cahnnels
+      </h2>
+      <img src="assets/img/tag-blue.png" alt="Tag Icon" />
+      <p>Office-team.</p>
+    </div>
+  </div>
+ 
+  <div class="chat-input-container">
+    <div class="chat-input">
+      <div class="textarea-wrapper">
+        <textarea
+          placeholder="Nachricht an #Office-team"
+          [(ngModel)]="message"
+          #textArea
+        ></textarea>
+
+        <div class="image-preview" *ngIf="imageUrl">
+          <img
+            class="image-border"
+            [src]="imageUrl"
+            alt="Hochgeladenes Bild"
+            (click)="openImageModal()"
+          />
+          <div class="img-wrapper">
+            <img
+              (click)="closeProfileCard(textArea); $event.stopPropagation()"
+              src="assets/img/close.png"
+              alt="Schließen"
+            />
+          </div>
+        </div>
+
+        <div class="buttons-wrapper">
+          <div class="input-buttons">
+            <label for="image-upload" class="image-upload-button">
+              <img
+                class="input-image"
+                src="assets/img/add-pic.png"
+                alt="Bild hinzufügen"
+              />
+
+              <input
+                type="file"
+                id="image-upload"
+                (change)="onImageSelected($event, textArea)"
+                style="display: none"
+              />
+            </label>
+
+            <img src="assets/img/Vector.png" />
+
+            <button (click)="toggleEmojiPicker()"  >
+              <img
+                class="input-image"
+                src="assets/img/emoji.png"
+                alt="Emoji hinzufügen"
+              />
+            </button>
+            
+            <button (click)="addAtSymbol()" class="at-button">
+              <img
+                class="input-image"
+                src="assets/img/qr.png"
+                alt="@ hinzufügen"
+              />
+            </button>
+          </div>
+
+          <div class="send-button">
+            <button (click)="sendMessage()">
+              <img src="assets/img/send-button.png" alt="Senden" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+    class="emoji-picker "
+    *ngIf="isEmojiPickerVisible"
+  >
+    <ngx-emoji-mart   (emojiSelect)="addEmoji($event)"></ngx-emoji-mart>
+  </div>
+  </div>
+
+  <div class="image-modal" *ngIf="isImageModalOpen" (click)="closeImageModal()">
+    <img
+      [src]="imageUrl"
+      alt="Vergrößertes Bild"
+      (click)="$event.stopPropagation()"
+    />
+    <button class="close-modal" (click)="closeImageModal()">×</button>
+  </div>
+
 </div>

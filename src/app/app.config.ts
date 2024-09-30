@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 
 
+
 export const appConfig: ApplicationConfig = {
   
 
@@ -30,5 +31,4 @@ export const appConfig: ApplicationConfig = {
     
   ]
 };
-
 

@@ -12,15 +12,16 @@ import { ChannelDialogComponent } from '../channel-dialog/channel-dialog.compone
   styleUrls: ['./inner-channel.component.scss']  // Korrektur: "styleUrls" im Plural
 })
 export class InnerChannelComponent {
-  entwicklerTeams = [{ name: 'Entwicklerteam' }]; // Liste der Entwicklerteam-Boxen
+  
+  entwicklerTeams: { name: string }[] = [];
+  isChannelsVisible = true;
+  
 
   constructor(public dialog: MatDialog) {}
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ChannelDialogComponent, {
-      width: '400px',
-      panelClass: 'custom-dialog-container',
-      position: { top: '50%', left: '50%' }
+      
     });
   
     dialogRef.afterClosed().subscribe(result => {
@@ -32,6 +33,10 @@ export class InnerChannelComponent {
   
   addEntwicklerTeam(name: string) {
     this.entwicklerTeams.push({ name });
+  }
+
+  toggleChannels(): void {
+    this.isChannelsVisible = !this.isChannelsVisible;
   }
 
 }

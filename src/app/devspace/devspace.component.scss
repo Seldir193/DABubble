@@ -33,10 +33,8 @@
         background-color: $lightblue;
 
         img {
-            filter: invert(31%) sepia(98%) saturate(508%) hue-rotate(170deg)
-              brightness(94%) contrast(86%);
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
           }
-
       }
   
     img {
@@ -45,8 +43,6 @@
         object-fit: cover;
         transition: filter 0.3s ease;
         cursor: pointer;
-
-        
       }
   }
 }

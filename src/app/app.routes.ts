@@ -10,6 +10,7 @@ import { PasswortResetComponent } from './passwort-reset/passwort-reset.componen
 import { NewPasswortComponent } from './new-passwort/new-passwort.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { AuthActionComponent } from './auth-action/auth-action.component';
+import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
 
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
     { path: 'auth-action', component: AuthActionComponent }, 
     { path: 'new-passwort', component: NewPasswortComponent},
     { path: 'verify-email', component: VerifyEmailComponent },
+    { path: 'direct-messages', component: DirectMessagesComponent },
     
 ];
 
