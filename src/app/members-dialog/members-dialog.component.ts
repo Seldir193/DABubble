@@ -1,4 +1,3 @@
-
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog  } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -6,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service'; 
 import { OverlayModule } from '@angular/cdk/overlay';
 import { SelectedMembersDialogComponent } from '../selected-members-dialog/selected-members-dialog.component';
+import { ChannelService } from '../channel.service';
 
 @Component({
   selector: 'app-mitglieder-dialog',
@@ -22,27 +22,48 @@ export class MembersDialogComponent implements OnInit {
   filteredMembers: any[] = []; // Gefilterte Mitglieder basierend auf der Suche
 
   selectedMembers: any[] = []; 
+  allMembers: any[] = [];
+
+ 
 
   constructor(
     private userService: UserService, 
+    private channelService: ChannelService ,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<MembersDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-   
   }
 
   ngOnInit(): void {
-    this.loadAllMembers(); // Lade alle Mitglieder, sobald der Dialog geöffnet wird
+    //this.loadAllMembers(); // Lade alle Mitglieder, sobald der Dialog geöffnet wird
     this.selectedMembers = this.data.members || [];
+   
+    this.loadMembers();
+    this.loadAllMembers();
   }
 
+  
   loadAllMembers(): void {
-    this.userService.getAllUsers().then((users) => {
-      this.members = users;
+    this.userService.getAllUsers().then((members) => {
+      this.allMembers = members; // Alle Mitglieder werden geladen
     }).catch((error) => {
-      console.error('Fehler beim Abrufen der Benutzer:', error);
+      console.error('Fehler beim Laden der Mitglieder:', error);
     });
+  }
+
+
+  loadMembers(): void {
+    this.userService.getAllUsers()
+      .then((data) => {
+        this.members = data.map(member => ({
+          ...member,
+          userStatus: member.isOnline ? 'Aktiv' : 'Abwesend'
+        }));
+      })
+      .catch((error) => {
+        console.error('Fehler beim Laden der Mitglieder:', error);
+      });
   }
 
   onSearchMembers(): void {
@@ -57,7 +78,6 @@ export class MembersDialogComponent implements OnInit {
     }
   }
 
-
   selectMember(member: any): void {
     if (!this.selectedMembers.includes(member)) {
       this.selectedMembers.push(member);
@@ -66,7 +86,7 @@ export class MembersDialogComponent implements OnInit {
     this.specificMemberName = '';  // Input leeren
   }
 
-  
+
   openMembersDialog(): void {
     const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
       data: { members: this.selectedMembers }
@@ -80,31 +100,34 @@ export class MembersDialogComponent implements OnInit {
   }
   
   
-
-
   removeMember(member: any): void {
     // Überprüfe, ob das Mitglied in der Liste ist, und entferne es
     this.selectedMembers = this.selectedMembers.filter(m => m !== member);
   }
   
-
   showAllMembers(): void {
     this.filteredMembers = [...this.members]; // Zeige alle Mitglieder anfangs an
   }
 
-
-  onCreate() {
+ 
+  
+  onCreate(): void {
     if (this.selectedOption === 'all') {
-      // Logik für "Alle Mitglieder hinzufügen"
-    } else if (this.selectedOption === 'specific' && this.specificMemberName) {
-      // Logik für "Bestimmte Mitglieder hinzufügen"
-      console.log('Mitglied hinzufügen:', this.specificMemberName);
+      // Wenn "Alle Mitglieder" ausgewählt ist, füge alle Mitglieder hinzu
+      this.selectedMembers = [...this.allMembers]; // Kopiere alle Mitglieder in die Auswahl
+      console.log('Alle Mitglieder wurden ausgewählt:', this.selectedMembers);
     }
-    if (!this.isButtonDisabled) {
-      // Logik für das Erstellen eines Kanals
-      console.log('Erstellen Button geklickt.');
-      this.dialogRef.close();
-    }
+
+    // Schließe den Dialog und übergebe die ausgewählten Mitglieder
+    this.dialogRef.close({
+      selectedMembers: this.selectedMembers
+    });
+
+    //this.channelService.setMembers(this.selectedMembers);
+
+    // Aufruf von setMembers, übergebe den Kanalnamen und die Mitglieder
+this.channelService.setMembers(this.data.channelName, this.selectedMembers);
+
   }
 
   disableButton(): void {
@@ -115,7 +138,6 @@ export class MembersDialogComponent implements OnInit {
   enableButton(): void {
     this.isButtonDisabled = false;
   }
-
 
   // Methode zum Schließen des Dialogs ohne Aktion
   onCancel(): void {

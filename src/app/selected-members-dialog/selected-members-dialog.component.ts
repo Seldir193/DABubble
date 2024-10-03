@@ -21,6 +21,7 @@ export class SelectedMembersDialogComponent {
     this.selectedMembers = data.members || []; // Erhalte die ausgewählten Mitglieder aus den Dialog-Daten
   }
 
+
   removeMember(index: number): void {
     this.selectedMembers.splice(index, 1); // Entferne das Mitglied aus der Liste
   }

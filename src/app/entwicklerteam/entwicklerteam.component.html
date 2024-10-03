@@ -1,16 +1,40 @@
-<div class="entwickler-box" >
-  <div class="office-box">
-    <img src="assets/img/tag-black.png" alt="Tag Icon" />
-    <h1>Office-team</h1> 
-    <img src="assets/img/keyboard_arrow_down-1.png" />
+<div class="entwickler-box">
+  <div *ngFor="let channel of channels" class="channel-container">
+    <!-- Linker Bereich: Channel-Name und Icon -->
+    <div class="office-box">
+      <img src="assets/img/tag-black.png" alt="Tag Icon" />
+      <h1>{{ channel.name }}</h1>
+      <img src="assets/img/keyboard_arrow_down-1.png" />
+    </div>
+
+
+    <!-- Rechter Bereich: Avatare der Mitglieder -->
+    <ul class="avatar-list" *ngIf="channel.members && channel.members.length > 0">
+
+      <li *ngFor="let member of channel.members ; let last = last">
+        <!-- Avatar des Mitglieds -->
+        <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar">
+      </li>
+
+      <!-- Zähler zwischen dem letzten Avatar und member.png -->
+      <li *ngIf="channel.members.length > 1" class="member-counter" (click)="openMembersDialog(channel)">
+        +{{ channel.members.length - 1 }}
+      </li>
+    </ul>
+    <div class="static-member" (click)="openAddMembersDialog(channel)" >
+      <img   src="assets/img/member.png" alt="Member" >
+    </div>
   </div>
 </div>
 
-<div class="channel-input-box">
-  <div class="channel-box">
+
+
+<div class="channel-input-box"*ngFor="let channel of channels"  >
+  <div class="channel-box" >
     <div class="channel-info">
       <img src="assets/img/tag-black.png" alt="Tag Icon" />
-      <h1>Office-team</h1>
+     
+      <h1>{{ channel.name  }}</h1>
       <img src="assets/img/keyboard_arrow_down-1.png" />
     </div>
     <div class="channel-info-detail">
@@ -18,7 +42,8 @@
         Du hast diesen Channel heute erstellt.Das ist der Anfang des Cahnnels
       </h2>
       <img src="assets/img/tag-blue.png" alt="Tag Icon" />
-      <p>Office-team.</p>
+      
+      <p>{{ channels[0].name }}</p>
     </div>
   </div>
  
@@ -26,7 +51,8 @@
     <div class="chat-input">
       <div class="textarea-wrapper">
         <textarea
-          placeholder="Nachricht an #Office-team"
+          
+         placeholder="Nachricht an #{{ channel.name }}"
           [(ngModel)]="message"
           #textArea
         ></textarea>

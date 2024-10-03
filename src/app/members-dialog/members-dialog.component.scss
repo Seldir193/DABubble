@@ -195,11 +195,11 @@ label {
 }
 
 ::ng-deep .mat-mdc-dialog-container {
-  border-radius: 40px !important;
+  border-radius: 30px !important;
 }
 
 ::ng-deep .mdc-dialog__surface {
-  border-radius: 40px !important;
+  border-radius: 30px !important;
   overflow: hidden;
 }
 .member-selection{
@@ -212,114 +212,118 @@ label {
 
 .specific-members input[type="text"] {
    
-    width: 100%;
-    max-width: 630px; /* Breite festlegen */
-    height: 60px;
-    border: 1px solid #ccc;
-    border-radius: 30px;
-    padding-left: 20px;  
-    padding-right: 20px;
-    box-sizing: border-box; /* Padding wird zur Gesamtbreite hinzugezählt */
-    transition: border-color 0.3s ease;
-  
-    &:hover {
-      border-color: #686868; /* Farbe beim Hover ändern */
-    }
-  
-    &:focus {
-      outline: none;
-      border-color: $button-blue; /* Passe $button-blue an */
-    }
-  
-    /* Falls notwendig, Fokus für nachfolgendes Input-Element */
-    &:not(:focus) {
-      &:has(+ input:focus) {
-        border-color: blue;
-      }
-    }
+  width: 100%;
+  max-width: 630px; /* Breite festlegen */
+  height: 60px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  padding-left: 20px;  
+  padding-right: 20px;
+  box-sizing: border-box; /* Padding wird zur Gesamtbreite hinzugezählt */
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: #686868; /* Farbe beim Hover ändern */
   }
 
+  &:focus {
+    outline: none;
+    border-color: $button-blue; /* Passe $button-blue an */
+  }
 
+  /* Falls notwendig, Fokus für nachfolgendes Input-Element */
+  &:not(:focus) {
+    &:has(+ input:focus) {
+      border-color: blue;
+    }
+  }
+}
+
+.specific-members {
+  display: flex;
+  align-items: center; /* Zentriere Input vertikal */
+  gap: 15px; /* Abstand zwischen Kindern */
+}
 
   .specific-members {
-    display: flex;
-    align-items: center; /* Zentriere Input vertikal */
-    gap: 15px; /* Abstand zwischen Kindern */
-  }
-
-
-    .specific-members {
-      position: relative;
+    position: relative;
+}
   
+  .dropdown-list {
+    list-style-type: none; 
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
   }
-    
-    .dropdown-list {
-      list-style-type: none; 
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1000;
+  
+  .dropdown-list li {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    max-width: fit-content;
+
+    border-radius: 2.1875rem;
+        font-size: 18px;
+        height: 35px;
+  
+    &:hover {
+      background-color: $lightblue;
     }
-    
-    .dropdown-list li {
-      padding: 10px;
+  
+    .avatar {
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-icon {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid white;
+      right:20px;
+    }
+  }
+  
+    .selected-member {
       display: flex;
       align-items: center;
+      background-color: $lightblue;
+      padding: 5px 10px;
+      border-radius: 20px;
+      position: absolute;
+      gap:15px;
+      left:20px;
       cursor: pointer;
-      max-width: fit-content;
-  
-      border-radius: 2.1875rem;
-          font-size: 18px;
-          height: 35px;
-    
-      &:hover {
-        background-color: $lightblue;
-      }
-    
+
       .avatar {
-        height: 50px;
+        width: 25px;
+        height: 25px;
         border-radius: 50%;
-        margin-right: 10px;
+      
+      }
+
+      .remove-btn {
+        background-color: transparent;
+        border: none;
+        color: gray;
+        cursor: pointer;
+        font-size: 20px;
+        margin-left: 5px;
+
+        &:hover{
+          color: $hoverColor;
+          scale: 1.1;
+        }
       }
     }
-    
 
-      .selected-member {
-        display: flex;
-        align-items: center;
-        background-color: $lightblue;
-        padding: 5px 10px;
-        border-radius: 20px;
-        position: absolute;
-        gap:15px;
-        left:20px;
-        cursor: pointer;
-  
-        .avatar {
-          width: 25px;
-          height: 25px;
-          border-radius: 50%;
-        
-        }
-  
-        .remove-btn {
-          background-color: transparent;
-          border: none;
-          color: gray;
-          cursor: pointer;
-          font-size: 20px;
-          margin-left: 5px;
-
-          &:hover{
-            color: $hoverColor;
-            scale: 1.1;
-          }
-        }
-      }
-    
   .scrollable-area {
     overflow-y: auto;
     max-height: 200px; /* Maximale Höhe für den sichtbaren Bereich */
@@ -332,6 +336,7 @@ label {
    border-bottom-left-radius: 30px;
    border-bottom-right-radius: 30px;
    border-top-right-radius: 30px;
+   border-color:$hoverColor;
   
     /* Für die Scrollbar */
     scrollbar-width: thin;
@@ -360,3 +365,11 @@ label {
 
 
 
+
+
+
+
+
+
+
+ 

@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MembersDialogComponent } from '../members-dialog/members-dialog.component';
+import { ChannelService } from '../channel.service';
+
 
 @Component({
   selector: 'app-channel-dialog',
@@ -20,46 +22,69 @@ import { MembersDialogComponent } from '../members-dialog/members-dialog.compone
     FormsModule,
     MatDialogModule, // Benötigt für MatDialog
     CommonModule,
-    MembersDialogComponent
+    //MembersDialogComponent
   ]
 })
 export class ChannelDialogComponent implements OnInit {
   selectedOption: string = 'all'; 
+  channelName: string = '' ;
+  selectedMembers: any[] = []; 
 
-  channelName = [];
+  allMembers: any[] = [];
+
   constructor(public dialogRef: MatDialogRef<ChannelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private channelService: ChannelService,
+    
+   
   ) {}
 
   onCreate(): void {
-    // Überprüfen, welche Option gewählt wurde
-    if (this.selectedOption === 'all') {
-      console.log('Alle Mitglieder wurden ausgewählt.');
-    } else if (this.selectedOption === 'specific') {
-      console.log('Bestimmte Mitglieder wurden ausgewählt.');
-    }
-
-    // Schließe den Channel-Dialog und öffne den Mitglieder-Dialog
-    this.dialogRef.close();
-
-    // Öffne den Mitglieder-Dialog nach Schließen des Channel-Dialogs
+    // Schließe den ersten Dialog und übergib den Channel-Namen
+    this.dialogRef.close({ channelName: this.channelName });
+  
+    // Öffne den Mitglieder-Dialog direkt nach dem Schließen des ersten Dialogs
     const mitgliederDialogRef = this.dialog.open(MembersDialogComponent, {
-     // width: '710px',
-      //height: '279px'
-      
+      data: { channelName: this.channelName },  // Gebe den Channel-Namen weiter
     });
-
+  
+    // Warte auf das Schließen des Mitglieder-Dialogs
     mitgliederDialogRef.afterClosed().subscribe(result => {
-      console.log('Mitglieder Dialog geschlossen. Ergebnis:', result);
-      // Hier kannst du die Logik für die ausgewählten Mitglieder implementieren
+      if (result && result.selectedMembers) {
+        // Mitglieder erfolgreich ausgewählt
+        console.log('Mitglieder erfolgreich ausgewählt: ', result.selectedMembers);
+  
+        // Optional: Falls der Channel-Service genutzt wird, um die Daten zu speichern
+        this.channelService.changeChannel({
+          name: this.channelName,
+          members: result.selectedMembers
+        });
+  
+        // Gebe den Channel-Namen und die ausgewählten Mitglieder an die nächste Komponente weiter
+        this.dialogRef.close({
+          channelName: this.channelName,
+          selectedMembers: result.selectedMembers
+        });
+      }
     });
+  }
+  
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 
   ngOnInit(): void {
-    console.log(this.data);
+    console.log(this.data); 
   }
 }
+
+
+
+ 
+
+
+
 
 
 

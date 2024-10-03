@@ -1,0 +1,173 @@
+@import "./../../styles.scss";
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    gap: 13px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 15px;
+    width:fit-content;
+    border-radius: 100px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    &:hover {
+        background-color: $lightblue;
+        border-radius: 100px;
+      }
+    }
+  
+    span {
+      font-size: 18px;
+      font-weight: 400;
+      color: black;
+      transition: color 0.3s ease;
+    }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .container {
+    padding: 40px;
+    gap: 20px;
+    border-radius: 40px 0px 0px 0px;
+    border: 1px 0px 0px 0px;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+   }
+
+   .remove-btn {
+    background-color: transparent;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: auto;
+  
+    &:hover {
+      color: $hoverColor;
+    }
+  }
+  
+
+  .close-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  
+    h1 {
+      margin-right: 20px;
+      font-size: 24px;
+      font-weight: 700;
+      flex-grow: 1;
+    }
+  
+    img {
+      cursor: pointer;
+      transition: filter 0.3s ease, background-color 0.3s ease;
+      border-radius: 50%;
+      margin-left: auto;
+      &:hover {
+        background-color: $lightblue;
+    
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        }
+      }
+    }
+  }
+
+
+  ::ng-deep .mat-mdc-dialog-container {
+    border-radius: 30px 0 30px 30px  !important;
+  }
+  
+  ::ng-deep .mdc-dialog__surface {
+    border-radius: 30px 0 30px 30px  !important;
+    
+    overflow: hidden;
+  }
+
+  .member-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 29px;
+    width: fit-content;
+    border-radius: 100px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    /* Standardzustand */
+    .img-container {
+        width: 32px;
+        height: 32px;
+        background-color: $lightblue;  // Hintergrund der Box
+        border-radius: 50%;  // Runde Form
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease;  
+
+        img {
+            width: 24px;  // Inneres Bild
+            height: 24px;
+            transition: filter 0.3s ease, transform 0.3s ease; 
+        }
+    }
+
+    h2 {
+        font-size: 18px;
+        font-weight: 400;
+        color: #333;  // Standardfarbe für den Text
+        transition: color 0.3s ease;
+    }
+
+    /* Hover-Effekt für die gesamte Box */
+    &:hover {
+        background-color: $lightblue;  // Die gesamte Box ändert die Farbe
+        border-radius: 100px;
+       
+        /* Textfarbe ändern */
+        h2 {
+            color: $hoverColor;  // Farbe für den Text bei Hover
+        }
+
+        /* Bild-Box und Bild beim Hover ändern */
+        .img-container {
+            background-color: transparent;  // Hintergrund der Box beim Hover
+
+            img {
+                filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+            }
+        }
+    }
+}
+
+
+.avatar-container {
+    position: relative;  /* Erlaubt das Status-Icon auf dem Avatar */
+
+    /* Status-Icons (Online/Offline) unten rechts auf dem Avatar-Bild */
+    .status-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+  }
+

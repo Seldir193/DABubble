@@ -97,14 +97,6 @@ export class DirectMessagesComponent implements OnInit {
     }
 
 
-
-
-
-
-
-  
- 
-
 // Überwache Maus- und Tastaturaktivitäten, um den Timer zurückzusetzen
 @HostListener('document:mousemove')
 @HostListener('document:keydown')

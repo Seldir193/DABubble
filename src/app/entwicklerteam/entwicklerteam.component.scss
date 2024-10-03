@@ -1,26 +1,53 @@
 @import "./../../styles.scss";
 
 .entwickler-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  
   cursor: pointer;
-  height: 96px;
+  height: auto;
   box-shadow: 0px 2px 10px 0px #00000014;
   padding: 25px 45px;
   background-color: white;
   border-radius: 30px 30px 0 0;
 
+  .channel-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+     /* Stil für das statische Mitglieds-Bild */
+ .static-member {
+  background-color: $lightblue;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+
+  img {
+   
+    border-radius: 50%;
+    transition: filter 0.3s ease; /* Übergang für den Filter-Effekt */
+   
+    
+    /* Filter-Effekt beim Hover auf das Bild */
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+     scale:1.1;
+    }
+  }
+}
+
+  }
+
   .office-box {
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 10px;
     transition: background-color 0.3s ease, transform 0.3s ease;
     border-radius: 30px;
     height: 45px;
-    width: 100%;
-    max-width: 235px;
 
     &:hover {
       background-color: $lightblue;
@@ -30,20 +57,89 @@
         filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
       }
 
-      &:hover h1 {
+      h1 {
         color: $hoverColor;
         font-size: 24px;
         font-weight: 700;
         transition: color 0.3s ease, font-size 0.3s ease;
       }
     }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
   }
 
-  h1 {
-    font-size: 24px;
-    font-weight: 700;
+
+
+  .avatar-list {
+    display: flex;
+    padding-right:10px;
+    margin-left: auto;
+    transition: background-color 0.3s ease,width 0.3s ease, border-radius 0.3s ease;
+
+    
+    &:hover {
+      background-color: $lightblue;
+      border-radius: 100px;
+    }
+
+    li {
+      list-style: none;
+      display: flex;
+      align-items: center;
+
+
+      img.avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        position: relative;
+        margin-left: -15px;  /* Negative margin für die Überlappung der Avatare */
+        z-index: 1;  /* Überlappungssteuerung */
+        border: 2px solid white; /* Optional: Umrandung */
+
+      }
+
+      /* Zähler für zusätzliche Mitglieder */
+      .member-counter {
+        margin-left: 10px;  /* Abstand zum letzten Avatar */
+        margin-right: 10px; /* Abstand zum `member.png` */
+        font-size: 14px;
+        color: #666;
+        display: flex;
+        align-items: center;
+
+      }
+
+    }
   }
 }
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
 
 
 .channel-input-box{
@@ -352,8 +448,13 @@
     color: white;
     cursor: pointer;
   }
-
 }
+
+
+
+
+
+
 
 
 
