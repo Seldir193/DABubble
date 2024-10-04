@@ -8,6 +8,7 @@ import { MemberListDialogComponent } from '../member-list-dialog/member-list-dia
 import { MatDialog } from '@angular/material/dialog';
 import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
 
+
 @Component({
   selector: 'app-entwicklerteam',
   standalone: true,
@@ -25,7 +26,6 @@ export class EntwicklerteamComponent implements OnInit {
   channels: { name: string; members: any[] }[] = [];
   selectedChannel: { name: string; members: any[] } | null = null;
   
-
   
 
   constructor(private channelService: ChannelService,private dialog: MatDialog){}
@@ -95,7 +95,7 @@ export class EntwicklerteamComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Abonniere den Channel-Service, um Channels zu empfangen
+    // Abonniere den Channel-Service, um den aktuellen Channel zu empfangen
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
         // Überschreibe den alten Channel mit dem neuen
@@ -104,46 +104,64 @@ export class EntwicklerteamComponent implements OnInit {
       }
     });
 
-   
+    // Abonniere die Channels-Liste im ChannelService
+    this.channelService.currentChannels.subscribe(channels => {
+      if (channels && channels.length > 0) {
+        console.log('Aktualisierte Channels-Liste:', channels);
 
-    // Abonniere den membersSource, um aktualisierte Mitglieder zu empfangen
-    this.channelService.currentMembers.subscribe(members => {
-      if (members.length > 0) {
-          this.channels[0].members = members; // Aktualisiere die Mitgliederliste
-          console.log('Aktualisierte Mitglieder im EntwicklerteamComponent:', this.channels[0].members);
+        // Falls ein spezifischer Channel angezeigt werden soll, wird dieser hier angezeigt
+        const selectedChannel = channels.find(channel => channel.name === this.channels[0]?.name);
+        if (selectedChannel) {
+          this.channels[0] = selectedChannel; // Aktualisiere den aktuellen Channel
+        }
       }
-  });
+    });
   }
-  
-
-
-
-  
-
-
-  
-
 
   openAddMembersDialog(channel: { name: string; members: any[] }): void {
-    //this.channelService.setMembers(channel.members);
-  
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
       data: { members: channel.members }
     });
-  
+
     dialogRef.afterClosed().subscribe((updatedMembers: any[] | undefined) => {
       if (updatedMembers && updatedMembers.length > 0) {
-        const uniqueMembers = updatedMembers.filter(member => 
+        const uniqueMembers = updatedMembers.filter(member =>
           !channel.members.some(m => m.name === member.name)
         );
         channel.members = [...channel.members, ...uniqueMembers]; // Füge neue Mitglieder hinzu
         console.log('Aktualisierte Mitgliederliste:', channel.members);
+
+        // Setze die Mitglieder im ChannelService, um sie zu speichern
+        this.channelService.setMembers(channel.name, channel.members);
+      }
+    });
+  }
+
+  openMembersDialog(channel: { name: string; members: any[] }): void {
+    const dialogRef = this.dialog.open(MemberListDialogComponent, {
+      data: { channelName: channel.name, members: channel.members }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.selectedMembers) {
+        channel.members = result.selectedMembers; // Aktualisiere die Mitglieder des Channels
+
+        // Setze die Mitglieder im ChannelService, um sie zu speichern
+        this.channelService.setMembers(channel.name, result.selectedMembers);
       }
     });
   }
 
 
 
+
+
+
+
+
+
+
+  
   openImageModal() {
     this.isImageModalOpen = true;
   }
@@ -158,26 +176,5 @@ export class EntwicklerteamComponent implements OnInit {
 }
 
 
-openMembersDialog(channel: { name: string; members: any[] }): void {
-  const dialogRef = this.dialog.open(MemberListDialogComponent, {
-    data: { channelName: channel.name, members: channel.members }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result && result.selectedMembers) {
-      channel.members = result.selectedMembers; // Aktualisiere die Mitglieder des Channels
-
-      // Setze die Mitglieder im ChannelService, um sie zu speichern
-     //this.channelService.setMembers(result.selectedMembers);
-
-      // Aufruf von setMembers, übergebe den Kanalnamen und die Mitglieder
-      this.channelService.setMembers(channel.name, result.selectedMembers);
-
-    }
-  });
-}
 
 }
-
-
-

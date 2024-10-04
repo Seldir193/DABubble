@@ -116,23 +116,46 @@ export class AddMembersDialogComponent implements OnInit {
     this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste nach dem Entfernen
   }
 
-
-
-  
   onCreate(): void {
     console.log('Mitglieder vor dem Speichern:', this.selectedMembers);
-  
+    
     const uniqueMembers = this.selectedMembers.filter(member => 
-        !this.data.members.some((m: any) => m.name === member.name)
+      !this.data.members.some((m: any) => m.name === member.name)
     );
   
     if (uniqueMembers.length > 0) {
-        console.log('Neue Mitglieder hinzugefügt:', uniqueMembers);
-        this.dialogRef.close(uniqueMembers);  // Übergibt Mitglieder zurück
+      console.log('Neue Mitglieder hinzugefügt:', uniqueMembers);
+      
+      // Kombiniere die bereits vorhandenen und neu ausgewählten Mitglieder
+      const updatedMembers = [...this.data.members, ...uniqueMembers];
+      
+      // Aktualisiere die Mitglieder im ChannelService
+      this.channelService.setMembers(this.data.channelName, updatedMembers);
+      
+      // Schließe den Dialog und übergebe die aktualisierte Mitgliederliste
+      this.dialogRef.close(updatedMembers);
     } else {
-        console.log('Keine neuen Mitglieder ausgewählt.');
+      console.log('Keine neuen Mitglieder ausgewählt.');
     }
   }
+  
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+  
+  
+
+
+
 
   
 

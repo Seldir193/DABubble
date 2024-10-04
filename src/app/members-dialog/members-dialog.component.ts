@@ -109,26 +109,25 @@ export class MembersDialogComponent implements OnInit {
     this.filteredMembers = [...this.members]; // Zeige alle Mitglieder anfangs an
   }
 
- 
-  
   onCreate(): void {
     if (this.selectedOption === 'all') {
       // Wenn "Alle Mitglieder" ausgewählt ist, füge alle Mitglieder hinzu
-      this.selectedMembers = [...this.allMembers]; // Kopiere alle Mitglieder in die Auswahl
+      this.selectedMembers = [...this.allMembers];
       console.log('Alle Mitglieder wurden ausgewählt:', this.selectedMembers);
     }
-
+  
     // Schließe den Dialog und übergebe die ausgewählten Mitglieder
     this.dialogRef.close({
       selectedMembers: this.selectedMembers
     });
-
-    //this.channelService.setMembers(this.selectedMembers);
-
-    // Aufruf von setMembers, übergebe den Kanalnamen und die Mitglieder
-this.channelService.setMembers(this.data.channelName, this.selectedMembers);
-
+  
+    // Stelle sicher, dass die Mitglieder im Service gespeichert sind.
+    this.channelService.setMembers(this.data.channelName, this.selectedMembers);
   }
+  
+
+
+
 
   disableButton(): void {
     this.isButtonDisabled = true;
@@ -148,3 +147,5 @@ this.channelService.setMembers(this.data.channelName, this.selectedMembers);
     this.dialogRef.close();
   }
 }
+
+

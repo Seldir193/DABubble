@@ -14,25 +14,24 @@ import { ChannelService } from '../channel.service';
 })
 export class MemberListDialogComponent {
   members: any[] = [];
- 
+
+
   constructor(
     public dialog: MatDialog,
-    
     public dialogRef: MatDialogRef<MemberListDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { members: any[] },
+    @Inject(MAT_DIALOG_DATA) public data: { channelName: string; members: any[] },
     private channelService: ChannelService
   ) {
-    this.members = data.members; 
+    this.members = data.members;
   }
 
   removeMember(member: any): void {
     this.data.members = this.data.members.filter(m => m !== member);
   }
 
-
   openAddMembersDialog(): void {
     // Schließe den aktuellen Dialog, bevor der neue Dialog geöffnet wird
-    this.dialogRef.close();  // Schliesse MemberListDialogComponent
+    this.dialogRef.close(); // Schliesse MemberListDialogComponent
 
     // Öffne den AddMembersDialogComponent
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
@@ -45,19 +44,27 @@ export class MemberListDialogComponent {
           !this.members.some(m => m.name === member.name)
         );
         this.members = [...this.members, ...uniqueMembers]; // Aktualisiere die Mitgliederliste
-       
-        
+
+        // Aktualisiere den ChannelService, um die neuen Mitglieder zu speichern
+        this.channelService.setMembers(this.data.channelName, this.members);
+
         // Gib die aktualisierte Liste an EntwicklerteamComponent zurück
-        this.closeDialog();  // Schließt den Dialog und gibt die aktualisierten Mitglieder zurück
+        this.closeDialog(); // Schließt den Dialog und gibt die aktualisierten Mitglieder zurück
       }
     });
-}
-
-
-  closeDialog(): void {
-    this.dialogRef.close(this.members);  // Rückgabe der aktualisierten Mitgliederliste
   }
 
+  closeDialog(): void {
+    // Rückgabe der aktualisierten Mitgliederliste
+    this.dialogRef.close({ members: this.members });
+  }
+
+
+
+
+
+
+  
    // Methode zum Schließen des Dialogs ohne Aktion
    onCancel(): void {
     this.dialogRef.close();

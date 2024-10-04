@@ -14,6 +14,9 @@
       <img src="assets/img/tag-gray.png" class="input-icon" alt="Tag Icon">
       <input   id="channel-name" [(ngModel)]="channelName" placeholder="z.B. Kooperationsprojekte" >
     </div>
+    <div *ngIf="channelNameExists" class="error-message">
+      <p>Channel-Name existiert bereits</p>
+    </div>
   
   
     <div class="optional">

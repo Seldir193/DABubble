@@ -1,5 +1,6 @@
+
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,83 +10,77 @@ import { CommonModule } from '@angular/common';
 import { MembersDialogComponent } from '../members-dialog/members-dialog.component';
 import { ChannelService } from '../channel.service';
 
-
 @Component({
   selector: 'app-channel-dialog',
   templateUrl: './channel-dialog.component.html',
   styleUrls: ['./channel-dialog.component.scss'],
-  standalone: true, // Wichtig für Standalone-Komponenten
+  standalone: true,
   imports: [
-    MatFormFieldModule, // Benötigt für <mat-form-field>
-    MatInputModule,      // Benötigt für <mat-input>
+    MatFormFieldModule,
+    MatInputModule,
     MatButtonModule,
     FormsModule,
-    MatDialogModule, // Benötigt für MatDialog
+    MatDialogModule,
     CommonModule,
-    //MembersDialogComponent
   ]
 })
 export class ChannelDialogComponent implements OnInit {
-  selectedOption: string = 'all'; 
-  channelName: string = '' ;
-  selectedMembers: any[] = []; 
+  channelName: string = '';
+  channelNameExists = false;  // Flag für vorhandenen Channel-Namen
 
-  allMembers: any[] = [];
-
-  constructor(public dialogRef: MatDialogRef<ChannelDialogComponent>,
+  constructor(
+    public dialogRef: MatDialogRef<ChannelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
-    private channelService: ChannelService,
-    
-   
+    private channelService: ChannelService
   ) {}
 
   onCreate(): void {
-    // Schließe den ersten Dialog und übergib den Channel-Namen
-    this.dialogRef.close({ channelName: this.channelName });
+    // Überprüfe, ob der Channel-Name bereits existiert
+    const exists = this.channelService.getChannels().some((channel: { name: string; members: any[] }) => 
+      channel.name.toLowerCase() === this.channelName.toLowerCase()
+    );
   
-    // Öffne den Mitglieder-Dialog direkt nach dem Schließen des ersten Dialogs
-    const mitgliederDialogRef = this.dialog.open(MembersDialogComponent, {
-      data: { channelName: this.channelName },  // Gebe den Channel-Namen weiter
-    });
+    if (exists) {
+      this.channelNameExists = true;  // Setze das Flag, um die Fehlermeldung anzuzeigen
+    } else {
+      this.channelNameExists = false;
   
-    // Warte auf das Schließen des Mitglieder-Dialogs
-    mitgliederDialogRef.afterClosed().subscribe(result => {
-      if (result && result.selectedMembers) {
-        // Mitglieder erfolgreich ausgewählt
-        console.log('Mitglieder erfolgreich ausgewählt: ', result.selectedMembers);
+      // Öffne den Mitglieder-Dialog direkt nach dem Schließen des Channel-Dialogs
+      const mitgliederDialogRef = this.dialog.open(MembersDialogComponent, {
+        data: { channelName: this.channelName },  // Gebe den Channel-Namen weiter
+      });
   
-        // Optional: Falls der Channel-Service genutzt wird, um die Daten zu speichern
-        this.channelService.changeChannel({
-          name: this.channelName,
-          members: result.selectedMembers
-        });
+      mitgliederDialogRef.afterClosed().subscribe(result => {
+        if (result && result.selectedMembers) {
+          // Channel speichern (erst jetzt, nach Auswahl der Mitglieder)
+          this.channelService.addChannel({
+            name: this.channelName,
+            members: result.selectedMembers
+          });
   
-        // Gebe den Channel-Namen und die ausgewählten Mitglieder an die nächste Komponente weiter
-        this.dialogRef.close({
-          channelName: this.channelName,
-          selectedMembers: result.selectedMembers
-        });
-      }
-    });
+          console.log('Channel erstellt mit Mitgliedern:', {
+            name: this.channelName,
+            members: result.selectedMembers
+          });
+        }
+      });
+  
+      this.dialogRef.close(); // Schließe den Channel-Dialog nachdem Mitglieder-Dialog geöffnet wurde
+    }
   }
   
+
+
+
+
+  
+
   closeDialog(): void {
     this.dialogRef.close();
   }
 
   ngOnInit(): void {
-    console.log(this.data); 
+    console.log(this.data);
   }
 }
-
-
-
- 
-
-
-
-
-
-
-
