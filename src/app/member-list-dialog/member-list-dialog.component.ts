@@ -59,16 +59,11 @@ export class MemberListDialogComponent {
     this.dialogRef.close({ members: this.members });
   }
 
-
-
-
-
-
-  
    // Methode zum Schließen des Dialogs ohne Aktion
    onCancel(): void {
     this.dialogRef.close();
   }
+
   
   updateMembers(updatedMembers: any[]): void {
     this.members = updatedMembers;

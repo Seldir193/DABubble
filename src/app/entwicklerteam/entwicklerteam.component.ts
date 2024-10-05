@@ -1,3 +1,4 @@
+
 import { Component, OnInit ,CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +8,7 @@ import { ChannelService } from '../channel.service';
 import { MemberListDialogComponent } from '../member-list-dialog/member-list-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
+import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-dialog.component';
 
 
 @Component({
@@ -60,7 +62,7 @@ export class EntwicklerteamComponent implements OnInit {
 
   adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
     if (this.imageUrl) {
-      //textArea.style.height = `${textArea.scrollHeight + 110}px`; // Vergrößere die Höhe basierend auf der Bildgröße
+      //textArea.style.height = ${textArea.scrollHeight + 110}px; // Vergrößere die Höhe basierend auf der Bildgröße
       textArea.style.paddingBottom = `${160}px`; 
     }
   }
@@ -95,28 +97,18 @@ export class EntwicklerteamComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Abonniere den Channel-Service, um den aktuellen Channel zu empfangen
+    // Abonniere den Channel-Service, um den aktuell ausgewählten Channel zu empfangen
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
-        // Überschreibe den alten Channel mit dem neuen
+        // Zeige nur den aktuell ausgewählten Channel an und ersetze den alten
         this.channels = [{ name: channel.name, members: channel.members }];
         console.log('Aktueller Channel im EntwicklerteamComponent:', this.channels);
       }
     });
-
-    // Abonniere die Channels-Liste im ChannelService
-    this.channelService.currentChannels.subscribe(channels => {
-      if (channels && channels.length > 0) {
-        console.log('Aktualisierte Channels-Liste:', channels);
-
-        // Falls ein spezifischer Channel angezeigt werden soll, wird dieser hier angezeigt
-        const selectedChannel = channels.find(channel => channel.name === this.channels[0]?.name);
-        if (selectedChannel) {
-          this.channels[0] = selectedChannel; // Aktualisiere den aktuellen Channel
-        }
-      }
-    });
   }
+  
+
+
 
   openAddMembersDialog(channel: { name: string; members: any[] }): void {
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
@@ -137,6 +129,7 @@ export class EntwicklerteamComponent implements OnInit {
     });
   }
 
+
   openMembersDialog(channel: { name: string; members: any[] }): void {
     const dialogRef = this.dialog.open(MemberListDialogComponent, {
       data: { channelName: channel.name, members: channel.members }
@@ -154,13 +147,25 @@ export class EntwicklerteamComponent implements OnInit {
 
 
 
+  
 
-
-
-
-
-
-
+  
+  openEditChannelDialog(channel: { name: string; members: any[]; description?: string; createdBy?: string }): void {
+    const dialogRef = this.dialog.open(EditChannelDialogComponent, {
+      data: {
+        name: channel.name,
+        description: channel.description || '',  // Verwende einen leeren String, falls description undefined ist
+        createdBy: channel.createdBy || 'Unbekannt'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Aktualisiere den Channel mit der neuen Beschreibung, falls vorhanden
+        this.channelService.updateChannel(channel.name, result.name, result.description || '');
+      }
+    });
+  }
   
   openImageModal() {
     this.isImageModalOpen = true;
@@ -174,7 +179,17 @@ export class EntwicklerteamComponent implements OnInit {
     onEscapePress(event: KeyboardEvent) {
   this.closeImageModal();
 }
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

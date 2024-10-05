@@ -110,11 +110,13 @@ export class AddMembersDialogComponent implements OnInit {
     this.isMembersListVisible = false; // Verstecke die Mitgliederliste
   }
 
+
   // Entferne ein Mitglied aus der Liste
   removeMember(member: any): void {
     this.selectedMembers = this.selectedMembers.filter(m => m !== member);
     this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste nach dem Entfernen
   }
+
 
   onCreate(): void {
     console.log('Mitglieder vor dem Speichern:', this.selectedMembers);
@@ -136,24 +138,14 @@ export class AddMembersDialogComponent implements OnInit {
       this.dialogRef.close(updatedMembers);
     } else {
       console.log('Keine neuen Mitglieder ausgewählt.');
-    }
   }
-  
+}
 
 
 
 
 
  
-
- 
-
-
-
-
-  
-  
-
 
 
 

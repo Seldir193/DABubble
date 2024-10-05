@@ -5,10 +5,6 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ChannelService {
-  // Zentraler BehaviorSubject zur Verwaltung aller Channels
-  private channelsSource = new BehaviorSubject<{ name: string; members: any[] }[]>([]);
-  currentChannels = this.channelsSource.asObservable();
-
   // Ein Observable zur Übertragung des aktuellen Channels
   private channelSource = new BehaviorSubject<{ name: string; members: any[] } | null>(null);
   currentChannel = this.channelSource.asObservable();
@@ -21,22 +17,36 @@ export class ChannelService {
   private membersSource = new BehaviorSubject<any[]>([]);
   currentMembers = this.membersSource.asObservable();
 
-  // Methode zum Ändern des aktuell ausgewählten Channels
-  changeSelectedChannel(channel: { name: string; members: any[] }) {
-    this.selectedChannelSource.next(channel);
-  }
+  private channelsSource = new BehaviorSubject<{ name: string; members: any[]; description?: string; createdBy?: string }[]>([]);
+  currentChannels = this.channelsSource.asObservable();
 
-  // Methode zum Hinzufügen eines neuen Channels
-  addChannel(channel: { name: string; members: any[] }): void {
+ 
+
+    // Füge einen neuen Channel hinzu
+addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): void {
+  const channels = this.channelsSource.getValue();
+  channels.push(channel);
+  this.channelsSource.next([...channels]);
+
+  this.changeChannel(channel);
+}
+
+
+
+
+  updateChannel(currentChannelName: string, newChannelName: string, description: string): void {
     const channels = this.channelsSource.getValue();
-    channels.push(channel);
-    this.channelsSource.next([...channels]); // Aktualisiere die gesamte Channel-Liste
+    const index = channels.findIndex(channel => channel.name === currentChannelName);
+    if (index !== -1) {
+      channels[index].name = newChannelName;
+      channels[index].description = description;
+      this.channelsSource.next([...channels]);
+    }
 
-    this.changeChannel(channel);
   }
 
   // Methode, um alle Channels abzurufen
-  getChannels(): { name: string; members: any[] }[] {
+  getChannels(): { name: string; members: any[]; description?: string; createdBy?: string }[] {
     return this.channelsSource.getValue();
   }
 
@@ -64,16 +74,12 @@ export class ChannelService {
       console.error('Channel nicht gefunden, Mitglieder konnten nicht aktualisiert werden.');
     }
   }
+
+  // Methode zum Ändern des aktuell ausgewählten Channels
+  changeSelectedChannel(channel: { name: string; members: any[] }) {
+    this.selectedChannelSource.next(channel);
+  }
   
-
-
-
-
-  
-
-  
-  
-
   // Methode zum Ändern des aktuellen Channels
   changeChannel(channel: { name: string; members: any[] }) {
     this.channelSource.next(channel);
@@ -84,13 +90,3 @@ export class ChannelService {
     return this.membersSource.getValue(); // Mitglieder abrufen
   }
 }
-
-
-
-
-
-
-
-
-
-

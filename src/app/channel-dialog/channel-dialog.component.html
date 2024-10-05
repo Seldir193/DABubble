@@ -12,7 +12,7 @@
     <label for="channel-name">Channel-Name</label>
     <div appearance="fill" class="custom-input">
       <img src="assets/img/tag-gray.png" class="input-icon" alt="Tag Icon">
-      <input   id="channel-name" [(ngModel)]="channelName" placeholder="z.B. Kooperationsprojekte" >
+      <input   id="channel-name" [(ngModel)]="channelName" (ngModelChange)="onChannelNameChange($event)" placeholder="z.B. Kooperationsprojekte" >
     </div>
     <div *ngIf="channelNameExists" class="error-message">
       <p>Channel-Name existiert bereits</p>
@@ -23,13 +23,13 @@
         <label for="channel-description">Beschreibung</label><p>(optional)</p>
     </div>
     <div appearance="fill" class="description-input">
-      <input  id="channel-description" placeholder="Dein Text hier">
+      <input  id="channel-description"  placeholder="Dein Text hier">
   </div>
   </div>
   
  
     <div mat-dialog-actions>
-      <button  class="primary-button" (click)="onCreate()">Erstellen</button>
+      <button  class="primary-button" (click)="onCreate()" [disabled]="!isChannelNameValid">Erstellen</button>
     </div>
     
   </div>

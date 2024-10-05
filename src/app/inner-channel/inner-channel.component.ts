@@ -41,6 +41,7 @@ export class InnerChannelComponent {
    * Methode zum Erstellen oder Aktualisieren eines Channels.
    * Vermeidet doppelte Channels und aktualisiert die Mitglieder bei einem existierenden Channel.
    */
+
   createChannel(name: string, members: any[]): void {
     // Überprüfe, ob ein Channel mit demselben Namen bereits existiert
     const exists = this.entwicklerTeams.some(channel => channel.name.toLowerCase() === name.toLowerCase());
@@ -55,6 +56,7 @@ export class InnerChannelComponent {
       this.channelNameExists = false;  // Setze das Flag auf false, da der Channel erfolgreich erstellt wurde
     }
   }
+
 
   /**
    * Methode, um einen Channel auszuwählen und ihn an den EntwicklerteamComponent zu senden.

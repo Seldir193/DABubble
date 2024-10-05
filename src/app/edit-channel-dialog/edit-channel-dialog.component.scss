@@ -1,0 +1,314 @@
+@import "./../../styles.scss";
+
+mat-form-field {
+    width: 100%; // Eingabefelder nehmen die volle Breite des Dialogs ein
+  }
+  
+  mat-dialog-content {
+    padding-bottom: 20px; // Platz unter dem Inhalt des Dialogs
+  }
+  
+  .mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end; // Der Button wird rechts ausgerichtet
+  }
+  
+  .mat-mdc-form-field-input-control.mdc-text-field__input,
+  .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  
+  .mat-mdc-dialog-actions {
+    padding: 20px 0;
+    justify-content: flex-end;
+  }
+  
+  ::ng-deep .mat-mdc-dialog-container {
+    border-radius: 30px !important;
+  }
+  
+  ::ng-deep .mdc-dialog__surface {
+    border-radius: 30px !important;
+    overflow: hidden;
+  }
+  
+  ::ng-deep.mat-mdc-dialog-content .mdc-dialog__content {
+    padding: 0; /* Entferne das Padding komplett */
+  }
+  
+  ::ng-deep.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+    padding: 0; /* Entferne das Padding komplett */
+  }
+  
+  ::ng-deep.mat-mdc-dialog-title,
+  .mdc-dialog__title,
+  .mat-mdc-dialog-container .mat-mdc-dialog-content,
+  .mdc-dialog .mdc-dialog__content {
+    padding: 0; /* Entferne das Padding komplett */
+    margin: 0; /* Entferne auch das Margin */
+  }
+  
+  ::ng-deep.mat-mdc-dialog-title,
+  .mdc-dialog__title {
+    margin: 0 0 20px !important ;
+  }
+  
+  .container {
+    width:792px;
+    padding: 40px;
+    gap: 20px;
+    border-radius: 40px 0px 0px 0px;
+    border: 1px 0px 0px 0px;
+    display: flex;
+    flex-direction: column;
+  
+    .close-dialog,
+    
+    .edit-box,
+   {
+      width: 100%; // Alle Kind-Container übernehmen die Breite von .close-container
+    }
+
+    .info-box{
+       
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        p{
+            font-size:18px;
+            font-weight: 400;
+        }
+      }
+  }
+  
+  .close-dialog {
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    gap: 15px;
+  
+    h1 {
+      margin-right: 20px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+  
+    img {
+      cursor: pointer;
+      transition: filter 0.3s ease, background-color 0.3s ease;
+      border-radius: 50%;
+  
+      &:hover {
+        background-color: $lightblue;
+  
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+            saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        }
+      }
+    }
+  
+    .close-pic-box {
+      display: flex;
+      margin-left: auto;
+    }
+  }
+  
+  .edit-box {
+      display: flex;
+      flex-direction: column;
+      border-radius: 40px;
+      padding: 20px 0;
+      //gap:20px;
+    
+      .input-icon {
+        position: absolute;
+        left: 25px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        transition: filter 0.3s ease;
+        font-size: 25px;
+        font-weight: 700;
+    
+      }
+    
+      input {
+        display: none;  // Standardmäßig Eingabefeld verstecken
+        background: $lightblue;
+        border-radius: 100px;
+        color: black;
+        font-size: 18px;
+        font-weight: 500;
+        height: 60px;
+        width: 100%;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        padding-left: 60px; // Platz für das Bild
+       
+        &.visible {
+          display: block;  // Zeige das Eingabefeld im Bearbeitungsmodus
+        }
+    
+        &:hover {
+          border-color: #686868;
+          transition: border-color 0.3s;
+        }
+    
+        &:focus,
+        &:focus-within {
+          outline: none;
+          border-color: $button-blue;
+        }
+      }
+    }
+    
+    .channel-box {
+     // padding: 20px;
+      gap: 20px;
+      border-radius: 20px;
+      border: 1px solid $button-border;
+     // width:792px;
+  
+      &.show-border {
+          border: 1px solid $button-border; // Rand wird eingeblendet, wenn die Klasse 'show-border' aktiv ist
+        }
+      
+        &.hide-border {
+          border: none; // Kein Rand während des Bearbeitens
+        }
+    
+      label {
+        font-size: 18px;
+        font-weight: 700;
+  
+       
+      }
+    
+      .channel-name-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative; // Positionieren, um das Bild innerhalb des Inputs zu platzieren
+    
+        h1 {
+          font-size: 18px;
+          font-weight: 400;
+          color: black;
+          padding-left:50px;
+          margin:0;
+        }
+      }
+    
+      .edit-button,
+      .save-button {
+        background: $button-blue;
+        border: none;
+        border-radius: 100px;
+        color: white;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    
+        &:hover {
+          background-color: #5b5ffc;
+        }
+    
+        &.save-button {
+          background: #28a745;
+    
+          &:hover {
+            background-color: #218838;
+          }
+        }
+      }
+    }
+  
+  
+    .header-button-box{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding:0 20px;
+  
+      label {
+          font-size: 18px;
+          font-weight: 700;
+          transition: all 0.5s ease-in-out;
+    
+          &.move-left {
+            transform: translate(-20px, -0px);
+          }
+        }
+  
+    }
+  
+    .profil-settings-button {
+      font-size: 18px;
+      font-weight: 600;
+      color: $hoverColor;
+      cursor: pointer;
+      transition: color 0.3s ease, transform 0.6s ease ;
+      
+      &:hover {
+          color: $hoverColor;
+          font-weight: 700;
+          transform: scale(1.05);
+        }
+  
+      &.move-initial {
+          transform: translate(0, 0); // Ausgangsposition (ohne Verschiebung)
+          
+        }
+  
+        &.move-right {
+          transform: translate(20px, -0px); // Verschiebung nach rechts oben beim Bearbeiten
+          
+        }
+  
+         
+      
+      }
+
+      .box-container{
+        display: flex;
+        flex-direction: column;
+        
+        gap: 20px;
+    }
+      
+
+    .primary-button {
+        background: $button-blue;
+        border: none;
+        border-radius: 100px;
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        padding: 12px 25px;
+        
+        height: 49px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      
+      
+        &:hover {
+          background: #5b5ffc;
+        }
+      
+        &:disabled {
+          background-color: gray;  /* Farbe, wenn der Button deaktiviert ist */
+          cursor: not-allowed;
+        }
+      
+        
+      }
+
+      .seperator{
+         border: 1px solid $button-border;
+         width: 100%;        // Die Breite des Separators wird auf 100% des übergeordneten Containers gesetzt
+         max-width: 739px; 
+         margin: 0 auto;
+      }

@@ -26,7 +26,9 @@ import { ChannelService } from '../channel.service';
 })
 export class ChannelDialogComponent implements OnInit {
   channelName: string = '';
+  
   channelNameExists = false;  // Flag für vorhandenen Channel-Namen
+  isChannelNameValid = false;
 
   constructor(
     public dialogRef: MatDialogRef<ChannelDialogComponent>,
@@ -35,7 +37,14 @@ export class ChannelDialogComponent implements OnInit {
     private channelService: ChannelService
   ) {}
 
+  onChannelNameChange(value: string): void {
+    this.isChannelNameValid = value.trim().length >= 3;  // Channel-Name ist gültig, wenn mindestens 3 Zeichen
+  }
+
   onCreate(): void {
+    if (!this.isChannelNameValid) {
+      return;  // Verhindere das Erstellen, falls der Channel-Name ungültig ist
+    }
     // Überprüfe, ob der Channel-Name bereits existiert
     const exists = this.channelService.getChannels().some((channel: { name: string; members: any[] }) => 
       channel.name.toLowerCase() === this.channelName.toLowerCase()
@@ -56,12 +65,14 @@ export class ChannelDialogComponent implements OnInit {
           // Channel speichern (erst jetzt, nach Auswahl der Mitglieder)
           this.channelService.addChannel({
             name: this.channelName,
-            members: result.selectedMembers
+            members: result.selectedMembers,
+            
           });
   
           console.log('Channel erstellt mit Mitgliedern:', {
             name: this.channelName,
-            members: result.selectedMembers
+            members: result.selectedMembers,
+            
           });
         }
       });
@@ -70,12 +81,6 @@ export class ChannelDialogComponent implements OnInit {
     }
   }
   
-
-
-
-
-  
-
   closeDialog(): void {
     this.dialogRef.close();
   }

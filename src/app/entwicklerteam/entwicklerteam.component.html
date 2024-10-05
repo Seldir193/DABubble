@@ -1,7 +1,7 @@
 <div class="entwickler-box">
   <div *ngFor="let channel of channels" class="channel-container">
     <!-- Linker Bereich: Channel-Name und Icon -->
-    <div class="office-box">
+    <div class="office-box" (click)="openEditChannelDialog(channel)">
       <img src="assets/img/tag-black.png" alt="Tag Icon" />
       <h1>{{ channel.name }}</h1>
       <img src="assets/img/keyboard_arrow_down-1.png" />
