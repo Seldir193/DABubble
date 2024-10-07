@@ -96,6 +96,11 @@ export class EntwicklerteamComponent implements OnInit {
     // Nachricht senden
   }
 
+  
+
+
+
+
   ngOnInit(): void {
     // Abonniere den Channel-Service, um den aktuell ausgewählten Channel zu empfangen
     this.channelService.currentChannel.subscribe(channel => {
@@ -110,6 +115,7 @@ export class EntwicklerteamComponent implements OnInit {
 
 
 
+  
   openAddMembersDialog(channel: { name: string; members: any[] }): void {
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
       data: { members: channel.members }
@@ -146,14 +152,11 @@ export class EntwicklerteamComponent implements OnInit {
   }
 
 
-
-  
-
-  
   openEditChannelDialog(channel: { name: string; members: any[]; description?: string; createdBy?: string }): void {
     const dialogRef = this.dialog.open(EditChannelDialogComponent, {
       data: {
         name: channel.name,
+        members: channel.members,  // Übergib die Mitglieder des Channels
         description: channel.description || '',  // Verwende einen leeren String, falls description undefined ist
         createdBy: channel.createdBy || 'Unbekannt'
       }
@@ -161,11 +164,36 @@ export class EntwicklerteamComponent implements OnInit {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Aktualisiere den Channel mit der neuen Beschreibung, falls vorhanden
+        // Aktualisiere den Channel mit der neuen Beschreibung und dem neuen Namen
         this.channelService.updateChannel(channel.name, result.name, result.description || '');
+  
+        // Optionale: Stelle sicher, dass Änderungen an den Mitgliedern auch gespeichert werden
+        this.channelService.setMembers(result.name, channel.members);
       }
     });
   }
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+
+  
+  
+
+
+
+  
+
+  
+  
   
   openImageModal() {
     this.isImageModalOpen = true;
@@ -180,16 +208,3 @@ export class EntwicklerteamComponent implements OnInit {
   this.closeImageModal();
 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

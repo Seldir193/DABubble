@@ -26,24 +26,27 @@ export class ChannelService {
 addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): void {
   const channels = this.channelsSource.getValue();
   channels.push(channel);
-  this.channelsSource.next([...channels]);
 
+  
+  this.channelsSource.next([...channels]);
+  
   this.changeChannel(channel);
 }
 
 
+updateChannel(currentChannelName: string, newChannelName: string, description: string): void {
+  const channels = this.channelsSource.getValue();
+  const index = channels.findIndex(channel => channel.name === currentChannelName);
+  if (index !== -1) {
+    channels[index].name = newChannelName;
+    channels[index].description = description;
 
+   
 
-  updateChannel(currentChannelName: string, newChannelName: string, description: string): void {
-    const channels = this.channelsSource.getValue();
-    const index = channels.findIndex(channel => channel.name === currentChannelName);
-    if (index !== -1) {
-      channels[index].name = newChannelName;
-      channels[index].description = description;
-      this.channelsSource.next([...channels]);
-    }
-
+    this.channelsSource.next([...channels]);
   }
+
+}
 
   // Methode, um alle Channels abzurufen
   getChannels(): { name: string; members: any[]; description?: string; createdBy?: string }[] {
@@ -90,3 +93,12 @@ addChannel(channel: { name: string; members: any[]; description?: string; create
     return this.membersSource.getValue(); // Mitglieder abrufen
   }
 }
+
+
+
+
+
+
+
+
+

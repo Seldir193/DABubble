@@ -2,10 +2,7 @@
 
 
 
-
-
-
-  <div class="container">
+<div class="container">
     <div class="close-dialog">
       <img src="assets/img/tag-black.png" alt="Tag Icon" />
       <h1>{{ channelName }}</h1>
@@ -15,51 +12,49 @@
     </div>
   
    
-    <div class="channel-box" [ngClass]="{ 'hide-border': isEditing, 'show-border': !isEditing }">
-      <div class="edit-box">
-        <div class="box-container">
-          <div class="header-button-box">
-            <label for="channelName" [ngClass]="{ 'move-left': isEditing }">Channel-Name</label>
-            <div (click)="toggleEditing()" class="profil-settings-button"
-                 [ngClass]="{ 'move-right': isEditing, 'move-initial': !isEditing }">
-              {{ isEditing ? 'Speichern' : 'Bearbeiten' }}
+    <div class="channel-box" [ngClass]="{ 'hide-border': isEditingName, 'show-border': !isEditingName }">
+        <div class="edit-box">
+          <div class="box-container">
+            <div class="header-button-box">
+              <label for="channelName" [ngClass]="{ 'move-left': isEditingName }">Channel-Name</label>
+              <div (click)="toggleEditingName()" class="profil-settings-button"
+                   [ngClass]="{ 'move-right': isEditingName, 'move-initial': !isEditingName }">
+                {{ isEditingName ? 'Speichern' : 'Bearbeiten' }}
+              </div>
+            </div>
+  
+            <div class="channel-name-box">
+                <span class="input-icon">#</span>
+                <h1 *ngIf="!isEditingName">{{ channelName }}</h1>
+                <input *ngIf="isEditingName"
+                       id="channelName"
+                       [placeholder]="channelName || 'Channel Name bearbeiten'"
+                       [(ngModel)]="editedChannelName"
+                       class="visible" />
+              </div>
             </div>
           </div>
-  
-          <div class="channel-name-box">
-            <span class="input-icon">#</span>
-            <h1 *ngIf="!isEditing">{{ channelName }}</h1>
-            <input *ngIf="isEditing"
-                   id="channelName"
-                   [placeholder]="channelName || 'Channel Name bearbeiten'"
-                   [(ngModel)]="editedChannelName" 
-                   class="visible" />
-          </div>
-        </div>
-      </div>
-    </div>
-  
-    <div class="channel-box" [ngClass]="{ 'hide-border': isEditing, 'show-border': !isEditing }">
-    <div class="edit-box">
-      <div class="box-container">
-        <div class="header-button-box">
-          <label for="description" [ngClass]="{ 'move-left': isEditing }">Beschreibung</label>
-          <div (click)="toggleEditing()" class="profil-settings-button"
-               [ngClass]="{ 'move-right': isEditing, 'move-initial': !isEditing }">
-            {{ isEditing ? 'Speichern' : 'Bearbeiten' }}
-          </div>
         </div>
   
-        <div class="channel-name-box">
-            
-            <h1 *ngIf="!isEditing">{{ description }}</h1>  <!-- Originale Beschreibung wird angezeigt, wenn nicht bearbeitet wird -->
-            <input *ngIf="isEditing"
-                   id="channel-description"
-                   [(ngModel)]="description"  
-                   placeholder="Dein Text hier"
-                   class="visible" />
-                   
-          </div>
+        <div class="channel-box" [ngClass]="{ 'hide-border': isEditingDescription, 'show-border': !isEditingDescription }">
+            <div class="edit-box">
+              <div class="box-container">
+                <div class="header-button-box">
+                  <label for="description" [ngClass]="{ 'move-left': isEditingDescription }">Beschreibung</label>
+                  <div (click)="toggleEditingDescription()" class="profil-settings-button"
+                       [ngClass]="{ 'move-right': isEditingDescription, 'move-initial': !isEditingDescription }">
+                    {{ isEditingDescription ? 'Speichern' : 'Bearbeiten' }}
+                  </div>
+                </div>
+  
+                <div class="channel-name-box">
+                    <h1 *ngIf="!isEditingDescription">{{ description }}</h1>  <!-- Originale Beschreibung wird angezeigt, wenn nicht bearbeitet wird -->
+                    <input *ngIf="isEditingDescription"
+                           id="channel-description"
+                           [(ngModel)]="editedDescription"
+                           placeholder="Dein Text hier"
+                           class="visible" />
+                  </div>
           <div class="seperator"></div>
 
           <!-- Info Box -->
@@ -76,4 +71,3 @@
       <button class="primary-button" (click)="onSave()">Channel verlassen</button>
     </div>
   </div>
-  

@@ -13,6 +13,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChannelDialogComponent } from '../channel-dialog/channel-dialog.component';
 import { EntwicklerteamComponent } from '../entwicklerteam/entwicklerteam.component';
 import { ChannelService } from '../channel.service';
+import { UserService } from '../user.service';
+
 
 @Component({
   selector: 'app-inner-channel',
@@ -27,7 +29,7 @@ export class InnerChannelComponent {
   entwicklerTeams: { name: string; members: any[] }[] = [];
   channelNameExists = false;  // Flag zur Überprüfung, ob der Channel-Name bereits existiert
 
-  constructor(public dialog: MatDialog, private channelService: ChannelService) {}
+  constructor(public dialog: MatDialog, private channelService: ChannelService,private userService: UserService) {}
 
 
   ngOnInit(): void {
@@ -37,26 +39,50 @@ export class InnerChannelComponent {
     });
   }
 
-  /**
-   * Methode zum Erstellen oder Aktualisieren eines Channels.
-   * Vermeidet doppelte Channels und aktualisiert die Mitglieder bei einem existierenden Channel.
-   */
 
   createChannel(name: string, members: any[]): void {
-    // Überprüfe, ob ein Channel mit demselben Namen bereits existiert
-    const exists = this.entwicklerTeams.some(channel => channel.name.toLowerCase() === name.toLowerCase());
+    this.userService.getCurrentUserData().then((userData) => {
+      const currentUserName = userData?.name || 'Unbekannt'; // Setze den Benutzernamen oder 'Unbekannt'
+      
+      // Überprüfe, ob ein Channel mit demselben Namen bereits existiert
+      const exists = this.entwicklerTeams.some(channel => channel.name.toLowerCase() === name.toLowerCase());
 
-    if (exists) {
-      this.channelNameExists = true;  // Setze das Flag auf true, um eine Fehlermeldung im UI anzuzeigen
-      console.error(`Channel "${name}" existiert bereits.`);
-    } else {
-      const newChannel = { name, members };
-      this.entwicklerTeams.push(newChannel);
-      this.channelService.changeChannel(newChannel);  // Sende den neuen Channel an EntwicklerteamComponent
-      this.channelNameExists = false;  // Setze das Flag auf false, da der Channel erfolgreich erstellt wurde
-    }
+      console.log('Benutzername abgerufen:', currentUserName);
+  
+      if (exists) {
+        this.channelNameExists = true;
+        console.error(`Channel "${name}" existiert bereits.`);
+      } else {
+        // Erstelle den neuen Channel mit dem 'createdBy' Feld
+        const newChannel = {
+          name,
+          members,
+          createdBy: currentUserName  // Hier wird der aktuelle Benutzername gesetzt
+        };
+  
+        this.entwicklerTeams.push(newChannel);
+        this.channelService.addChannel(newChannel);  // Speichere den Channel
+        this.channelService.changeChannel(newChannel);  // Aktualisiere den Channel in der Entwicklerteam-Komponente
+        this.channelNameExists = false;
+      }
+    }).catch((error) => {
+      console.error('Fehler beim Abrufen des Benutzers:', error);
+    });
   }
+  
 
+
+
+  
+
+
+ 
+
+  
+
+
+
+  
 
   /**
    * Methode, um einen Channel auszuwählen und ihn an den EntwicklerteamComponent zu senden.

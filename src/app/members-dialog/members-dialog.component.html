@@ -10,12 +10,12 @@
         
         <div class="option">
           <input type="radio" id="allMembers" name="memberSelection" value="all" [(ngModel)]="selectedOption">
-          <label for="allMembers">Alle Mitglieder</label>
+          <label for="allMembers">Alle Mitglieder von <span class="blue-text">OfficeTeam</span> hinzufügen</label>
         </div>
   
         <div class="option">
           <input type="radio" id="specificMembers" name="memberSelection" value="specific" [(ngModel)]="selectedOption">
-          <label for="specificMembers">Bestimmte Mitglieder</label>
+          <label for="specificMembers">Bestimmte Leute hinzufügen</label>
         </div>
 
         <div *ngIf="selectedOption === 'specific'" class="specific-members">

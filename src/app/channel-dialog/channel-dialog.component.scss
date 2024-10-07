@@ -65,13 +65,14 @@ label {
 }
 
 .custom-input {
+  position: relative; // Stelle sicher, dass die Positionierung relativ zur Custom-Input-Box ist.
   border-radius: 40px;
   padding-top: 20px;
 
   .input-icon {
     position: absolute;
-    left: 70px;
-    top: 47%;
+    left: 40px;
+    top: 65%; // Verwende 50%, um die Positionierung unabhängig von der Fehlermeldung zu machen.
     transform: translateY(-50%);
     cursor: pointer;
     transition: filter 0.3s ease;
@@ -101,14 +102,31 @@ label {
       outline: none;
       border-color: $button-blue;
     }
-
-    &:not(:focus) {
-      &:has(+ input:focus) {
-        border-color: blue;
-      }
-    }
   }
 }
+
+.error-message {
+  min-height: 24px; // Reserviere Platz für die Fehlermeldung.
+  margin-top: 5px; // Abstand zwischen Input und Fehlermeldung.
+  p {
+    margin: 0;
+    padding-left: 20px;
+    color: red;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .description-input {
   input {
@@ -214,12 +232,3 @@ label {
 }
 
 
-.error-message{
- 
-
-  p{
-    margin: 0;
-    padding-left: 20px;
-    color: red;
-}
-  }

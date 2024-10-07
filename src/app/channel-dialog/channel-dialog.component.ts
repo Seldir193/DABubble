@@ -29,6 +29,7 @@ export class ChannelDialogComponent implements OnInit {
   
   channelNameExists = false;  // Flag für vorhandenen Channel-Namen
   isChannelNameValid = false;
+  description: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<ChannelDialogComponent>,
@@ -66,13 +67,13 @@ export class ChannelDialogComponent implements OnInit {
           this.channelService.addChannel({
             name: this.channelName,
             members: result.selectedMembers,
-            
+            description: this.description 
           });
   
           console.log('Channel erstellt mit Mitgliedern:', {
             name: this.channelName,
             members: result.selectedMembers,
-            
+            description: this.description 
           });
         }
       });
@@ -80,6 +81,12 @@ export class ChannelDialogComponent implements OnInit {
       this.dialogRef.close(); // Schließe den Channel-Dialog nachdem Mitglieder-Dialog geöffnet wurde
     }
   }
+
+
+
+
+
+  
   
   closeDialog(): void {
     this.dialogRef.close();
