@@ -27,6 +27,8 @@ export class MemberListDialogComponent {
 
   removeMember(member: any): void {
     this.data.members = this.data.members.filter(m => m !== member);
+
+    this.channelService.setMembers(this.data.channelName, this.members);
   }
 
   openAddMembersDialog(): void {
@@ -68,4 +70,5 @@ export class MemberListDialogComponent {
   updateMembers(updatedMembers: any[]): void {
     this.members = updatedMembers;
   }
+
 }

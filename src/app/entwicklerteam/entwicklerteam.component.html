@@ -47,6 +47,27 @@
         <!-- Nachricht anzeigen -->
         <div class="message-container" [ngClass]="{ 'sent-message': msg.senderName === currentUser.name, 'received-message': msg.senderName !== currentUser.name }">
           <!-- Avatar des Senders -->
+
+          <div class="emoji-box">
+            <div class="image-wrapper">
+            <img src="assets/img/close.png" alt="Emoji 1" />
+            </div>
+            <div class="image-wrapper">
+            <img src="assets/img/reaction.png" alt="Emoji 2" />
+            </div>
+            <div class="image-wrapper">
+            <img src="assets/img/reaction.png" alt="Reaction" />
+            </div>
+            <div class="image-wrapper">
+            <img src="assets/img/comment.png" alt="Comment" />
+            </div>
+            <div class="image-wrapper">
+            <img src="assets/img/more.png" alt="More"  />
+            </div>
+            
+          </div>
+
+
           <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
           <div class="message-box">
             <span class="message-info">
@@ -56,17 +77,18 @@
             <div class="message-content" 
             [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'} ">
 
-
+            <img *ngIf="msg.type === 'image' " [src]="msg.content" class="sent-image" />
+            <p *ngIf="msg.type === 'text' " class="sent-message">{{ msg.content }}</p>
     
-              <img *ngIf="msg.type === 'image' " [src]="msg.content" class="sent-image" />
-              <p *ngIf="msg.type === 'text' " class="sent-message">{{ msg.content }}</p>
+              
             </div>
           </div>
+         </div>
         </div>
       </div>
     </div>
-  </div>
-
+  
+  
 
 
 

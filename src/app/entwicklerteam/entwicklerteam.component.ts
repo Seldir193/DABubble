@@ -1,4 +1,3 @@
-
 import { Component, OnInit ,CUSTOM_ELEMENTS_SCHEMA,ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +10,6 @@ import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dia
 import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-dialog.component';
 import { UserService } from '../user.service'; // Importiere den UserService
 import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für formatDate
-
 
 @Component({
   selector: 'app-entwicklerteam',
@@ -29,11 +27,14 @@ export class EntwicklerteamComponent implements OnInit {
   isTextareaExpanded: boolean = false;
   isImageModalOpen = false;
   channels: { name: string; members: any[] }[] = [];
+  //channels: { id: string, name: string, members: any[], description?: string, createdBy?: string }[] = [];
+
+
   selectedChannel: { name: string; members: any[] } | null = null;
   messages: { type: string, content: string, senderName: string, senderAvatar: string, time: string, date: string }[] = [];
   currentUser: any;  
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
-  
+
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
 
   receiveNewTeam(name: string, members: any[]): void {
@@ -41,6 +42,8 @@ export class EntwicklerteamComponent implements OnInit {
     this.channels = [{ name, members }];
     console.log('EntwicklerteamComponent: Neuer Channel hinzugefügt:', this.channels);
   }
+
+
 
   onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
     const input = event.target as HTMLInputElement;
@@ -56,12 +59,6 @@ export class EntwicklerteamComponent implements OnInit {
     }
   }
   
-
-
-
-
-  
-
   closeProfileCard(textArea: HTMLTextAreaElement): void {
     this.imageUrl = null;  // Entfernt das Bild
     this.isTextareaExpanded = false; 
@@ -100,6 +97,7 @@ export class EntwicklerteamComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  
     // Abonniere den Channel-Service, um den aktuell ausgewählten Channel zu empfangen
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
@@ -108,9 +106,10 @@ export class EntwicklerteamComponent implements OnInit {
         console.log('Aktueller Channel im EntwicklerteamComponent:', this.channels);
       }
     });
-
+    
     this.loadCurrentUser();
   }
+  
 
   loadCurrentUser(): void {
     this.userService.getCurrentUserData().then(user => {
@@ -150,6 +149,8 @@ export class EntwicklerteamComponent implements OnInit {
 
         // Setze die Mitglieder im ChannelService, um sie zu speichern
         this.channelService.setMembers(channel.name, result.selectedMembers);
+
+        this.channels = this.channels.map(ch => ch.name === channel.name ? { ...ch, members: result.members } : ch);
       }
     });
   }
@@ -161,33 +162,20 @@ export class EntwicklerteamComponent implements OnInit {
         members: channel.members,  // Übergib die Mitglieder des Channels
         description: channel.description || '',  // Verwende einen leeren String, falls description undefined ist
         createdBy: channel.createdBy || 'Unbekannt'
+       
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Aktualisiere den Channel mit der neuen Beschreibung und dem neuen Namen
-        this.channelService.updateChannel(channel.name, result.name, result.description || '');
+        this.channelService.updateChannel( channel.name, result.name, result.description || '');
   
         // Optionale: Stelle sicher, dass Änderungen an den Mitgliedern auch gespeichert werden
         this.channelService.setMembers(result.name, channel.members);
       }
     });
   }
-  
-
-
-
-
-
-
-
- 
- 
-
-
-
-
 
   openImageModal() {
     this.isImageModalOpen = true;
@@ -212,7 +200,6 @@ scrollToBottom(): void {
   }
 }
 
-
 sendMessage(textArea: HTMLTextAreaElement): void {
   const currentTime = new Date().toLocaleTimeString();
   const msgDate = formatDate(new Date(), 'dd.MM.yyyy', 'en');
@@ -227,7 +214,8 @@ sendMessage(textArea: HTMLTextAreaElement): void {
   this.scrollToBottom();
 }
 
-addMessage(type: string, content: string, time: string, date: string) {
+addMessage(type: string, content: string, time: string, date: string)
+ {
   this.messages.push({
     type,
     content,
@@ -246,11 +234,7 @@ handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
     this.sendMessage(textArea);
   }
 }
-
 }
-
-
-
 
 
 

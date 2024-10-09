@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,8 +6,6 @@ import { ChannelDialogComponent } from '../channel-dialog/channel-dialog.compone
 import { EntwicklerteamComponent } from '../entwicklerteam/entwicklerteam.component';
 import { ChannelService } from '../channel.service';
 import { UserService } from '../user.service';
-
-
 @Component({
   selector: 'app-inner-channel',
   standalone: true,
@@ -31,13 +21,16 @@ export class InnerChannelComponent {
 
   constructor(public dialog: MatDialog, private channelService: ChannelService,private userService: UserService) {}
 
+  
 
   ngOnInit(): void {
+    this.channelService.loadChannels();
     // Abonniere die Channels, um sie zu aktualisieren
     this.channelService.currentChannels.subscribe((channels) => {
       this.entwicklerTeams = channels;
     });
   }
+  
 
 
   createChannel(name: string, members: any[]): void {
@@ -69,25 +62,9 @@ export class InnerChannelComponent {
       console.error('Fehler beim Abrufen des Benutzers:', error);
     });
   }
-  
-
-
-
-  
-
-
  
 
-  
-
-
-
-  
-
-  /**
-   * Methode, um einen Channel auszuwählen und ihn an den EntwicklerteamComponent zu senden.
-   */
-  selectChannel(channel: { name: string; members: any[] }): void {
+  selectChannel(channel: {  name: string; members: any[] }): void {
     this.channelService.changeChannel(channel);  // Aktualisiere den Channel im EntwicklerteamComponent
   }
 

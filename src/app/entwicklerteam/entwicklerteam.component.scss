@@ -165,18 +165,123 @@
     }
   }
 
+
   .message-container {
     display: flex;
-    align-items: flex-start; /* Nachrichten beginnen von oben */
+    align-items: flex-start;
     margin-bottom: 15px;
-    flex-direction:row-reverse;
-    gap:30px;
-    padding:25px;
-
-
-    &:hover{
+    flex-direction: row-reverse;
+    gap: 30px;
+    padding: 25px;
+    position: relative;
+    background-color: transparent;
+    
+    &:hover {
       background-color: $lightblue;
+  
+      .emoji-box {
+        display: flex;
+        align-items: center;
+       
+      }
     }
+  
+    .emoji-box {
+      position: absolute;
+     
+      height: 46px;
+      padding: 3px 15px 3px 20px;
+      gap: 5px;
+      border-radius: 25px 25px 0;
+      border: 1px solid #ADB0D9;
+      background: #fff;
+      left: 0;
+      top: 0;
+      z-index: 3;
+      display: none;
+  
+      .image-wrapper {
+        width: 40px; /* Feste Größe für den Wrapper */
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        border-radius: 50%;
+      
+        
+        &:hover {
+          background-color: $lightblue; /* Hintergrundfarbe beim Hover */
+          cursor: pointer;
+        }
+  
+        img {
+          width: 24px; /* Bild bleibt konstant */
+          height: 24px;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+      }
+    }
+  
+  
+
+
+
+  
+  
+
+
+
+
+
+
+
+ 
+
+
+      
+     
+
+
+
+
+     
+
+
+
+
+
+
+
+      
+
+     
+
+
+
+
+
+      
+
+
+
+
+     
+
+ 
+
+
+
+      
+   
+  
+
+      
+      
+
+
+    
 
     /* Nachrichten-Header für Avatar und Name des Senders */
     .message-header {
@@ -196,6 +301,7 @@
         color: #333;
       }
     }
+
 
     /* Nachrichteninhalt: Bild oder Text */
     .message-content {
@@ -490,4 +596,61 @@
     border: 1px solid $middleblue;
     white-space: nowrap;
   }
+
+
+
+
+
+
+
+  .edit-dialog {
+    position: absolute;
+    top: 10px;
+    left: 50px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  
+    button {
+      display: block;
+      background: none;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      &:hover {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+  
+  .edit-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  
+    button {
+      background-color: $button-blue;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      color: #fff;
+  
+      &:hover {
+        background-color: darken($button-blue, 10%);
+      }
+    }
+  
+    button:last-child {
+      background-color: #e74c3c;
+  
+      &:hover {
+        background-color: darken(#e74c3c, 10%);
+      }
+    }
+  }
+  
 }

@@ -33,6 +33,7 @@ export class AddMembersDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    
     console.log('Mitglieder im Dialog:', this.data.members);
     this.specificMemberName = ''; // Leere das Eingabefeld beim Öffnen
     this.existingMembers = this.data.members || []; // Lade bereits vorhandene Mitglieder (Entwicklerteam + MemberList)
@@ -117,29 +118,43 @@ export class AddMembersDialogComponent implements OnInit {
     this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste nach dem Entfernen
   }
 
-
   onCreate(): void {
     console.log('Mitglieder vor dem Speichern:', this.selectedMembers);
-    
+  
     const uniqueMembers = this.selectedMembers.filter(member => 
       !this.data.members.some((m: any) => m.name === member.name)
     );
   
     if (uniqueMembers.length > 0) {
       console.log('Neue Mitglieder hinzugefügt:', uniqueMembers);
-      
+  
       // Kombiniere die bereits vorhandenen und neu ausgewählten Mitglieder
       const updatedMembers = [...this.data.members, ...uniqueMembers];
-      
-      // Aktualisiere die Mitglieder im ChannelService
-      this.channelService.setMembers(this.data.channelName, updatedMembers);
+  
+      // Aktualisiere die Mitglieder im ChannelService und speichere in Firestore
+      this.channelService.setMembers(this.data.channelName, updatedMembers)
+        .then(() => {
+          console.log('Mitglieder erfolgreich gespeichert.');
+        })
+        .catch(error => {
+          console.error('Fehler beim Speichern der Mitglieder:', error);
+        });
       
       // Schließe den Dialog und übergebe die aktualisierte Mitgliederliste
       this.dialogRef.close(updatedMembers);
     } else {
       console.log('Keine neuen Mitglieder ausgewählt.');
+    }
   }
-}
+  
+
+
+
+
+
+
+
+ 
 
 
 

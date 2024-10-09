@@ -29,7 +29,6 @@ export class EditChannelDialogComponent implements OnInit {
   editedChannelName: string = '';
   editedDescription: string = '';
 
-  
 
   constructor(
     public dialogRef: MatDialogRef<EditChannelDialogComponent>,
@@ -37,6 +36,7 @@ export class EditChannelDialogComponent implements OnInit {
     private channelService: ChannelService,
     private userService: UserService 
   ) {
+   
     this.channelName = data.name;
     this.members = data.members;
     this.description = data.description;
@@ -71,6 +71,7 @@ export class EditChannelDialogComponent implements OnInit {
       name: this.editedChannelName.trim() ? this.editedChannelName : this.channelName,
       members: this.members, // Behalte die Mitglieder bei
       description: this.description,
+      //description: this.editedDescription.trim() ? this.editedDescription : this.description,
       createdBy: this.createdBy
     };
 
@@ -121,8 +122,6 @@ export class EditChannelDialogComponent implements OnInit {
   }
  
 }
-
-
 
 
 
