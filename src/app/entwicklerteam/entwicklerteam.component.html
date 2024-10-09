@@ -1,116 +1,114 @@
+
 <div class="entwickler-box">
   <div *ngFor="let channel of channels" class="channel-container">
-    <!-- Linker Bereich: Channel-Name und Icon -->
+    <!-- Channel Name -->
     <div class="office-box" (click)="openEditChannelDialog(channel)">
       <img src="assets/img/tag-black.png" alt="Tag Icon" />
       <h1>{{ channel.name }}</h1>
       <img src="assets/img/keyboard_arrow_down-1.png" />
     </div>
 
-
-    <!-- Rechter Bereich: Avatare der Mitglieder -->
+    <!-- Avatare der Mitglieder -->
     <ul class="avatar-list" *ngIf="channel.members && channel.members.length > 0">
-
-      <li *ngFor="let member of channel.members ; let last = last">
-        <!-- Avatar des Mitglieds -->
+      <li *ngFor="let member of channel.members">
         <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar">
       </li>
-
-      <!-- Zähler zwischen dem letzten Avatar und member.png -->
       <li *ngIf="channel.members.length > 1" class="member-counter" (click)="openMembersDialog(channel)">
         +{{ channel.members.length - 1 }}
       </li>
     </ul>
-    <div class="static-member" (click)="openAddMembersDialog(channel)" >
-      <img   src="assets/img/member.png" alt="Member" >
+
+    <div class="static-member" (click)="openAddMembersDialog(channel)">
+      <img src="assets/img/member.png" alt="Member">
     </div>
   </div>
 </div>
 
 
-
 <div class="channel-input-box" *ngFor="let channel of channels">
-  <div class="channel-box" >
-    <div class="channel-info">
-      <img src="assets/img/tag-black.png" alt="Tag Icon" />
-     
-      <h1>{{ channel.name  }}</h1>
-      <img src="assets/img/keyboard_arrow_down-1.png" />
-    </div>
-    <div class="channel-info-detail">
-      <h2>
-        Du hast diesen Channel heute erstellt.Das ist der Anfang des Cahnnels
-      </h2>
-      <img src="assets/img/tag-blue.png" alt="Tag Icon" />
-      
-      <p>{{ channels[0].name }}</p>
+  <div class="channel-box">
+    
+
+    <!-- Nachrichtenliste -->
+    <div class="message-list" #messageList>
+      <div *ngFor="let msg of messages; let i = index">
+        <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
+        <div class="seperator" *ngIf="i === 0 || messages[i-1].date !== msg.date">
+          <span class="date-separator">
+            <span *ngIf="msg.date === currentDate; else otherDate">
+              Heute
+            </span>
+            <ng-template #otherDate>
+              {{ msg.date | date:'dd.MM.yyyy' }}
+            </ng-template>
+          </span>
+        </div>
+
+        <!-- Nachricht anzeigen -->
+        <div class="message-container" [ngClass]="{ 'sent-message': msg.senderName === currentUser.name, 'received-message': msg.senderName !== currentUser.name }">
+          <!-- Avatar des Senders -->
+          <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+          <div class="message-box">
+            <span class="message-info">
+              <span class="sender-name">{{ msg.senderName }}</span>
+              <span class="message-time">{{ msg.time }}</span>
+            </span>
+            <div class="message-content" 
+            [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'} ">
+
+
+    
+              <img *ngIf="msg.type === 'image' " [src]="msg.content" class="sent-image" />
+              <p *ngIf="msg.type === 'text' " class="sent-message">{{ msg.content }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
- 
+
+
+
+
+
+
+
+
+
+
+
+
   <div class="chat-input-container">
     <div class="chat-input">
       <div class="textarea-wrapper">
-        <textarea
-          
-         placeholder="Nachricht an #{{ channel.name }}"
-          [(ngModel)]="message"
-          #textArea
-        ></textarea>
+        <textarea placeholder="Nachricht an #{{ channel.name }}" [(ngModel)]="message" #textArea
+        (keydown)="handleKeyDown($event, textArea)"></textarea>
 
         <div class="image-preview" *ngIf="imageUrl">
-          <img
-            class="image-border"
-            [src]="imageUrl"
-            alt="Hochgeladenes Bild"
-            (click)="openImageModal()"
-          />
+          <img class="image-border" [src]="imageUrl" alt="Hochgeladenes Bild" (click)="openImageModal()" />
           <div class="img-wrapper">
-            <img
-              (click)="closeProfileCard(textArea); $event.stopPropagation()"
-              src="assets/img/close.png"
-              alt="Schließen"
-            />
+            <img (click)="closeProfileCard(textArea); $event.stopPropagation()" src="assets/img/close.png" alt="Schließen" />
           </div>
         </div>
 
         <div class="buttons-wrapper">
           <div class="input-buttons">
             <label for="image-upload" class="image-upload-button">
-              <img
-                class="input-image"
-                src="assets/img/add-pic.png"
-                alt="Bild hinzufügen"
-              />
-
-              <input
-                type="file"
-                id="image-upload"
-                (change)="onImageSelected($event, textArea)"
-                style="display: none"
-              />
+              <img class="input-image" src="assets/img/add-pic.png" alt="Bild hinzufügen" />
+              <input type="file" id="image-upload" (change)="onImageSelected($event, textArea)" style="display: none" />
             </label>
 
-            <img src="assets/img/Vector.png" />
-
-            <button (click)="toggleEmojiPicker()"  >
-              <img
-                class="input-image"
-                src="assets/img/emoji.png"
-                alt="Emoji hinzufügen"
-              />
+            <button (click)="toggleEmojiPicker()">
+              <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
             </button>
             
             <button (click)="addAtSymbol()" class="at-button">
-              <img
-                class="input-image"
-                src="assets/img/qr.png"
-                alt="@ hinzufügen"
-              />
+              <img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
             </button>
           </div>
 
           <div class="send-button">
-            <button (click)="sendMessage()">
+            <button (click)="sendMessage(textArea)">
               <img src="assets/img/send-button.png" alt="Senden" />
             </button>
           </div>
@@ -118,21 +116,13 @@
       </div>
     </div>
 
-    <div
-    class="emoji-picker "
-    *ngIf="isEmojiPickerVisible"
-  >
-    <ngx-emoji-mart   (emojiSelect)="addEmoji($event)"></ngx-emoji-mart>
-  </div>
+    <div class="emoji-picker" *ngIf="isEmojiPickerVisible">
+      <ngx-emoji-mart (emojiSelect)="addEmoji($event)"></ngx-emoji-mart>
+    </div>
   </div>
 
   <div class="image-modal" *ngIf="isImageModalOpen" (click)="closeImageModal()">
-    <img
-      [src]="imageUrl"
-      alt="Vergrößertes Bild"
-      (click)="$event.stopPropagation()"
-    />
+    <img [src]="imageUrl" alt="Vergrößertes Bild" (click)="$event.stopPropagation()" />
     <button class="close-modal" (click)="closeImageModal()">×</button>
   </div>
-
 </div>

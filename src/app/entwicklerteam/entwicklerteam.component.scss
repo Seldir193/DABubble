@@ -1,7 +1,6 @@
 @import "./../../styles.scss";
 
 .entwickler-box {
-  
   cursor: pointer;
   height: auto;
   box-shadow: 0px 2px 10px 0px #00000014;
@@ -26,11 +25,9 @@
   justify-content: center;
 
   img {
-   
     border-radius: 50%;
     transition: filter 0.3s ease; /* Übergang für den Filter-Effekt */
    
-    
     /* Filter-Effekt beim Hover auf das Bild */
     &:hover {
       filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
@@ -72,7 +69,6 @@
   }
 
 
-
   .avatar-list {
     display: flex;
     padding-right:10px;
@@ -101,7 +97,6 @@
         border: 2px solid white; /* Optional: Umrandung */
 
       }
-
       /* Zähler für zusätzliche Mitglieder */
       .member-counter {
         margin-left: 10px;  /* Abstand zum letzten Avatar */
@@ -117,104 +112,118 @@
   }
 }
 
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-.channel-input-box{
+.channel-input-box {
   height: calc(100vh - 20.3rem);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
 }
-.channel-box{
-  padding: 25px 45px 0;
-  height: 100%;
+
+.channel-box {
+  padding: 0px 45px 0;
+  //padding: 25px 45px 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  overflow-x:hidden;
+  flex-grow: 1; 
 
-.channel-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 33px;
-  cursor: pointer;
-  width: 100%;
-  max-width: 200px;
-
-  &:hover {
-    background-color: $lightblue;
-    border-radius: 100px;
+  .message-list {
    
-    img {
-      filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+    overflow-y: auto; /* Ermögliche vertikales Scrollen */
+    padding: 10px;
+    flex-grow: 1; /* Erlaubt der Nachrichtenliste, den verfügbaren Platz einzunehmen */
+   
+
+    .message-box{
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      gap:8px;
+
+      .message-info {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        gap: 20px;
+        align-items: center;
+      }
+    }
+     
+      .message-time {
+        font-size: 14px;
+        font-weight:400;
+        color: $lightgray;
+      
+      }
+      
+
+    .sender-name{
+      font-size:18px;
+      font-weight:700;
+    }
+  }
+
+  .message-container {
+    display: flex;
+    align-items: flex-start; /* Nachrichten beginnen von oben */
+    margin-bottom: 15px;
+    flex-direction:row-reverse;
+    gap:30px;
+
+    /* Nachrichten-Header für Avatar und Name des Senders */
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+
+      .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 35%;
+      }
+
+      .sender-name {
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+      }
     }
 
-    &:hover h1 {
-      color: $hoverColor;
-      font-size: 24px;
-      font-weight: 700;
-      transition: color 0.3s ease, font-size 0.3s ease;
+    /* Nachrichteninhalt: Bild oder Text */
+    .message-content {
+      //max-width: 60%; /* Maximal 60% der Breite */
+      background-color: $hoverColor;
+      padding: 15px;
+      border-radius: 30px 0px 30px 30px;
+      word-wrap: break-word;
+
+      p{
+        font-size:18px;
+        font-weight:400;
+        margin:0;
+      }
+
+      &.text-message {
+        background-color: $middleblue;
+        color: white;
+      }
+
+      &.image-message {
+        background-color: transparent;
+        
+        img {
+          max-width: 200px;
+          border-radius: 10px;
+          object-fit: cover;
+        }
+      }
     }
   }
-
-
-  h1 {
-    font-size: 24px;
-    font-weight: 700;
-  }
 }
-
-
-.channel-info-detail {
-  display: flex;
-  align-items: center;
-
-  img {
-    width: 20px;
-    height: 20px;
-  }
-
-  h2 {
-    font-size: 20px;
-    font-weight: 400;
-  }
-
-  p {
-    color: $hoverColor;
-  }
-}
-}
-
 
 .chat-input-container {
-
-  
-
-
   .emoji-picker {
     position: absolute; /* Emoji-Picker soll relativ zum Container positioniert werden */
     bottom: 80px; /* Stelle sicher, dass er über dem Eingabefeld angezeigt wird */
@@ -225,18 +234,16 @@
     background-color: white; /* Hintergrundfarbe für den Emoji-Picker */
   }
 
-  
-  
   .chat-input {
     display: flex;
     align-items: center;
-    padding:25px 45px;
-    
+   // padding:25px 45px;
+   padding:0px 45px;
+
     .textarea-wrapper {
       position: relative;  
       width: 100%;
     }
-
 
     textarea {
       flex-grow: 1;
@@ -253,7 +260,6 @@
       transition: all 0.3s ease;
       font-family: 'Segoe UI Emoji', sans-serif;
   
-    
       &:hover {
         border-color: $button-blue;
         transition: border-color 0.3s;
@@ -343,7 +349,6 @@
         justify-content: center;
         cursor: pointer;
         
-
         &:hover {
           background-color: $lightblue;
           
@@ -450,14 +455,32 @@
   }
 }
 
+.seperator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+  margin-bottom:15px;
 
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;  // Linie nimmt den verbleibenden Platz ein
+    height: 1px;
+    background-color: $middleblue;  // Farbe der Linie
+  }
 
-
-
-
-
-
-
-
-
-
+  .date-separator {
+    font-size: 14px;
+    font-weight:400;
+    color: black;  // Datum Farbe
+    padding: 5px 15px;  // Abstand links und rechts vom Text (optional)
+    background-color: #fff;  // Hintergrundfarbe, um den Text von den Linien zu trennen
+    z-index: 1;  // Damit der Text über den Linien liegt, wenn nötig
+    border-radius:30px;
+    border: 1px solid $middleblue;
+    white-space: nowrap;
+  }
+}
