@@ -12,6 +12,7 @@ import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-
 import { UserService } from '../user.service'; // Importiere den UserService
 import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für formatDate
 
+
 @Component({
   selector: 'app-entwicklerteam',
   standalone: true,
@@ -162,7 +163,7 @@ export class EntwicklerteamComponent implements OnInit {
         createdBy: channel.createdBy || 'Unbekannt'
       }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Aktualisiere den Channel mit der neuen Beschreibung und dem neuen Namen
@@ -174,6 +175,20 @@ export class EntwicklerteamComponent implements OnInit {
     });
   }
   
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
   openImageModal() {
     this.isImageModalOpen = true;
   }

@@ -1,3 +1,5 @@
+
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -13,8 +15,6 @@ import { UserService } from '../user.service';
   styleUrls: ['./edit-channel-dialog.component.scss']
 })
 
-
-
 export class EditChannelDialogComponent implements OnInit {
   channelName: string = '';
   description: string = '';
@@ -28,6 +28,8 @@ export class EditChannelDialogComponent implements OnInit {
   // Variablen für bearbeitete Daten
   editedChannelName: string = '';
   editedDescription: string = '';
+
+  
 
   constructor(
     public dialogRef: MatDialogRef<EditChannelDialogComponent>,
@@ -63,8 +65,6 @@ export class EditChannelDialogComponent implements OnInit {
     });
   }
 
-
-  
   onSave(): void {
     // Falls der Channel-Name bearbeitet wurde, speichere die Änderungen
     const updatedChannel = {
@@ -79,13 +79,6 @@ export class EditChannelDialogComponent implements OnInit {
 
     this.dialogRef.close(updatedChannel); // Übergib den aktualisierten Channel beim Schließen des Dialogs
   }
-
-
-
-
-
-  
-
 
   // Methode zum Bearbeiten und Speichern des Channel-Namens
   toggleEditingName(): void {
@@ -126,4 +119,14 @@ export class EditChannelDialogComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
+ 
 }
+
+
+
+
+
+
+
+
+
