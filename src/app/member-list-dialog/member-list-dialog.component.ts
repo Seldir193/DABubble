@@ -1,6 +1,13 @@
 
+
+
+
+
+
+
+
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA ,MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
 import { ChannelService } from '../channel.service';
@@ -15,27 +22,26 @@ import { ChannelService } from '../channel.service';
 export class MemberListDialogComponent {
   members: any[] = [];
 
-
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<MemberListDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { channelName: string; members: any[] },
+    @Inject(MAT_DIALOG_DATA) public data: { channelId: string; channelName: string; members: any[] },
     private channelService: ChannelService
   ) {
-    this.members = data.members;
+    this.members = [...data.members]; // Erstelle eine Kopie der Mitgliederliste, um direkte Mutationen zu vermeiden
   }
 
+  // Methode zum Entfernen eines Mitglieds
   removeMember(member: any): void {
-    this.data.members = this.data.members.filter(m => m !== member);
-
-    this.channelService.setMembers(this.data.channelName, this.members);
+    this.members = this.members.filter(m => m !== member);
+    this.updateChannelMembers();
   }
 
+  // Methode zum Hinzufügen von Mitgliedern über den AddMembersDialog
   openAddMembersDialog(): void {
-    // Schließe den aktuellen Dialog, bevor der neue Dialog geöffnet wird
-    this.dialogRef.close(); // Schliesse MemberListDialogComponent
 
-    // Öffne den AddMembersDialogComponent
+    this.dialogRef.close(); 
+
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
       data: { members: this.members }
     });
@@ -45,30 +51,36 @@ export class MemberListDialogComponent {
         const uniqueMembers = updatedMembers.filter(member =>
           !this.members.some(m => m.name === member.name)
         );
-        this.members = [...this.members, ...uniqueMembers]; // Aktualisiere die Mitgliederliste
 
-        // Aktualisiere den ChannelService, um die neuen Mitglieder zu speichern
-        this.channelService.setMembers(this.data.channelName, this.members);
+        if (uniqueMembers.length > 0) {
+          this.members = [...this.members, ...uniqueMembers]; // Aktualisiere die Mitgliederliste
+          this.updateChannelMembers();
+        }
 
-        // Gib die aktualisierte Liste an EntwicklerteamComponent zurück
-        this.closeDialog(); // Schließt den Dialog und gibt die aktualisierten Mitglieder zurück
+        this.closeDialog(); 
       }
     });
   }
 
+  // Methode zur Aktualisierung der Mitgliederliste im ChannelService
+  updateChannelMembers(): void {
+    this.channelService.setMembers(this.data.channelId, this.members)
+      .then(() => {
+        console.log('Mitglieder erfolgreich im ChannelService aktualisiert.');
+      })
+      .catch((error) => {
+        console.error('Fehler beim Aktualisieren der Mitglieder im ChannelService:', error);
+      });
+  }
+
+  // Methode zum Schließen des Dialogs und Rückgabe der aktualisierten Mitgliederliste
   closeDialog(): void {
-    // Rückgabe der aktualisierten Mitgliederliste
+    // Gib die aktualisierte Mitgliederliste zurück
     this.dialogRef.close({ members: this.members });
   }
 
-   // Methode zum Schließen des Dialogs ohne Aktion
-   onCancel(): void {
+  // Methode zum Schließen des Dialogs ohne Änderungen
+  onCancel(): void {
     this.dialogRef.close();
   }
-
-  
-  updateMembers(updatedMembers: any[]): void {
-    this.members = updatedMembers;
-  }
-
 }

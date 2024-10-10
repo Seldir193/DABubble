@@ -26,23 +26,19 @@ export class EntwicklerteamComponent implements OnInit {
   imageUrl: string | ArrayBuffer | null | undefined = null;  // Typ mit undefined erweitert
   isTextareaExpanded: boolean = false;
   isImageModalOpen = false;
-  channels: { name: string; members: any[] }[] = [];
+  //channels: { name: string; members: any[] }[] = [];
   //channels: { id: string, name: string, members: any[], description?: string, createdBy?: string }[] = [];
+  channels: { id: string; name: string; members: any[]; description?: string; createdBy?: string }[] = [];
 
+ // selectedChannel: { name: string; members: any[] } | null = null;
 
-  selectedChannel: { name: string; members: any[] } | null = null;
+  selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
+
   messages: { type: string, content: string, senderName: string, senderAvatar: string, time: string, date: string }[] = [];
   currentUser: any;  
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
 
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
-
-  receiveNewTeam(name: string, members: any[]): void {
-    // Überschreibe die Channel-Liste mit dem neuen Channel
-    this.channels = [{ name, members }];
-    console.log('EntwicklerteamComponent: Neuer Channel hinzugefügt:', this.channels);
-  }
-
 
 
   onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
@@ -97,20 +93,65 @@ export class EntwicklerteamComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  
-    // Abonniere den Channel-Service, um den aktuell ausgewählten Channel zu empfangen
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
-        // Zeige nur den aktuell ausgewählten Channel an und ersetze den alten
-        this.channels = [{ name: channel.name, members: channel.members }];
+        if (!channel.id) {
+          console.error('Fehlende ID im Channel:', channel);
+        } else if (!channel.createdBy) {
+          // Setze einen Standardwert für createdBy, wenn er fehlt
+          channel.createdBy = '';
+        }
+        
+        // Setze die Channels-Liste und füge die ID und createdBy hinzu
+        this.channels = [{
+          id: channel.id,
+          name: channel.name,
+          members: channel.members,
+          description: channel.description,
+          createdBy: channel.createdBy
+        }];
         console.log('Aktueller Channel im EntwicklerteamComponent:', this.channels);
       }
     });
-    
+  
     this.loadCurrentUser();
   }
   
+  
+  receiveNewTeam(name: string, members: any[]): void {
+    const newChannelId = Math.random().toString(36).substring(2, 15); // Generiere eine eindeutige ID für den neuen Channel
+    const createdBy = this.currentUser?.name || ''; // Setze den aktuellen Benutzer als Ersteller
+  
+    // Überschreibe die Channel-Liste mit dem neuen Channel inklusive ID und createdBy
+    this.channels = [{ id: newChannelId, name, members, createdBy }];
+    console.log('EntwicklerteamComponent: Neuer Channel hinzugefügt:', this.channels);
+  }
+  
 
+  openEditChannelDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
+    const dialogRef = this.dialog.open(EditChannelDialogComponent, {
+      data: {
+        id: channel.id,
+        name: channel.name,
+        members: channel.members,
+        description: channel.description || '',
+        createdBy: channel.createdBy || ''
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Aktualisiere den Channel mit der neuen Beschreibung und dem neuen Namen
+        this.channelService.updateChannel(channel.id, result.name, result.description || '');
+  
+        // Optional: Stelle sicher, dass Änderungen an den Mitgliedern auch gespeichert werden
+        this.channelService.setMembers(channel.id, result.members);
+      }
+    });
+  }
+  
+  
+  
   loadCurrentUser(): void {
     this.userService.getCurrentUserData().then(user => {
       this.currentUser = user;
@@ -118,12 +159,12 @@ export class EntwicklerteamComponent implements OnInit {
       console.error('Fehler beim Laden des aktuellen Benutzers:', err);
     });
   }
-  
-  openAddMembersDialog(channel: { name: string; members: any[] }): void {
+
+  openAddMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
       data: { members: channel.members }
     });
-
+  
     dialogRef.afterClosed().subscribe((updatedMembers: any[] | undefined) => {
       if (updatedMembers && updatedMembers.length > 0) {
         const uniqueMembers = updatedMembers.filter(member =>
@@ -131,52 +172,40 @@ export class EntwicklerteamComponent implements OnInit {
         );
         channel.members = [...channel.members, ...uniqueMembers]; // Füge neue Mitglieder hinzu
         console.log('Aktualisierte Mitgliederliste:', channel.members);
-
-        // Setze die Mitglieder im ChannelService, um sie zu speichern
-        this.channelService.setMembers(channel.name, channel.members);
-      }
-    });
-  }
-
-  openMembersDialog(channel: { name: string; members: any[] }): void {
-    const dialogRef = this.dialog.open(MemberListDialogComponent, {
-      data: { channelName: channel.name, members: channel.members }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.selectedMembers) {
-        channel.members = result.selectedMembers; // Aktualisiere die Mitglieder des Channels
-
-        // Setze die Mitglieder im ChannelService, um sie zu speichern
-        this.channelService.setMembers(channel.name, result.selectedMembers);
-
-        this.channels = this.channels.map(ch => ch.name === channel.name ? { ...ch, members: result.members } : ch);
-      }
-    });
-  }
-
-  openEditChannelDialog(channel: { name: string; members: any[]; description?: string; createdBy?: string }): void {
-    const dialogRef = this.dialog.open(EditChannelDialogComponent, {
-      data: {
-        name: channel.name,
-        members: channel.members,  // Übergib die Mitglieder des Channels
-        description: channel.description || '',  // Verwende einen leeren String, falls description undefined ist
-        createdBy: channel.createdBy || 'Unbekannt'
-       
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Aktualisiere den Channel mit der neuen Beschreibung und dem neuen Namen
-        this.channelService.updateChannel( channel.name, result.name, result.description || '');
   
-        // Optionale: Stelle sicher, dass Änderungen an den Mitgliedern auch gespeichert werden
-        this.channelService.setMembers(result.name, channel.members);
+        // Setze die Mitglieder im ChannelService, um sie zu speichern
+        this.channelService.setMembers(channel.id, channel.members);
       }
     });
   }
+  
+  
+  
 
+
+
+  openMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
+    const dialogRef = this.dialog.open(MemberListDialogComponent, {
+      data: { channelId: channel.id, channelName: channel.name, members: channel.members }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.members) {
+        channel.members = result.members; // Aktualisiere die Mitglieder des Channels
+  
+        // Setze die Mitglieder im ChannelService, um sie zu speichern
+        this.channelService.setMembers(channel.id, result.members);
+  
+        // Aktualisiere die lokale channels-Liste
+        this.channels = this.channels.map(ch => ch.id === channel.id ? { ...ch, members: result.members } : ch);
+      }
+    });
+  }
+  
+
+  
+  
+  
   openImageModal() {
     this.isImageModalOpen = true;
   }

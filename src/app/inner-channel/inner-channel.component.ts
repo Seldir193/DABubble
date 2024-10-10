@@ -16,8 +16,13 @@ import { UserService } from '../user.service';
 export class InnerChannelComponent {
   @ViewChild(EntwicklerteamComponent) entwicklerteamComponent!: EntwicklerteamComponent;
   isChannelsVisible = true;
-  entwicklerTeams: { name: string; members: any[] }[] = [];
+  //entwicklerTeams: { name: string; members: any[] }[] = [];
+
+  entwicklerTeams: { id: string; name: string; members: any[]; description?: string; createdBy?: string }[] = [];
+
   channelNameExists = false;  // Flag zur Überprüfung, ob der Channel-Name bereits existiert
+
+ // selectedChannelId: string | null = null; 
 
   constructor(public dialog: MatDialog, private channelService: ChannelService,private userService: UserService) {}
 
@@ -30,24 +35,19 @@ export class InnerChannelComponent {
       this.entwicklerTeams = channels;
     });
   }
-  
-
 
   createChannel(name: string, members: any[]): void {
     this.userService.getCurrentUserData().then((userData) => {
       const currentUserName = userData?.name || 'Unbekannt'; // Setze den Benutzernamen oder 'Unbekannt'
-      
-      // Überprüfe, ob ein Channel mit demselben Namen bereits existiert
+  
       const exists = this.entwicklerTeams.some(channel => channel.name.toLowerCase() === name.toLowerCase());
-
-      console.log('Benutzername abgerufen:', currentUserName);
   
       if (exists) {
         this.channelNameExists = true;
         console.error(`Channel "${name}" existiert bereits.`);
       } else {
-        // Erstelle den neuen Channel mit dem 'createdBy' Feld
         const newChannel = {
+          id: Math.random().toString(36).substring(2, 15), // Generiere eine eindeutige ID für den neuen Channel
           name,
           members,
           createdBy: currentUserName  // Hier wird der aktuelle Benutzername gesetzt
@@ -55,18 +55,26 @@ export class InnerChannelComponent {
   
         this.entwicklerTeams.push(newChannel);
         this.channelService.addChannel(newChannel);  // Speichere den Channel
-        this.channelService.changeChannel(newChannel);  // Aktualisiere den Channel in der Entwicklerteam-Komponente
+        this.channelService.changeChannel(newChannel);  // Aktualisiere den Channel
         this.channelNameExists = false;
       }
     }).catch((error) => {
       console.error('Fehler beim Abrufen des Benutzers:', error);
     });
   }
- 
+  
 
-  selectChannel(channel: {  name: string; members: any[] }): void {
+
+
+  
+  
+ 
+ 
+ 
+  selectChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     this.channelService.changeChannel(channel);  // Aktualisiere den Channel im EntwicklerteamComponent
   }
+  
 
   /**
    * Methode zum Öffnen des Dialogs für die Channelerstellung.

@@ -3,6 +3,7 @@
 .selection{
     display: flex;
     flex-direction: column;
+    gap:25px;
 
 .channel-box {
   display: flex;
@@ -40,6 +41,7 @@
       font-size: 24px;
       font-weight: 700;
       transition: color 0.3s ease, transform 0.3s ease;
+      margin:0;
     }
   }
 
@@ -47,6 +49,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap:10px;
   }
   
   .edit-channel {
@@ -78,49 +81,59 @@
   }
 }
 
-.entwickler-box{
-    display: flex;
-    align-items: center;
-    gap:10px;
-    padding:0 0 0 40px;
-    border-radius: 100px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    width:100%;
-    height:33px;
-    max-width:206px;
-    cursor: pointer;
-    margin-top: 13px;
-
-    &:hover {
-        background-color: $lightblue;
-        img {
-          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-          }
-      }
+.entwickler-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 0 40px;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  width: 100%;
+  height: 33px;
+  max-width: 206px;
+  cursor: pointer;
   
-    img {
-        width: 24px;
-        height: 24px;
-        object-fit: cover;
-        transition: filter 0.3s ease;
-        cursor: pointer;
-      }
-    p{
-        font-size: 18px;
-    }
-}
 
-.first-channel  {
-  background-color: $lightblue !important; // Dauerhafte Hintergrundfarbe
+  &:hover {
+    background-color: $lightblue;
+    img {
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+    }
+  }
 
   img {
-    filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+    cursor: pointer;
   }
 
-  p{
-    color:$hoverColor !important;
+  p {
+    font-size: 18px;
+  }
+
+  &.selected {
+    background-color: $lightblue; // Hintergrundfarbe für den ausgewählten Kanal
+
+    img {
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+    }
+
+    p {
+      color: $hoverColor;
+    }
   }
 }
+
+
+
+
+
+
+
+
+
 
 .add-channel{
   display: flex;
@@ -129,6 +142,10 @@
   padding:0 0 0 40px;
   cursor: pointer;
   font-size:18px;
+
+  p{
+    margin:0;
+  }
 
   &:hover {
 
@@ -173,6 +190,19 @@
   &.rotate-down {
     transform: rotate(180deg); // Zurück zur Ausgangsposition
   }
+}
+
+.channel-distanz{
+  display: flex;
+  flex-direction: column;
+  gap:25px;
+
+}
+
+.channel-detail-distanz{
+  display: flex;
+    flex-direction: column;
+    gap: 13px;
 }
 
 }

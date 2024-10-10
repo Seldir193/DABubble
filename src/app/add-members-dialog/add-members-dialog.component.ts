@@ -118,10 +118,12 @@ export class AddMembersDialogComponent implements OnInit {
     this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste nach dem Entfernen
   }
 
+
+
   onCreate(): void {
     console.log('Mitglieder vor dem Speichern:', this.selectedMembers);
   
-    const uniqueMembers = this.selectedMembers.filter(member => 
+    const uniqueMembers = this.selectedMembers.filter(member =>
       !this.data.members.some((m: any) => m.name === member.name)
     );
   
@@ -135,15 +137,17 @@ export class AddMembersDialogComponent implements OnInit {
       this.channelService.setMembers(this.data.channelName, updatedMembers)
         .then(() => {
           console.log('Mitglieder erfolgreich gespeichert.');
+          
+          // Schließe den Dialog und übergebe die aktualisierte Mitgliederliste
+          this.dialogRef.close(updatedMembers);  // Stelle sicher, dass die aktualisierte Mitgliederliste zurückgegeben wird
         })
         .catch(error => {
           console.error('Fehler beim Speichern der Mitglieder:', error);
         });
-      
-      // Schließe den Dialog und übergebe die aktualisierte Mitgliederliste
-      this.dialogRef.close(updatedMembers);
+  
     } else {
       console.log('Keine neuen Mitglieder ausgewählt.');
+      this.dialogRef.close(null); // Falls keine neuen Mitglieder, Dialog schließen ohne Änderung
     }
   }
   
@@ -153,19 +157,9 @@ export class AddMembersDialogComponent implements OnInit {
 
 
 
-
- 
-
-
-
-
-
- 
-
-
-
   
-
+  
+  
 openMembersDialog(): void {
   const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
     data: { members: this.selectedMembers }

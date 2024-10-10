@@ -32,7 +32,9 @@ export class EditChannelDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<EditChannelDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { name: string; members: any[]; description: string; createdBy: string },
+  
+    @Inject(MAT_DIALOG_DATA) public data: { id: string; name: string; members: any[]; description: string; createdBy: string },
+
     private channelService: ChannelService,
     private userService: UserService 
   ) {
@@ -65,57 +67,58 @@ export class EditChannelDialogComponent implements OnInit {
     });
   }
 
+  
+  
+
+
   onSave(): void {
-    // Falls der Channel-Name bearbeitet wurde, speichere die Änderungen
+    // Falls der Channel-Name oder die Beschreibung bearbeitet wurde, speichere die Änderungen
     const updatedChannel = {
       name: this.editedChannelName.trim() ? this.editedChannelName : this.channelName,
       members: this.members, // Behalte die Mitglieder bei
-      description: this.description,
-      //description: this.editedDescription.trim() ? this.editedDescription : this.description,
+      description: this.editedDescription.trim() ? this.editedDescription : this.description,
       createdBy: this.createdBy
     };
-
-    this.channelService.updateChannel(this.channelName, updatedChannel.name, this.description);
-    this.channelService.setMembers(updatedChannel.name, this.members); // Stelle sicher, dass Mitglieder auch aktualisiert werden
-
-    this.dialogRef.close(updatedChannel); // Übergib den aktualisierten Channel beim Schließen des Dialogs
-  }
-
-  // Methode zum Bearbeiten und Speichern des Channel-Namens
-  toggleEditingName(): void {
-    this.isEditingName = !this.isEditingName;
-    if (this.isEditingName) {
-      this.editedChannelName = ''; // Leere das Eingabefeld beim Bearbeiten
-    } else {
-      this.saveChannelName(); // Speichere den Namen
-    }
+  
+    // Rufe den ChannelService auf, um den Channel in Firestore zu aktualisieren
+    this.channelService.updateChannel(this.data.id, updatedChannel.name, updatedChannel.description);
+  
+    // Schließe den Dialog und übergib den aktualisierten Channel
+    this.dialogRef.close(updatedChannel);
   }
 
   saveChannelName(): void {
     if (this.editedChannelName.trim()) {
-      this.channelService.updateChannel(this.channelName, this.editedChannelName, this.description);
+      this.channelService.updateChannel(this.data.id, this.editedChannelName, this.description);
       this.channelName = this.editedChannelName; // Aktualisiere den Channel-Namen
     }
     this.isEditingName = false;
   }
-
-  // Methode zum Bearbeiten und Speichern der Beschreibung
-  toggleEditingDescription(): void {
-    this.isEditingDescription = !this.isEditingDescription;
-    if (this.isEditingDescription) {
-      this.editedDescription = ''; // Leere das Eingabefeld beim Bearbeiten
-    } else {
-      this.saveDescription(); // Speichere die Beschreibung
-    }
-  }
-
+  
   saveDescription(): void {
     if (this.editedDescription.trim()) {
-      this.channelService.updateChannel(this.channelName, this.channelName, this.editedDescription);
+      this.channelService.updateChannel(this.data.id, this.channelName, this.editedDescription);
       this.description = this.editedDescription; // Aktualisiere die Beschreibung
     }
     this.isEditingDescription = false;
   }
+
+  toggleEditingName(): void {
+    this.isEditingName = !this.isEditingName;
+    if (!this.isEditingName) {
+      this.saveChannelName(); // Speichere den Namen, wenn die Bearbeitung beendet wird
+    }
+  }
+
+  toggleEditingDescription(): void {
+    this.isEditingDescription = !this.isEditingDescription;
+    if (!this.isEditingDescription) {
+      this.saveDescription(); // Speichere die Beschreibung, wenn die Bearbeitung beendet wird
+    }
+  }
+  
+  
+
 
   onCancel(): void {
     this.dialogRef.close();

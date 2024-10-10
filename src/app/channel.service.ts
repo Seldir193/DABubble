@@ -6,13 +6,13 @@ import { Firestore, collection, addDoc,getDocs,doc,updateDoc } from '@angular/fi
   providedIn: 'root'
 })
 export class ChannelService {
-  // Ein Observable zur Übertragung des aktuellen Channels
-  private channelSource = new BehaviorSubject<{ name: string; members: any[] } | null>(null);
-  currentChannel = this.channelSource.asObservable();
+  // Channel Typdefinition erweitern
+private channelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string } | null>(null);
+currentChannel = this.channelSource.asObservable();
 
-  // Ein Observable zur Übertragung des aktuell ausgewählten Channels
-  private selectedChannelSource = new BehaviorSubject<{ name: string; members: any[] } | null>(null);
-  selectedChannel = this.selectedChannelSource.asObservable();
+private selectedChannelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string } | null>(null);
+selectedChannel = this.selectedChannelSource.asObservable();
+
 
   // Ein Observable zur Übertragung der Mitglieder
   private membersSource = new BehaviorSubject<any[]>([]);
@@ -44,6 +44,7 @@ export class ChannelService {
     }
   }
 
+
   // Lade alle Channels von Firestore
   async loadChannels(): Promise<void> {
     try {
@@ -61,6 +62,7 @@ export class ChannelService {
       console.error('Fehler beim Laden der Channels:', error);
     }
   }
+
 
   async updateChannel(channelId: string, newChannelName: string, description: string): Promise<void> {
     try {
@@ -85,14 +87,13 @@ export class ChannelService {
       throw error;
     }
   }
-
-  async setMembers(channelName: string, members: any[]): Promise<void> {
+  async setMembers(channelId: string, members: any[]): Promise<void> {
     try {
       // Hole die aktuelle Channels-Liste aus dem Service
       const channels = this.channelsSource.getValue();
   
-      // Suche den Channel anhand des Namens
-      const channelIndex = channels.findIndex(c => c.name === channelName);
+      // Suche den Channel anhand der ID
+      const channelIndex = channels.findIndex(c => c.id === channelId);
       
       if (channelIndex > -1) {
         const channel = channels[channelIndex];
@@ -101,7 +102,7 @@ export class ChannelService {
         channel.members = members;
   
         // Speichere die Mitglieder auch in Firestore
-        const channelDocRef = doc(this.firestore, 'channels', channel.id); // Channel-ID aus dem Channel-Objekt
+        const channelDocRef = doc(this.firestore, 'channels', channel.id);
         await updateDoc(channelDocRef, { members });
   
         // Setze die aktualisierte Channels-Liste
@@ -109,12 +110,12 @@ export class ChannelService {
   
         // Falls der aktuelle Channel auch der aktualisierte Channel ist, aktualisiere ihn ebenfalls
         const currentChannel = this.channelSource.getValue();
-        if (currentChannel && currentChannel.name === channelName) {
+        if (currentChannel && currentChannel.id === channelId) {
           currentChannel.members = members;
           this.channelSource.next(currentChannel); // Aktualisiere den aktuellen Channel im Service
         }
   
-        console.log(`Mitglieder für Channel "${channelName}" erfolgreich aktualisiert.`);
+        console.log(`Mitglieder für Channel mit ID "${channelId}" erfolgreich aktualisiert.`);
       } else {
         console.error('Channel nicht gefunden, Mitglieder konnten nicht aktualisiert werden.');
       }
@@ -123,20 +124,21 @@ export class ChannelService {
     }
   }
 
-
-
   
+
+
   
 
 // Methode zum Ändern des aktuell ausgewählten Channels
-changeSelectedChannel(channel: { name: string; members: any[] }) {
+changeSelectedChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }) {
   this.selectedChannelSource.next(channel);
 }
 
 // Methode zum Ändern des aktuellen Channels
-changeChannel(channel: { name: string; members: any[] }) {
+changeChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }) {
   this.channelSource.next(channel);
 }
+
 
 // Methode, um alle Channels abzurufen
 getChannels(): { name: string; members: any[]; description?: string; createdBy?: string }[] {

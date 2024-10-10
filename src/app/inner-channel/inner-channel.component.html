@@ -15,9 +15,12 @@
         </div>
     </div>
 
-    <div *ngIf="isChannelsVisible">
-    <div *ngIf="entwicklerTeams.length > 0">
-        <div  *ngFor="let team of entwicklerTeams; let i = index"  [class.first-channel]="i === 0"  class="entwickler-box" (click)="selectChannel(team)">
+    <div class="channel-distanz" *ngIf="isChannelsVisible">
+    <div  class="channel-detail-distanz" *ngIf="entwicklerTeams.length > 0">
+        <div  *ngFor="let team of entwicklerTeams; let i = index"
+        [class.first-channel]="i === 0"
+          
+            class="entwickler-box" (click)="selectChannel(team)">
             <img  src="assets/img/tag-black.png"> 
             <p>{{ team.name }}</p>
         </div>
