@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Firestore, collection, addDoc,getDocs,doc,updateDoc } from '@angular/fire/firestore';
-
+import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where } from '@angular/fire/firestore';
+import { MessageContent } from './entwicklerteam/entwicklerteam.component';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,7 +13,6 @@ currentChannel = this.channelSource.asObservable();
 private selectedChannelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string } | null>(null);
 selectedChannel = this.selectedChannelSource.asObservable();
 
-
   // Ein Observable zur Übertragung der Mitglieder
   private membersSource = new BehaviorSubject<any[]>([]);
   currentMembers = this.membersSource.asObservable();
@@ -22,7 +21,6 @@ selectedChannel = this.selectedChannelSource.asObservable();
   currentChannels = this.channelsSource.asObservable();
 
   constructor(private firestore: Firestore) {}
-
 
   async addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): Promise<void> {
     try {
@@ -43,7 +41,6 @@ selectedChannel = this.selectedChannelSource.asObservable();
       console.error('Fehler beim Hinzufügen des Channels:', error);
     }
   }
-
 
   // Lade alle Channels von Firestore
   async loadChannels(): Promise<void> {
@@ -124,11 +121,6 @@ selectedChannel = this.selectedChannelSource.asObservable();
     }
   }
 
-  
-
-
-  
-
 // Methode zum Ändern des aktuell ausgewählten Channels
 changeSelectedChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }) {
   this.selectedChannelSource.next(channel);
@@ -138,7 +130,6 @@ changeSelectedChannel(channel: { id: string; name: string; members: any[]; descr
 changeChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }) {
   this.channelSource.next(channel);
 }
-
 
 // Methode, um alle Channels abzurufen
 getChannels(): { name: string; members: any[]; description?: string; createdBy?: string }[] {
@@ -150,4 +141,64 @@ getChannels(): { name: string; members: any[]; description?: string; createdBy?:
 getMembers(): any[] {
   return this.membersSource.getValue(); // Mitglieder abrufen
 }
+
+
+
+async addMessage(channelId: string, message: any): Promise<void> {
+  try {
+    const messagesCollection = collection(this.firestore, 'messages'); // Die Sammlung für Nachrichten
+    const docRef = await addDoc(messagesCollection, { ...message, channelId });
+    console.log('Nachricht erfolgreich hinzugefügt mit ID: ', docRef.id);
+    message.id = docRef.id; // ID zur Nachricht hinzufügen
+  } catch (error) {
+    console.error('Fehler beim Hinzufügen der Nachricht:', error);
+  }
+}
+
+
+// Nachrichten eines Kanals abrufen
+async getMessages(channelId: string): Promise<any[]> {
+  try {
+    const messagesCollection = collection(this.firestore, 'messages');
+    const q = query(messagesCollection, where('channelId', '==', channelId));
+    const querySnapshot = await getDocs(q);
+    const messages: any[] = [];
+    querySnapshot.forEach((doc) => {
+      messages.push(doc.data());
+    });
+    return messages;
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Nachrichten:', error);
+    return [];
+  }
+}
+
+
+
+
+
+
+
+
+
+
+async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
+  try {
+    // Reference to the specific message document
+    const messageDocRef = doc(this.firestore, 'messages', messageId);
+    
+    // Update Firestore with the new content
+    await updateDoc(messageDocRef, {
+      content: updatedContent
+    });
+    
+    console.log('Nachricht erfolgreich gespeichert');
+  } catch (error) {
+    console.error('Fehler beim Aktualisieren der Nachricht:', error);
+  }
+}
+
+
+
+
 }

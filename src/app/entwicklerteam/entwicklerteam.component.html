@@ -27,28 +27,96 @@
 
 <div class="channel-input-box" *ngFor="let channel of channels">
   <div class="channel-box">
-    
+
+
 
     <!-- Nachrichtenliste -->
-    <div class="message-list" #messageList>
-      <div *ngFor="let msg of messages; let i = index">
-        <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
-        <div class="seperator" *ngIf="i === 0 || messages[i-1].date !== msg.date">
-          <span class="date-separator">
-            <span *ngIf="msg.date === currentDate; else otherDate">
-              Heute
-            </span>
-            <ng-template #otherDate>
-              {{ msg.date | date:'dd.MM.yyyy' }}
-            </ng-template>
+<div class="message-list" #messageList>
+  <div *ngFor="let msg of messages; let i = index">
+    <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
+    <div class="seperator" *ngIf="i === 0 || messages[i-1].date !== msg.date">
+      <span class="date-separator">
+        <span *ngIf="msg.date === currentDate; else otherDate">
+          Heute
+        </span>
+        <ng-template #otherDate>
+          {{ msg.date | date:'dd.MM.yyyy' }}
+        </ng-template>
+      </span>
+    </div>
+
+    <!-- Container für gesendete Nachrichten -->
+    <div *ngIf="msg.senderName === currentUser.name" class="sent-message-container">
+      <div class="message-container sent-message">
+        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+        <div class="message-box">
+          <span class="message-info">
+            <span class="sender-name">{{ msg.senderName }}</span>
+            <span class="message-time">{{ msg.time }}</span>
           </span>
+          <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
+            <!-- Display message if not in editing mode -->
+            <p *ngIf="!msg.isEditing && msg.content?.text" class="sent-message">{{ msg.content.text }}</p>
+            
+            <!-- Show textarea and buttons when editing mode is enabled -->
+            <div *ngIf="msg.isEditing" class="edit-message-box">
+              <textarea [(ngModel)]="msg.content.text" rows="3" class="edit-textarea"></textarea>
+              <div class="edit-buttons">
+                <button (click)="saveMessage(msg)" class="save-button">Speichern</button>
+                <button (click)="cancelEditing(msg)" class="cancel-button">Abbrechen</button>
+              </div>
+            </div>
+            </div>
+            <!-- Display image content (if exists) -->
+            <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
+          </div>
+          
+        
+ <div class="emoji-container">
+        <div class="emoji-box">
+          <div class="image-wrapper">
+          <img src="assets/img/close.png" alt="Emoji 1" />
+          </div>
+          <div class="image-wrapper">
+          <img src="assets/img/reaction.png" alt="Emoji 2" />
+          </div>
+          <div class="image-wrapper">
+          <img src="assets/img/reaction.png" alt="Reaction" />
+          </div>
+          <div class="image-wrapper">
+          <img src="assets/img/comment.png" alt="Comment" />
+          </div>
+          <div class="image-wrapper">
+          <img src="assets/img/more.png" alt="More"  (click)="toggleEditMessage(msg)"/>
+          </div>
+          
+        </div>
+  </div>
+
+</div>
+</div>
+  
+  
+
+
+    <!-- Container für empfangene Nachrichten -->
+    <div *ngIf="msg.senderName !== currentUser.name" class="received-message-container">
+      <div class="message-container received-message">
+        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+        <div class="message-box">
+          <span class="message-info">
+            <span class="sender-name">{{ msg.senderName }}</span>
+            <span class="message-time">{{ msg.time }}</span>
+          </span>
+          <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
+            <p *ngIf="msg.content && msg.content.text" class="received-message">{{ msg.content.text }}</p>
+          </div>
+          <img *ngIf="msg.content && msg.content.image" [src]="msg.content.image" class="received-image" />
         </div>
 
-        <!-- Nachricht anzeigen -->
-        <div class="message-container" [ngClass]="{ 'sent-message': msg.senderName === currentUser.name, 'received-message': msg.senderName !== currentUser.name }">
-          <!-- Avatar des Senders -->
 
-          <div class="emoji-box">
+        <div class="emoji-container-received">
+          <div class="emoji-box-received">
             <div class="image-wrapper">
             <img src="assets/img/close.png" alt="Emoji 1" />
             </div>
@@ -61,44 +129,37 @@
             <div class="image-wrapper">
             <img src="assets/img/comment.png" alt="Comment" />
             </div>
-            <div class="image-wrapper">
-            <img src="assets/img/more.png" alt="More"  />
-            </div>
-            
+          
           </div>
-
-
-          <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
-          <div class="message-box">
-            <span class="message-info">
-              <span class="sender-name">{{ msg.senderName }}</span>
-              <span class="message-time">{{ msg.time }}</span>
-            </span>
-            <div class="message-content" 
-            [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'} ">
-
-            <img *ngIf="msg.type === 'image' " [src]="msg.content" class="sent-image" />
-            <p *ngIf="msg.type === 'text' " class="sent-message">{{ msg.content }}</p>
-    
-              
-            </div>
-          </div>
-         </div>
-        </div>
-      </div>
     </div>
   
   
 
 
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
 
 
+    
+  
+  
+  
 
 
 
+
+
+    
+
+    
+
+  
+  
 
   <div class="chat-input-container">
     <div class="chat-input">

@@ -11,6 +11,12 @@ import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-
 import { UserService } from '../user.service'; // Importiere den UserService
 import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für formatDate
 
+
+export interface MessageContent {
+  text?: string;
+  image?: string | ArrayBuffer | null;
+}
+
 @Component({
   selector: 'app-entwicklerteam',
   standalone: true,
@@ -28,15 +34,17 @@ export class EntwicklerteamComponent implements OnInit {
   isImageModalOpen = false;
   //channels: { name: string; members: any[] }[] = [];
   //channels: { id: string, name: string, members: any[], description?: string, createdBy?: string }[] = [];
-  channels: { id: string; name: string; members: any[]; description?: string; createdBy?: string }[] = [];
+  channels: { id: string; name: string; members: any[]; description?: string; createdBy?: string  }[] = [];
 
  // selectedChannel: { name: string; members: any[] } | null = null;
 
   selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
 
-  messages: { type: string, content: string, senderName: string, senderAvatar: string, time: string, date: string }[] = [];
+  messages: { type: string, content: MessageContent, senderName: string, senderAvatar: string, time: string, date: string; isEditing?: boolean  }[] = [];
   currentUser: any;  
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+
+ 
 
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
 
@@ -101,7 +109,7 @@ export class EntwicklerteamComponent implements OnInit {
           // Setze einen Standardwert für createdBy, wenn er fehlt
           channel.createdBy = '';
         }
-        
+  
         // Setze die Channels-Liste und füge die ID und createdBy hinzu
         this.channels = [{
           id: channel.id,
@@ -110,12 +118,24 @@ export class EntwicklerteamComponent implements OnInit {
           description: channel.description,
           createdBy: channel.createdBy
         }];
-        console.log('Aktueller Channel im EntwicklerteamComponent:', this.channels);
+        this.selectedChannel = channel;
+  
+        // Nachrichten für den aktuellen Channel laden
+        this.loadMessages(channel.id);
       }
     });
   
     this.loadCurrentUser();
   }
+  
+  loadCurrentUser(): void {
+    this.userService.getCurrentUserData().then(user => {
+      this.currentUser = user;
+    }).catch(err => {
+      console.error('Fehler beim Laden des aktuellen Benutzers:', err);
+    });
+  }
+
   
   
   receiveNewTeam(name: string, members: any[]): void {
@@ -150,15 +170,7 @@ export class EntwicklerteamComponent implements OnInit {
     });
   }
   
-  
-  
-  loadCurrentUser(): void {
-    this.userService.getCurrentUserData().then(user => {
-      this.currentUser = user;
-    }).catch(err => {
-      console.error('Fehler beim Laden des aktuellen Benutzers:', err);
-    });
-  }
+
 
   openAddMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
@@ -179,11 +191,6 @@ export class EntwicklerteamComponent implements OnInit {
     });
   }
   
-  
-  
-
-
-
   openMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     const dialogRef = this.dialog.open(MemberListDialogComponent, {
       data: { channelId: channel.id, channelName: channel.name, members: channel.members }
@@ -201,10 +208,6 @@ export class EntwicklerteamComponent implements OnInit {
       }
     });
   }
-  
-
-  
-  
   
   openImageModal() {
     this.isImageModalOpen = true;
@@ -229,30 +232,58 @@ scrollToBottom(): void {
   }
 }
 
+
 sendMessage(textArea: HTMLTextAreaElement): void {
   const currentTime = new Date().toLocaleTimeString();
   const msgDate = formatDate(new Date(), 'dd.MM.yyyy', 'en');
 
+
   if (this.message.trim() || this.imageUrl) {
-    this.addMessage(this.message.trim() ? 'text' : 'image', this.message || this.imageUrl as string, currentTime, msgDate);
+    const newMessage = {
+      type: this.imageUrl && this.message.trim() ? 'text_and_image' : (this.imageUrl ? 'image' : 'text'),
+      content: {
+        text: this.message.trim() || null,
+        image: this.imageUrl || null
+      },
+      senderName: this.currentUser.name,
+      senderAvatar: this.currentUser.avatarUrl,
+      time: currentTime,
+      date: msgDate
+    };
+
+    this.addMessage(newMessage);
     this.message = ''; // Nachricht zurücksetzen
     this.imageUrl = null; // Bild zurücksetzen
     this.resetTextareaHeight(textArea);
+    this.scrollToBottom();
   }
-
-  this.scrollToBottom();
 }
 
-addMessage(type: string, content: string, time: string, date: string)
- {
-  this.messages.push({
-    type,
-    content,
-    senderName: this.currentUser.name,
-    senderAvatar: this.currentUser.avatarUrl,
-    time,
-    date
+
+
+
+
+
+
+loadMessages(channelId: string): void {
+  this.channelService.getMessages(channelId).then((messages) => {
+    // Sortiere die Nachrichten nach Datum und Uhrzeit
+    this.messages = messages.sort((a, b) => {
+      const dateA = new Date(a.date + ' ' + a.time);
+      const dateB = new Date(b.date + ' ' + b.time);
+      return dateA.getTime() - dateB.getTime();
+    });
+  }).catch((error) => {
+    console.error('Fehler beim Laden der Nachrichten:', error);
   });
+}
+
+
+addMessage(message: any): void {
+  if (this.selectedChannel) {
+    this.messages.push(message);
+    this.channelService.addMessage(this.selectedChannel.id, message);
+  }
 }
 
 handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
@@ -263,6 +294,41 @@ handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
     this.sendMessage(textArea);
   }
 }
+
+
+
+
+
+
+
+toggleEditMessage(msg: any): void {
+  msg.isEditing = true; // Öffnet das Bearbeitungsfeld
+}
+
+saveMessage(msg: any): void {
+  if (msg?.isEditing !== undefined) {
+    msg.isEditing = false; // Exit edit mode
+    // Save edited message to the backend
+    const messageId = msg.id; // Make sure each message has a unique 'id'
+    if (messageId) {
+      this.channelService.updateMessage(this.selectedChannel?.id!, messageId, msg.content)
+        .then(() => {
+          console.log('Nachricht erfolgreich gespeichert');
+        })
+        .catch(err => {
+          console.error('Fehler beim Speichern der Nachricht:', err);
+        });
+    }
+  }
+}
+
+cancelEditing(msg: any): void {
+  msg.isEditing = false; // Abbrechen und Bearbeiten beenden
+  if (this.selectedChannel) {
+    this.loadMessages(this.selectedChannel.id);
+  }
+}
+
 }
 
 
