@@ -62,8 +62,8 @@
             <div *ngIf="msg.isEditing" class="edit-message-box">
               <textarea [(ngModel)]="msg.content.text" rows="3" class="edit-textarea"></textarea>
               <div class="edit-buttons">
-                <button (click)="saveMessage(msg)" class="save-button">Speichern</button>
-                <button (click)="cancelEditing(msg)" class="cancel-button">Abbrechen</button>
+                <button (click)="cancelEditing(msg)" class="cancel-button button-gäste-login">Abbrechen</button>
+                <button  (click)="saveMessage(msg)" class="save-button button-anmelden">Speichern</button>
               </div>
             </div>
             </div>
@@ -80,9 +80,11 @@
           <div class="image-wrapper">
           <img src="assets/img/reaction.png" alt="Emoji 2" />
           </div>
-          <div class="image-wrapper">
-          <img src="assets/img/reaction.png" alt="Reaction" />
+          <div class="image-wrapper" >
+            <img src="assets/img/reaction.png" alt="Reaction" />
           </div>
+          
+          
           <div class="image-wrapper">
           <img src="assets/img/comment.png" alt="Comment" />
           </div>
@@ -181,7 +183,8 @@
               <input type="file" id="image-upload" (change)="onImageSelected($event, textArea)" style="display: none" />
             </label>
 
-            <button (click)="toggleEmojiPicker()">
+            <button (click)="toggleEmojiPicker()"
+            >
               <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
             </button>
             

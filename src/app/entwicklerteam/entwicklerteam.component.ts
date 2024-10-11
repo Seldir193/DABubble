@@ -11,12 +11,10 @@ import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-
 import { UserService } from '../user.service'; // Importiere den UserService
 import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für formatDate
 
-
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
 }
-
 @Component({
   selector: 'app-entwicklerteam',
   standalone: true,
@@ -32,22 +30,15 @@ export class EntwicklerteamComponent implements OnInit {
   imageUrl: string | ArrayBuffer | null | undefined = null;  // Typ mit undefined erweitert
   isTextareaExpanded: boolean = false;
   isImageModalOpen = false;
-  //channels: { name: string; members: any[] }[] = [];
-  //channels: { id: string, name: string, members: any[], description?: string, createdBy?: string }[] = [];
   channels: { id: string; name: string; members: any[]; description?: string; createdBy?: string  }[] = [];
-
- // selectedChannel: { name: string; members: any[] } | null = null;
-
   selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
-
-  messages: { type: string, content: MessageContent, senderName: string, senderAvatar: string, time: string, date: string; isEditing?: boolean  }[] = [];
+  messages: {id: string;  type: string, content: MessageContent, senderName: string, senderAvatar: string, time: string, date: string; isEditing?: boolean }[] = [];
   currentUser: any;  
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+  originalMessage: any = null;
 
- 
 
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
-
 
   onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
     const input = event.target as HTMLInputElement;
@@ -82,10 +73,12 @@ export class EntwicklerteamComponent implements OnInit {
     textArea.style.paddingBottom = '20px'; 
   }
 
+ 
   toggleEmojiPicker(): void {
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible; // Umschalten der Sichtbarkeit
     console.log('Emoji Picker Sichtbarkeit:', this.isEmojiPickerVisible); // Zum Debuggen in der Konsole
   }
+
   
   addAtSymbol(): void {
     this.message += '@';
@@ -106,11 +99,9 @@ export class EntwicklerteamComponent implements OnInit {
         if (!channel.id) {
           console.error('Fehlende ID im Channel:', channel);
         } else if (!channel.createdBy) {
-          // Setze einen Standardwert für createdBy, wenn er fehlt
           channel.createdBy = '';
         }
   
-        // Setze die Channels-Liste und füge die ID und createdBy hinzu
         this.channels = [{
           id: channel.id,
           name: channel.name,
@@ -120,13 +111,23 @@ export class EntwicklerteamComponent implements OnInit {
         }];
         this.selectedChannel = channel;
   
-        // Nachrichten für den aktuellen Channel laden
-        this.loadMessages(channel.id);
+         // Nachrichten für den aktuellen Channel laden
+         this.loadMessages(channel.id).then(() => {
+          // Nach dem Laden der Nachrichten zum letzten scrollen
+          this.scrollToBottom();
+        });
       }
+        
     });
   
     this.loadCurrentUser();
   }
+  
+
+
+
+
+
   
   loadCurrentUser(): void {
     this.userService.getCurrentUserData().then(user => {
@@ -136,8 +137,6 @@ export class EntwicklerteamComponent implements OnInit {
     });
   }
 
-  
-  
   receiveNewTeam(name: string, members: any[]): void {
     const newChannelId = Math.random().toString(36).substring(2, 15); // Generiere eine eindeutige ID für den neuen Channel
     const createdBy = this.currentUser?.name || ''; // Setze den aktuellen Benutzer als Ersteller
@@ -147,7 +146,6 @@ export class EntwicklerteamComponent implements OnInit {
     console.log('EntwicklerteamComponent: Neuer Channel hinzugefügt:', this.channels);
   }
   
-
   openEditChannelDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     const dialogRef = this.dialog.open(EditChannelDialogComponent, {
       data: {
@@ -170,8 +168,6 @@ export class EntwicklerteamComponent implements OnInit {
     });
   }
   
-
-
   openAddMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
       data: { members: channel.members }
@@ -232,11 +228,9 @@ scrollToBottom(): void {
   }
 }
 
-
 sendMessage(textArea: HTMLTextAreaElement): void {
   const currentTime = new Date().toLocaleTimeString();
   const msgDate = formatDate(new Date(), 'dd.MM.yyyy', 'en');
-
 
   if (this.message.trim() || this.imageUrl) {
     const newMessage = {
@@ -261,30 +255,24 @@ sendMessage(textArea: HTMLTextAreaElement): void {
 
 
 
-
-
-
-
-loadMessages(channelId: string): void {
-  this.channelService.getMessages(channelId).then((messages) => {
+async loadMessages(channelId: string): Promise<void> {
+  try {
+    const messages = await this.channelService.getMessages(channelId);
     // Sortiere die Nachrichten nach Datum und Uhrzeit
     this.messages = messages.sort((a, b) => {
       const dateA = new Date(a.date + ' ' + a.time);
       const dateB = new Date(b.date + ' ' + b.time);
       return dateA.getTime() - dateB.getTime();
     });
-  }).catch((error) => {
+  } catch (error) {
     console.error('Fehler beim Laden der Nachrichten:', error);
-  });
-}
-
-
-addMessage(message: any): void {
-  if (this.selectedChannel) {
-    this.messages.push(message);
-    this.channelService.addMessage(this.selectedChannel.id, message);
   }
 }
+
+
+
+
+
 
 handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
   if (event.key === 'Enter' && !event.shiftKey) {
@@ -296,36 +284,68 @@ handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
 }
 
 
+addMessage(message: any): void {
+  if (this.selectedChannel) {
+    this.channelService.addMessage(this.selectedChannel.id, message)
+      .then((docRefId) => {
+        // ID zur Nachricht hinzufügen, nachdem sie erfolgreich hinzugefügt wurde
+        message.id = docRefId; 
+        this.messages.push(message); // Nachricht in die lokale Liste aufnehmen
+        this.scrollToBottom();
+      })
+      .catch((error) => {
+        console.error('Fehler beim Hinzufügen der Nachricht:', error);
+      });
 
-
-
+     
+  }
+}
 
 
 toggleEditMessage(msg: any): void {
   msg.isEditing = true; // Öffnet das Bearbeitungsfeld
-}
-
-saveMessage(msg: any): void {
-  if (msg?.isEditing !== undefined) {
-    msg.isEditing = false; // Exit edit mode
-    // Save edited message to the backend
-    const messageId = msg.id; // Make sure each message has a unique 'id'
-    if (messageId) {
-      this.channelService.updateMessage(this.selectedChannel?.id!, messageId, msg.content)
-        .then(() => {
-          console.log('Nachricht erfolgreich gespeichert');
-        })
-        .catch(err => {
-          console.error('Fehler beim Speichern der Nachricht:', err);
-        });
-    }
-  }
+  this.originalMessage = { ...msg }; // Speichere eine Kopie der ursprünglichen Nachricht
 }
 
 cancelEditing(msg: any): void {
   msg.isEditing = false; // Abbrechen und Bearbeiten beenden
-  if (this.selectedChannel) {
-    this.loadMessages(this.selectedChannel.id);
+  if (this.originalMessage) {
+    // Stelle die ursprüngliche Nachricht wieder her
+    const index = this.messages.findIndex((m) => m.id === msg.id);
+    if (index !== -1) {
+      this.messages[index] = this.originalMessage;
+    }
+  }
+  this.originalMessage = null; // Zurücksetzen
+}
+
+saveMessage(msg: any): void {
+  if (msg?.isEditing !== undefined) {
+    msg.isEditing = false; // Bearbeiten beenden
+    const messageId = msg.id; // Ensure each message has a unique 'id'
+
+    // Debug-Ausgaben, um zu sehen, welche Werte fehlen
+    console.log('Speichern gestartet. Message ID:', messageId);
+    console.log('Aktueller Channel:', this.selectedChannel);
+
+    if (messageId && this.selectedChannel) {
+      this.channelService.updateMessage(this.selectedChannel.id, messageId, msg.content)
+        .then(() => {
+          console.log('Nachricht erfolgreich gespeichert');
+          // Aktualisiere die Nachricht in der lokalen Liste
+          this.messages = this.messages.map((m) => {
+            if (m.id === messageId) {
+              return { ...msg, isEditing: false }; // Update the message with new content and set `isEditing` to false
+            }
+            return m;
+          });
+        })
+        .catch(err => {
+          console.error('Fehler beim Speichern der Nachricht:', err);
+        });
+    } else {
+      console.error('Speichern fehlgeschlagen: Message ID oder Channel ID fehlt.');
+    }
   }
 }
 

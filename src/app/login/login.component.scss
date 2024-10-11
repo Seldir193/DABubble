@@ -68,24 +68,6 @@
       margin-top: 40px;
     }
 
-    .button-gäste-login {
-      background: white;
-      border: 1px solid $middleblue;
-      border-radius: 100px;
-      color: $button-blue;
-      font-size: 18px;
-      font-weight: 700;
-      width: 153px;
-      height: 49px;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s;
-
-      &:hover {
-        background: $button-blue;
-        color: white;
-      }
-    }
-
     form {
       input {
         background: $lightblue;

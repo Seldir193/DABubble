@@ -142,21 +142,31 @@ getMembers(): any[] {
   return this.membersSource.getValue(); // Mitglieder abrufen
 }
 
-
-
-async addMessage(channelId: string, message: any): Promise<void> {
+async addMessage(channelId: string, message: any): Promise<string> {
   try {
     const messagesCollection = collection(this.firestore, 'messages'); // Die Sammlung für Nachrichten
     const docRef = await addDoc(messagesCollection, { ...message, channelId });
     console.log('Nachricht erfolgreich hinzugefügt mit ID: ', docRef.id);
-    message.id = docRef.id; // ID zur Nachricht hinzufügen
+    return docRef.id; // ID zur Nachricht zurückgeben
   } catch (error) {
     console.error('Fehler beim Hinzufügen der Nachricht:', error);
+    throw error; // Fehler weiterwerfen
   }
 }
 
 
-// Nachrichten eines Kanals abrufen
+
+
+
+
+
+
+
+
+
+
+
+
 async getMessages(channelId: string): Promise<any[]> {
   try {
     const messagesCollection = collection(this.firestore, 'messages');
@@ -164,7 +174,7 @@ async getMessages(channelId: string): Promise<any[]> {
     const querySnapshot = await getDocs(q);
     const messages: any[] = [];
     querySnapshot.forEach((doc) => {
-      messages.push(doc.data());
+      messages.push({ id: doc.id, ...doc.data() }); // Stelle sicher, dass die Nachricht-ID mitgeladen wird
     });
     return messages;
   } catch (error) {
@@ -181,9 +191,9 @@ async getMessages(channelId: string): Promise<any[]> {
 
 
 
-
 async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
   try {
+    console.log('Aktualisiere Nachricht für Channel ID:', channelId);
     // Reference to the specific message document
     const messageDocRef = doc(this.firestore, 'messages', messageId);
     
@@ -197,6 +207,13 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
     console.error('Fehler beim Aktualisieren der Nachricht:', error);
   }
 }
+
+
+
+
+
+
+
 
 
 
