@@ -1,5 +1,7 @@
 @import "./../../styles.scss";
 
+
+
 .entwickler-box {
   cursor: pointer;
   height: auto;
@@ -443,17 +445,29 @@
   
 
 
+
 .chat-input-container {
   .emoji-picker {
-    position: absolute; /* Emoji-Picker soll relativ zum Container positioniert werden */
-    bottom: 80px; /* Stelle sicher, dass er über dem Eingabefeld angezeigt wird */
-    left: 20px; /* Positioniere ihn nach Bedarf */
-    z-index: 1000; /* Stelle sicher, dass der Emoji-Picker über anderen Elementen liegt */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Leichter Schatten für bessere Sichtbarkeit */
-    border-radius: 10px; /* Optionale abgerundete Ecken */
-    background-color: white; /* Hintergrundfarbe für den Emoji-Picker */
+    position: absolute;
+    bottom: 250px;
+    left: 500px;
+    z-index: 10000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    width: 300px;
+    height: 300px;
   }
 
+
+
+   
+  
+    
+
+
+    
+   
   .chat-input {
     display: flex;
     align-items: center;
@@ -805,11 +819,7 @@
       padding: 5px 10px;
       cursor: pointer;
     }
-
   }
-
-
-
 }
 
 
@@ -817,6 +827,44 @@
 
 
 
+.edit-options {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 0px 30px 30px 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  margin-top: 5px;
+  left:260px;
+  top:-30px;
+  //width:308px;
+  //text-align: center;
+ 
+
+  button {
+    background-color: transparent;
+    border:none;
+    cursor: pointer;
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border-radius: 30px;
+    height: 45px;
+    width:268px;
+    
+
+    &:hover {
+      background-color: $lightblue;
+      border-radius: 100px;
+      color:$hoverColor;
+      
+    }
+
+    
+  }
+}
 
 
 

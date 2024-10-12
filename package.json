@@ -21,7 +21,7 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
-    "@ctrl/ngx-emoji-mart": "^7.0.0",
+    "@ctrl/ngx-emoji-mart": "^9.2.0",
     "cors": "^2.8.5",
     "firebase": "^10.12.5",
     "perfect-scrollbar": "^1.5.5",

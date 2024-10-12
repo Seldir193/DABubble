@@ -10,6 +10,7 @@ import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dia
 import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-dialog.component';
 import { UserService } from '../user.service'; // Importiere den UserService
 import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für formatDate
+import { AddMemberSelectorComponent } from '../add-member-selector/add-member-selector.component';
 
 export interface MessageContent {
   text?: string;
@@ -27,6 +28,7 @@ export class EntwicklerteamComponent implements OnInit {
   @ViewChild('messageList') messageList!: ElementRef; // Zugriff auf den Nachrichten-Containe
   message: string = '';
   isEmojiPickerVisible: boolean = false;
+  
   imageUrl: string | ArrayBuffer | null | undefined = null;  // Typ mit undefined erweitert
   isTextareaExpanded: boolean = false;
   isImageModalOpen = false;
@@ -35,10 +37,34 @@ export class EntwicklerteamComponent implements OnInit {
   messages: {id: string;  type: string, content: MessageContent, senderName: string, senderAvatar: string, time: string, date: string; isEditing?: boolean }[] = [];
   currentUser: any;  
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+  yesterdayDate: string = this.getYesterdayDate();
   originalMessage: any = null;
+
+  showEditOptions: boolean = false;
+currentMessageId: string | null = null;
+
+
+
+
 
 
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
+
+  getYesterdayDate(): string {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return formatDate(yesterday, 'dd.MM.yyyy', 'en');
+  }
+
+  isToday(date: string): boolean {
+    return date === this.currentDate;
+  }
+
+  isYesterday(date: string): boolean {
+    return date === this.yesterdayDate;
+  }
+
+  
 
   onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
     const input = event.target as HTMLInputElement;
@@ -53,6 +79,7 @@ export class EntwicklerteamComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
   
   closeProfileCard(textArea: HTMLTextAreaElement): void {
     this.imageUrl = null;  // Entfernt das Bild
@@ -73,26 +100,23 @@ export class EntwicklerteamComponent implements OnInit {
     textArea.style.paddingBottom = '20px'; 
   }
 
- 
   toggleEmojiPicker(): void {
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible; // Umschalten der Sichtbarkeit
     console.log('Emoji Picker Sichtbarkeit:', this.isEmojiPickerVisible); // Zum Debuggen in der Konsole
   }
 
-  
-  addAtSymbol(): void {
-    this.message += '@';
-  }
 
   addEmoji(event: any): void {
-    if (event.emoji && event.emoji.native) {
+    console.log("Emoji ausgewählt:", event); // Debug-Nachricht
+    if (event && event.emoji && event.emoji.native) {
       this.message += event.emoji.native;
     } else {
       console.error('Emoji Event Fehler:', event);
     }
-    this.isEmojiPickerVisible = false;
+    this.isEmojiPickerVisible = false; // Emoji Picker schließen
   }
-
+  
+  
   ngOnInit(): void {
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
@@ -117,17 +141,14 @@ export class EntwicklerteamComponent implements OnInit {
           this.scrollToBottom();
         });
       }
+
+      
         
     });
   
     this.loadCurrentUser();
+
   }
-  
-
-
-
-
-
   
   loadCurrentUser(): void {
     this.userService.getCurrentUserData().then(user => {
@@ -253,8 +274,6 @@ sendMessage(textArea: HTMLTextAreaElement): void {
   }
 }
 
-
-
 async loadMessages(channelId: string): Promise<void> {
   try {
     const messages = await this.channelService.getMessages(channelId);
@@ -270,10 +289,6 @@ async loadMessages(channelId: string): Promise<void> {
 }
 
 
-
-
-
-
 handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
   if (event.key === 'Enter' && !event.shiftKey) {
     // Verhindere den normalen Zeilenumbruch in der Textarea
@@ -282,7 +297,6 @@ handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
     this.sendMessage(textArea);
   }
 }
-
 
 addMessage(message: any): void {
   if (this.selectedChannel) {
@@ -296,10 +310,9 @@ addMessage(message: any): void {
       .catch((error) => {
         console.error('Fehler beim Hinzufügen der Nachricht:', error);
       });
-
-     
   }
 }
+
 
 
 toggleEditMessage(msg: any): void {
@@ -307,17 +320,25 @@ toggleEditMessage(msg: any): void {
   this.originalMessage = { ...msg }; // Speichere eine Kopie der ursprünglichen Nachricht
 }
 
+
+
+
+
+
+
+
+
 cancelEditing(msg: any): void {
-  msg.isEditing = false; // Abbrechen und Bearbeiten beenden
+  msg.isEditing = false; // Bearbeiten beenden
   if (this.originalMessage) {
     // Stelle die ursprüngliche Nachricht wieder her
-    const index = this.messages.findIndex((m) => m.id === msg.id);
-    if (index !== -1) {
-      this.messages[index] = this.originalMessage;
-    }
+    msg.content = { ...this.originalMessage.content }; // Nur Inhalt kopieren
+    this.originalMessage = null; // Originalnachricht zurücksetzen
   }
-  this.originalMessage = null; // Zurücksetzen
+  this.showEditOptions = false; // Bearbeitungsoptionen schließen
 }
+
+
 
 saveMessage(msg: any): void {
   if (msg?.isEditing !== undefined) {
@@ -348,6 +369,49 @@ saveMessage(msg: any): void {
     }
   }
 }
+
+toggleEditOptions(msgId: string): void {
+  // Umschalten der Sichtbarkeit für das angeklickte Symbol
+  if (this.currentMessageId === msgId && this.showEditOptions) {
+    this.showEditOptions = false;
+    this.currentMessageId = null;
+  } else {
+    this.showEditOptions = true;
+    this.currentMessageId = msgId;
+  }
+}
+
+startEditing(msg: any): void {
+  msg.isEditing = true; // Bearbeitungsmodus aktivieren
+  this.originalMessage = { ...msg }; // Originalnachricht speichern
+  this.showEditOptions = false; // Optionen schließen
+}
+
+
+
+
+addAtSymbolAndOpenDialog(): void {
+  // Fügt zuerst das "@"-Symbol zur Nachricht hinzu
+  this.message += '@';
+
+  // Öffnet dann das Dialogfenster, um Mitglieder auszuwählen
+  const dialogRef = this.dialog.open(AddMemberSelectorComponent, {
+    data: {
+      members: this.selectedChannel?.members
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(selectedMember => {
+    if (selectedMember) {
+      // Avatar und Name des Mitglieds zum Text hinzufügen
+      this.message += ` ${selectedMember.name}  `;
+    }
+  });
+}
+
+
+
+
 
 }
 

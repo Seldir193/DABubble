@@ -33,10 +33,12 @@ html,body
   
 }
 body {
-  font-family: "Nunito", sans-serif;
+  font-family: "Nunito",'Noto Color Emoji', 'Segoe UI Emoji', sans-serif;
   height: 100%;
   width: 100%;
 }
+
+
 
 .button-anmelden {
   background: $button-blue;

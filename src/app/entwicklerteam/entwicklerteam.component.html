@@ -4,9 +4,13 @@
     <!-- Channel Name -->
     <div class="office-box" (click)="openEditChannelDialog(channel)">
       <img src="assets/img/tag-black.png" alt="Tag Icon" />
-      <h1>{{ channel.name }}</h1>
+      <h1>{{ channel.name }}</h1> 
+      
       <img src="assets/img/keyboard_arrow_down-1.png" />
+      
     </div>
+
+   
 
     <!-- Avatare der Mitglieder -->
     <ul class="avatar-list" *ngIf="channel.members && channel.members.length > 0">
@@ -25,123 +29,136 @@
 </div>
 
 
+
+
+
+
+
+
 <div class="channel-input-box" *ngFor="let channel of channels">
   <div class="channel-box">
+   
 
-
-
-    <!-- Nachrichtenliste -->
-<div class="message-list" #messageList>
-  <div *ngFor="let msg of messages; let i = index">
-    <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
-    <div class="seperator" *ngIf="i === 0 || messages[i-1].date !== msg.date">
-      <span class="date-separator">
-        <span *ngIf="msg.date === currentDate; else otherDate">
-          Heute
-        </span>
-        <ng-template #otherDate>
-          {{ msg.date | date:'dd.MM.yyyy' }}
-        </ng-template>
-      </span>
-    </div>
-
-    <!-- Container für gesendete Nachrichten -->
-    <div *ngIf="msg.senderName === currentUser.name" class="sent-message-container">
-      <div class="message-container sent-message">
-        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
-        <div class="message-box">
-          <span class="message-info">
-            <span class="sender-name">{{ msg.senderName }}</span>
-            <span class="message-time">{{ msg.time }}</span>
-          </span>
-          <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
-            <!-- Display message if not in editing mode -->
-            <p *ngIf="!msg.isEditing && msg.content?.text" class="sent-message">{{ msg.content.text }}</p>
-            
-            <!-- Show textarea and buttons when editing mode is enabled -->
-            <div *ngIf="msg.isEditing" class="edit-message-box">
-              <textarea [(ngModel)]="msg.content.text" rows="3" class="edit-textarea"></textarea>
-              <div class="edit-buttons">
-                <button (click)="cancelEditing(msg)" class="cancel-button button-gäste-login">Abbrechen</button>
-                <button  (click)="saveMessage(msg)" class="save-button button-anmelden">Speichern</button>
-              </div>
+        <!-- Nachrichtenliste -->
+        <div class="message-list" #messageList>
+          <div *ngFor="let msg of messages; let i = index">
+            <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
+            <div class="seperator" *ngIf="i === 0 || messages[i-1].date !== msg.date">
+              <span class="date-separator">
+                 <span *ngIf="msg.date === currentDate">Heute</span>
+                 <span *ngIf="msg.date === yesterdayDate">Gestern</span>
+                <ng-template #otherDate>
+                  {{ msg.date | date:'dd.MMMM.yyyy' }}
+                </ng-template>
+              </span>
             </div>
-            </div>
-            <!-- Display image content (if exists) -->
-            <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
+        
+            <!-- Container für gesendete Nachrichten -->
+            <div *ngIf="msg.senderName === currentUser.name" class="sent-message-container">
+              <div class="message-container sent-message">
+                <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+                <div class="message-box">
+                  <span class="message-info">
+                    <span class="sender-name">{{ msg.senderName }}</span>
+                    <span class="message-time">{{ msg.time }}</span>
+                  </span>
+                  <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
+                    <!-- Display message if not in editing mode -->
+                    <p *ngIf="!msg.isEditing && msg.content?.text" class="sent-message">{{ msg.content.text }}</p>
+                    
+                    <!-- Show textarea and buttons when editing mode is enabled -->
+                    <div *ngIf="msg.isEditing" class="edit-message-box">
+                      <textarea [(ngModel)]="msg.content.text" rows="3" class="edit-textarea"></textarea>
+                      <div class="edit-buttons">
+                        <button (click)="cancelEditing(msg)" class="cancel-button button-gäste-login">Abbrechen</button>
+                        <button  (click)="saveMessage(msg)" class="save-button button-anmelden">Speichern</button>
+                      </div>
+                    </div>
+                    </div>
+                    <!-- Display image content (if exists) -->
+                    <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
+                  </div>
+                  
+                
+         <div class="emoji-container">
+                <div class="emoji-box">
+                  <div class="image-wrapper">
+                  <img src="assets/img/close.png" alt="Emoji 1" />
+                  </div>
+                  <div class="image-wrapper">
+                  <img src="assets/img/reaction.png" alt="Emoji 2" />
+                  </div>
+                  <div class="image-wrapper" >
+                    <img src="assets/img/reaction.png" alt="Reaction" />
+                  </div>
+                  
+                  
+                  
+                  <div class="image-wrapper">
+                  <img src="assets/img/comment.png" alt="Comment" />
+                  </div>
+                 
+
+                  <div class="image-wrapper">
+                    <img src="assets/img/more.png" alt="Mehr Optionen" (click)="toggleEditOptions(msg.id)"/>
+                  
+                    <!-- Bearbeitungsoptionen anzeigen, wenn `showEditOptions` und `currentMessageId` passen -->
+                    <div *ngIf="showEditOptions && currentMessageId === msg.id" class="edit-options">
+                      <button (click)="startEditing(msg)">Nachricht bearbeiten</button>
+                    </div>
+                  </div>
+                  
+                  
+                </div>
           </div>
+        
+        </div>
+        </div>
+          
           
         
- <div class="emoji-container">
-        <div class="emoji-box">
-          <div class="image-wrapper">
-          <img src="assets/img/close.png" alt="Emoji 1" />
-          </div>
-          <div class="image-wrapper">
-          <img src="assets/img/reaction.png" alt="Emoji 2" />
-          </div>
-          <div class="image-wrapper" >
-            <img src="assets/img/reaction.png" alt="Reaction" />
-          </div>
+        
+            <!-- Container für empfangene Nachrichten -->
+            <div *ngIf="msg.senderName !== currentUser.name" class="received-message-container">
+              <div class="message-container received-message">
+                <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+                <div class="message-box">
+                  <span class="message-info">
+                    <span class="sender-name">{{ msg.senderName }}</span>
+                    <span class="message-time">{{ msg.time }}</span>
+                  </span>
+                  <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
+                    <p *ngIf="msg.content && msg.content.text" class="received-message">{{ msg.content.text }}</p>
+                  </div>
+                  <img *ngIf="msg.content && msg.content.image" [src]="msg.content.image" class="received-image" />
+                </div>
+        
+        
+                <div class="emoji-container-received">
+                  <div class="emoji-box-received">
+                    <div class="image-wrapper">
+                    <img src="assets/img/close.png" alt="Emoji 1" />
+                    </div>
+                    <div class="image-wrapper">
+                    <img src="assets/img/reaction.png" alt="Emoji 2" />
+                    </div>
+                    <div class="image-wrapper">
+                    <img src="assets/img/reaction.png" alt="Reaction" />
+                    </div>
+                    <div class="image-wrapper">
+                    <img src="assets/img/comment.png" alt="Comment" />
+                    </div>
+                  
+                  </div>
+            </div>
           
           
-          <div class="image-wrapper">
-          <img src="assets/img/comment.png" alt="Comment" />
+        
+        
+              </div>
+            </div>
           </div>
-          <div class="image-wrapper">
-          <img src="assets/img/more.png" alt="More"  (click)="toggleEditMessage(msg)"/>
-          </div>
-          
         </div>
-  </div>
-
-</div>
-</div>
-  
-  
-
-
-    <!-- Container für empfangene Nachrichten -->
-    <div *ngIf="msg.senderName !== currentUser.name" class="received-message-container">
-      <div class="message-container received-message">
-        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
-        <div class="message-box">
-          <span class="message-info">
-            <span class="sender-name">{{ msg.senderName }}</span>
-            <span class="message-time">{{ msg.time }}</span>
-          </span>
-          <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
-            <p *ngIf="msg.content && msg.content.text" class="received-message">{{ msg.content.text }}</p>
-          </div>
-          <img *ngIf="msg.content && msg.content.image" [src]="msg.content.image" class="received-image" />
-        </div>
-
-
-        <div class="emoji-container-received">
-          <div class="emoji-box-received">
-            <div class="image-wrapper">
-            <img src="assets/img/close.png" alt="Emoji 1" />
-            </div>
-            <div class="image-wrapper">
-            <img src="assets/img/reaction.png" alt="Emoji 2" />
-            </div>
-            <div class="image-wrapper">
-            <img src="assets/img/reaction.png" alt="Reaction" />
-            </div>
-            <div class="image-wrapper">
-            <img src="assets/img/comment.png" alt="Comment" />
-            </div>
-          
-          </div>
-    </div>
-  
-  
-
-
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
@@ -186,9 +203,10 @@
             <button (click)="toggleEmojiPicker()"
             >
               <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
+
             </button>
             
-            <button (click)="addAtSymbol()" class="at-button">
+            <button (click)="addAtSymbolAndOpenDialog()"  class="at-button">
               <img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
             </button>
           </div>
@@ -202,9 +220,18 @@
       </div>
     </div>
 
+
+    
+
+
+   
+    
     <div class="emoji-picker" *ngIf="isEmojiPickerVisible">
       <ngx-emoji-mart (emojiSelect)="addEmoji($event)"></ngx-emoji-mart>
     </div>
+    
+
+    
   </div>
 
   <div class="image-modal" *ngIf="isImageModalOpen" (click)="closeImageModal()">

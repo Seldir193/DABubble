@@ -60,7 +60,6 @@ selectedChannel = this.selectedChannelSource.asObservable();
     }
   }
 
-
   async updateChannel(channelId: string, newChannelName: string, description: string): Promise<void> {
     try {
       const channels = this.channelsSource.getValue();
@@ -136,7 +135,6 @@ getChannels(): { name: string; members: any[]; description?: string; createdBy?:
   return this.channelsSource.getValue();
 }
 
-
 // Methode zum Abrufen von Mitgliedern
 getMembers(): any[] {
   return this.membersSource.getValue(); // Mitglieder abrufen
@@ -154,19 +152,6 @@ async addMessage(channelId: string, message: any): Promise<string> {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 async getMessages(channelId: string): Promise<any[]> {
   try {
     const messagesCollection = collection(this.firestore, 'messages');
@@ -182,14 +167,6 @@ async getMessages(channelId: string): Promise<any[]> {
     return [];
   }
 }
-
-
-
-
-
-
-
-
 
 async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
   try {
@@ -207,15 +184,4 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
     console.error('Fehler beim Aktualisieren der Nachricht:', error);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 }

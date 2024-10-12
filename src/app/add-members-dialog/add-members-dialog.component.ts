@@ -118,8 +118,6 @@ export class AddMembersDialogComponent implements OnInit {
     this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste nach dem Entfernen
   }
 
-
-
   onCreate(): void {
     console.log('Mitglieder vor dem Speichern:', this.selectedMembers);
   
@@ -150,15 +148,6 @@ export class AddMembersDialogComponent implements OnInit {
       this.dialogRef.close(null); // Falls keine neuen Mitglieder, Dialog schließen ohne Änderung
     }
   }
-  
-
-
-
-
-
-
-  
-  
   
 openMembersDialog(): void {
   const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
