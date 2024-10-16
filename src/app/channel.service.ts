@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where,collectionData,getDoc} from '@angular/fire/firestore';
 import { MessageContent } from './entwicklerteam/entwicklerteam.component';
+import { orderBy } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { serverTimestamp } from '@angular/fire/firestore';
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -140,10 +145,14 @@ getMembers(): any[] {
   return this.membersSource.getValue(); // Mitglieder abrufen
 }
 
+
+
+
+
 async addMessage(channelId: string, message: any): Promise<string> {
   try {
     const messagesCollection = collection(this.firestore, 'messages'); // Die Sammlung für Nachrichten
-    const docRef = await addDoc(messagesCollection, { ...message, channelId });
+    const docRef = await addDoc(messagesCollection, { ...message, channelId,timestamp: serverTimestamp() });
     console.log('Nachricht erfolgreich hinzugefügt mit ID: ', docRef.id);
     return docRef.id; // ID zur Nachricht zurückgeben
   } catch (error) {
@@ -152,21 +161,29 @@ async addMessage(channelId: string, message: any): Promise<string> {
   }
 }
 
-async getMessages(channelId: string): Promise<any[]> {
-  try {
-    const messagesCollection = collection(this.firestore, 'messages');
-    const q = query(messagesCollection, where('channelId', '==', channelId));
-    const querySnapshot = await getDocs(q);
-    const messages: any[] = [];
-    querySnapshot.forEach((doc) => {
-      messages.push({ id: doc.id, ...doc.data() }); // Stelle sicher, dass die Nachricht-ID mitgeladen wird
-    });
-    return messages;
-  } catch (error) {
-    console.error('Fehler beim Abrufen der Nachrichten:', error);
-    return [];
-  }
+
+
+
+
+
+getMessages(channelId: string): Observable<any[]> {
+  const messagesCollection = collection(this.firestore, 'messages');
+  
+  // Firestore-Abfrage: Nachrichten sortiert nach timestamp
+  const q = query(
+    messagesCollection,
+    where('channelId', '==', channelId),
+    orderBy('timestamp', 'asc') // Aufsteigende Reihenfolge nach timestamp
+  );
+  
+  // Mit collectionData() ein Observable zurückgeben, das die Nachrichten in Echtzeit liefert
+  return collectionData(q, { idField: 'id' }) as Observable<any[]>;
 }
+
+
+
+
+
 
 async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
   try {
@@ -176,7 +193,7 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
     
     // Update Firestore with the new content
     await updateDoc(messageDocRef, {
-      content: updatedContent
+      content: updatedContent,timestamp: serverTimestamp()
     });
     
     console.log('Nachricht erfolgreich gespeichert');
@@ -184,4 +201,39 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
     console.error('Fehler beim Aktualisieren der Nachricht:', error);
   }
 }
+
+
+
+
+
+async saveLastUsedEmojis(channelId: string, lastUsedEmojis: string[]): Promise<void> {
+  if (!channelId) return;
+
+  const channelDocRef = doc(this.firestore, 'channels', channelId);
+  try {
+    await updateDoc(channelDocRef, { lastUsedEmojis });
+    console.log('Letzte Emojis erfolgreich gespeichert.');
+  } catch (error) {
+    console.error('Fehler beim Speichern der letzten Emojis:', error);
+  }
+}
+
+async getLastUsedEmojis(channelId: string): Promise<string[] | undefined> {
+  if (!channelId) return;
+
+  const channelDocRef = doc(this.firestore, 'channels', channelId);
+  const channelDoc = await getDoc(channelDocRef);
+  
+  if (channelDoc.exists()) {
+    const data = channelDoc.data();
+    return data['lastUsedEmojis'] || [];
+    
+  } else {
+    console.error('Channel-Dokument nicht gefunden.');
+    return [];
+  }
+}
+
+
+
 }

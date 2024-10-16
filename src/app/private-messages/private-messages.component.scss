@@ -449,8 +449,8 @@
 .chat-input-container {
   .emoji-picker {
     position: absolute;
-    bottom: 280px;
-    //left: 500px;
+    bottom: 250px;
+    left: 500px;
     z-index: 10000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
@@ -917,56 +917,3 @@
     }
     }
 }
-
-
-
-
-
-
-
-.emoji-box {
-  position: relative; /* Elterncontainer relativ positionieren */
-}
-
-.emoji-pickere {
-  position: absolute;
-  top: 100%; /* Positioniere es direkt unter dem Bild */
-  left: 0;
-  z-index: 100; /* Sicherstellen, dass der Picker über anderen Elementen liegt */
-  background-color: white; /* Hintergrundfarbe für Picker */
-  border: 1px solid #ccc; /* Leichter Rahmen um den Picker */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für eine bessere Sichtbarkeit */
-}
-
-
-
-.emoji-message-container{
-  display: flex;
-  gap:10px;
-
-  nav{
-    color:black;
-    font-size:16px;
-    font-weight: 400;
-  }
-
-  span{
-    border:1px solid $hoverColor;
-    padding:5px 10px;
-    border-radius:20px;
-    display: flex;
-    gap:10px;
-  }
-}
-
-
-.emoji-count {
-  margin-left: 5px; /* Abstand zwischen Emoji und der Zahl */
-  font-size: 14px; /* Größe der Zahl anpassen */
-  color: #888; /* Farbe der Zahl anpassen */
-}
-
-
-
-
-

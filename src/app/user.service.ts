@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, updateDoc, doc, getDoc, collection, getDocs } from '@angular/fire/firestore';
+import { Firestore, updateDoc, doc, getDoc, collection, getDocs,query,where } from '@angular/fire/firestore';
 import { getAuth, EmailAuthProvider, reauthenticateWithCredential, User, onAuthStateChanged, sendEmailVerification,updateEmail } from 'firebase/auth';
 import { Storage } from '@angular/fire/storage';
 
@@ -148,11 +148,32 @@ async getCurrentUserData(): Promise<any> {
 
     return users; // Gebe die Liste der Benutzer zurück
   }
+
+
+
+
+  async getUsersByFirstLetter(firstLetter: string): Promise<any[]> {
+    const usersCollection = collection(this.firestore, 'users');
+    
+    // Firestore-Abfrage, um nur Benutzer zu laden, deren Name mit dem angegebenen Buchstaben beginnt
+    const q = query(usersCollection, where('name', '>=', firstLetter), where('name', '<=', firstLetter + '\uf8ff'));
+    
+    const querySnapshot = await getDocs(q);
+    const users: any[] = [];
+  
+    querySnapshot.forEach((doc) => {
+      users.push(doc.data());
+    });
+  
+    return users;  // Gebe die gefilterten Benutzer zurück
+  }
+  
+
+
+
 }
   
   
-
-
 
 
 

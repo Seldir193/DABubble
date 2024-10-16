@@ -41,6 +41,7 @@ export class MemberListDialogComponent {
   openAddMembersDialog(): void {
 
     this.dialogRef.close(); 
+    
 
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
       data: { members: this.members }

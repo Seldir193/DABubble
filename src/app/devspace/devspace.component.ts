@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 
 @Component({
@@ -5,10 +6,9 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './devspace.component.html',
-  styleUrl: './devspace.component.scss'
+  styleUrls: ['./devspace.component.scss']  // korrigiere "styleUrl" zu "styleUrls"
 })
 export class DevspaceComponent {
-
+  
  
-
 }

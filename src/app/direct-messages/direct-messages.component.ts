@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener,Output, EventEmitter  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
@@ -14,6 +14,8 @@ import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
 })
 
 export class DirectMessagesComponent implements OnInit {
+  @Output() memberSelected = new EventEmitter<any>();
+ 
   members: any[] = [];
   isChannelsVisible: boolean = false;
   inactivityTimeout: any;
@@ -22,6 +24,7 @@ export class DirectMessagesComponent implements OnInit {
   userIsActive: boolean = true;
 
   constructor(private userService: UserService, private router: Router,private firestore: Firestore)
+ 
    {}
 
   ngOnInit(): void {
@@ -104,13 +107,15 @@ handleUserActivity(): void {
   this.resetInactivityTimer();  // Setze den Timer bei jeder Aktivität zurück
 }
 
-  toggleChannels(): void {
-    this.isChannelsVisible = !this.isChannelsVisible;
-  }
+toggleChannels(): void {
+  this.isChannelsVisible = !this.isChannelsVisible;
+}
 
-  openDirectMessage(member: any): void {
-    console.log('Öffne Direktnachricht mit:', member);
-  }
+
+openDirectMessage(member: any): void {
+  console.log('Öffne Direktnachricht mit:', member);
+  this.memberSelected.emit(member); // Emit the selected member event
+}
 
   loadMembersInRealtime(): void {
     const membersCollectionRef = collection(this.firestore, 'users');
@@ -150,6 +155,8 @@ handleUserActivity(): void {
       }
     });
   }
+
+
 }
 
 

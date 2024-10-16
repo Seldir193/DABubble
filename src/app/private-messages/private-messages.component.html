@@ -1,0 +1,96 @@
+<div class="private-message-container">
+    <h1>Private Nachricht an {{ recipientName }}</h1>
+  
+    <!-- Nachrichtenliste -->
+    <div class="message-list" #messageList>
+      <div *ngFor="let msg of privateMessages; let i = index">
+        <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
+        <div class="seperator" *ngIf="i === 0 || privateMessages[i-1].date !== msg.date">
+          <span class="date-separator">
+            <span *ngIf="msg.date === currentDate">Heute</span>
+            <span *ngIf="msg.date === yesterdayDate">Gestern</span>
+            <ng-template #otherDate>
+              {{ msg.date | date: 'dd.MMMM.yyyy' }}
+            </ng-template>
+          </span>
+        </div>
+  
+        <!-- Container für gesendete Nachrichten -->
+        <div *ngIf="msg.senderId === currentUser.id" class="sent-message-container">
+          <div class="message-container sent-message">
+            <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+            <div class="message-box">
+              <span class="message-info">
+                <span class="sender-name">{{ msg.senderName }}</span>
+                <span class="message-time">{{ msg.time }}</span>
+              </span>
+              <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
+                <p *ngIf="msg.content?.text">{{ msg.content.text }}</p>
+                <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Container für empfangene Nachrichten -->
+        <div *ngIf="msg.senderId !== currentUser.id" class="received-message-container">
+          <div class="message-container received-message">
+            <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+            <div class="message-box">
+              <span class="message-info">
+                <span class="sender-name">{{ msg.senderName }}</span>
+                <span class="message-time">{{ msg.time }}</span>
+              </span>
+              <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
+                <p *ngIf="msg.content?.text">{{ msg.content.text }}</p>
+                <img *ngIf="msg.content?.image" [src]="msg.content.image" class="received-image" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Eingabefeld für private Nachrichten -->
+    <div class="chat-input-container">
+      <div class="textarea-wrapper">
+        <textarea [(ngModel)]="privateMessage" (keydown)="handleKeyDown($event)"></textarea>
+  
+        <div class="image-preview" *ngIf="imageUrl">
+          <img class="image-border" [src]="imageUrl" alt="Hochgeladenes Bild" (click)="openImageModal()" />
+          <div class="img-wrapper">
+            <img (click)="closeProfileCard(); $event.stopPropagation()" src="assets/img/close.png" alt="Schließen" />
+          </div>
+        </div>
+  
+        <div class="buttons-wrapper">
+          <div class="input-buttons">
+            <label for="image-upload" class="image-upload-button">
+              <img class="input-image" src="assets/img/add-pic.png" alt="Bild hinzufügen" />
+              <input type="file" id="image-upload" (change)="onImageSelected($event)" style="display: none" />
+            </label>
+  
+            <button (click)="toggleEmojiPicker()">
+              <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
+            </button>
+          </div>
+  
+          <div class="send-button">
+            <button (click)="sendPrivateMessage()">
+              <img src="assets/img/send-button.png" alt="Senden" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="emoji-picker" *ngIf="isEmojiPickerVisible">
+      <ngx-emoji-mart (emojiSelect)="addEmoji($event)"></ngx-emoji-mart>
+    </div>
+  
+    <div class="image-modal" *ngIf="isImageModalOpen" (click)="closeImageModal()">
+      <img [src]="imageUrl" alt="Vergrößertes Bild" (click)="$event.stopPropagation()" />
+      <button class="close-modal" (click)="closeImageModal()">×</button>
+    </div>
+  </div>
+  

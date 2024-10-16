@@ -1,4 +1,4 @@
-import { Component, OnInit ,CUSTOM_ELEMENTS_SCHEMA,ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit ,CUSTOM_ELEMENTS_SCHEMA,ViewChild, ElementRef,Input, EventEmitter, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
@@ -11,10 +11,12 @@ import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-
 import { UserService } from '../user.service'; // Importiere den UserService
 import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für formatDate
 import { AddMemberSelectorComponent } from '../add-member-selector/add-member-selector.component';
+import { MemberSectionDialogComponent } from '../member-section-dialog/member-section-dialog.component';
 
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
+  emojis?: any[];
 }
 @Component({
   selector: 'app-entwicklerteam',
@@ -26,15 +28,22 @@ export interface MessageContent {
 })
 export class EntwicklerteamComponent implements OnInit {
   @ViewChild('messageList') messageList!: ElementRef; // Zugriff auf den Nachrichten-Containe
+  @Output() memberSelected = new EventEmitter<{ uid: string, name: string }>();
+ 
+   
   message: string = '';
   isEmojiPickerVisible: boolean = false;
   
   imageUrl: string | ArrayBuffer | null | undefined = null;  // Typ mit undefined erweitert
   isTextareaExpanded: boolean = false;
   isImageModalOpen = false;
-  channels: { id: string; name: string; members: any[]; description?: string; createdBy?: string  }[] = [];
-  selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
-  messages: {id: string;  type: string, content: MessageContent, senderName: string, senderAvatar: string, time: string, date: string; isEditing?: boolean }[] = [];
+
+  
+
+
+   channels: { id: string; name: string; members: any[]; description?: string; createdBy?: string  } [] = [];
+   @Input() selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
+  messages: {id: string;  type: string, content: MessageContent, senderName: string, senderAvatar: string, time: string, date: string; isEditing?: boolean ,isEmojiPickerVisible?: boolean;  }[] = [];
   currentUser: any;  
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
   yesterdayDate: string = this.getYesterdayDate();
@@ -44,12 +53,27 @@ export class EntwicklerteamComponent implements OnInit {
 currentMessageId: string | null = null;
 
 
+newMessage: string = '';
+  
 
 
+selectedMember: any = null;  // Speichere das ausgewählte Mitglied
+  privateMessage: string = '';  // Für die private Nachricht
+
+
+
+  filteredMembers: any[] = [];
+  searchLetter: string = '';
+  members: any[] = [];
+
+  lastUsedEmojis: string[] = [];
 
 
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
+  @Input() isEditingChannel: boolean = false;
+  @Output() channelSelected = new EventEmitter<void>();
 
+  
   getYesterdayDate(): string {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -63,8 +87,6 @@ currentMessageId: string | null = null;
   isYesterday(date: string): boolean {
     return date === this.yesterdayDate;
   }
-
-  
 
   onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
     const input = event.target as HTMLInputElement;
@@ -80,7 +102,6 @@ currentMessageId: string | null = null;
     }
   }
 
-  
   closeProfileCard(textArea: HTMLTextAreaElement): void {
     this.imageUrl = null;  // Entfernt das Bild
     this.isTextareaExpanded = false; 
@@ -103,6 +124,7 @@ currentMessageId: string | null = null;
   toggleEmojiPicker(): void {
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible; // Umschalten der Sichtbarkeit
     console.log('Emoji Picker Sichtbarkeit:', this.isEmojiPickerVisible); // Zum Debuggen in der Konsole
+
   }
 
 
@@ -115,8 +137,121 @@ currentMessageId: string | null = null;
     }
     this.isEmojiPickerVisible = false; // Emoji Picker schließen
   }
+
+
+
+
+  
+
+
+ 
+  
+  toggleEmojiPickerForMessage(msg: any): void {
+    const isCurrentlyVisible = msg.isEmojiPickerVisible;  // Merke dir den aktuellen Zustand
+    
+    // Schließe alle Emoji-Picker
+    this.messages.forEach(m => m.isEmojiPickerVisible = false);
+  
+    // Setze den Zustand für die ausgewählte Nachricht basierend auf dem vorherigen Zustand
+    msg.isEmojiPickerVisible = !isCurrentlyVisible;
+  }
   
   
+
+
+  
+
+  addEmojiToMessage(event: any, msg: any): void {
+    if (!msg.content.emojis) {
+      msg.content.emojis = [];  // Initialisiere das Emoji-Array, falls es noch nicht existiert
+    }
+  
+    if (event && event.emoji && event.emoji.native) {
+      const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === event.emoji.native);
+  
+      if (existingEmoji) {
+        // Erhöhe die Zählung, wenn das Emoji bereits existiert
+        existingEmoji.count += 1;
+      } else {
+        // Füge das Emoji mit einer Zählung von 1 hinzu, wenn es noch nicht existiert
+        msg.content.emojis.push({ emoji: event.emoji.native, count: 1 });
+      }
+  
+      // Speichere die letzten zwei Emojis (basierend auf dem Emoji, nicht der Zählung)
+      this.lastUsedEmojis = [event.emoji.native, ...this.lastUsedEmojis].slice(0, 2);
+  
+      // Speichern der letzten verwendeten Emojis
+      if (this.selectedChannel?.id) {
+        this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojis);
+      }
+    }
+  
+    msg.isEmojiPickerVisible = false;  // Schließe den Emoji-Picker nach Auswahl
+  
+    // Nachricht aktualisieren
+    if (this.selectedChannel?.id) {
+      this.channelService.updateMessage(this.selectedChannel.id, msg.id, msg.content)
+        .then(() => {
+          console.log('Nachricht erfolgreich aktualisiert.');
+        })
+        .catch((error) => {
+          console.error('Fehler beim Aktualisieren der Nachricht:', error);
+        });
+    } else {
+      console.error('Channel ID ist undefined, Nachricht kann nicht aktualisiert werden.');
+    }
+  }
+  
+  
+  
+
+  
+  
+
+  sendMessage(textArea: HTMLTextAreaElement): void {
+    const currentTime = new Date().toLocaleTimeString();
+    const msgDate = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+  
+    if (this.message.trim() || this.imageUrl) {
+      const newMessage = {
+        type: this.imageUrl && this.message.trim() ? 'text_and_image' : (this.imageUrl ? 'image' : 'text'),
+        content: {
+          text: this.message.trim() || null,
+          image: this.imageUrl || null,
+          emojis: [] 
+        },
+        senderName: this.currentUser.name,
+        senderAvatar: this.currentUser.avatarUrl,
+        time: currentTime,
+        date: msgDate,
+        isEmojiPickerVisible: false
+      };
+  
+      this.addMessage(newMessage);
+      this.message = ''; // Nachricht zurücksetzen
+      this.imageUrl = null; // Bild zurücksetzen
+      this.resetTextareaHeight(textArea);
+      this.scrollToBottom();
+    }
+  }
+  
+ 
+
+  
+
+  
+
+  openChannel(channel: any): void {
+    console.log('Channel ausgewählt:', channel);
+    this.channelService.changeChannel(channel); // Den neuen Channel setzen
+  }
+  
+  
+
+
+
+
+
   ngOnInit(): void {
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
@@ -133,23 +268,48 @@ currentMessageId: string | null = null;
           description: channel.description,
           createdBy: channel.createdBy
         }];
+        
         this.selectedChannel = channel;
   
-         // Nachrichten für den aktuellen Channel laden
-         this.loadMessages(channel.id).then(() => {
-          // Nach dem Laden der Nachrichten zum letzten scrollen
-          this.scrollToBottom();
+        this.channelService.getLastUsedEmojis(channel.id || '').then(emojis => {
+          this.lastUsedEmojis = emojis || [];
+        });
+        
+        
+  
+        // Nachrichten für den aktuellen Channel abonnieren und in Echtzeit empfangen
+        this.channelService.getMessages(channel.id).subscribe(messages => {
+          // Initialisiere die emojis als leeres Array, falls nicht vorhanden
+          this.messages = messages.map(msg => ({
+            ...msg,
+            content: { ...msg.content, emojis: msg.content?.emojis || [] }
+          }));
+  
+          this.scrollToBottom(); // Automatisch nach unten scrollen
+        }, error => {
+          console.error('Fehler beim Laden der Nachrichten:', error);
         });
       }
-
-      
-        
     });
   
     this.loadCurrentUser();
-
   }
   
+
+
+  scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        if (this.messageList?.nativeElement) {
+          this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+        }
+      }, 100); // Eine kleine Verzögerung, um sicherzustellen, dass das DOM fertig gerendert ist
+    } catch (err) {
+      console.error('Fehler beim Scrollen:', err);
+    }
+  }
+
+
   loadCurrentUser(): void {
     this.userService.getCurrentUserData().then(user => {
       this.currentUser = user;
@@ -239,54 +399,7 @@ currentMessageId: string | null = null;
   this.closeImageModal();
 }
 
-scrollToBottom(): void {
-  try {
-    setTimeout(() => {
-      this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-    }, 50); // 50ms Timeout, um sicherzustellen, dass das DOM fertig gerendert ist
-  } catch (err) {
-    console.error('Fehler beim Scrollen:', err);
-  }
-}
 
-sendMessage(textArea: HTMLTextAreaElement): void {
-  const currentTime = new Date().toLocaleTimeString();
-  const msgDate = formatDate(new Date(), 'dd.MM.yyyy', 'en');
-
-  if (this.message.trim() || this.imageUrl) {
-    const newMessage = {
-      type: this.imageUrl && this.message.trim() ? 'text_and_image' : (this.imageUrl ? 'image' : 'text'),
-      content: {
-        text: this.message.trim() || null,
-        image: this.imageUrl || null
-      },
-      senderName: this.currentUser.name,
-      senderAvatar: this.currentUser.avatarUrl,
-      time: currentTime,
-      date: msgDate
-    };
-
-    this.addMessage(newMessage);
-    this.message = ''; // Nachricht zurücksetzen
-    this.imageUrl = null; // Bild zurücksetzen
-    this.resetTextareaHeight(textArea);
-    this.scrollToBottom();
-  }
-}
-
-async loadMessages(channelId: string): Promise<void> {
-  try {
-    const messages = await this.channelService.getMessages(channelId);
-    // Sortiere die Nachrichten nach Datum und Uhrzeit
-    this.messages = messages.sort((a, b) => {
-      const dateA = new Date(a.date + ' ' + a.time);
-      const dateB = new Date(b.date + ' ' + b.time);
-      return dateA.getTime() - dateB.getTime();
-    });
-  } catch (error) {
-    console.error('Fehler beim Laden der Nachrichten:', error);
-  }
-}
 
 
 handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
@@ -315,18 +428,14 @@ addMessage(message: any): void {
 
 
 
+
+
+
+
 toggleEditMessage(msg: any): void {
   msg.isEditing = true; // Öffnet das Bearbeitungsfeld
   this.originalMessage = { ...msg }; // Speichere eine Kopie der ursprünglichen Nachricht
 }
-
-
-
-
-
-
-
-
 
 cancelEditing(msg: any): void {
   msg.isEditing = false; // Bearbeiten beenden
@@ -337,8 +446,6 @@ cancelEditing(msg: any): void {
   }
   this.showEditOptions = false; // Bearbeitungsoptionen schließen
 }
-
-
 
 saveMessage(msg: any): void {
   if (msg?.isEditing !== undefined) {
@@ -388,8 +495,6 @@ startEditing(msg: any): void {
 }
 
 
-
-
 addAtSymbolAndOpenDialog(): void {
   // Fügt zuerst das "@"-Symbol zur Nachricht hinzu
   this.message += '@';
@@ -413,8 +518,76 @@ addAtSymbolAndOpenDialog(): void {
 
 
 
+
+sendPrivateMessage(): void {
+  if (this.privateMessage.trim() && this.selectedMember) {
+    console.log('Private Nachricht an:', this.selectedMember.name);
+    console.log('Nachricht:', this.privateMessage);
+
+    // Hier kannst du die Nachricht an das ausgewählte Mitglied senden
+    this.privateMessage = '';  // Leere die Nachricht nach dem Senden
+  }
 }
 
 
+// Filtere Mitglieder basierend auf dem eingegebenen Buchstaben
+filterMembers(): void {
+  if (this.searchLetter.trim() !== '') {
+    this.userService.getUsersByFirstLetter(this.searchLetter)
+      .then((data) => {
+        this.filteredMembers = data;
+        if (this.filteredMembers.length > 0) {
+          this.openMemberSelectionDialog();  // Öffne den Dialog mit den gefilterten Mitgliedern
+        }
+      })
+      .catch((error) => {
+        console.error('Fehler beim Filtern der Mitglieder:', error);
+      });
+  }
+}
+
+openMemberSelectionDialog(): void {
+  const dialogRef = this.dialog.open(MemberSectionDialogComponent, {
+    width: '400px',
+    data: { members: this.filteredMembers }
+  });
+
+  dialogRef.componentInstance.memberSelected.subscribe((selectedMember) => {
+    this.handleMemberSelected(selectedMember);
+  });
+
+  dialogRef.afterClosed().subscribe(() => {
+    console.log('Dialog zur Auswahl von Mitgliedern geschlossen.');
+  });
+}
+
+handleMemberSelected(member: { uid: string, name: string }): void {
+  console.log('Mitglied empfangen:', member);
+  this.selectedMember = member; // Setze das ausgewählte Mitglied
+}
 
 
+// Öffne den Dialog zur Mitgliederauswahl
+ // Überwache die Eingabe im Input-Feld
+ onMessageInput(event: Event): void {
+  const inputValue = (event.target as HTMLInputElement).value;
+
+  if (inputValue.length > 0) {
+    const lastChar = inputValue.charAt(inputValue.length - 1);
+
+    // Überprüfe, ob der letzte eingegebene Charakter ein Buchstabe ist
+    if (/[a-zA-Z]/.test(lastChar)) {
+      this.searchLetter = lastChar;  // Speichere den Buchstaben
+      this.filterMembers();  // Filtere Mitglieder basierend auf dem Buchstaben
+    }
+  }
+}
+
+selectMember(member: any): void {
+  console.log('Ausgewähltes Mitglied:', member);  // Ausgabe in der Konsole
+  if (member && member.uid && member.name) {
+    this.memberSelected.emit({ uid: member.uid, name: member.name });
+  }
+}
+
+}
