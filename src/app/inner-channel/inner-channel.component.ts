@@ -73,6 +73,7 @@ export class InnerChannelComponent {
     this.channelSelected.emit(channel);
   }
 
+
   openDialog(): void {
     const dialogRef = this.dialog.open(ChannelDialogComponent);
 
@@ -85,6 +86,9 @@ export class InnerChannelComponent {
       }
     });
   }
+  
+
+  
 
   toggleChannels(): void {
     this.isChannelsVisible = !this.isChannelsVisible;

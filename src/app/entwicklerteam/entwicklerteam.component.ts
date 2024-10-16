@@ -66,7 +66,11 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
   searchLetter: string = '';
   members: any[] = [];
 
-  lastUsedEmojis: string[] = [];
+  //lastUsedEmojis: string[] = [];
+
+  lastUsedEmojisSent: string[] = [];  // Emojis für gesendete Nachrichten
+lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
+
 
 
   constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
@@ -156,11 +160,6 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
     msg.isEmojiPickerVisible = !isCurrentlyVisible;
   }
   
-  
-
-
-  
-
   addEmojiToMessage(event: any, msg: any): void {
     if (!msg.content.emojis) {
       msg.content.emojis = [];  // Initialisiere das Emoji-Array, falls es noch nicht existiert
@@ -170,23 +169,28 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
       const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === event.emoji.native);
   
       if (existingEmoji) {
-        // Erhöhe die Zählung, wenn das Emoji bereits existiert
-        existingEmoji.count += 1;
+        existingEmoji.count += 1;  // Erhöhe die Zählung, wenn das Emoji bereits existiert
       } else {
-        // Füge das Emoji mit einer Zählung von 1 hinzu, wenn es noch nicht existiert
-        msg.content.emojis.push({ emoji: event.emoji.native, count: 1 });
+        msg.content.emojis.push({ emoji: event.emoji.native, count: 1 });  // Füge neues Emoji hinzu
       }
   
-      // Speichere die letzten zwei Emojis (basierend auf dem Emoji, nicht der Zählung)
-      this.lastUsedEmojis = [event.emoji.native, ...this.lastUsedEmojis].slice(0, 2);
-  
-      // Speichern der letzten verwendeten Emojis
-      if (this.selectedChannel?.id) {
-        this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojis);
+      // Unterschiedliche Behandlung je nachdem, ob es eine gesendete oder empfangene Nachricht ist
+      if (msg.senderName === this.currentUser?.name) {
+        // Nachricht wurde gesendet -> Verwalte Emojis für gesendete Nachrichten
+        this.lastUsedEmojisSent = [event.emoji.native, ...this.lastUsedEmojisSent].slice(0, 2);
+        if (this.selectedChannel?.id) {
+          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisSent, 'sent');  // Speichere Emojis für gesendete Nachrichten
+        }
+      } else {
+        // Nachricht wurde empfangen -> Verwalte Emojis für empfangene Nachrichten
+        this.lastUsedEmojisReceived = [event.emoji.native, ...this.lastUsedEmojisReceived].slice(0, 2);
+        if (this.selectedChannel?.id) {
+          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisReceived, 'received');  // Speichere Emojis für empfangene Nachrichten
+        }
       }
     }
   
-    msg.isEmojiPickerVisible = false;  // Schließe den Emoji-Picker nach Auswahl
+    msg.isEmojiPickerVisible = false;  // Emoji-Picker schließen
   
     // Nachricht aktualisieren
     if (this.selectedChannel?.id) {
@@ -201,6 +205,11 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
       console.error('Channel ID ist undefined, Nachricht kann nicht aktualisiert werden.');
     }
   }
+  
+
+
+  
+
   
   
   
@@ -268,14 +277,18 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
           description: channel.description,
           createdBy: channel.createdBy
         }];
-        
+  
         this.selectedChannel = channel;
   
-        this.channelService.getLastUsedEmojis(channel.id || '').then(emojis => {
-          this.lastUsedEmojis = emojis || [];
+        // Letzte Emojis für gesendete Nachrichten laden
+        this.channelService.getLastUsedEmojis(channel.id, 'sent').then(emojisSent => {
+          this.lastUsedEmojisSent = emojisSent || [];
         });
-        
-        
+  
+        // Letzte Emojis für empfangene Nachrichten laden
+        this.channelService.getLastUsedEmojis(channel.id, 'received').then(emojisReceived => {
+          this.lastUsedEmojisReceived = emojisReceived || [];
+        });
   
         // Nachrichten für den aktuellen Channel abonnieren und in Echtzeit empfangen
         this.channelService.getMessages(channel.id).subscribe(messages => {
@@ -291,10 +304,10 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
         });
       }
     });
-  
     this.loadCurrentUser();
   }
   
+
 
 
   scrollToBottom(): void {

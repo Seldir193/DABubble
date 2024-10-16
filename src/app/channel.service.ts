@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where,collectionData,getDoc} from '@angular/fire/firestore';
@@ -5,7 +6,6 @@ import { MessageContent } from './entwicklerteam/entwicklerteam.component';
 import { orderBy } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { serverTimestamp } from '@angular/fire/firestore';
-
 
 @Injectable({
   providedIn: 'root'
@@ -181,10 +181,6 @@ getMessages(channelId: string): Observable<any[]> {
 }
 
 
-
-
-
-
 async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
   try {
     console.log('Aktualisiere Nachricht für Channel ID:', channelId);
@@ -204,30 +200,32 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
 
 
 
-
-
-async saveLastUsedEmojis(channelId: string, lastUsedEmojis: string[]): Promise<void> {
+async saveLastUsedEmojis(channelId: string, lastUsedEmojis: string[], type: 'sent' | 'received'): Promise<void> {
   if (!channelId) return;
 
   const channelDocRef = doc(this.firestore, 'channels', channelId);
   try {
-    await updateDoc(channelDocRef, { lastUsedEmojis });
-    console.log('Letzte Emojis erfolgreich gespeichert.');
+    // Unterscheide zwischen gesendeten und empfangenen Emojis
+    if (type === 'sent') {
+      await updateDoc(channelDocRef, { lastUsedEmojisSent: lastUsedEmojis });
+    } else {
+      await updateDoc(channelDocRef, { lastUsedEmojisReceived: lastUsedEmojis });
+    }
+    console.log(`Letzte Emojis (${type}) erfolgreich gespeichert.`);
   } catch (error) {
-    console.error('Fehler beim Speichern der letzten Emojis:', error);
+    console.error(`Fehler beim Speichern der letzten Emojis (${type}):`, error);
   }
 }
 
-async getLastUsedEmojis(channelId: string): Promise<string[] | undefined> {
+async getLastUsedEmojis(channelId: string, type: 'sent' | 'received'): Promise<string[] | undefined> {
   if (!channelId) return;
 
   const channelDocRef = doc(this.firestore, 'channels', channelId);
   const channelDoc = await getDoc(channelDocRef);
-  
+
   if (channelDoc.exists()) {
     const data = channelDoc.data();
-    return data['lastUsedEmojis'] || [];
-    
+    return type === 'sent' ? data['lastUsedEmojisSent'] || [] : data['lastUsedEmojisReceived'] || [];
   } else {
     console.error('Channel-Dokument nicht gefunden.');
     return [];
@@ -235,5 +233,12 @@ async getLastUsedEmojis(channelId: string): Promise<string[] | undefined> {
 }
 
 
-
 }
+
+
+
+
+
+
+
+

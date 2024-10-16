@@ -8,6 +8,7 @@ import { Storage } from '@angular/fire/storage';
 })
 export class UserService {constructor(private firestore: Firestore, private storage: Storage) {};
 
+
 async getCurrentUserData(): Promise<any> {
   const auth = getAuth();
 
@@ -44,6 +45,8 @@ async getCurrentUserData(): Promise<any> {
     });
   });
 }
+
+
 
   async updateUserEmail(newEmail: string): Promise<void> {
     const auth = getAuth();
@@ -167,10 +170,6 @@ async getCurrentUserData(): Promise<any> {
   
     return users;  // Gebe die gefilterten Benutzer zurück
   }
-  
-
-
-
 }
   
   

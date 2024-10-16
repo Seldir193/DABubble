@@ -1,12 +1,10 @@
 
-
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChannelService } from '../channel.service';
 import { UserService } from '../user.service'; 
-
 @Component({
   selector: 'app-edit-channel-dialog',
   standalone: true,
@@ -20,25 +18,18 @@ export class EditChannelDialogComponent implements OnInit {
   description: string = '';
   createdBy: string = '';
   members: any[] = [];
-
-  // Separate Flags für die Bearbeitung
   isEditingName: boolean = false;
   isEditingDescription: boolean = false;
-
-  // Variablen für bearbeitete Daten
   editedChannelName: string = '';
   editedDescription: string = '';
-
+  
 
   constructor(
     public dialogRef: MatDialogRef<EditChannelDialogComponent>,
-  
     @Inject(MAT_DIALOG_DATA) public data: { id: string; name: string; members: any[]; description: string; createdBy: string },
-
     private channelService: ChannelService,
     private userService: UserService 
   ) {
-   
     this.channelName = data.name;
     this.members = data.members;
     this.description = data.description;
@@ -54,7 +45,7 @@ export class EditChannelDialogComponent implements OnInit {
         this.description = currentChannel.description || '';
         this.members = currentChannel.members || [];
         this.createdBy = currentChannel.createdBy || ''; 
-      
+
         this.userService.getCurrentUserData().then(userData => {
           if (userData && userData.name) {
             this.createdBy = userData.name; // Setze den Benutzernamen als Ersteller des Channels
@@ -63,12 +54,9 @@ export class EditChannelDialogComponent implements OnInit {
           console.error('Fehler beim Abrufen des Benutzers:', err);
         });
       }
-
     });
+   
   }
-
-  
-  
 
 
   onSave(): void {
@@ -86,6 +74,7 @@ export class EditChannelDialogComponent implements OnInit {
     // Schließe den Dialog und übergib den aktualisierten Channel
     this.dialogRef.close(updatedChannel);
   }
+
 
   saveChannelName(): void {
     if (this.editedChannelName.trim()) {
@@ -117,18 +106,7 @@ export class EditChannelDialogComponent implements OnInit {
     }
   }
   
-  
-
-
   onCancel(): void {
     this.dialogRef.close();
   }
- 
 }
-
-
-
-
-
-
-

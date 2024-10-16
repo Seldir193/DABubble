@@ -938,6 +938,16 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für eine bessere Sichtbarkeit */
 }
 
+.emoji-picker-received{
+  position: absolute;
+    top: 10%;
+    z-index: 100;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    right: 25px;
+}
+
 
 
 .emoji-message-container{

@@ -96,21 +96,20 @@
                 
                   
                   <div class="image-wrapper">
-                    <!-- Das zweitletzte verwendete Emoji anzeigen -->
-                    <span *ngIf="lastUsedEmojis.length > 1" 
-                          (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojis[1] } }, msg)">
-                      {{ lastUsedEmojis[1] }}
+                    <!-- Zeige Emojis für gesendete Nachrichten -->
+                    <span *ngIf="lastUsedEmojisSent.length > 0" 
+                          (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisSent[0] } }, msg)">
+                      {{ lastUsedEmojisSent[0] }}
                     </span>
                   </div>
-                  
                   
                   <div class="image-wrapper">
-                    <!-- Das zuletzt verwendete Emoji anzeigen -->
-                    <span *ngIf="lastUsedEmojis.length > 0" 
-                          (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojis[0] } }, msg)">
-                      {{ lastUsedEmojis[0] }}
+                    <span *ngIf="lastUsedEmojisSent.length > 1" 
+                          (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisSent[1] } }, msg)">
+                      {{ lastUsedEmojisSent[1] }}
                     </span>
                   </div>
+                  
                   
 
 
@@ -157,18 +156,43 @@
                   <p *ngIf="msg.content && msg.content.text" class="received-message">{{ msg.content.text }}</p>
                 </div>
                 <img *ngIf="msg.content && msg.content.image" [src]="msg.content.image" class="received-image" />
-              </div>
+             
+                 <!-- Emoji-Anzeige für empfangene Nachrichten -->
+      <div class="emoji-message-container" *ngIf="msg.content.emojis && msg.content.emojis.length > 0">
+        <span *ngFor="let emojiObj of msg.content.emojis">
+          {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
+          <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
+        </span>
+      </div>
+    </div>
+              
               <div class="emoji-container-received">
                 <div class="emoji-box-received">
                   <div class="image-wrapper">
-                    <img src="assets/img/close.png" alt="Emoji 1" />
+                    <!-- Zeige Emojis für empfangene Nachrichten -->
+                    <span *ngIf="lastUsedEmojisReceived.length > 0" 
+                          (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[0] } }, msg)">
+                      {{ lastUsedEmojisReceived[0] }}
+                    </span>
                   </div>
+                  
                   <div class="image-wrapper">
-                    <img src="assets/img/reaction.png" alt="Emoji 2"  />
+                    <span *ngIf="lastUsedEmojisReceived.length > 1" 
+                          (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[1] } }, msg)">
+                      {{ lastUsedEmojisReceived[1] }}
+                    </span>
                   </div>
-                  <div class="image-wrapper">
+                  
+
+                  <div *ngIf="msg.isEmojiPickerVisible" class="emoji-picker-received" >
+                    <!-- Emoji-Picker anzeigen -->
+                    <emoji-mart (emojiSelect)="addEmojiToMessage($event, msg)"></emoji-mart>
+                  </div>
+                  
+                  <div class="image-wrapper" (click)="toggleEmojiPickerForMessage(msg)">
                     <img src="assets/img/reaction.png" alt="Reaction" />
                   </div>
+                  
                   <div class="image-wrapper">
                     <img src="assets/img/comment.png" alt="Comment" />
                   </div>
@@ -180,6 +204,8 @@
       </div>
     </div>
   </div>
+
+
 
 <div class="chat-input-container">
   <div class="chat-input">
