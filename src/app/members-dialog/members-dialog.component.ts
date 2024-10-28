@@ -125,10 +125,6 @@ export class MembersDialogComponent implements OnInit {
     this.channelService.setMembers(this.data.channelName, this.selectedMembers);
   }
   
-
-
-
-
   disableButton(): void {
     this.isButtonDisabled = true;
   }

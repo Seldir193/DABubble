@@ -13,6 +13,9 @@ import { formatDate } from '@angular/common';  // Korrekte Import-Anweisung für
 import { AddMemberSelectorComponent } from '../add-member-selector/add-member-selector.component';
 import { MemberSectionDialogComponent } from '../member-section-dialog/member-section-dialog.component';
 
+
+
+
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
@@ -71,12 +74,15 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
   lastUsedEmojisSent: string[] = [];  // Emojis für gesendete Nachrichten
 lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
 
+showWelcomeContainer: boolean = false;
 
 
-  constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService){}
+
+  constructor(private channelService: ChannelService,private dialog: MatDialog,private userService: UserService ){}
   @Input() isEditingChannel: boolean = false;
   @Output() channelSelected = new EventEmitter<void>();
 
+@Output() channelLeft = new EventEmitter<void>();
   
   getYesterdayDate(): string {
     const yesterday = new Date();
@@ -255,12 +261,14 @@ lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
     this.channelService.changeChannel(channel); // Den neuen Channel setzen
   }
   
+
+
+
+
+
   
-
-
-
-
-
+  
+  
   ngOnInit(): void {
     this.channelService.currentChannel.subscribe(channel => {
       if (channel) {
@@ -277,6 +285,10 @@ lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
           description: channel.description,
           createdBy: channel.createdBy
         }];
+
+        this.channels = this.channels.map(ch => 
+          ch.id === channel.id ? { ...ch, members: channel.members, name: channel.name } : ch
+        );
   
         this.selectedChannel = channel;
   
@@ -307,7 +319,7 @@ lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
     this.loadCurrentUser();
   }
   
-
+  
 
 
   scrollToBottom(): void {
@@ -350,6 +362,13 @@ lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
         createdBy: channel.createdBy || ''
       }
     });
+
+    dialogRef.componentInstance.channelLeft.subscribe(() => {
+      // Hier behandelst du das Verlassen des Channels
+      // Z.B.: Informiere die ChatComponent, dass der Channel verlassen wurde
+      this.onLeaveChannel(channel);  // Diese Methode zeigt den welcome-container an
+    });
+  
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -602,5 +621,42 @@ selectMember(member: any): void {
     this.memberSelected.emit({ uid: member.uid, name: member.name });
   }
 }
+
+
+
+
+
+onLeaveChannel(channel: any): void {
+  this.userService.getCurrentUserData().then((userData) => {
+    if (userData && userData.uid && channel.id) {
+      this.channelService.leaveChannel(channel.id, userData.uid).then(() => {
+        console.log('Benutzer hat den Channel verlassen.');
+
+        // Entferne den Benutzer aus der Mitgliederliste des Channels
+        channel.members = channel.members.filter((member: any) => member.uid !== userData.uid);
+
+        // Aktualisiere die gesamte channels-Liste, um Angular zu zwingen, die Änderung zu erkennen
+        this.channels = this.channels.map(ch => ch.id === channel.id ? { ...ch, members: channel.members } : ch);
+
+        // Optional: Zeige den `welcome-container`, wenn der Channel verlassen wurde
+        this.selectedChannel = null;  // Setze den aktiven Channel zurück
+        this.showWelcomeContainer = true;  // Zeige den Welcome-Screen an
+
+
+
+       
+        this.channelLeft.emit(); 
+      }).catch(error => {
+        console.error('Fehler beim Verlassen des Channels:', error);
+      });
+    }
+  }).catch(error => {
+    console.error('Fehler beim Abrufen des Benutzers:', error);
+  });
+}
+
+
+
+
 
 }

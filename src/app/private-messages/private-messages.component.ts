@@ -12,6 +12,10 @@ import { MessageService } from '../message.service';
 import { MemberSectionDialogComponent } from '../member-section-dialog/member-section-dialog.component';
 import { formatDate } from '@angular/common';
 
+
+
+
+
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
@@ -199,5 +203,5 @@ export class PrivateMessagesComponent implements OnInit, AfterViewInit {
   closeProfileCard(): void {
     this.imageUrl = null;  // Entfernt das Bild
   }
-}
 
+}

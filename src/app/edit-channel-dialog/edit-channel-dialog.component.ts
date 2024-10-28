@@ -1,5 +1,4 @@
-
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, EventEmitter, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +13,7 @@ import { UserService } from '../user.service';
 })
 
 export class EditChannelDialogComponent implements OnInit {
+  @Output() channelLeft = new EventEmitter<string>(); // Event für das Verlassen des Channels
   channelName: string = '';
   description: string = '';
   createdBy: string = '';
@@ -23,7 +23,7 @@ export class EditChannelDialogComponent implements OnInit {
   editedChannelName: string = '';
   editedDescription: string = '';
   
-
+ 
   constructor(
     public dialogRef: MatDialogRef<EditChannelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { id: string; name: string; members: any[]; description: string; createdBy: string },
@@ -55,9 +55,7 @@ export class EditChannelDialogComponent implements OnInit {
         });
       }
     });
-   
   }
-
 
   onSave(): void {
     // Falls der Channel-Name oder die Beschreibung bearbeitet wurde, speichere die Änderungen
@@ -70,7 +68,6 @@ export class EditChannelDialogComponent implements OnInit {
   
     // Rufe den ChannelService auf, um den Channel in Firestore zu aktualisieren
     this.channelService.updateChannel(this.data.id, updatedChannel.name, updatedChannel.description);
-  
     // Schließe den Dialog und übergib den aktualisierten Channel
     this.dialogRef.close(updatedChannel);
   }
@@ -108,5 +105,18 @@ export class EditChannelDialogComponent implements OnInit {
   
   onCancel(): void {
     this.dialogRef.close();
+  }
+  onLeaveChannel(): void {
+    this.userService.getCurrentUserData().then((userData) => {
+      if (userData && userData.uid) {
+        this.channelService.leaveChannel(this.data.id, userData.uid).then(() => {
+          console.log('Channel erfolgreich verlassen');
+          this.channelLeft.emit();  // Event auslösen, um das Verlassen zu signalisieren
+          this.dialogRef.close();   // Dialog schließen
+        }).catch(error => {
+          console.error('Fehler beim Verlassen des Channels:', error);
+        });
+      }
+    });
   }
 }

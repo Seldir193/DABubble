@@ -8,31 +8,61 @@
 
 <app-chat-header></app-chat-header>
 
+
 <section>
+
+
+
+
+
+
+
   <div class="container">
 
     <app-devspace ></app-devspace>
     <div class="scrollable-area">
       <!-- Channel Komponente -->
-      <app-inner-channel (channelSelected)="onChannelSelected($event)"></app-inner-channel>
+      <app-inner-channel #innerChannel (channelSelected)="onChannelSelected($event)"></app-inner-channel>
       <!-- Private Nachrichten Komponente -->
       <app-direct-messages (memberSelected)="onMemberSelected($event)"></app-direct-messages>
     </div>
   </div>
 
-  <div class="team-container">
+  <div class="team-container" *ngIf="selectedChannel">
     <!-- Entwicklerteam-Komponente wird angezeigt, wenn kein privater Chat aktiv ist -->
     <div *ngIf="!isPrivateChat && selectedChannel">
-      <app-entwicklerteam  [selectedChannel]="selectedChannel"></app-entwicklerteam>
+     
+      <app-entwicklerteam (channelLeft)="onChannelSelected(null)"  [selectedChannel]="selectedChannel"></app-entwicklerteam>
+
     </div>
+
     
-    <!-- Private Nachrichten Komponente wird angezeigt, wenn der private Chat aktiv ist -->
-    <div *ngIf="isPrivateChat && selectedMember">
-      <app-private-messages 
-        [recipientId]="selectedMember.id" 
-        [recipientName]="selectedMember.name">
-      </app-private-messages>
-    </div>
+
+    
   </div>
+<!-- Private Nachrichten Komponente wird angezeigt, wenn der private Chat aktiv ist -->
+<div class="privat-chat-container" *ngIf="isPrivateChat && selectedMember">
+  
+  <app-private-messages 
+  [recipientId]="selectedMember.id" 
+  [recipientName]="selectedMember.name">
+
+  
+  </app-private-messages>
+
+
+</div>
+
+
+
+<div  *ngIf="!selectedChannel && showWelcomeContainer"   class="welcome-container">
+  <app-welcome-screen></app-welcome-screen>
+</div>
+  
 </section>
 
+
+
+
+
+   

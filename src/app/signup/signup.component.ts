@@ -128,7 +128,9 @@ export class SignupComponent implements OnInit {
         setTimeout(() => {
           this.successMessage = '';
           this.router.navigate(['/avatar']);
+          console.log('User successfully navigated to Avatar Page');
         }, 3000);
+       
       } catch (error: any) {
         console.error('Fehler bei der Registrierung:', error.code, error.message);
         this.errorMessage = this.getFirebaseErrorMessage(error);

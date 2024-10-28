@@ -32,6 +32,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from '@angular/fire/auth';
+import { AppStateService } from '../app-state.service'; 
 
 @Component({
   selector: 'app-login',
@@ -63,7 +64,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private firestore: Firestore,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private appStateService: AppStateService
   ) {
     this.myForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -74,7 +76,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {}
-
+ 
   emailValidator(control: AbstractControl): ValidationErrors | null {
     const email = control.value;
     if (!this.emailPattern.test(email)) {
@@ -126,6 +128,8 @@ export class LoginComponent implements OnInit {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, this.email, this.password);
 
+      this.appStateService.setShowWelcomeContainer(true);
+
       this.successMessage = 'Anmelden';
       setTimeout(() => {
         this.successMessage = '';
@@ -146,7 +150,6 @@ export class LoginComponent implements OnInit {
       }
     }
   }
-
 
   async loadUserData(email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
     const auth = getAuth();

@@ -1,11 +1,14 @@
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where,collectionData,getDoc} from '@angular/fire/firestore';
+import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where,collectionData,getDoc,deleteDoc} from '@angular/fire/firestore';
 import { MessageContent } from './entwicklerteam/entwicklerteam.component';
 import { orderBy } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { serverTimestamp } from '@angular/fire/firestore';
+import { getAuth } from 'firebase/auth';
+import { UserService } from './user.service';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +28,8 @@ selectedChannel = this.selectedChannelSource.asObservable();
   private channelsSource = new BehaviorSubject<{id: string; name: string; members: any[]; description?: string; createdBy?: string }[]>([]);
   currentChannels = this.channelsSource.asObservable();
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore,private userService:UserService) {}
+
 
   async addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): Promise<void> {
     try {
@@ -47,23 +51,75 @@ selectedChannel = this.selectedChannelSource.asObservable();
     }
   }
 
-  // Lade alle Channels von Firestore
-  async loadChannels(): Promise<void> {
-    try {
-      const channelsCollection = collection(this.firestore, 'channels');
-      const querySnapshot = await getDocs(channelsCollection);
-      const channels: any[] = [];
+async leaveChannel(channelId: string, userId: string): Promise<void> {
+  try {
+    // Hole den Channel aus Firestore
+    const channelDocRef = doc(this.firestore, 'channels', channelId);
+    const channelDoc = await getDoc(channelDocRef);
+
+    if (channelDoc.exists()) {
+      const channelData = channelDoc.data();
+
+      // Entferne den Benutzer aus der Mitgliederliste
+      const updatedMembers = (channelData['members'] || []).filter((member: string) => member !== userId);
+
+      if (updatedMembers.length > 0) {
+        // Aktualisiere die Mitgliederliste im Firestore, falls noch Mitglieder vorhanden sind
+        await updateDoc(channelDocRef, { members: updatedMembers });
+        console.log(`Benutzer ${userId} erfolgreich aus dem Channel ${channelId} entfernt.`);
+      } else {
+        // Lösche den Channel nur, wenn keine Mitglieder mehr vorhanden sind
+        await deleteDoc(channelDocRef);
+        console.log(`Channel ${channelId} gelöscht, da keine Mitglieder mehr vorhanden.`);
+      }
+
+      // Lokales Entfernen des Channels, damit er für den Benutzer nicht mehr sichtbar ist
+      this.removeChannelLocally(channelId);
       
-      querySnapshot.forEach((doc) => {
-        channels.push({ id: doc.id, ...doc.data() }); // Channels mit ID sammeln
-      });
-      
-      // Aktualisiere die Observable mit den neuesten Daten
-      this.channelsSource.next(channels);
-    } catch (error) {
-      console.error('Fehler beim Laden der Channels:', error);
+    } else {
+      console.error('Channel nicht gefunden.');
     }
+  } catch (error) {
+    console.error('Fehler beim Verlassen des Channels:', error);
+    throw error;
   }
+}
+
+
+
+
+// Lade alle Channels von Firestore
+async loadChannels(): Promise<void> {
+  try {
+    const channelsCollection = collection(this.firestore, 'channels');
+    const querySnapshot = await getDocs(channelsCollection);
+    const channels: any[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      channels.push({ id: doc.id, ...doc.data() }); // Channels mit ID sammeln
+    });
+    
+    // Aktualisiere die Observable mit den neuesten Daten
+    this.channelsSource.next(channels);
+   
+  } catch (error) {
+    console.error('Fehler beim Laden der Channels:', error);
+  }
+}
+
+
+removeChannelLocally(channelId: string): void {
+  const updatedChannels = this.channelsSource.getValue().filter(channel => channel.id !== channelId);
+  this.channelsSource.next(updatedChannels); // Update der lokalen Channel-Liste
+}
+
+ 
+
+  updateLocalChannels(updatedChannels: any[]): void {
+    // Aktualisiere die Observable mit den neuen lokalen Channels
+    this.channelsSource.next(updatedChannels);
+  }
+  
 
   async updateChannel(channelId: string, newChannelName: string, description: string): Promise<void> {
     try {
@@ -135,6 +191,7 @@ changeChannel(channel: { id: string; name: string; members: any[]; description?:
   this.channelSource.next(channel);
 }
 
+
 // Methode, um alle Channels abzurufen
 getChannels(): { name: string; members: any[]; description?: string; createdBy?: string }[] {
   return this.channelsSource.getValue();
@@ -144,10 +201,6 @@ getChannels(): { name: string; members: any[]; description?: string; createdBy?:
 getMembers(): any[] {
   return this.membersSource.getValue(); // Mitglieder abrufen
 }
-
-
-
-
 
 async addMessage(channelId: string, message: any): Promise<string> {
   try {
@@ -160,11 +213,6 @@ async addMessage(channelId: string, message: any): Promise<string> {
     throw error; // Fehler weiterwerfen
   }
 }
-
-
-
-
-
 
 getMessages(channelId: string): Observable<any[]> {
   const messagesCollection = collection(this.firestore, 'messages');
@@ -179,7 +227,6 @@ getMessages(channelId: string): Observable<any[]> {
   // Mit collectionData() ein Observable zurückgeben, das die Nachrichten in Echtzeit liefert
   return collectionData(q, { idField: 'id' }) as Observable<any[]>;
 }
-
 
 async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
   try {
@@ -197,8 +244,6 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
     console.error('Fehler beim Aktualisieren der Nachricht:', error);
   }
 }
-
-
 
 async saveLastUsedEmojis(channelId: string, lastUsedEmojis: string[], type: 'sent' | 'received'): Promise<void> {
   if (!channelId) return;
@@ -233,12 +278,24 @@ async getLastUsedEmojis(channelId: string, type: 'sent' | 'received'): Promise<s
 }
 
 
+
+async deleteChannel(channelId: string): Promise<void> {
+  try {
+    const channelDocRef = doc(this.firestore, 'channels', channelId);
+    await deleteDoc(channelDocRef); // Lösche das Kanal-Dokument aus Firestore
+    console.log(`Channel ${channelId} erfolgreich gelöscht.`);
+    
+    // Aktualisiere die Channels im Frontend
+    //await this.loadChannels();
+
+    this.removeChannelLocally(channelId);
+   
+  } catch (error) {
+    console.error('Fehler beim Löschen des Channels:', error);
+  }
 }
 
 
 
 
-
-
-
-
+}

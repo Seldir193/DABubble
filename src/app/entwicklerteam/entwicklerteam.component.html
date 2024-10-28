@@ -8,6 +8,8 @@
         <img src="assets/img/keyboard_arrow_down-1.png" />
       </div>
       <!-- Avatare der Mitglieder -->
+     
+     
       <ul class="avatar-list" *ngIf="channel.members && channel.members.length > 0">
         <li *ngFor="let member of channel.members">
           <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar">
@@ -16,6 +18,11 @@
           +{{ channel.members.length - 1 }}
         </li>
       </ul>
+
+      
+      
+
+      
       <div class="static-member" (click)="openAddMembersDialog(channel)">
         <img src="assets/img/member.png" alt="Member">
       </div>

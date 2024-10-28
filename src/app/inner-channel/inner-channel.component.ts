@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -12,6 +6,7 @@ import { ChannelDialogComponent } from '../channel-dialog/channel-dialog.compone
 import { EntwicklerteamComponent } from '../entwicklerteam/entwicklerteam.component';
 import { ChannelService } from '../channel.service';
 import { UserService } from '../user.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-inner-channel',
@@ -24,11 +19,17 @@ export class InnerChannelComponent {
   @ViewChild(EntwicklerteamComponent) entwicklerteamComponent!: EntwicklerteamComponent;
   @Output() channelSelected = new EventEmitter<any>(); // EventEmitter für Kanaländerungen
   isChannelsVisible = true;
-
   entwicklerTeams: { id: string; name: string; members: any[]; description?: string; createdBy?: string }[] = [];
   channelNameExists = false;  // Flag zur Überprüfung, ob der Channel-Name bereits existiert
+  showWelcomeContainer: boolean = false;
+  selectedChannel: any = null;
 
-  constructor(public dialog: MatDialog, private channelService: ChannelService, private userService: UserService) {}
+  constructor(public dialog: MatDialog, private channelService: ChannelService, private userService: UserService,private cdr: ChangeDetectorRef) {}
+
+ 
+  
+
+
 
   ngOnInit(): void {
     this.channelService.loadChannels();
@@ -38,8 +39,9 @@ export class InnerChannelComponent {
     });
   }
 
-  
 
+
+  
   createChannel(name: string, members: any[]): void {
     this.userService.getCurrentUserData().then((userData) => {
       const currentUserName = userData?.name || 'Unbekannt';
@@ -66,6 +68,9 @@ export class InnerChannelComponent {
     });
   }
 
+
+  
+
   selectChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     // Wähle den Kanal aus und speichere ihn im Zustand
     this.channelService.changeChannel(channel);
@@ -73,10 +78,11 @@ export class InnerChannelComponent {
     this.channelSelected.emit(channel);
   }
 
+ 
+  
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ChannelDialogComponent);
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('InnerChannelComponent: Channel erstellt:', result.channelName);
@@ -87,27 +93,35 @@ export class InnerChannelComponent {
     });
   }
   
-
-  
-
   toggleChannels(): void {
     this.isChannelsVisible = !this.isChannelsVisible;
   }
 
- 
+  async leaveChannel(channelId: string): Promise<void> {
+    const userId = this.userService.getCurrentUserId(); // Benutzer-ID holen
+  
+    if (userId) {
+      try {
+        // Entferne den Benutzer aus Firestore, aber lösche den Channel nicht vollständig
+        await this.channelService.leaveChannel(channelId, userId);
+        
+        // Der Channel wird aus der lokalen Channel-Liste entfernt
+        this.entwicklerTeams = this.entwicklerTeams.filter(channel => channel.id !== channelId);
+        
+        // Emitte ein Event, dass kein Channel mehr ausgewählt ist
+        this.channelSelected.emit(null);
+      } catch (error) {
+        console.error('Fehler beim Verlassen des Channels:', error);
+      }
+    } else {
+      console.error('Benutzer-ID konnte nicht abgerufen werden.');
+    }
+  }
+  
+
+  
+
+  
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

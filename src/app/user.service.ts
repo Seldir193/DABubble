@@ -170,9 +170,25 @@ async getCurrentUserData(): Promise<any> {
   
     return users;  // Gebe die gefilterten Benutzer zurück
   }
+
+
+  getCurrentUserId(): string | null {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    return user ? user.uid : null;
+  }
+  
 }
   
+
+
   
+
+
+
+
+
+
 
 
 

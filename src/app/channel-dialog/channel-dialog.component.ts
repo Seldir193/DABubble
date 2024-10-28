@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MembersDialogComponent } from '../members-dialog/members-dialog.component';
 import { ChannelService } from '../channel.service';
 
+
 @Component({
   selector: 'app-channel-dialog',
   templateUrl: './channel-dialog.component.html',
@@ -35,12 +36,18 @@ export class ChannelDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ChannelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
-    private channelService: ChannelService
+    private channelService: ChannelService,
+    
+   
+
+    
+    
   ) {}
 
   onChannelNameChange(value: string): void {
     this.isChannelNameValid = value.trim().length >= 3;  // Channel-Name ist gültig, wenn mindestens 3 Zeichen
   }
+
 
   onCreate(): void {
     if (!this.isChannelNameValid) {
@@ -81,13 +88,13 @@ export class ChannelDialogComponent implements OnInit {
       this.dialogRef.close(); // Schließe den Channel-Dialog nachdem Mitglieder-Dialog geöffnet wurde
     }
   }
-
-
-
-
+ 
 
   
   
+  
+  
+
   closeDialog(): void {
     this.dialogRef.close();
   }
