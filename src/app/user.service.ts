@@ -138,21 +138,22 @@ async getCurrentUserData(): Promise<any> {
     }
   }
 
+
+
   async getAllUsers(): Promise<any[]> {
-    const usersCollection = collection(this.firestore, 'users'); // Holen wir die 'users' Collection
-    const querySnapshot = await getDocs(usersCollection); // Firebase Firestore Abfrage
+    const usersCollection = collection(this.firestore, 'users');
+    const querySnapshot = await getDocs(usersCollection);
     const users: any[] = [];
-    
-   
-    // Iteriere durch die Ergebnisse und füge sie in ein Array
     querySnapshot.forEach((doc) => {
-      users.push(doc.data()); // Füge jedes Dokument zur users-Liste hinzu
+      users.push({ id: doc.id, ...doc.data() });
     });
-
-
-    return users; // Gebe die Liste der Benutzer zurück
+    return users;
   }
 
+
+
+
+  
 
 
 
