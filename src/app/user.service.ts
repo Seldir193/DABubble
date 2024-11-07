@@ -8,7 +8,6 @@ import { Storage } from '@angular/fire/storage';
 })
 export class UserService {constructor(private firestore: Firestore, private storage: Storage) {};
 
-
 async getCurrentUserData(): Promise<any> {
   const auth = getAuth();
 
@@ -23,7 +22,8 @@ async getCurrentUserData(): Promise<any> {
           await updateDoc(userDocRef, { isOnline: true });
 
           if (userDocSnap.exists()) {
-            resolve(userDocSnap.data());
+            resolve({ ...userDocSnap.data(), id: user.uid }); 
+            //resolve(userDocSnap.data());
           } else {
             reject(new Error('Benutzer nicht gefunden.'));
           }
@@ -45,7 +45,6 @@ async getCurrentUserData(): Promise<any> {
     });
   });
 }
-
 
 
   async updateUserEmail(newEmail: string): Promise<void> {
@@ -144,10 +143,12 @@ async getCurrentUserData(): Promise<any> {
     const querySnapshot = await getDocs(usersCollection); // Firebase Firestore Abfrage
     const users: any[] = [];
     
+   
     // Iteriere durch die Ergebnisse und füge sie in ein Array
     querySnapshot.forEach((doc) => {
       users.push(doc.data()); // Füge jedes Dokument zur users-Liste hinzu
     });
+
 
     return users; // Gebe die Liste der Benutzer zurück
   }
@@ -177,13 +178,27 @@ async getCurrentUserData(): Promise<any> {
     const user = auth.currentUser;
     return user ? user.uid : null;
   }
+
+
+
+
   
+
+
+  // user.service.ts
+  async getUserById(userId: string): Promise<any> {
+    const userDocRef = doc(this.firestore, 'users', userId);
+    const userDocSnap = await getDoc(userDocRef);
+    if (userDocSnap.exists()) {
+      return userDocSnap.data();
+      
+
+    } else {
+      throw new Error('Benutzer nicht gefunden.');
+    }
+  }
+
 }
-  
-
-
-  
-
 
 
 

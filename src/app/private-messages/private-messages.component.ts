@@ -1,7 +1,4 @@
-
-
-
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
@@ -9,9 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { MessageService } from '../message.service';
-import { MemberSectionDialogComponent } from '../member-section-dialog/member-section-dialog.component';
 import { formatDate } from '@angular/common';
-
+import { Message } from '../message.models';
 
 
 
@@ -21,6 +17,9 @@ export interface MessageContent {
   image?: string | ArrayBuffer | null;
 }
 
+
+
+
 @Component({
   selector: 'app-private-messages',
   standalone: true,
@@ -29,24 +28,27 @@ export interface MessageContent {
   styleUrls: ['./private-messages.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class PrivateMessagesComponent implements OnInit, AfterViewInit {
+export class PrivateMessagesComponent implements OnInit, AfterViewInit,OnChanges{
   @ViewChild('messageList') messageList!: ElementRef;
-  @ViewChild('textArea') textArea!: ElementRef;
-  
-  @Input() recipientName: string = ''; // Name des Empfängers der privaten Nachricht
-  @Input() recipientId: string = '';   // ID des Empfängers der privaten Nachricht
+  @Input() recipientName: string = '';
+  @Input() recipientId: string = '';
+  @Output() memberSelected = new EventEmitter<any>();
+
   imageUrl: string | ArrayBuffer | null = null; 
   privateMessage: string = '';
- 
   currentUser: any;
   privateMessages: any[] = [];
+  recipient: any = null;
   isEmojiPickerVisible: boolean = false;
   isImageModalOpen = false;
-  searchLetter: string = '';
-  filteredMembers: any[] = [];
-  isTextareaExpanded: boolean = false;
   yesterdayDate: string = this.getYesterdayDate();
   currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+
+  recipientAvatarUrl: string = '';
+  recipientStatus: string = ''; 
+ 
+
+  
 
 
   constructor(
@@ -57,21 +59,166 @@ export class PrivateMessagesComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog
   ) {}
 
+
+
   ngOnInit(): void {
     this.loadCurrentUser();
+    this.loadRecipientData();
+  }
+  
+  generateConversationId(userId1: string, userId2: string): string {
+    return [userId1, userId2].sort().join('_'); // Alphabetisch sortieren und verbinden
+  }
+  
 
-    // Route-Parameter auslesen
-    this.route.params.subscribe(params => {
-      this.recipientName = params['name'];
-      this.recipientId = params['id'];
-    });
 
-    // Private Nachrichten laden
-    this.loadPrivateMessages();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['recipientId'] && !changes['recipientId'].isFirstChange()) {
+      this.loadRecipientData();
+      this.loadPrivateMessages();
+    }
   }
 
+  
+
+
+  
   ngAfterViewInit(): void {
     this.scrollToBottom();
+  }
+
+
+  loadCurrentUser(): void {
+    this.userService.getCurrentUserData().then(user => {
+      this.currentUser = user;
+      console.log("Current User:", this.currentUser);
+      console.log("Recipient ID:", this.recipientId);
+      
+      // Überprüfen Sie, ob beide IDs vorhanden sind, bevor Sie die Nachrichten laden
+      if (this.currentUser?.id && this.recipientId) {
+        this.loadPrivateMessages();
+      } else {
+        console.error("Fehlende Benutzer-ID oder Empfänger-ID beim Initialisieren");
+      }
+    }).catch(err => {
+      console.error('Fehler beim Laden des aktuellen Benutzers:', err);
+    });
+
+  }
+  
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imageUrl = e.target?.result || null;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  private loadRecipientData(): void {
+    if (!this.recipientId) {
+      console.error("Fehlende Empfänger-ID beim Laden der Empfängerdaten");
+      return;
+    }
+    this.userService.getUserById(this.recipientId)
+      .then(userData => {
+        this.recipientAvatarUrl = userData.avatarUrl;
+        this.recipientName = userData.name;
+        this.recipientStatus = userData.isOnline ? 'Aktiv' : 'Abwesend';
+      })
+      .catch(error => {
+        console.error('Fehler beim Laden des Empfängers:', error);
+      });
+  }
+
+
+  loadPrivateMessages(): void {
+    const senderId = this.userService.getCurrentUserId();
+    const recipientId = this.recipientId;
+  
+    if (senderId && recipientId) {
+      const conversationId = this.generateConversationId(senderId, recipientId);
+      this.messageService.listenForPrivateMessages(conversationId, (messages) => {
+        this.privateMessages = messages.map(msg => ({
+          ...msg,
+          timestamp: msg.timestamp ? msg.timestamp.toDate() : new Date()
+        }));
+        this.scrollToBottom();
+      });
+    } else {
+      console.error("Fehlende Benutzer-ID oder Empfänger-ID beim Laden der Nachrichten");
+    }
+  }
+
+  async sendPrivateMessage(): Promise<void> {
+    const senderId = this.userService.getCurrentUserId();
+    const recipientId = this.recipientId;
+    if (!senderId || !recipientId) {
+      console.error("Fehlende Benutzer-ID oder Empfänger-ID beim Senden der Nachricht");
+      return;
+    }
+  
+    const conversationId = this.generateConversationId(senderId, recipientId);
+    const messageData = {
+      content: {
+        text: this.privateMessage || null,
+        image: this.imageUrl || null
+      },
+      timestamp: new Date(),
+      senderId: senderId,
+      senderName: this.currentUser.name || "Unbekannt",
+      senderAvatar: this.currentUser.avatarUrl || ""
+    };
+  
+    await this.messageService.sendPrivateMessage(senderId, recipientId, messageData);
+    // Entferne diese Zeile, um das doppelte Hinzufügen zu verhindern:
+    // this.privateMessages.push(messageData);
+  
+    this.privateMessage = '';
+    this.imageUrl = null;
+    this.scrollToBottom();
+  }
+  
+ 
+  
+ 
+  
+  
+
+  openDirectMessage(member: any): void {
+    console.log('Öffne Direktnachricht mit:', member);
+    this.memberSelected.emit(member);
+  
+    const currentUserId = this.userService.getCurrentUserId();
+    if (currentUserId && member.id) { // Überprüfen, ob beide Werte nicht null sind
+      const conversationId = this.generateConversationId(currentUserId, member.id);
+      this.messageService.listenForPrivateMessages(conversationId, (messages: Message[]) => {
+        this.privateMessages = messages.map((msg: Message) => ({
+          ...msg,
+          timestamp: msg.timestamp ? msg.timestamp.toDate() : new Date()
+        }));
+      });
+    } else {
+      console.error("Fehlende Benutzer-ID oder Empfänger-ID.");
+    }
+  }
+  
+  
+  
+  
+  
+
+  
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      if (this.messageList) {
+        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+      }
+    }, 100);
   }
 
   getYesterdayDate(): string {
@@ -80,65 +227,10 @@ export class PrivateMessagesComponent implements OnInit, AfterViewInit {
     return formatDate(yesterday, 'dd.MM.yyyy', 'en');
   }
 
-  isToday(date: string): boolean {
-    return date === this.currentDate;
-  }
-
-  isYesterday(date: string): boolean {
-    return date === this.yesterdayDate;
-  }
-
-  loadCurrentUser(): void {
-    this.userService.getCurrentUserData().then(user => {
-      this.currentUser = user;
-    }).catch(err => {
-      console.error('Fehler beim Laden des aktuellen Benutzers:', err);
-    });
-  }
-
-  loadPrivateMessages(): void {
-    this.messageService.getPrivateMessages(this.recipientId).then(messages => {
-      this.privateMessages = messages;
-      this.scrollToBottom();
-    }).catch(error => {
-      console.error('Fehler beim Laden der privaten Nachrichten:', error);
-    });
-  }
-
-  sendPrivateMessage(): void {
-    if (this.privateMessage.trim() || this.imageUrl) {
-      const message = {
-        senderId: this.currentUser.id,
-        recipientId: this.recipientId,
-        content: {
-          text: this.privateMessage,
-          image: this.imageUrl
-        },
-        timestamp: new Date().toISOString()
-      };
-
-      this.messageService.sendPrivateMessage(message).then(() => {
-        this.privateMessage = ''; // Nachricht zurücksetzen
-        this.imageUrl = null; // Bild zurücksetzen
-        this.scrollToBottom();
-      }).catch(error => {
-        console.error('Fehler beim Senden der Nachricht:', error);
-      });
-    }
-  }
-
   handleKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.sendPrivateMessage();
-    }
-  }
-
-  scrollToBottom(): void {
-    if (this.messageList) {
-      setTimeout(() => {
-        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-      }, 100);
     }
   }
 
@@ -153,45 +245,6 @@ export class PrivateMessagesComponent implements OnInit, AfterViewInit {
     this.isEmojiPickerVisible = false;
   }
 
-  openMemberSelectionDialog(): void {
-    const dialogRef = this.dialog.open(MemberSectionDialogComponent, {
-      width: '400px',
-      data: { members: this.filteredMembers }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.router.navigate(['/private-messages', { id: result.id, name: result.name }]);
-      }
-    });
-  }
-
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.imageUrl = e.target?.result || null; // Entfernt `undefined`
-        this.adjustTextareaHeight(); // Textarea-Höhe anpassen
-        this.isTextareaExpanded = true;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  adjustTextareaHeight(): void {
-    if (this.textArea && this.imageUrl) {
-      this.textArea.nativeElement.style.paddingBottom = '160px';
-    }
-  }
-
-  resetTextareaHeight(): void {
-    if (this.textArea) {
-      this.textArea.nativeElement.style.paddingBottom = '20px';
-    }
-  }
-
   openImageModal(): void {
     this.isImageModalOpen = true;
   }
@@ -201,7 +254,14 @@ export class PrivateMessagesComponent implements OnInit, AfterViewInit {
   }
 
   closeProfileCard(): void {
-    this.imageUrl = null;  // Entfernt das Bild
+    this.imageUrl = null;
   }
 
+
+
+
+  
+  
+  
 }
+

@@ -1,6 +1,6 @@
 <div class="entwickler-box">
   <div *ngIf="!isEditingChannel">
-    <div *ngFor="let channel of channels" class="channel-container"  >
+    <div *ngFor="let channel of channels"  class="channel-container"  >
       <!-- Channel Name -->
       <div class="office-box"   (click)="openEditChannelDialog(channel)" >
         <img src="assets/img/tag-black.png" alt="Tag Icon" />

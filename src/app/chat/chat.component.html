@@ -43,13 +43,16 @@
 <!-- Private Nachrichten Komponente wird angezeigt, wenn der private Chat aktiv ist -->
 <div class="privat-chat-container" *ngIf="isPrivateChat && selectedMember">
   
+   
   <app-private-messages 
-  [recipientId]="selectedMember.id" 
-  [recipientName]="selectedMember.name">
-
+ 
+    [recipientId]="selectedMember.id" 
+    [recipientName]="selectedMember.name">
   
   </app-private-messages>
 
+  
+  
 
 </div>
 

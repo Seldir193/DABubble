@@ -81,7 +81,7 @@ export class DirectMessagesComponent implements OnInit {
       // Starte einen neuen Timer für 5 Minuten (300000 ms)
       this.inactivityTimeout = setTimeout(() => {
         this.setUserAsInactive();
-      }, 5000); // 5 Minuten Inaktivität
+      }, 50000); // 5 Minuten Inaktivität
     }
   
     // Setzt den Benutzer auf "inaktiv"
