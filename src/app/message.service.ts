@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, query, where, getDocs, orderBy, DocumentReference, DocumentData, onSnapshot } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, query, where, getDocs, orderBy, DocumentReference, DocumentData, onSnapshot,doc,updateDoc } from '@angular/fire/firestore';
 import { Message } from './message.models';
 @Injectable({
   providedIn: 'root',
@@ -52,6 +52,6 @@ export class MessageService {
   }
   
   
-
+  
   
 }
