@@ -81,14 +81,28 @@
                 <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
 
                 <div class="emoji-message-container" *ngIf="msg.content.emojis && msg.content.emojis.length > 0">
-                  <span *ngFor="let emojiObj of msg.content.emojis">
+
+                  <span  *ngFor="let emojiObj of msg.content.emojis" 
+                  (mouseover)="showTooltip($event,emojiObj.emoji, msg.senderName )" 
+                  (mouseleave)="hideTooltip()" >
                     {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
                     <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
-                  </span>
+                </span>
+
+
+                 
                 </div>
                 
 
-
+                <div class="tooltip" *ngIf="tooltipVisible" 
+                [style.top.px]="tooltipPosition.y" 
+                [style.left.px]="tooltipPosition.x">
+             <div class="emoji-icon">{{ tooltipEmoji }}</div>
+             <div class="tooltip-content">
+               <span class="sender-name">{{ tooltipSenderName }}</span>
+               <span class="reaction-text">hat mit reagiert</span>
+             </div>
+           </div>
 
                
                 
@@ -166,11 +180,24 @@
              
                  <!-- Emoji-Anzeige für empfangene Nachrichten -->
       <div class="emoji-message-container" *ngIf="msg.content.emojis && msg.content.emojis.length > 0">
-        <span *ngFor="let emojiObj of msg.content.emojis">
-          {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
-          <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
-        </span>
+        <span  *ngFor="let emojiObj of msg.content.emojis" 
+                  (mouseover)="showTooltip($event,emojiObj.emoji, msg.senderName )" 
+                  (mouseleave)="hideTooltip()" >
+                    {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
+                    <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
+                </span>
       </div>
+
+      
+      <div class="tooltip" *ngIf="tooltipVisible" 
+      [style.top.px]="tooltipPosition.y" 
+      [style.left.px]="tooltipPosition.x">
+   <div class="emoji-icon">{{ tooltipEmoji }}</div>
+   <div class="tooltip-content">
+     <span class="sender-name">{{ tooltipSenderName }}</span>
+     <span class="reaction-text">hat mit reagiert</span>
+   </div>
+ </div>
     </div>
               
               <div class="emoji-container-received">

@@ -245,6 +245,8 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
   }
 }
 
+
+
 async saveLastUsedEmojis(channelId: string, lastUsedEmojis: string[], type: 'sent' | 'received'): Promise<void> {
   if (!channelId) return;
 

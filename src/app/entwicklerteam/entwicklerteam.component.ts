@@ -56,6 +56,7 @@ export class EntwicklerteamComponent implements OnInit {
 currentMessageId: string | null = null;
 
 
+
 newMessage: string = '';
   
 
@@ -75,6 +76,11 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
 lastUsedEmojisReceived: string[] = [];  // Emojis für empfangene Nachrichten
 
 showWelcomeContainer: boolean = false;
+
+tooltipVisible = false;
+tooltipPosition = { x: 0, y: 0 };
+tooltipEmoji = '';
+tooltipSenderName = '';
 
 
 
@@ -165,33 +171,41 @@ showWelcomeContainer: boolean = false;
     // Setze den Zustand für die ausgewählte Nachricht basierend auf dem vorherigen Zustand
     msg.isEmojiPickerVisible = !isCurrentlyVisible;
   }
-  
+
+
   addEmojiToMessage(event: any, msg: any): void {
     if (!msg.content.emojis) {
       msg.content.emojis = [];  // Initialisiere das Emoji-Array, falls es noch nicht existiert
     }
   
     if (event && event.emoji && event.emoji.native) {
-      const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === event.emoji.native);
+      const newEmoji = event.emoji.native;
+      const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
   
       if (existingEmoji) {
         existingEmoji.count += 1;  // Erhöhe die Zählung, wenn das Emoji bereits existiert
       } else {
-        msg.content.emojis.push({ emoji: event.emoji.native, count: 1 });  // Füge neues Emoji hinzu
+        msg.content.emojis.push({ emoji: newEmoji, count: 1 });  // Füge neues Emoji hinzu
       }
   
       // Unterschiedliche Behandlung je nachdem, ob es eine gesendete oder empfangene Nachricht ist
       if (msg.senderName === this.currentUser?.name) {
         // Nachricht wurde gesendet -> Verwalte Emojis für gesendete Nachrichten
-        this.lastUsedEmojisSent = [event.emoji.native, ...this.lastUsedEmojisSent].slice(0, 2);
+        if (!this.lastUsedEmojisSent.includes(newEmoji)) {
+          // Emoji hinzufügen, nur wenn es nicht vorhanden ist
+          this.lastUsedEmojisSent = [newEmoji, ...this.lastUsedEmojisSent].slice(0, 2);
+        }
         if (this.selectedChannel?.id) {
-          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisSent, 'sent');  // Speichere Emojis für gesendete Nachrichten
+          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisSent, 'sent');
         }
       } else {
         // Nachricht wurde empfangen -> Verwalte Emojis für empfangene Nachrichten
-        this.lastUsedEmojisReceived = [event.emoji.native, ...this.lastUsedEmojisReceived].slice(0, 2);
+        if (!this.lastUsedEmojisReceived.includes(newEmoji)) {
+          // Emoji hinzufügen, nur wenn es nicht vorhanden ist
+          this.lastUsedEmojisReceived = [newEmoji, ...this.lastUsedEmojisReceived].slice(0, 2);
+        }
         if (this.selectedChannel?.id) {
-          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisReceived, 'received');  // Speichere Emojis für empfangene Nachrichten
+          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisReceived, 'received');
         }
       }
     }
@@ -212,8 +226,8 @@ showWelcomeContainer: boolean = false;
     }
   }
   
-
-
+  
+ 
   
 
   
@@ -656,7 +670,22 @@ onLeaveChannel(channel: any): void {
 }
 
 
+showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+  this.tooltipVisible = true;
+  this.tooltipEmoji = emoji;
+  this.tooltipSenderName = senderName;
+  // Positioniere den Tooltip direkt über dem Emoji
+  this.tooltipPosition = {
+    x: event.clientX ,
+    y: event.clientY - 40
+};
+}
 
+
+
+hideTooltip(): void {
+  this.tooltipVisible = false;
+}
 
 
 }

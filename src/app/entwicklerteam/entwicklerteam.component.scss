@@ -979,4 +979,50 @@
 
 
 
+.tooltip {
+  position: fixed; /* Positioniert das Element relativ zum Viewport */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $button-blue;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  z-index: 1000;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -100%); /* Zentriert den Tooltip horizontal über dem Emoji */
+  padding: 15px 10px;
+  border-radius: 30px 30px 30px 0px;
+  width: 180px;
+  text-align: center;
+  
+}
+
+
+
+.emoji-icon {
+font-size: 30px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sender-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 8px; /* Abstand zwischen Emoji und Sendername */
+}
+
+.reaction-text {
+  font-size: 16px;
+  margin-top: 5px; /* Abstand zwischen Sendername und Reaktionstext */
+}
+
+
 

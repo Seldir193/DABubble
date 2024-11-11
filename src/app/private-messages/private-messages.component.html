@@ -20,13 +20,12 @@
   <div *ngFor="let msg of privateMessages; let i = index">
     <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
     <div class="seperator" *ngIf="i === 0 || privateMessages[i-1].date !== msg.date">
-      <span class="date-separator">
-        <span *ngIf="msg.date === currentDate">Heute</span>
-        <span *ngIf="msg.date === yesterdayDate">Gestern</span>
-        <ng-template #otherDate>
-          {{ msg.date | date: 'dd.MMMM.yyyy' }}
-        </ng-template>
-      </span>
+      
+        <span class="date-separator">
+          {{ getFormattedDate(msg.date) }}
+        </span>
+       
+      
     </div>
 
     <!-- Container für gesendete Nachrichten -->
@@ -39,11 +38,106 @@
             <span class="message-time">{{ msg.time }}</span>
           </span>
           <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
-            <p *ngIf="msg.content?.text">{{ msg.content.text }}</p>
+            
+            <p *ngIf="msg.content?.text && !msg.isEditing">{{ msg.content.text }}</p>
+
+            <div *ngIf="msg.isEditing" class="edit-message-box">
+              <textarea [(ngModel)]="msg.content.text" rows="3" class="edit-textarea"></textarea>
+              <div class="edit-buttons">
+                <button (click)="cancelEditing(msg)" class="cancel-button button-gäste-login">Abbrechen</button>
+                <button (click)="saveMessage(msg)" class="save-button button-anmelden">Speichern</button>
+              </div>
+            </div>
             
           </div>
           <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
+
+         
+
+          <div class="emoji-message-container" *ngIf="msg.content.emojis && msg.content.emojis.length > 0">
+
+            
+           
+            <span  *ngFor="let emojiObj of msg.content.emojis" 
+            (mouseover)="showTooltip($event,emojiObj.emoji, msg.senderName )" 
+            (mouseleave)="hideTooltip()" >
+              {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
+              <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
+          </span>
+           
+          
         </div>
+          
+
+        <div class="tooltip" *ngIf="tooltipVisible" 
+     [style.top.px]="tooltipPosition.y" 
+     [style.left.px]="tooltipPosition.x">
+  <div class="emoji-icon">{{ tooltipEmoji }}</div>
+  <div class="tooltip-content">
+    <span class="sender-name">{{ tooltipSenderName }}</span>
+    <span class="reaction-text">hat mit reagiert</span>
+  </div>
+</div>
+            
+      
+
+      </div>
+
+        
+        
+
+        <div class="emoji-container" >
+                
+          
+          <div class="emoji-box">
+            <div class="image-wrapper">
+              <!-- Zeige Emojis für gesendete Nachrichten -->
+              <span *ngIf="lastUsedEmojisSent.length > 0" 
+                    (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisSent[0] } }, msg)">
+                {{ lastUsedEmojisSent[0] }}
+              </span>
+            </div>
+            
+            <div class="image-wrapper">
+              <span *ngIf="lastUsedEmojisSent.length > 1" 
+                    (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisSent[1] } }, msg)">
+                {{ lastUsedEmojisSent[1] }}
+              </span>
+            </div>
+            
+            
+
+
+
+
+
+
+            <div class="image-wrapper" (click)="toggleEmojiPickerForMessage(msg)">
+              <img src="assets/img/reaction.png" alt="Reaction" />
+            </div>
+
+            
+        
+            <div *ngIf="msg.isEmojiPickerVisible" class="emoji-pickere">
+              <!-- Emoji-Picker anzeigen -->
+              <emoji-mart (emojiSelect)="addEmojiToMessage($event, msg)"></emoji-mart>
+            </div>
+                        
+           
+            <div class="image-wrapper">
+              <img src="assets/img/comment.png" alt="Comment" />
+            </div>
+            <div class="image-wrapper">
+              <img src="assets/img/more.png" alt="Mehr Optionen" (click)="toggleEditOptions(msg.id)" />
+              <!-- Bearbeitungsoptionen anzeigen, wenn `showEditOptions` und `currentMessageId` passen -->
+              <div *ngIf="showEditOptions && currentMessageId === msg.id" class="edit-options">
+                <button (click)="startEditing(msg)">Nachricht bearbeiten</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+       
       </div>
     </div>
 
@@ -61,15 +155,76 @@
             <p *ngIf="msg.content?.text">{{ msg.content.text }}</p>
             
           </div>
-
-
-
-
-          
-
-          
           <img *ngIf="msg.content?.image" [src]="msg.content.image" class="received-image" />
+
+
+
+          <div class="emoji-message-container" *ngIf="msg.content.emojis && msg.content.emojis.length > 0">
+            <span  *ngFor="let emojiObj of msg.content.emojis" 
+            (mouseover)="showTooltip($event,emojiObj.emoji, msg.senderName )" 
+            (mouseleave)="hideTooltip()" >
+              {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
+              <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
+          </span>
+
+            
+          </div>
+
+          
+        <div class="tooltip" *ngIf="tooltipVisible" 
+        [style.top.px]="tooltipPosition.y" 
+        [style.left.px]="tooltipPosition.x">
+     <div class="emoji-icon">{{ tooltipEmoji }}</div>
+     <div class="tooltip-content">
+       <span class="sender-name">{{ tooltipSenderName }}</span>
+       <span class="reaction-text">hat mit reagiert</span>
+     </div>
+   </div>
+
         </div>
+
+
+
+
+
+        <div class="emoji-container-received">
+          <div class="emoji-box-received">
+            <div class="image-wrapper">
+              <!-- Zeige Emojis für empfangene Nachrichten -->
+              <span *ngIf="lastUsedEmojisReceived.length > 0" 
+                    (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[0] } }, msg)">
+                {{ lastUsedEmojisReceived[0] }}
+              </span>
+            </div>
+            
+            <div class="image-wrapper">
+              <span *ngIf="lastUsedEmojisReceived.length > 1" 
+                    (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[1] } }, msg)">
+                {{ lastUsedEmojisReceived[1] }}
+              </span>
+            </div>
+            
+
+            <div *ngIf="msg.isEmojiPickerVisible" class="emoji-picker-received" >
+              <!-- Emoji-Picker anzeigen -->
+              <emoji-mart (emojiSelect)="addEmojiToMessage($event, msg)"></emoji-mart>
+            </div>
+            
+            <div class="image-wrapper" (click)="toggleEmojiPickerForMessage(msg)">
+              <img src="assets/img/reaction.png" alt="Reaction" />
+            </div>
+            
+            <div class="image-wrapper">
+              <img src="assets/img/comment.png" alt="Comment" />
+            </div>
+          </div>
+        </div>
+        
+
+
+
+
+
       </div>
     </div>
   </div>

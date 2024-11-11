@@ -14,8 +14,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
-  emojis?: any[];
-}
+ // emojis?: any[];
+ // emojis?: Array<{ emoji: string; count: number }>;
+
+} emojis: Array<{ emoji: string; count: number }>;
 
 @Component({
   selector: 'app-private-messages',
@@ -35,15 +37,34 @@ export class PrivateMessagesComponent implements OnInit {
   privateMessage: string = '';
   currentUser: any;
   privateMessages: any[] = [];
+  conversationId: string | undefined;
   recipientStatus: string = '';  // Status of the recipient
   recipientAvatarUrl: string = ''; // Added recipientAvatarUrl property
   isEmojiPickerVisible: boolean = false;
   isImageModalOpen = false;
-  yesterdayDate: string = this.getYesterdayDate();
-  currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+  //yesterdayDate: string = this.getYesterdayDate();
+  //currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
+
+  currentDate = new Date();
+  yesterdayDate = new Date();
 
   isTextareaExpanded: boolean = false;
   message: string = ''; 
+
+  lastUsedEmojisReceived: string[] = []; 
+  lastUsedEmojisSent: string[] = [];
+  showEditOptions: boolean = false;
+  currentMessageId: string | null = null;
+originalMessage: any = null;
+
+
+
+tooltipVisible = false;
+tooltipPosition = { x: 0, y: 0 };
+tooltipEmoji = '';
+tooltipSenderName = '';
+
+
 
   constructor(
     
@@ -52,28 +73,83 @@ export class PrivateMessagesComponent implements OnInit {
     private userService: UserService,
     private channelService: ChannelService,
     private dialog: MatDialog,
-    private messageService: MessageService
+    private messageService: MessageService,
+    
 
-  ) {}
+  ) { this.yesterdayDate.setDate(this.currentDate.getDate() - 1);}
 
-  ngOnInit(): void {
-    this.loadCurrentUser();
+  
+
+  async ngOnInit(): Promise<void> {
+    await this.loadCurrentUser(); 
     this.loadRecipientData();
-    this.loadPrivateMessages();
+  
+    if (this.currentUser && this.recipientId) {
+      this.conversationId = this.messageService.generateConversationId(this.currentUser.id, this.recipientId);
+      
+      // Initialisiere Konversation und stelle sicher, dass ein Konversationsdokument existiert
+      await this.messageService.initializeConversation(this.conversationId);
+      
+      // Lade die letzten Emojis für gesendete und empfangene Nachrichten
+      this.loadLastUsedEmojis();
+      
+      // Nachrichten für den aktuellen Chat abonnieren
+      this.messageService.listenForPrivateMessages(this.conversationId, (messages: Message[]) => {
+        this.privateMessages = messages.map((msg: Message) => ({
+          ...msg,
+          content: { ...msg.content, emojis: msg.content?.emojis || [] }
+        }));
+        this.scrollToBottom();
+      });
+    }
   }
 
-  getYesterdayDate(): string {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return formatDate(yesterday, 'dd.MM.yyyy', 'en');
+
+  
+  
+
+  private async loadLastUsedEmojis(): Promise<void> {
+    if (this.conversationId) {
+      this.lastUsedEmojisSent = await this.messageService.getLastUsedEmojis(this.conversationId, 'sent');
+      this.lastUsedEmojisReceived = await this.messageService.getLastUsedEmojis(this.conversationId, 'received');
+    }
+  }
+  
+  
+ // getYesterdayDate(): string {
+  //  const yesterday = new Date();
+   // yesterday.setDate(yesterday.getDate() - 1);
+   // return formatDate(yesterday, 'dd.MM.yyyy', 'en');
+  //}
+
+  getFormattedDate(dateString: string): string {
+    const date = new Date(dateString);
+
+    if (this.isSameDay(date, this.currentDate)) {
+      return 'Heute';
+    } else if (this.isSameDay(date, this.yesterdayDate)) {
+      return 'Gestern';
+    } else {
+      return formatDate(date, 'dd.MM.yyyy', 'en');
+    }
   }
 
-  loadCurrentUser(): void {
-    this.userService.getCurrentUserData().then(user => {
-      this.currentUser = user;
-    }).catch(err => {
-      console.error('Fehler beim Laden des aktuellen Benutzers:', err);
-    });
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  }
+
+  async loadCurrentUser(): Promise<void> {
+    return this.userService.getCurrentUserData()
+      .then(user => {
+        this.currentUser = user;
+      })
+      .catch(err => {
+        console.error('Fehler beim Laden des aktuellen Benutzers:', err);
+      });
   }
 
   loadRecipientData(): void {
@@ -87,8 +163,6 @@ export class PrivateMessagesComponent implements OnInit {
     }
   }
 
-
-  
   loadPrivateMessages(): void {
     const senderId = this.userService.getCurrentUserId();
     if (senderId && this.recipientId) {
@@ -106,53 +180,47 @@ export class PrivateMessagesComponent implements OnInit {
     }
   }
 
-
   async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
     const senderId = this.userService.getCurrentUserId();
     const recipientId = this.recipientId;
-
+  
     if (!senderId || !recipientId) {
         console.error("Sender or recipient ID is missing.");
         return;
     }
-
-    const conversationId = this.generateConversationId(senderId, recipientId);
+  
+    const conversationId = this.messageService.generateConversationId(senderId, recipientId);
     const messageData = {
         content: {
             text: this.privateMessage || null,
-            image: this.imageUrl || null
+            image: this.imageUrl || null,
+            emojis: []
         },
-        date: formatDate(new Date(), 'dd.MM.yyyy', 'en'),
+        date: new Date().toLocaleDateString(),
         timestamp: new Date(),
-        time: formatDate(new Date(), 'HH:mm', 'en'),
+        time: new Date().toLocaleTimeString(),
         senderId: senderId,
         senderName: this.currentUser?.name || "Unknown",
         senderAvatar: this.currentUser?.avatarUrl || ""
     };
-
-    // Senden der Nachricht über MessageService
-    await this.messageService.sendPrivateMessage(senderId, recipientId, messageData);
-
-    // Textbereich zurücksetzen
+  
+    await this.messageService.sendPrivateMessage(conversationId, messageData);
+  
+    // Clear the message input
     this.privateMessage = '';
     this.imageUrl = null;
-
-    // Textarea-Größe nach dem Senden zurücksetzen
-    if (textArea) {
-        this.resetTextareaHeight(textArea);
-    }
-
-    // Scrollen zur letzten Nachricht
+    if (textArea) this.resetTextareaHeight(textArea);
+  
+    // Reload emojis and scroll to the bottom
+    await this.loadLastUsedEmojis();  // Aufruf ohne Parameter
     this.scrollToBottom();
 }
 
-  
 
   
-
-
-
-
+  
+  
+  
  
   
   onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
@@ -221,9 +289,6 @@ export class PrivateMessagesComponent implements OnInit {
     }, 100);
   }
 
-
-
-
   addAtSymbolAndOpenDialog(): void {
     this.privateMessage += '@';
   
@@ -243,16 +308,6 @@ export class PrivateMessagesComponent implements OnInit {
     });
   }
   
-
-
-  
-
-
-  
-
-
-
-  
   generateConversationId(userId1: string, userId2: string): string {
     return [userId1, userId2].sort().join('_'); // Alphabetisch sortieren und verbinden
   }
@@ -264,5 +319,176 @@ export class PrivateMessagesComponent implements OnInit {
     }
   }
 
+  toggleEmojiPickerForMessage(msg: any): void {
+    const isCurrentlyVisible = msg.isEmojiPickerVisible;
+  
+    // Schließe alle Emoji-Picker in `privateMessages`
+    this.privateMessages.forEach((m) => m.isEmojiPickerVisible = false);
+  
+    // Setze den Zustand für die ausgewählte Nachricht basierend auf dem vorherigen Zustand
+    msg.isEmojiPickerVisible = !isCurrentlyVisible;
+  }
+
+  addEmojiToMessage(event: any, msg: any): void {
+    if (!msg.content.emojis) {
+        msg.content.emojis = [];  // Initialisiere das Emoji-Array, falls es noch nicht existiert
+    }
+  
+    const newEmoji = event.emoji.native;
+    const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
+  
+    if (existingEmoji) {
+        existingEmoji.count += 1;  // Erhöhe die Zählung, wenn das Emoji bereits existiert
+    } else {
+        msg.content.emojis.push({ emoji: newEmoji, count: 1 });  // Füge neues Emoji hinzu
+    }
+  
+    const conversationId = this.messageService.generateConversationId(this.currentUser.id, this.recipientId);
+  
+    // Behandlung für gesendete Emojis
+    if (msg.senderName === this.currentUser?.name) {
+        if (!this.lastUsedEmojisSent.includes(newEmoji)) {
+            this.lastUsedEmojisSent = [newEmoji, ...this.lastUsedEmojisSent].slice(0, 2);
+        }
+        this.messageService.saveLastUsedEmojis(conversationId, this.lastUsedEmojisSent, 'sent');
+    } 
+    // Behandlung für empfangene Emojis
+    else {
+        if (!this.lastUsedEmojisReceived.includes(newEmoji)) {
+            this.lastUsedEmojisReceived = [newEmoji, ...this.lastUsedEmojisReceived].slice(0, 2);
+        }
+        this.messageService.saveLastUsedEmojis(conversationId, this.lastUsedEmojisReceived, 'received');
+    }
+  
+    msg.isEmojiPickerVisible = false;
+  
+    // Emoji-Reaktionen in Firestore aktualisieren
+    this.messageService.updatePrivateMessageEmojis(conversationId, msg.id, msg.content.emojis)
+      .then(() => console.log('Emoji erfolgreich zur Nachricht hinzugefügt.'))
+      .catch((error) => console.error('Fehler beim Hinzufügen des Emojis:', error));
+  }
+
+  async initializeConversation(): Promise<void> {
+    const conversationId = this.messageService.generateConversationId(this.currentUser.id, this.recipientId);
+  
+    // Lade Emojis für gesendete Nachrichten
+    this.messageService.getLastUsedEmojis(conversationId, 'sent').then(emojisSent => {
+      this.lastUsedEmojisSent = emojisSent || [];
+    }).catch(error => console.error("Fehler beim Laden gesendeter Emojis:", error));
+  
+    // Lade Emojis für empfangene Nachrichten
+    this.messageService.getLastUsedEmojis(conversationId, 'received').then(emojisReceived => {
+      this.lastUsedEmojisReceived = emojisReceived || [];
+    }).catch(error => console.error("Fehler beim Laden empfangener Emojis:", error));
+  
+    // Nachrichten für den aktuellen Chat abonnieren
+    this.messageService.listenForPrivateMessages(conversationId, (messages: Message[]) => {
+      this.privateMessages = messages.map((msg: Message) => ({
+        ...msg,
+        content: { ...msg.content, emojis: msg.content?.emojis || [] }
+      }));
+      this.scrollToBottom();
+    });
+  }
+  
+
+
+
+ 
+
+toggleEditOptions(msgId: string): void {
+  // Umschalten der Sichtbarkeit für das angeklickte Symbol
+  if (this.currentMessageId === msgId && this.showEditOptions) {
+    this.showEditOptions = false;
+    this.currentMessageId = null;
+  } else {
+    this.showEditOptions = true;
+    this.currentMessageId = msgId;
+  }
+}
+
+startEditing(msg: any): void {
+  msg.isEditing = true; // Bearbeitungsmodus aktivieren
+  this.originalMessage = { ...msg }; // Originalnachricht speichern
+  this.showEditOptions = false; // Optionen schließen
+}
+
+toggleEditMessage(msg: any): void {
+  msg.isEditing = true; // Öffnet das Bearbeitungsfeld
+  this.originalMessage = { ...msg }; // Speichere eine Kopie der ursprünglichen Nachricht
+}
+
+cancelEditing(msg: any): void {
+  msg.isEditing = false; // Bearbeiten beenden
+  if (this.originalMessage) {
+    // Stelle die ursprüngliche Nachricht wieder her
+    msg.content = { ...this.originalMessage.content }; // Nur Inhalt kopieren
+    this.originalMessage = null; // Originalnachricht zurücksetzen
+  }
+  this.showEditOptions = false; // Bearbeitungsoptionen schließen
+}
+
+async saveMessage(msg: any): Promise<void> {
+  if (msg?.isEditing !== undefined && this.conversationId) {
+    msg.isEditing = false; // Bearbeiten beenden
+    const messageId = msg.id;
+
+    if (messageId) {
+      try {
+        await this.messageService.updatePrivateMessageContent(this.conversationId, messageId, msg.content);
+        console.log('Nachricht erfolgreich gespeichert');
+        
+        // Aktualisiere die Nachricht in der lokalen Liste
+        this.privateMessages = this.privateMessages.map((m) => {
+          if (m.id === messageId) {
+            return { ...msg, isEditing: false };
+          }
+          return m;
+        });
+      } catch (err) {
+        console.error('Fehler beim Speichern der Nachricht:', err);
+      }
+    } else {
+      console.error('Speichern fehlgeschlagen: Message ID fehlt.');
+    }
+  }
+}
+
+showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+  this.tooltipVisible = true;
+  this.tooltipEmoji = emoji;
+  this.tooltipSenderName = senderName;
+  // Positioniere den Tooltip direkt über dem Emoji
+  this.tooltipPosition = {
+    x: event.clientX ,
+    y: event.clientY - 40
+};
+}
+
+
+
+hideTooltip(): void {
+  this.tooltipVisible = false;
+}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
