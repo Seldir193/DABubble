@@ -28,15 +28,16 @@
       </div>
     </div>
   </div>
-  <div *ngIf="isEditingChannel" class="new-message-container">
-    <h1>Neue Nachricht</h1>
-    <input 
-      type="text" 
-      placeholder="An: #channel, oder @jemand oder E-Mail Adresse" 
-      (input)="onMessageInput($event)" 
-      [(ngModel)]="newMessage" 
-    />
-  </div>
+
+
+  
+
+ 
+
+  
+ 
+
+
 </div>
 <div *ngFor="let channel of channels" class="channel-input-box" >
   <div class="channel-box" >
@@ -49,8 +50,10 @@
           <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
           <div class="seperator" *ngIf="i === 0 || messages[i-1]?.date !== msg.date">
             <span class="date-separator">
-              <span *ngIf="msg.date === currentDate">Heute</span>
-              <span *ngIf="msg.date === yesterdayDate">Gestern</span>
+              {{ getReadableDate(msg.date) }}
+              
+              
+              
               <ng-template #otherDate>
                 {{ msg.date | date: 'dd.MMMM.yyyy' }}
               </ng-template>

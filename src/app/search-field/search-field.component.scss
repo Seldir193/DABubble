@@ -1,0 +1,62 @@
+@import "./../../styles.scss";
+
+.new-message-container{
+
+    h1{
+      font-size: 24px;
+      font-weight: 700;
+      color:black;
+    }
+    
+    input {
+      flex-grow: 1;
+      padding: 15px 20px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      resize: none;
+      width:100%;
+      min-height: 55px; 
+      font-size: 18px;
+      font-weight: 400;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      font-family: 'Segoe UI Emoji', sans-serif;
+  
+      &:hover {
+        border-color: $button-blue;
+        transition: border-color 0.3s;
+      }
+  
+      &:focus,
+      &:focus-within {
+        outline: none;
+        border-color: $button-blue;
+      }
+  
+      &:not(:focus) {
+        &:has(+ input:focus) {
+          border-color: blue;
+        }
+      }
+      }
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

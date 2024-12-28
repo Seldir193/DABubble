@@ -33,6 +33,8 @@ export class PrivateMessagesComponent implements OnInit {
   @Input() recipientId: string = '';
   @Output() memberSelected = new EventEmitter<any>();
 
+  @Input() showSearchField: boolean = false;
+
   imageUrl: string | ArrayBuffer | null = null;
   privateMessage: string = '';
   currentUser: any;
@@ -42,43 +44,27 @@ export class PrivateMessagesComponent implements OnInit {
   recipientAvatarUrl: string = ''; // Added recipientAvatarUrl property
   isEmojiPickerVisible: boolean = false;
   isImageModalOpen = false;
-  //yesterdayDate: string = this.getYesterdayDate();
-  //currentDate: string = formatDate(new Date(), 'dd.MM.yyyy', 'en');
-
-  currentDate = new Date();
-  yesterdayDate = new Date();
-
+  currentDate: Date = new Date();
+  yesterdayDate: Date = this.getYesterdayDate();
   isTextareaExpanded: boolean = false;
   message: string = ''; 
-
   lastUsedEmojisReceived: string[] = []; 
   lastUsedEmojisSent: string[] = [];
   showEditOptions: boolean = false;
   currentMessageId: string | null = null;
-originalMessage: any = null;
-
-
-
-tooltipVisible = false;
-tooltipPosition = { x: 0, y: 0 };
-tooltipEmoji = '';
-tooltipSenderName = '';
-
-
+  originalMessage: any = null;
+  tooltipVisible = false;
+  tooltipPosition = { x: 0, y: 0 };
+  tooltipEmoji = '';
+  tooltipSenderName = '';
 
   constructor(
-    
     private route: ActivatedRoute,
-
     private userService: UserService,
     private channelService: ChannelService,
     private dialog: MatDialog,
     private messageService: MessageService,
-    
-
-  ) { this.yesterdayDate.setDate(this.currentDate.getDate() - 1);}
-
-  
+  ) { }
 
   async ngOnInit(): Promise<void> {
     await this.loadCurrentUser(); 
@@ -104,10 +90,6 @@ tooltipSenderName = '';
     }
   }
 
-
-  
-  
-
   private async loadLastUsedEmojis(): Promise<void> {
     if (this.conversationId) {
       this.lastUsedEmojisSent = await this.messageService.getLastUsedEmojis(this.conversationId, 'sent');
@@ -115,25 +97,48 @@ tooltipSenderName = '';
     }
   }
   
-  
- // getYesterdayDate(): string {
-  //  const yesterday = new Date();
-   // yesterday.setDate(yesterday.getDate() - 1);
-   // return formatDate(yesterday, 'dd.MM.yyyy', 'en');
-  //}
-
   getFormattedDate(dateString: string): string {
-    const date = new Date(dateString);
-
-    if (this.isSameDay(date, this.currentDate)) {
-      return 'Heute';
-    } else if (this.isSameDay(date, this.yesterdayDate)) {
-      return 'Gestern';
-    } else {
-      return formatDate(date, 'dd.MM.yyyy', 'en');
+    if (!dateString) {
+      console.error('Ungültiges Datum erkannt:', dateString);
+      return 'Ungültiges Datum';
     }
+  
+    // Konvertiere das Datum in ein standardisiertes Format
+    const parts = dateString.split('.');
+    let date: Date;
+    if (parts.length === 3) {
+      // Falls Format dd.MM.yyyy
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      date = new Date(year, month, day);
+    } else {
+      // ISO-Format oder unbekannt
+      date = new Date(dateString);
+    }
+  
+    if (isNaN(date.getTime())) {
+      console.error('Ungültiges Datum erkannt:', dateString);
+      return 'Ungültiges Datum';
+    }
+  
+    if (this.isSameDay(date, new Date())) {
+      return 'Heute';
+    } else if (this.isSameDay(date, this.getYesterdayDate())) {
+      return 'Gestern';
+    }
+  
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
+    return date.toLocaleDateString('de-DE', options); // Beispiel: "Samstag, 21. Dezember"
   }
-
+  
+  private getYesterdayDate(): Date {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday;
+  }
+  
+ 
   private isSameDay(date1: Date, date2: Date): boolean {
     return (
       date1.getDate() === date2.getDate() &&
@@ -141,7 +146,7 @@ tooltipSenderName = '';
       date1.getFullYear() === date2.getFullYear()
     );
   }
-
+  
   async loadCurrentUser(): Promise<void> {
     return this.userService.getCurrentUserData()
       .then(user => {
@@ -151,6 +156,7 @@ tooltipSenderName = '';
         console.error('Fehler beim Laden des aktuellen Benutzers:', err);
       });
   }
+
 
   loadRecipientData(): void {
     if (this.recipientId) {
@@ -162,6 +168,7 @@ tooltipSenderName = '';
       });
     }
   }
+
 
   loadPrivateMessages(): void {
     const senderId = this.userService.getCurrentUserId();
@@ -191,19 +198,20 @@ tooltipSenderName = '';
   
     const conversationId = this.messageService.generateConversationId(senderId, recipientId);
     const messageData = {
-        content: {
-            text: this.privateMessage || null,
-            image: this.imageUrl || null,
-            emojis: []
-        },
-        date: new Date().toLocaleDateString(),
-        timestamp: new Date(),
-        time: new Date().toLocaleTimeString(),
-        senderId: senderId,
-        senderName: this.currentUser?.name || "Unknown",
-        senderAvatar: this.currentUser?.avatarUrl || ""
+      content: {
+        text: this.privateMessage || null,
+        image: this.imageUrl || null,
+        emojis: []
+      },
+    // date: new Date().toISOString().split('T')[0], // ISO-Datum ohne Zeit
+     date: formatDate(new Date(), 'dd.MM.yyyy', 'en'),
+      timestamp: new Date(),
+      time: new Date().toLocaleTimeString(),
+      senderId: senderId,
+      senderName: this.currentUser?.name || "Unknown",
+      senderAvatar: this.currentUser?.avatarUrl || ""
     };
-  
+    
     await this.messageService.sendPrivateMessage(conversationId, messageData);
   
     // Clear the message input
@@ -216,13 +224,6 @@ tooltipSenderName = '';
     this.scrollToBottom();
 }
 
-
-  
-  
-  
-  
- 
-  
   onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -239,7 +240,6 @@ tooltipSenderName = '';
     }
   }
   
-
   toggleEmojiPicker(): void {
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
@@ -391,11 +391,6 @@ tooltipSenderName = '';
     });
   }
   
-
-
-
- 
-
 toggleEditOptions(msgId: string): void {
   // Umschalten der Sichtbarkeit für das angeklickte Symbol
   if (this.currentMessageId === msgId && this.showEditOptions) {
@@ -465,12 +460,9 @@ showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
 };
 }
 
-
-
 hideTooltip(): void {
   this.tooltipVisible = false;
 }
-
 }
 
 

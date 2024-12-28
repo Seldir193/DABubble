@@ -19,7 +19,9 @@
 
   <div class="container">
 
-    <app-devspace ></app-devspace>
+    
+    
+    <app-devspace (searchTriggered)="openSearchField($event)"></app-devspace>
     <div class="scrollable-area">
       <!-- Channel Komponente -->
       <app-inner-channel #innerChannel (channelSelected)="onChannelSelected($event)"></app-inner-channel>
@@ -27,45 +29,45 @@
       <app-direct-messages (memberSelected)="onMemberSelected($event)"></app-direct-messages>
     </div>
   </div>
-
-  <div class="team-container" *ngIf="selectedChannel">
+  
+  <div class="team-container"  *ngIf="selectedChannel  && !isSearchActive">
     <!-- Entwicklerteam-Komponente wird angezeigt, wenn kein privater Chat aktiv ist -->
     <div *ngIf="!isPrivateChat && selectedChannel">
-     
+      
       <app-entwicklerteam (channelLeft)="onChannelSelected(null)"  [selectedChannel]="selectedChannel"></app-entwicklerteam>
 
     </div>
 
-    
 
-    
   </div>
-<!-- Private Nachrichten Komponente wird angezeigt, wenn der private Chat aktiv ist -->
-<div class="privat-chat-container" *ngIf="isPrivateChat && selectedMember">
+
   
-   
+<!-- Private Nachrichten Komponente wird angezeigt, wenn der private Chat aktiv ist -->
+<div class="privat-chat-container" *ngIf="isPrivateChat && selectedMember  && !isSearchActive ">
+  
+  
   <app-private-messages 
  
-    [recipientId]="selectedMember.id" 
-    [recipientName]="selectedMember.name">
+  [recipientId]="selectedMember.id" 
+  [recipientName]="selectedMember.name">
   
-  </app-private-messages>
+</app-private-messages>
+
 
   
-  
-
 </div>
 
 
+<div class="search-container" *ngIf="isSearchActive">
+  <app-search-field
+      (close)="closeSearchField()" 
+      (memberSelected)="handleMemberSelection($event)"
+  ></app-search-field>
+</div>
 
-<div  *ngIf="!selectedChannel && showWelcomeContainer"   class="welcome-container">
+
+<div  *ngIf="!selectedChannel && showWelcomeContainer  && !isSearchActive "   class="welcome-container">
   <app-welcome-screen></app-welcome-screen>
 </div>
   
 </section>
-
-
-
-
-
-   

@@ -46,7 +46,6 @@ async getCurrentUserData(): Promise<any> {
   });
 }
 
-
   async updateUserEmail(newEmail: string): Promise<void> {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -138,8 +137,6 @@ async getCurrentUserData(): Promise<any> {
     }
   }
 
-
-
   async getAllUsers(): Promise<any[]> {
     const usersCollection = collection(this.firestore, 'users');
     const querySnapshot = await getDocs(usersCollection);
@@ -149,13 +146,6 @@ async getCurrentUserData(): Promise<any> {
     });
     return users;
   }
-
-
-
-
-  
-
-
 
   async getUsersByFirstLetter(firstLetter: string): Promise<any[]> {
     const usersCollection = collection(this.firestore, 'users');
@@ -170,9 +160,8 @@ async getCurrentUserData(): Promise<any> {
       users.push(doc.data());
     });
   
-    return users;  // Gebe die gefilterten Benutzer zurück
+    return users;  
   }
-
 
   getCurrentUserId(): string | null {
     const auth = getAuth();
@@ -181,12 +170,6 @@ async getCurrentUserData(): Promise<any> {
   }
 
 
-
-
-  
-
-
-  // user.service.ts
   async getUserById(userId: string): Promise<any> {
     const userDocRef = doc(this.firestore, 'users', userId);
     const userDocSnap = await getDoc(userDocRef);
@@ -199,6 +182,7 @@ async getCurrentUserData(): Promise<any> {
     }
   }
 
+  
 }
 
 

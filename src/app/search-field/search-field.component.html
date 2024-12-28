@@ -1,0 +1,46 @@
+
+
+  <div class="new-message-container">
+    <h1>Neue Nachricht</h1>
+    <input 
+      type="text" 
+      placeholder="An: #channel, oder @jemand oder E-Mail Adresse" 
+      (input)="onSearchInput()" 
+      [(ngModel)]="searchQuery" 
+    />
+    <ul *ngIf="filteredMembers.length > 0" class="filtered-members">
+      <li *ngFor="let member of filteredMembers" (click)="selectMember(member)">
+        <img [src]="member.avatarUrl" alt="{{ member.name }}" />
+        <span>{{ member.name }}</span>
+      </li>
+    </ul>
+    <p *ngIf="noResultsFound">Keine Mitglieder gefunden.</p>
+  </div>
+  
+  
+
+ 
+
+  
+ 
+
+
+
+
+      
+      
+ 
+    
+              
+              
+                
+    
+
+
+
+
+         
+  
+  
+  
+  

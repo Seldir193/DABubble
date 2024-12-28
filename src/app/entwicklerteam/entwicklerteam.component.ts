@@ -70,6 +70,8 @@ selectedMember: any = null;  // Speichere das ausgewählte Mitglied
   searchLetter: string = '';
   members: any[] = [];
 
+  
+
   //lastUsedEmojis: string[] = [];
 
   lastUsedEmojisSent: string[] = [];  // Emojis für gesendete Nachrichten
@@ -90,19 +92,27 @@ tooltipSenderName = '';
 
 @Output() channelLeft = new EventEmitter<void>();
   
-  getYesterdayDate(): string {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return formatDate(yesterday, 'dd.MM.yyyy', 'en');
-  }
+getYesterdayDate(): string {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return formatDate(yesterday, 'dd.MM.yyyy', 'en');
+}
 
-  isToday(date: string): boolean {
-    return date === this.currentDate;
-  }
 
-  isYesterday(date: string): boolean {
-    return date === this.yesterdayDate;
+  getReadableDate(msgDate: string): string {
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
+    
+    if (msgDate === this.currentDate) {
+      return 'Heute';
+    } else if (msgDate === this.yesterdayDate) {
+      return 'Gestern';
+    } else {
+      // Mit Intl.DateTimeFormat formatieren
+      const formattedDate = new Date(msgDate).toLocaleDateString('de-DE', options);
+      return formattedDate; // Beispiel: "Samstag, 21. Dezember"
+    }
   }
+  
 
   onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
     const input = event.target as HTMLInputElement;
@@ -228,13 +238,6 @@ tooltipSenderName = '';
   
   
  
-  
-
-  
-  
-  
-
-  
   
 
   sendMessage(textArea: HTMLTextAreaElement): void {
@@ -629,13 +632,13 @@ handleMemberSelected(member: { uid: string, name: string }): void {
   }
 }
 
+
 selectMember(member: any): void {
   console.log('Ausgewähltes Mitglied:', member);  // Ausgabe in der Konsole
   if (member && member.uid && member.name) {
     this.memberSelected.emit({ uid: member.uid, name: member.name });
   }
 }
-
 
 
 
