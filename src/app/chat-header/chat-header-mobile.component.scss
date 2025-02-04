@@ -1,0 +1,36 @@
+@media (max-width: 1080px) {
+  .center-section {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+    .user-name {
+      display: none;
+    }
+  
+    .right-section {
+      gap: unset;
+  
+      .menu-toggle {
+        display: none;
+      }
+  
+      .avatar {
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+      }
+    }
+  
+    .container {
+      padding: 10px;
+      //width: 100%;
+  
+      h1 {
+        font-size: 20px;
+        margin-left: 10px;
+      }
+    }
+  }
+  

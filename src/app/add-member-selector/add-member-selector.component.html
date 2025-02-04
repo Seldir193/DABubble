@@ -1,0 +1,23 @@
+
+
+
+
+<div class="container">
+
+    
+    <ul>
+      <li *ngFor="let member of data.members" (click)="selectMember(member)">
+        <div class="avatar-container">
+          <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar">
+
+          <img *ngIf="member.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
+          <img *ngIf="!member.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
+
+          
+        </div>
+        <span>{{ member.name }}</span>
+       
+      </li>
+    </ul>
+
+  </div>

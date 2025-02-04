@@ -1,0 +1,397 @@
+@import "./../../styles.scss";
+
+
+mat-form-field {
+    width: 100%; // Eingabefelder nehmen die volle Breite des Dialogs ein
+  }
+  
+ mat-dialog-content {
+   padding-bottom: 20px; // Platz unter dem Inhalt des Dialogs
+
+    
+  }
+  
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end; // Der Button wird rechts ausgerichtet
+  }
+  
+  .button-box{
+      display: flex;
+      justify-content: flex-end;
+  }
+  
+  .mat-mdc-form-field-input-control.mdc-text-field__input,
+  .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  
+  label {
+    font-size: 18px;
+    font-weight: 400;
+    color: black;
+    cursor: pointer;
+  }
+  
+  .optional {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .close-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  
+    h1 {
+      margin-right: 20px;
+      font-size: 24px;
+      font-weight: 700;
+      flex-grow: 1;
+      margin:0;
+    }
+  
+    img {
+      cursor: pointer;
+      transition: filter 0.3s ease, background-color 0.3s ease;
+      border-radius: 50%;
+      margin-left: auto;
+      &:hover {
+        background-color: $lightblue;
+    
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        }
+      }
+    }
+  }
+  
+  .custom-input {
+    border-radius: 40px;
+    padding-top: 20px;
+  
+    .input-icon {
+      position: absolute;
+      left: 70px;
+      top: 48%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      transition: filter 0.3s ease;
+    }
+  
+    input {
+      background: $lightblue;
+      border-radius: 100px;
+      color: #686868;
+      font-size: 18px;
+      font-weight: 500;
+      height: 60px;
+      width: 100%;
+      border: 1px solid transparent;
+      cursor: pointer;
+      box-sizing: border-box;
+      max-width: 792px;
+      padding: 1.125rem 2rem 1.125rem 5.375rem;
+  
+      &:hover {
+        border-color: #686868;
+        transition: border-color 0.3s;
+      }
+  
+      &:focus,
+      &:focus-within {
+        outline: none;
+        border-color: $button-blue;
+      }
+  
+      &:not(:focus) {
+        &:has(+ input:focus) {
+          border-color: blue;
+        }
+      }
+    }
+  }
+  
+  .description-input {
+    input {
+      background: $lightblue;
+      border-radius: 100px;
+      color: #686868;
+      font-size: 18px;
+      font-weight: 500;
+      height: 60px;
+      width: 100%;
+      border: 1px solid transparent;
+      cursor: pointer;
+      box-sizing: border-box;
+      max-width: 792px;
+      padding-left: 50px;
+  
+      &:hover {
+        border-color: #686868;
+        transition: border-color 0.3s;
+      }
+  
+      &:focus,
+      &:focus-within {
+        outline: none;
+        border-color: $button-blue;
+      }
+  
+      &:not(:focus) {
+        &:has(+ input:focus) {
+          border-color: blue;
+        }
+      }
+    }
+  }
+  
+  .container {
+  
+   // padding: 18px 20px;
+  
+        padding: 40px;
+        
+        border-radius: 40px 0px 0px 0px;
+        border: 1px 0px 0px 0px;
+      
+        display: flex;
+        flex-direction: column;
+        
+       // width:792px;
+  }
+  
+  .primary-button {
+    background: $button-blue;
+    border: none;
+    border-radius: 100px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 25px;
+    width: 147px;
+    height: 49px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  
+  
+    &:hover {
+      background: #5b5ffc;
+    }
+  
+    &:disabled {
+      background-color: gray;  /* Farbe, wenn der Button deaktiviert ist */
+      cursor: not-allowed;
+    }
+  
+    
+  }
+  
+  .mat-mdc-dialog-actions {
+    padding: 0 20px 20px 0;
+    justify-content: flex-end;
+  
+  }
+  
+  ::ng-deep .mat-mdc-dialog-container {
+    //transform: translate(140%, -90% ) !important;
+    border-radius: 30px 0px 30px 30px!important;
+  }
+  
+  ::ng-deep .mdc-dialog__surface {
+    border-radius: 30px 0px 30px 30px !important;
+    overflow: hidden;
+  }
+  .member-selection{
+      display: flex;
+      flex-direction: column;
+      gap:20px;
+      width:434px;
+  }
+  
+  
+  .specific-members input[type="text"] {
+     
+    width: 100%;
+    max-width: 630px; /* Breite festlegen */
+    height: 60px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    padding-left: 20px;  
+    padding-right: 20px;
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite hinzugezählt */
+    transition: border-color 0.3s ease;
+  
+    &:hover {
+      border-color: #686868; /* Farbe beim Hover ändern */
+    }
+  
+    &:focus {
+      outline: none;
+      border-color: $button-blue; /* Passe $button-blue an */
+    }
+  
+    /* Falls notwendig, Fokus für nachfolgendes Input-Element */
+    &:not(:focus) {
+      &:has(+ input:focus) {
+        border-color: blue;
+      }
+    }
+  }
+  
+  .specific-members {
+    display: flex;
+    align-items: center; /* Zentriere Input vertikal */
+    gap: 15px; /* Abstand zwischen Kindern */
+  }
+  
+    .specific-members {
+      position: relative;
+  }
+    
+    .dropdown-list {
+      list-style-type: none; 
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+     // width:80%;
+    }
+    
+    .dropdown-list li {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      max-width: fit-content;
+  
+      border-radius: 2.1875rem;
+          font-size: 18px;
+          height: 35px;
+    
+      &:hover {
+        background-color: $lightblue;
+      }
+    
+      .avatar {
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+  
+      .status-icon {
+        position: relative;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        right:20px;
+      }
+    }
+    
+      .selected-member {
+        display: flex;
+        align-items: center;
+        background-color: $lightblue;
+        padding: 5px 10px;
+        border-radius: 20px;
+        position: absolute;
+        gap:15px;
+        left:20px;
+        cursor: pointer;
+       
+  
+        .avatar {
+          width: 25px;
+          height: 25px;
+          border-radius: 50%;
+        
+        }
+  
+        .remove-btn {
+          background-color: transparent;
+          border: none;
+          color: gray;
+          cursor: pointer;
+          font-size: 20px;
+          margin-left: 5px;
+  
+          &:hover{
+            color: $hoverColor;
+            scale: 1.1;
+          }
+        }
+      }
+  
+    .scrollable-area {
+      overflow-y: auto;
+      max-height: 200px; /* Maximale Höhe für den sichtbaren Bereich */
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      gap:10px;
+      padding-top:20px;
+     
+     border-bottom-left-radius: 30px;
+     border-bottom-right-radius: 30px;
+     border-top-right-radius: 30px;
+     border-color:$hoverColor;
+    
+      /* Für die Scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: black white;
+    
+      /* Styles für WebKit-basierte Browser (Chrome, Safari, Edge) */
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+    
+      &::-webkit-scrollbar-thumb {
+        background-color: black;
+        border-radius: 10px;
+      }
+    
+      &::-webkit-scrollbar-track {
+        background-color: white;
+      }
+    }
+    
+    /* Hover-Effekt für Scrollbar */
+    .scrollable-area:hover {
+      scrollbar-color: blue white; /* Beim Hover: Scrollbar wird blau */
+    }
+  
+
+    .team{
+        display: flex;
+        align-items: center;
+        gap:15px;
+        margin-bottom:20px;
+
+        p{
+            font-size: 18px;
+            font-weight: 400;
+            color:$hoverColor;
+            margin:0;
+        }
+    }
+
+   .input-button-box{
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+   }
+
+
+
+
+   
+
+   

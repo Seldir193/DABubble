@@ -1,0 +1,234 @@
+@import "./../../styles.scss";
+
+mat-form-field {
+  width: 100%; // Eingabefelder nehmen die volle Breite des Dialogs ein
+}
+
+mat-dialog-content {
+  padding-bottom: 20px; // Platz unter dem Inhalt des Dialogs
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end; // Der Button wird rechts ausgerichtet
+}
+
+.mat-mdc-form-field-input-control.mdc-text-field__input,
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+label {
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
+}
+
+.optional {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+}
+
+.close-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
+  h1 {
+    margin-right: 20px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+
+ 
+
+  img {
+    cursor: pointer;
+    transition: filter 0.3s ease, background-color 0.3s ease;
+    border-radius: 50%;
+    
+    &:hover {
+      background-color: $lightblue;
+  
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+
+    
+    }
+  }
+}
+
+.custom-input {
+  position: relative; // Stelle sicher, dass die Positionierung relativ zur Custom-Input-Box ist.
+  border-radius: 40px;
+  padding-top: 20px;
+
+  .input-icon {
+    position: absolute;
+    left: 40px;
+    top: 65%; // Verwende 50%, um die Positionierung unabhängig von der Fehlermeldung zu machen.
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: filter 0.3s ease;
+  }
+
+  input {
+    background: $lightblue;
+    border-radius: 100px;
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    height: 60px;
+    width: 100%;
+    border: 1px solid transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    max-width: 792px;
+    padding: 1.125rem 2rem 1.125rem 5.375rem;
+
+    &:hover {
+      border-color: #686868;
+      transition: border-color 0.3s;
+    }
+
+    &:focus,
+    &:focus-within {
+      outline: none;
+      border-color: $button-blue;
+    }
+  }
+}
+
+.error-message {
+  min-height: 24px; // Reserviere Platz für die Fehlermeldung.
+  margin-top: 5px; // Abstand zwischen Input und Fehlermeldung.
+  p {
+    margin: 0;
+    padding-left: 20px;
+    color: red;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.description-input {
+  input {
+    background: $lightblue;
+    border-radius: 100px;
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    height: 60px;
+    width: 100%;
+    border: 1px solid transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    max-width: 792px;
+    padding-left: 50px;
+
+    &:hover {
+      border-color: #686868;
+      transition: border-color 0.3s;
+    }
+
+    &:focus,
+    &:focus-within {
+      outline: none;
+      border-color: $button-blue;
+    }
+
+    &:not(:focus) {
+      &:has(+ input:focus) {
+        border-color: blue;
+      }
+    }
+  }
+}
+
+.container {
+  max-width: 792px;
+  padding:40px;
+  gap: 20px;
+  border-radius: 40px 0px 0px 0px;
+  border: 1px 0px 0px 0px;
+}
+
+.primary-button {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+  width: 125px;
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: #5b5ffc;
+  }
+
+  &:disabled {
+    background-color: #686868;
+    cursor: not-allowed;
+  }
+}
+
+.mat-mdc-dialog-actions {
+  padding: 20px 0;
+  justify-content: flex-end;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 30px !important;
+}
+
+::ng-deep .mdc-dialog__surface {
+  border-radius: 30px !important;
+  overflow: hidden;
+}
+
+
+::ng-deep.mat-mdc-dialog-content .mdc-dialog__content {
+  padding: 0;  /* Entferne das Padding komplett */
+}
+
+::ng-deep.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+  padding: 0;  /* Entferne das Padding komplett */
+}
+
+::ng-deep.mat-mdc-dialog-title, 
+.mdc-dialog__title, 
+.mat-mdc-dialog-container .mat-mdc-dialog-content,
+.mdc-dialog .mdc-dialog__content {
+  padding: 0;  /* Entferne das Padding komplett */
+  margin:  0 ;   /* Entferne auch das Margin */
+}
+
+
+
+::ng-deep.mat-mdc-dialog-title, 
+.mdc-dialog__title{
+  margin:  0 0 20px !important ;
+}
+
+
