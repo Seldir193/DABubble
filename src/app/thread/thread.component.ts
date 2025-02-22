@@ -336,6 +336,7 @@ export class ThreadComponent implements OnInit {
         console.log("📩 DEBUG: `parentMessage.content.text` nach Fix:", this.parentMessage.content.text);
         // **🚀 Jetzt sicherstellen, dass `parentMessage` wirklich die ERSTE private Nachricht ist**
         this.loadOriginalPrivateMessage(this.parentMessage.id);
+        this.listenForReplyCountUpdates(); 
         // **Live-Updates starten**
         this.loadThreadMessagesLive();
         this.loadLastUsedThreadEmojis();
@@ -344,6 +345,7 @@ export class ThreadComponent implements OnInit {
         console.warn("⚠️ `ngOnChanges` wurde aufgerufen, aber `parentMessage` ist `null` oder leer!");
     }
   }
+
 
   private listenForReplyCountUpdates(): void {
     if (!this.parentMessage?.id) {
