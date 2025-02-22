@@ -1,0 +1,33 @@
+
+<div class="container">
+  <ul>
+    <li *ngFor="let result of data.results" (click)="selectResult(result)">
+      
+      <!-- Channel-Ergebnisse -->
+      <div *ngIf="result.type === 'channel'"   class="channel-container">
+        <img src="assets/img/tag-black.png" class="icon">
+        
+      </div>
+
+      <!-- Benutzer-Ergebnisse -->
+      <div *ngIf="result.type === 'user'" class="avatar-container">
+        <img [src]="result.avatarUrl || 'assets/img/tag-black.png'" alt="{{ result.name }}" class="avatar">
+        <img *ngIf="result.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
+        <img *ngIf="!result.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
+        
+      </div>
+      <span>{{ result.name }}</span>
+  
+     
+      <div *ngIf="result.type === 'thread' || result.type === 'message' || result.type === 'private-message' || result.type === 'thread-channel'" class="message-container">
+        
+        <span class="message-preview">{{ result.text || '⚠️ Kein Text' }}</span>
+       
+        <span class="message-timestamp">
+      
+          {{ result.formattedTimestamp | date:'dd.MM.yyyy HH:mm' }}
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>

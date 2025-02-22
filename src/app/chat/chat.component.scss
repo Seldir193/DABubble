@@ -1,0 +1,166 @@
+@import "./../../styles.scss";
+
+section {
+  display: flex;
+  background-color: #eceefe;
+  gap: 20px;
+  padding: 0 20px 20px 20px;
+  height: calc(100vh - 10.35rem);
+  position: relative;
+
+  .work-space {
+    position: fixed; /* Fixiert am linken Rand */
+    left: 0; /* Direkt am linken Rand */
+    top: 50%; /* In der Mitte des Bildschirms */
+    width: 60px; /* Schmale Breite */
+    height: 347px; /* Höhe */
+    border-radius: 0px 30px 30px 0px; /* Nur oben rechts und unten rechts abgerundet */
+    background-color: white; /* Hintergrund bleibt weiß */
+    cursor: pointer;
+    display: flex;
+    flex-direction: column; /* Bild oben, Text unten */
+    align-items: center; /* Zentriert */
+    justify-content: center; /* Zentriert */
+    transition: background-color 0.3s ease-in-out;
+    padding: 23px 14px;
+    box-shadow: 4px 4px 7px 0px #00000033;
+    gap: 10px; /* Abstand zwischen Bild & Text */
+    text-align: center;
+  }
+  
+  /* Bild bleibt oben */
+  .work-space img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease-in-out; /* Sanfte Skalierung */
+  }
+  
+  /* Text bleibt UNTEN & ist um 90° gedreht */
+  .work-space span {
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+    transform: rotate(-90deg); /* Ständig um 90° nach links gedreht */
+    transform-origin: center;
+    white-space: nowrap; /* Kein Umbruch */
+    position: relative;
+    z-index: 2; /* Sicherstellen, dass der Text über dem Bild bleibt */
+    display: flex;
+    gap: 10px;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; /* Sanfte Skalierung */
+  }
+  
+  /* Beim Hover wird NUR der Text & das Bild größer, aber NICHT gedreht */
+  .work-space:hover img {
+    transform: scale(1.1); /* Vergrößerung ohne Rotation */
+    filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+  }
+  
+  /* Fix für den Text: Behalte Rotation & füge Skalierung hinzu */
+  .work-space:hover span {
+    transform: rotate(-90deg) scale(1.1);
+    color: $hoverColor;
+  }
+  
+
+  /* Allgemeiner Container für Devspace */
+  .container {
+    width: 100%;
+    max-width: 366px;
+    //min-height: 100vh;
+    border-radius: 30px;
+    background-color: white;
+    padding: 32px 30px;
+   
+    opacity: 1;
+    gap: 25px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Spezifischer Stil für den Team-Container */
+  .team-container {
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+   
+  }
+
+  .welcome-container{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+   //display: none;
+  }
+
+  .privat-chat-container{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+    //display: none;
+  }
+
+  .search-container{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+
+  }
+
+  .scrollable-area {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 10rem);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  
+   
+    scrollbar-width: thin ; 
+    scrollbar-color: black white; /* Farbe des Scrollbar-Griffs und -Hintergrunds */
+  }
+  
+  /* Hover-Effekt für Firefox */
+  .scrollable-area:hover {
+    scrollbar-color: $hoverColor white; /* Farbe des Scrollbar-Griffs und -Hintergrunds beim Hover */
+  }
+
+
+  app-inner-channel,
+  app-direct-messages {
+    flex: none; /* Komponenten sollen nicht den gesamten Platz füllen */
+    padding: 15px;
+  }
+
+  .thread-area {
+    width: 30%; /* Thread-Bereich rechts */
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem); /* Gleiche Höhe wie andere Container */
+    overflow: hidden;
+  }
+
+  .thread-activ{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+
+  }
+}
