@@ -31,14 +31,20 @@ export class InnerChannelComponent {
 
 
 
+  
+
   ngOnInit(): void {
     this.channelService.loadChannels();
     // Abonniere die Channels, um sie zu aktualisieren
     this.channelService.currentChannels.subscribe((channels) => {
-      this.entwicklerTeams = channels;
+      const currentUserId = this.userService.getCurrentUserId();
+      
+      this.entwicklerTeams = channels.filter((channel) =>
+        channel.members.some((member: any) => member.uid === currentUserId)
+      );
     });
   }
-
+  
 
 
   

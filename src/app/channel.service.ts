@@ -49,39 +49,48 @@ selectedChannel = this.selectedChannelSource.asObservable();
     }
   }
 
+
+
 async leaveChannel(channelId: string, userId: string): Promise<void> {
   try {
-    // Hole den Channel aus Firestore
     const channelDocRef = doc(this.firestore, 'channels', channelId);
     const channelDoc = await getDoc(channelDocRef);
 
     if (channelDoc.exists()) {
-      const channelData = channelDoc.data();
+      const channelData = channelDoc.data() || {};
+      const members = channelData['members'] || [];
 
-      // Entferne den Benutzer aus der Mitgliederliste
-      const updatedMembers = (channelData['members'] || []).filter((member: string) => member !== userId);
+      // 🟢 Filter nach .uid
+      const updatedMembers = members.filter((member: any) => member.uid !== userId);
 
       if (updatedMembers.length > 0) {
-        // Aktualisiere die Mitgliederliste im Firestore, falls noch Mitglieder vorhanden sind
         await updateDoc(channelDocRef, { members: updatedMembers });
         console.log(`Benutzer ${userId} erfolgreich aus dem Channel ${channelId} entfernt.`);
       } else {
-        // Lösche den Channel nur, wenn keine Mitglieder mehr vorhanden sind
+        // Keine Mitglieder mehr => Channel löschen
         await deleteDoc(channelDocRef);
         console.log(`Channel ${channelId} gelöscht, da keine Mitglieder mehr vorhanden.`);
       }
 
-      // Lokales Entfernen des Channels, damit er für den Benutzer nicht mehr sichtbar ist
+      // 👉 Falls du lokal das Channel-Objekt entfernen möchtest ...
       this.removeChannelLocally(channelId);
-      
+
     } else {
-      console.error('Channel nicht gefunden.');
+      console.error('Channel nicht gefunden.', channelId);
     }
   } catch (error) {
     console.error('Fehler beim Verlassen des Channels:', error);
     throw error;
   }
 }
+
+
+
+
+
+
+
+
 // Lade alle Channels von Firestore
 async loadChannels(): Promise<void> {
   try {
