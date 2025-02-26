@@ -15,6 +15,8 @@ import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
 
 export class DirectMessagesComponent implements OnInit {
   @Output() memberSelected = new EventEmitter<any>();
+
+
  
   members: any[] = [];
   isChannelsVisible: boolean = false;
@@ -33,6 +35,8 @@ export class DirectMessagesComponent implements OnInit {
     this.loadMembersInRealtime(); // Lade die Mitgliederliste in Echtzeit
     this.resetInactivityTimer();
   }
+
+
 
   loadMembers(): void {
     // Nehme an, du verwendest Firestore oder eine API, um den Benutzerstatus zu laden

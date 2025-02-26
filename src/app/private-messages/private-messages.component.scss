@@ -147,10 +147,7 @@
       padding:25px;
       transition: background-color 0.3s ease, transform 0.3s ease ;
 
-      img{
-        width:70px;
-        height:70px;
-      }
+     
      
       &:hover {
         background-color: $lightblue;
@@ -249,8 +246,8 @@
       }
 
       img {
-        width: 24px; /* Bild bleibt konstant */
-        height: 24px;
+       // width: 24px; /* Bild bleibt konstant */
+       // height: 24px;
         object-fit: cover;
         border-radius: 50%;
       }
@@ -269,10 +266,7 @@
     margin-bottom: 15px;
     transition: background-color 0.3s ease, transform 0.3s ease;
 
-    img{
-      width:70px;
-      height:70px;
-    }
+   
 
     &:hover {
       background-color: $lightblue;
@@ -374,8 +368,8 @@
       }
 
       img {
-        width: 24px; /* Bild bleibt konstant */
-        height: 24px;
+       // width: 24px; /* Bild bleibt konstant */
+        //height: 24px;
         object-fit: cover;
         border-radius: 50%;
       }

@@ -233,7 +233,7 @@
       display: none;
   
       .image-wrapper {
-        width: 40px; /* Feste Größe für den Wrapper */
+        //width: 40px; /* Feste Größe für den Wrapper */
         height: 40px;
         display: flex;
         justify-content: center;
@@ -244,11 +244,15 @@
         &:hover {
           background-color: $lightblue; /* Hintergrundfarbe beim Hover */
           cursor: pointer;
+
+          img {
+            filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+            }
         }
   
         img {
-          width: 24px; /* Bild bleibt konstant */
-          height: 24px;
+          width: 40px; /* Bild bleibt konstant */
+          height: 40px;
           object-fit: cover;
           border-radius: 50%;
         }
@@ -358,7 +362,7 @@
       display: none;
   
       .image-wrapper {
-        width: 40px; /* Feste Größe für den Wrapper */
+        //width: 40px; /* Feste Größe für den Wrapper */
         height: 40px;
         display: flex;
         justify-content: center;
@@ -369,11 +373,15 @@
         &:hover {
           background-color: $lightblue; /* Hintergrundfarbe beim Hover */
           cursor: pointer;
+
+          img {
+            filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+            }
         }
   
         img {
-          width: 24px; /* Bild bleibt konstant */
-          height: 24px;
+          width: 40px; /* Bild bleibt konstant */
+          height: 40px;
           object-fit: cover;
           border-radius: 50%;
         }

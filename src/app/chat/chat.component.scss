@@ -8,6 +8,7 @@ section {
   height: calc(100vh - 10.35rem);
   position: relative;
 
+
   .work-space {
     position: fixed; /* Fixiert am linken Rand */
     left: 0; /* Direkt am linken Rand */
@@ -77,7 +78,15 @@ section {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    position: relative;
+
   }
+    
+    
+
+
+  
 
   /* Spezifischer Stil für den Team-Container */
   .team-container {
@@ -87,7 +96,7 @@ section {
     opacity: 1;
     height: calc(100vh - 10.35rem);
     overflow: hidden;
-   
+
   }
 
   .welcome-container{
@@ -127,6 +136,7 @@ section {
     display: flex;
     flex-direction: column;
     cursor: pointer;
+    overflow-x: hidden;
   
    
     scrollbar-width: thin ; 
@@ -163,4 +173,110 @@ section {
     overflow: hidden;
 
   }
+
+  .property-box{
+    display: none;
+   }
+
+  @media (max-width: 1800px) {
+    /* standardmäßig ALLES unsichtbar */
+    .container,
+    .work-space,
+    .team-container,
+    .privat-chat-container,
+    .thread-area,
+    .welcome-container {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .show-mobile {
+      display: block !important; /* oder flex, je nach Bedarf */
+    }
+
+     .container {
+      height:calc(100vh - 11.55rem);
+      padding:20px;
+     }
+
+     .team-container{
+      height:calc(100vh - 8.95rem);
+     }
+
+     .privat-chat-container{
+      height:calc(100vh - 8.95rem);
+     }
+
+     .thread-area{
+      height:calc(100vh - 8.95rem);
+     }
+
+     .welcome-container{
+      height:calc(100vh - 8.95rem);
+     }
+
+
+ 
+
+
+       .property-box {
+        display: block;
+        position: absolute;
+        bottom: 0px;
+        right: 15px;
+       // box-shadow: 0px 6px 10px 0px #00000033;
+
+
+        // optional: z-index, margin, usw.
+      }
+   
+  }
+
+  
+  @media (max-width: 1080px) {
+    .container {
+      height:calc(100vh - 11.05rem);
+     }
+
+     .team-container{
+      height:calc(100vh - 8.55rem);
+     }
+
+     .privat-chat-container{
+      height:calc(100vh - 8.55rem);
+     }
+
+     .thread-area{
+      height:calc(100vh - 8.55rem);
+     }
+
+     .welcome-container{
+      height:calc(100vh - 8.55rem);
+     }
+  }
+
+  @media (max-width: 850px) {
+    .container {
+      height:calc(100vh - 9.00rem);
+     }
+
+     .team-container{
+      height:calc(100vh - 6.35rem);
+     }
+
+     .privat-chat-container{
+      height:calc(100vh - 6.35rem);
+     }
+
+     .thread-area{
+      height:calc(100vh - 6.35rem);
+     }
+
+     .welcome-container{
+      height:calc(100vh - 6.35rem);
+     }
+    }
 }
+
+

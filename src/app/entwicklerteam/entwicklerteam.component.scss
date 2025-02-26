@@ -146,11 +146,7 @@
       padding:25px;
       transition: background-color 0.3s ease, transform 0.3s ease ;
 
-      img{
-        width:70px;
-        height:70px;
-      }
-     
+    
       &:hover {
         background-color: $lightblue;
     
@@ -245,11 +241,18 @@
       &:hover {
         background-color: $lightblue; /* Hintergrundfarbe beim Hover */
         cursor: pointer;
+
+       
+
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+          }
+      
       }
 
       img {
-        width: 24px; /* Bild bleibt konstant */
-        height: 24px;
+       // width: 24px; /* Bild bleibt konstant */
+       // height: 24px;
         object-fit: cover;
         border-radius: 50%;
       }
@@ -268,10 +271,7 @@
     margin-bottom: 15px;
     transition: background-color 0.3s ease, transform 0.3s ease;
 
-    img{
-      width:70px;
-      height:70px;
-    }
+  
 
     &:hover {
       background-color: $lightblue;
@@ -370,11 +370,15 @@
       &:hover {
         background-color: $lightblue; /* Hintergrundfarbe beim Hover */
         cursor: pointer;
+
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+          }
       }
 
       img {
-        width: 24px; /* Bild bleibt konstant */
-        height: 24px;
+       // width: 24px; /* Bild bleibt konstant */
+       // height: 24px;
         object-fit: cover;
         border-radius: 50%;
       }

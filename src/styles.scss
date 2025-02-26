@@ -22,21 +22,30 @@ $button-border: #ADB0D9;
   }
 }
 
+
 @media (max-width: 780px) {
   body {
     overflow: auto;
+   
   }
+
 }
 
 html,body
  {
   margin: 0;
+
+ 
   
 }
 body {
   font-family: "Nunito",'Noto Color Emoji', 'Segoe UI Emoji', sans-serif;
   height: 100%;
   width: 100%;
+  background-color: $lightblue;
+
+ 
+ 
 }
 
 
@@ -113,11 +122,18 @@ body {
 }
 
 
+@media (max-width: 1800px) {
+  section {
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+}
+
+
+
 
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-
-
 
 
 

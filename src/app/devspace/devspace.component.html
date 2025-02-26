@@ -1,11 +1,27 @@
 
 <div class="dev-box">
+
+    <!-- devspace.component.html -->
+<div class="center-section" *ngIf="!isDesktop">
+    <input
+      type="text" 
+      placeholder="Gehe zu..." 
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (input)="onSearchInput()"
+    >
+    <img src="assets/img/search.png" class="search-icon" alt="Suche">
+  </div>
+  
+
+  <div class="desktop-content" *ngIf="isDesktop">
     <img src="assets/img/dev_logo.png" alt="Dev Space"  >
     <h1>Devspace</h1> 
     <div class="edit-square" 
    
     >
        <img  src="assets/img/edit_square.png" alt="Square"  (click)="onEditSquareClick()">
+    </div>
     </div>
 </div>
 

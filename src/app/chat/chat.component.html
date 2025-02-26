@@ -1,10 +1,11 @@
 
 
 <app-chat-header
+[showDesktop]="showDesktopHeader"
+(backClicked)="onHeaderBackClicked()"
   (openThread)="openThreadFromPrivateMessage($event)"
   (threadSelected)="openThreadFromSearch($event)"
-  (threadChannelSelected)="openThreadChannelFromSearch($event)"
-
+  (threadChannelSelected)="openThreadChannelFromSearch($event)" 
   (memberSelected)="onMemberSelected($event)"
   #innerChannel
   (channelSelected)="onChannelSelected($event)">
@@ -12,12 +13,37 @@
 
 <section>
   <!-- WORKSPACE / DEVSPACE -->
+   
   <div class="work-space" (click)="toggleWorkspace()">
      <span>Workspace-Menü schließen <img src="assets/img/Show menu.png" alt="Menu"></span>
   </div>
 
-  <div class="container" *ngIf="isWorkspaceVisible">
-    <app-devspace (searchTriggered)="openSearchField($event)"></app-devspace>
+  <div class="container"  [ngClass]="{'show-mobile': currentMobileView === 'container'}"  *ngIf="isWorkspaceVisible">
+    <app-devspace 
+    #devspaceRef
+  (searchTriggered)="openSearchField($event)"
+  (channelSelected)="onChannelSelected($event)"
+  (memberSelected)="onMemberSelected($event)"
+  (threadChannelSelected)="openThreadChannelFromSearch($event)"
+  (threadSelected)="openThreadFromSearch($event)"
+></app-devspace>
+
+
+
+
+
+<div class="property-box">
+  <img 
+  
+  src="assets/img/Property1.png" 
+
+      alt="Square" 
+      (click)="onEditSquareIconClick()">
+</div>
+
+
+
+
     <div class="scrollable-area">
       <!-- Channel-Übersicht -->
       <app-inner-channel 
@@ -35,8 +61,8 @@
   <!-- =========================
        1) ENTWICKLERTEAM (Kanal-Ansicht)
       ========================= -->
-  <div class="team-container"
-       *ngIf="selectedChannel && !isSearchActive">
+  <div class="team-container" [ngClass]="{'show-mobile': currentMobileView === 'team'}"
+       *ngIf="selectedChannel && !isSearchActive"  >
     <!-- Nur anzeigen, wenn KEIN private Chat aktiv ist -->
     <div *ngIf="!isPrivateChat && selectedChannel">
       <app-entwicklerteam
@@ -51,7 +77,7 @@
   <!-- =========================
        2) PRIVATER CHAT
       ========================= -->
-  <div class="privat-chat-container"
+  <div class="privat-chat-container" [ngClass]="{'show-mobile': currentMobileView === 'private'}"
        *ngIf="isPrivateChat && selectedMember && !isSearchActive">
     <app-private-messages
       [recipientId]="selectedMember.id"
@@ -67,12 +93,8 @@
        3) THREAD-CHANNEL ANSICHT
       ========================= -->
   <div *ngIf="selectedThreadChannel"
-       class="thread-area"
-       [ngClass]="{'thread-activ': isThreadChannelFromSearch}">
-
-
-       
-
+       class="thread-area" 
+       [ngClass]="{'thread-activ': isThreadChannelFromSearch , 'show-mobile': currentMobileView === 'threadChannel'   }">
 
 
   <app-thread-channel
@@ -88,7 +110,7 @@
        4) THREAD ANSICHT
       ========================= -->
   <div *ngIf="selectedThread"
-       [ngClass]="{'thread-area': !isThreadFromSearch, 'thread-activ': isThreadFromSearch}">
+       [ngClass]="{'thread-area': !isThreadFromSearch, 'thread-activ': isThreadFromSearch , 'show-mobile': currentMobileView === 'thread'   }" >
     <app-thread
       [parentMessage]="selectedThread"
       [recipientName]="selectedThread.recipientName || selectedMember?.name || 'Unbekannt'"
@@ -97,16 +119,20 @@
     </app-thread>
   </div>
 
+
+
+
   <!-- SUCHE -->
-  <div class="search-container" *ngIf="isSearchActive">
+  <div class="search-container"     *ngIf="isSearchActive && currentMobileView === 'search'"  [ngClass]="{'show-mobile': currentMobileView === 'search'}" >
     <app-search-field
       (close)="closeSearchField()"
       (memberSelected)="handleMemberSelection($event)">
     </app-search-field>
   </div>
 
+
   <!-- WELCOME-SCREEN -->
-  <div *ngIf="!selectedChannel && showWelcomeContainer && !isSearchActive"
+  <div *ngIf="!selectedChannel && showWelcomeContainer && !isSearchActive" [ngClass]="{'show-mobile': currentMobileView === 'welcome'}"
        class="welcome-container">
     <app-welcome-screen></app-welcome-screen>
   </div>

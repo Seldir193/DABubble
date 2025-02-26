@@ -146,23 +146,10 @@
           <div class="emoji-container" >
                   
             <div class="emoji-box">
-              <div class="image-wrapper">
-                <!-- Zeige Emojis für gesendete Nachrichten -->
-                <span *ngIf="lastUsedEmojisSent.length > 0" 
-                      (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisSent[0] } }, msg)">
-                  {{ lastUsedEmojisSent[0] }}
-                </span>
-              </div>
-              
-              <div class="image-wrapper">
-                <span *ngIf="lastUsedEmojisSent.length > 1" 
-                      (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisSent[1] } }, msg)">
-                  {{ lastUsedEmojisSent[1] }}
-                </span>
-              </div>
+             
               
               <div class="image-wrapper" (click)="toggleEmojiPickerForMessage(msg)">
-                <img src="assets/img/reaction.png" alt="Reaction" />
+                <img src="assets/img/emojiplus.png" alt="Reaction" />
               </div>
   
               <div *ngIf="msg.isEmojiPickerVisible" class="emoji-pickere">
@@ -231,20 +218,7 @@
     
             <div class="emoji-container-received">
               <div class="emoji-box-received">
-                <div class="image-wrapper">
-                  <!-- Zeige Emojis für empfangene Nachrichten -->
-                  <span *ngIf="lastUsedEmojisReceived.length > 0" 
-                        (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[0] } }, msg)">
-                    {{ lastUsedEmojisReceived[0] }}
-                  </span>
-                </div>
                 
-                <div class="image-wrapper">
-                  <span *ngIf="lastUsedEmojisReceived.length > 1" 
-                        (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[1] } }, msg)">
-                    {{ lastUsedEmojisReceived[1] }}
-                  </span>
-                </div>
                 
     
                 <div *ngIf="msg.isEmojiPickerVisible" class="emoji-picker-received" >
@@ -253,7 +227,7 @@
                 </div>
                 
                 <div class="image-wrapper" (click)="toggleEmojiPickerForMessage(msg)">
-                  <img src="assets/img/reaction.png" alt="Reaction" />
+                  <img src="assets/img/emojiplus.png" alt="Reaction" />
                 </div>
                 
                 

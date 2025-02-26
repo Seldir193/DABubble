@@ -1,10 +1,42 @@
-@media (max-width: 1080px) {
+@media (max-width: 1800px) {
   .center-section {
     display: none;
   }
+
+
+
+
+
+  .desktop-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 30px;
+
+    .left{
+      width:25px;
+      height:25px;
+    }
+   
+  
+    img {
+      width: 60px;
+      height: 60px;
+    }
+  
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-left:15px;
+    }
+  
+  }
+
 }
 
 @media (max-width: 850px) {
+
+
     .user-name {
       display: none;
     }
@@ -24,9 +56,9 @@
     }
   
     .container {
-      padding: 10px;
+      padding: 15px 16px;
       //width: 100%;
-  
+      
       h1 {
         font-size: 20px;
         margin-left: 10px;
@@ -34,3 +66,4 @@
     }
   }
   
+

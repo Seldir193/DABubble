@@ -1,6 +1,6 @@
 <div class="container">
-    <div class="content-container">
-        <div class="container-box">
+    <div class="content-container" *ngIf="!showDesktop">
+        <div class="container-box" >
             <div class="vector">
                 <div class="background-pink"></div>
                 <div class="background">
@@ -26,10 +26,18 @@
         <h1>DABubble</h1>
     </div>
 
-    
 
 
-    <div class="center-section">
+
+    <div class="desktop-content" *ngIf="showDesktop" >
+        <img class="left" src="/assets/img/pfeilleft.png" (click)="onBackClick()">
+        <img src="assets/img/dev_logo.png" alt="Dev Space"  >
+        <h1>Devspace</h1> 
+    </div>
+
+
+
+    <div class="center-section" *ngIf="isDesktop" >
         <input 
           type="text" 
           placeholder="Devspace durchsuchen" 

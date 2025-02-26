@@ -49,6 +49,8 @@ export class ChatHeaderComponent  implements OnInit{
 
 selectedThreadChannel: any = null;
 
+
+
   @Output() memberSelected = new EventEmitter<any>();
   @Output() channelSelected = new EventEmitter<any>();
   @Output() openPrivateChat = new EventEmitter<void>();
@@ -63,9 +65,15 @@ selectedThreadChannel: any = null;
 
  @Output() threadChannelSelected = new EventEmitter<any>();
 
+ @Output() backClicked = new EventEmitter<void>();
 
 
 
+ isDesktop = false;
+ //showDesktop = false;
+
+  
+ @Input() showDesktop = false;
 
   inputStates: { [key: string]: boolean } = {
     name: false,
@@ -91,6 +99,21 @@ selectedThreadChannel: any = null;
   @HostListener('document:keydown') onKeyDown() {
     this.resetInactivityTimer();
   }
+  
+
+
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    if (window.innerWidth >= 1800) {
+      // Sobald Breite >= 1800px => ausblenden
+      //this.showDesktop = false;
+    }
+  }
+
+
+
+
 
   constructor(private router: Router,
     private firestore: Firestore,
@@ -105,6 +128,17 @@ selectedThreadChannel: any = null;
     this.listenForAuthChanges();
     this.resetInactivityTimer();
     this.loadUserData();
+
+    this.isDesktop = window.innerWidth >= 1079;
+  }
+
+
+
+  onBackClick(): void {
+   // this.showDesktop = false;
+    // Einfach nur das Event aussenden. 
+    // Den eigentlichen Zustand ändert der Parent.
+    this.backClicked.emit();
   }
 
   onAvatarClick(): void {
