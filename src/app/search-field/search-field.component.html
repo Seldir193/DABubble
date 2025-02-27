@@ -1,37 +1,71 @@
-<div class="entwickler-box">
-
-
-
-
+<div    class="entwickler-box">
   <div class="private-message-container"  >
-    
-   
-    
-    <div class="new-message-container">
+    <div class="new-message-container " >
       <h1>Neue Nachricht</h1>
-      <input 
-        type="text" 
-        placeholder="An: #channel, oder @jemand oder E-Mail Adresse" 
-        (input)="onSearchInput()" 
-        [(ngModel)]="searchQuery" 
-      />
-      
-      <p *ngIf="noResultsFound">Keine Mitglieder gefunden.</p>
+
+
+
+
+
+
+
+
+
+<!-- Input-Feld als Trigger für das Overlay -->
+<input
+          
+  type="text"
+  placeholder="An: #channel, oder @jemand oder E-Mail Adresse"
+  [(ngModel)]="searchQuery"
+  (input)="onSearchInput()"
+  cdkOverlayOrigin #trigger="cdkOverlayOrigin"
+  
+/>
+
+<!-- Dropdown via cdkConnectedOverlay -->
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="filteredMembers.length > 0"
+  [cdkConnectedOverlayHasBackdrop]="false" 
+  [cdkConnectedOverlayPositions]="[
+    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' }
+  ]"
+>
+  <!-- Nur anzeigen, wenn es auch Filter-Ergebnisse gibt -->
+  <ul *ngIf="filteredMembers.length > 0" class="dropdown-list scrollable-area">
+    <li *ngFor="let member of filteredMembers" (click)="addRecipient(member)">
+      <div class="avatar-container">
+        <img
+          [src]="member.avatarUrl"
+          alt="Avatar"
+          class="avatar"
+        />
+        <span>{{ member.email }}</span>
+      </div>
+    </li>
+  </ul>
+</ng-template>
+
     </div>
-
-
     </div>
     </div>
-
-
-
-
-
-
-
 
 <div  class="channel-input-box" >
   <div class="channel-box" >
+
+    <div *ngIf="selectedRecipients.length > 0" class="selected-recipients">
+     
+      <ul>
+        <li *ngFor="let recipient of selectedRecipients">
+          <img [src]="recipient.avatarUrl" alt="Avatar" class="avatar" />
+           {{ recipient.email }}
+          
+           <img (click)="removeRecipient(recipient)" src="assets/img/close.png" class="close-icon">
+        </li>
+      </ul>
+    </div>
+  
 
  <!-- Nachrichtenliste -->
  <div class="message-list" #messageList>
@@ -39,12 +73,13 @@
     <!-- Datum nur anzeigen, wenn es sich von der vorherigen Nachricht unterscheidet -->
     <div class="seperator" *ngIf="i === 0 || privateMessages[i-1].date !== msg.date">
       
-        <span class="date-separator">
-          {{ getFormattedDate(msg.date) }}
-        </span>
-       
-      
+      <span class="date-separator">
+        {{ getFormattedDate(msg.date) }}
+      </span>
+    
     </div>
+
+
 
 
     <!-- Container für gesendete Nachrichten -->
@@ -101,6 +136,17 @@
       
 
       </div>
+
+
+
+
+
+    
+     
+
+ 
+
+
 
         
         
@@ -160,6 +206,10 @@
       </div>
     </div>
 
+
+    
+
+
     <!-- Container für empfangene Nachrichten -->
     <div *ngIf="msg.senderId !== currentUser.id" class="received-message-container">
       <div class="message-container received-message">
@@ -169,6 +219,11 @@
             <span class="sender-name">{{ msg.senderName }}</span>
             <span class="message-time">{{ msg.time }}</span>
           </span>
+
+
+
+
+          
 
           <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
             <p *ngIf="msg.content?.text">{{ msg.content.text }}</p>
@@ -241,6 +296,7 @@
         
 
 
+ 
 
 
 
@@ -258,10 +314,15 @@
 
 
 
+
+
+
+
 <div class="chat-input-container">
   <div class="chat-input">
     <div class="textarea-wrapper">
-      <textarea placeholder="Nachricht an {{ recipientName }}" [(ngModel)]="privateMessage" #textArea (keydown)="handleKeyDown($event, textArea)" readonly></textarea>
+      <textarea placeholder="Nachricht an {{ recipientName }}"  [(ngModel)]="messageToAll"  #textArea (keydown)="handleKeyDown($event, textArea)"  cdkOverlayOrigin
+      #textAreaOrigin="cdkOverlayOrigin"    ></textarea>
      
 
       <div class="image-preview" *ngIf="imageUrl">
@@ -273,21 +334,78 @@
 
       <div class="buttons-wrapper">
         <div class="input-buttons">
-          <label for="image-upload" class="image-upload-button"style="pointer-events: none; " >
+          <label for="image-upload" class="image-upload-button" >
             <img class="input-image" src="assets/img/add-pic.png" alt="Bild hinzufügen" />
             <input type="file" id="image-upload" (change)="onImageSelected($event, textArea)" style="display: none" />
           </label>
-          <button (click)="toggleEmojiPicker()"style="pointer-events: none; " >
+          <button (click)="toggleEmojiPicker()" >
             
             <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
           </button>
-          <button (click)="addAtSymbolAndOpenDialog()" class="at-button" style="pointer-events: none; ">
-            <img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
+         
+
+
+
+
+
+
+
+
+          <button
+                      
+          (click)="toggleAtDropdown()"
+          class="at-button"
+          >
+          <img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
           </button>
+          
+          <!-- Dropdown via cdkConnectedOverlay -->
+          
+          <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="textAreaOrigin"
+          [cdkConnectedOverlayOpen]="showAtDropdown"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          (backdropClick)="showAtDropdown = false"  
+          [cdkConnectedOverlayPositions]="[
+            
+          
+            {
+              originX: 'start',
+              originY: 'top',
+              overlayX: 'start',
+              overlayY: 'bottom'
+            }
+          ]"
+          >
+          <!-- Beispiel-Liste aller Mitglieder (Nutzern) -->
+          <ul   class="at-dropdown-list scrollable-area" >    
+            <li *ngFor="let member of allMembers" (click)="addAtSymbolFor(member)">
+              <img [src]="member.avatarUrl" alt="Avatar" class="avatar" />
+              {{ member.name }}
+            </li>
+          </ul>
+          </ng-template>
+
+
+          <!-- Button, der das Dropdown triggert -->
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
 
-        <div class="send-button" style="pointer-events: none; ">
-          <button (click)="sendPrivateMessage(textArea)">
+        <div class="send-button" >
+          <button  (click)="sendMessageToAll(textArea)">
             <img src="assets/img/send-button.png" alt="Senden" />
           </button>
         </div>

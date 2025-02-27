@@ -6,7 +6,7 @@ import { ChannelService } from '../channel.service';
 import { UserService } from '../user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDate } from '@angular/common';
-import { AddMemberSelectorComponent } from '../add-member-selector/add-member-selector.component';
+
 import { Message } from '../message.models';
 import { MessageService } from '../message.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,6 +15,8 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { Timestamp } from 'firebase/firestore';
 
+
+import { OverlayModule } from '@angular/cdk/overlay';
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
@@ -24,7 +26,7 @@ export interface MessageContent {
 @Component({
   selector: 'app-private-messages',
   standalone: true,
-  imports: [CommonModule, FormsModule, PickerModule],
+  imports: [CommonModule, FormsModule, PickerModule, OverlayModule],
   templateUrl: './private-messages.component.html',
   styleUrls: ['./private-messages.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -66,6 +68,13 @@ export class PrivateMessagesComponent implements OnInit {
   selectedThread: any = null;
   latestTimestamp: Date | null = null;
   selectedMember: any = null; 
+
+
+
+  allUsers: any[] = [];
+
+  // Steuert Overlay
+  showUserDropdown: boolean = false;
 
   private replyCache: Map<string, any[]> = new Map(); 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
@@ -901,24 +910,66 @@ onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
     }, 100);
   }
 
-  addAtSymbolAndOpenDialog(): void {
-    this.privateMessage += '@';
-  
-    // Alle Benutzer abrufen und an den Dialog übergeben
-    this.userService.getAllUsers().then(users => {
-      const dialogRef = this.dialog.open(AddMemberSelectorComponent, {
-        data: { members: users }
-      });
-  
-      dialogRef.afterClosed().subscribe(selectedMember => {
-        if (selectedMember) {
-          this.privateMessage += ` ${selectedMember.name} `;
-        }
-      });
-    }).catch(error => {
-      console.error('Fehler beim Abrufen der Benutzer:', error);
-    });
+
+
+
+
+
+
+
+
+
+
+
+  toggleUserDropdown(): void {
+    // Wenn wir das erste Mal öffnen, Nutzer laden
+    if (!this.showUserDropdown) {
+      this.loadAllUsers();
+    }
+    this.showUserDropdown = !this.showUserDropdown;
   }
+
+
+
+  // Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
+loadAllUsers(): void {
+  this.userService.getAllUsers()
+    .then(users => {
+      this.allUsers = users.map(u => ({
+        id: u.id,
+        //email: u.email,
+        name: u.name,
+        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
+      }));
+    })
+    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
+}
+
+
+  // Beim Klick auf einen Nutzer im Dropdown
+  addUserSymbol(member: any) {
+    // Füge in privateMessage ein @Name ein
+    // => Oder user.email, je nachdem was du brauchst
+    this.privateMessage += ` @${member.name} `;
+    // Overlay schließen
+    this.showUserDropdown = false;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   highlightMessage(messageId: string, retries = 5): void {
     setTimeout(() => {

@@ -21,7 +21,7 @@
            <div class="mitglieder" *ngFor ="let member of members"  (click)="openDirectMessage(member)" >
 
             <div class="avatar-container">
-              <img   [src]="member.avatarUrl" alt="{{ member.name }}" />
+              <img   [src]="member.avatarUrl || 'assets/img/avatar.png'"  alt=""   />
 
 
               <img *ngIf="member.userStatus === 'Aktiv'" src="assets/img/online.png" class="status-icon" alt="Online">

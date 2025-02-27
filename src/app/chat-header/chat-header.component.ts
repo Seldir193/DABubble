@@ -404,8 +404,9 @@ resetInputBorders() {
       
       // 1) Channels
       this.filteredChannels = channels.map(channel => ({
-        id: channel.id,
-        name: channel.name,
+        //id: channel.id,
+       // name: channel.name,
+       ...channel,   
         type: 'channel'
       }));
   

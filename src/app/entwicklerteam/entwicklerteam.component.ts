@@ -10,10 +10,13 @@ import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dia
 import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-dialog.component';
 import { UserService } from '../user.service'; 
 import { formatDate } from '@angular/common';  
-import { AddMemberSelectorComponent } from '../add-member-selector/add-member-selector.component';
+
 import { MemberSectionDialogComponent } from '../member-section-dialog/member-section-dialog.component';
 
 import { MessageService } from '../message.service';
+
+
+import { OverlayModule } from '@angular/cdk/overlay';
 
 export interface MessageContent {
   text?: string;
@@ -40,7 +43,7 @@ interface ThreadChannelParentDoc {
 @Component({
   selector: 'app-entwicklerteam',
   standalone: true,
-  imports: [CommonModule,FormsModule,PickerModule],
+  imports: [CommonModule,FormsModule,PickerModule, OverlayModule],
   templateUrl: './entwicklerteam.component.html',
   styleUrls: ['./entwicklerteam.component.scss'] ,
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -104,6 +107,12 @@ export class EntwicklerteamComponent implements OnInit {
   tooltipEmoji = '';
   tooltipSenderName = '';
   selectedThreadChannel: any = null;
+
+
+  allUsers: any[] = [];
+
+  // Steuert Overlay
+  showUserDropdown: boolean = false;
 
   
 
@@ -245,6 +254,12 @@ private isSameDay(date1: Date, date2: Date): boolean {
       if (existingEmoji) {
         existingEmoji.count += 1;  // Erhöhe die Zählung, wenn das Emoji bereits existiert
       } else {
+        if (msg.content.emojis.length >= 2) {
+          // Entferne das älteste (oder z.B. das erste Element)
+          msg.content.emojis.shift();  
+          // shift() entfernt das erste Element aus dem Array
+        }
+       
         msg.content.emojis.push({ emoji: newEmoji, count: 1 });  // Füge neues Emoji hinzu
       }
   
@@ -642,24 +657,61 @@ startEditing(msg: any): void {
   this.showEditOptions = false; // Optionen schließen
 }
 
-addAtSymbolAndOpenDialog(): void {
-  // Fügt zuerst das "@"-Symbol zur Nachricht hinzu
-  this.message += '@';
 
-  // Öffnet dann das Dialogfenster, um Mitglieder auszuwählen
-  const dialogRef = this.dialog.open(AddMemberSelectorComponent, {
-    data: {
-      members: this.selectedChannel?.members
-    }
-  });
 
-  dialogRef.afterClosed().subscribe(selectedMember => {
-    if (selectedMember) {
-      // Avatar und Name des Mitglieds zum Text hinzufügen
-      this.message += ` ${selectedMember.name}  `;
-    }
-  });
+
+
+
+
+
+
+
+
+
+toggleUserDropdown(): void {
+  // Wenn wir das erste Mal öffnen, Nutzer laden
+  if (!this.showUserDropdown) {
+    this.loadAllUsers();
+  }
+  this.showUserDropdown = !this.showUserDropdown;
 }
+
+
+
+// Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
+loadAllUsers(): void {
+this.userService.getAllUsers()
+  .then(users => {
+    this.allUsers = users.map(u => ({
+      id: u.id,
+      //email: u.email,
+      name: u.name,
+      avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
+    }));
+  })
+  .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
+}
+
+
+// Beim Klick auf einen Nutzer im Dropdown
+addUserSymbol(member: any) {
+  // Füge in privateMessage ein @Name ein
+  // => Oder user.email, je nachdem was du brauchst
+  this.message += ` @${member.name} `;
+  // Overlay schließen
+  this.showUserDropdown = false;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 sendPrivateMessage(): void {
   if (this.privateMessage.trim() && this.selectedMember) {

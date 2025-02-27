@@ -346,7 +346,8 @@
   <div class="chat-input">
     <div class="textarea-wrapper">
       <textarea placeholder="Nachricht an #{{ selectedChannel?.name }}" [(ngModel)]="message" #textArea
-        (keydown)="handleKeyDown($event, textArea)"></textarea>
+        (keydown)="handleKeyDown($event, textArea)"   cdkOverlayOrigin
+        #userTrigger="cdkOverlayOrigin" ></textarea>
       <div class="image-preview" *ngIf="imageUrl">
         <img class="image-border" [src]="imageUrl" alt="Hochgeladenes Bild" (click)="openImageModal()" />
         <div class="img-wrapper">
@@ -362,9 +363,56 @@
           <button (click)="toggleEmojiPicker()">
             <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
           </button>
-          <button (click)="addAtSymbolAndOpenDialog()" class="at-button">
-            <img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
-          </button>
+
+
+
+
+                    <!-- @-Button -->
+<button
+class="at-button"
+(click)="toggleUserDropdown()"
+
+>
+<img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
+</button>
+
+<!-- Das Dropdown mit cdkConnectedOverlay -->
+<ng-template
+cdkConnectedOverlay
+[cdkConnectedOverlayOrigin]="userTrigger"
+[cdkConnectedOverlayOpen]="showUserDropdown"
+[cdkConnectedOverlayHasBackdrop]="true"
+(backdropClick)="showUserDropdown = false"
+[cdkConnectedOverlayPositions]="[
+            
+          
+{
+  originX: 'start',
+  originY: 'top',
+  overlayX: 'start',
+  overlayY: 'bottom'
+}
+]"
+>
+<ul class="my-user-dropdown pm-scrollable" >
+  <li
+      *ngFor="let member of allUsers"
+      (click)="addUserSymbol(member)"
+    >
+      <!-- Avatar -->
+      <img
+        [src]="member.avatarUrl || 'assets/img/avatar.png'"
+        alt="Avatar"
+        class="avatar"
+      />
+      <!-- Name oder E-Mail, je nach Bedarf -->
+      {{ member.name }}
+    </li>
+
+</ul>
+</ng-template>
+
+         
         </div>
         <div class="send-button">
           <button (click)="sendMessage(textArea)">

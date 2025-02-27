@@ -152,6 +152,7 @@ replyCount: number = 0;  // 🔥 Antwortanzahl wird gespeichert
         break;
   
       case 'channel':
+       
         this.loadChannelMessages(result.id);
         this.dialogRef.close(result);
         break;

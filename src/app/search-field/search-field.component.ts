@@ -4,11 +4,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 
-
-
-
-
-
 import { ViewChild, ElementRef, Input,SimpleChanges  } from '@angular/core';
 import { ChannelService } from '../channel.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,8 +14,7 @@ import { MessageService } from '../message.service';
 import { ActivatedRoute} from '@angular/router';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { Router } from '@angular/router';
-
-
+import { OverlayModule } from '@angular/cdk/overlay';
 
 export interface MessageContent {
   text?: string;
@@ -29,17 +23,15 @@ export interface MessageContent {
 
 } emojis: Array<{ emoji: string; count: number }>;
 
-
 interface EmojiItem {
   emoji: string;
   count: number;
 }
 
-
 @Component({
   selector: 'app-search-field',
   standalone: true,
-  imports: [CommonModule, FormsModule,PickerModule],
+  imports: [CommonModule, FormsModule,PickerModule,OverlayModule],
   templateUrl: './search-field.component.html',
   styleUrls: ['./search-field.component.scss'],
 })
@@ -49,13 +41,6 @@ export class SearchFieldComponent {
   searchQuery: string = '';
   filteredMembers: any[] = [];
   noResultsFound: boolean = false; // Neues Feld für die Fehlermeldung
-
-
-
-
-
-
-
 
 
   @ViewChild('messageList') messageList!: ElementRef;
@@ -89,7 +74,16 @@ export class SearchFieldComponent {
   tooltipSenderName = '';
 
  
- 
+  selectedRecipients: any[] = [];
+  messageToAll: string = '';
+
+  // Falls du neu hinzugefügte User in einem separaten Array speichern willst:
+  systemMessages: any[] = [];
+
+
+  showAtDropdown: boolean = false; // Steuert Sichtbarkeit des Dropdown
+  allMembers: any[] = [];     
+
 
   constructor(
     private route: ActivatedRoute,
@@ -104,9 +98,9 @@ export class SearchFieldComponent {
   async ngOnInit(): Promise<void> {
     await this.loadCurrentUser();
     this.loadRecipientData();
+    this.currentUser = await this.userService.getCurrentUserData();
 
 
-  
     if (this.currentUser && this.recipientId) {
       this.conversationId = this.messageService.generateConversationId(
         this.currentUser.id,
@@ -267,66 +261,8 @@ export class SearchFieldComponent {
 
   
 
-async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
-  const senderId = this.userService.getCurrentUserId();
-  const recipientId = this.recipientId;
 
-  // 1) Prüfen, ob Absender und Empfänger existieren
-  if (!senderId || !recipientId) {
-    console.error("❌ Sender oder Empfänger-ID fehlt.");
-    return;
-  }
-
-  // 2) conversationId erzeugen (z.B. "ID1_ID2")
-  const conversationId = this.messageService.generateConversationId(senderId, recipientId);
-
-  // 3) Falls du leere Strings für "text" und "image" statt null verwenden möchtest
-  const textValue = this.privateMessage ? this.privateMessage : "";
-  const imageValue = this.imageUrl ? this.imageUrl : "";
-
-  // 4) Nachrichtendaten zusammenstellen
-  const messageData = {
-    type: "private" as const,  // Typ: 'private' für den MessageService
-    conversationId,            // Eindeutige ID für diese Konversation
-    content: {
-      text: textValue,
-      //image: imageValue,
-      image: (typeof this.imageUrl === 'string' ? this.imageUrl : '') || '',
-
-      emojis: []
-    },
-    date: formatDate(new Date(), "dd.MM.yyyy", "en"),
-    timestamp: new Date(),
-    time: new Date().toLocaleTimeString(),
-    senderId,
-    senderName: this.currentUser?.name || "Unknown",
-    senderAvatar: this.currentUser?.avatarUrl || "",
-    recipientId
-  };
-
-  try {
-    // 5) Senden über die neue Methode `sendMessage(...)`
-    await this.messageService.sendMessage(messageData);
-
-    // 6) Eingabefelder zurücksetzen
-    this.privateMessage = "";
-    this.imageUrl = null;
-
-    // Optional: TextArea zurücksetzen (Höhe, etc.)
-    if (textArea) this.resetTextareaHeight(textArea);
-
-    // 7) Emojis neu laden (wenn du LastUsedEmojis o.Ä. nutzt)
-    await this.loadLastUsedEmojis();
-
-    // 8) Nach unten scrollen
-    this.scrollToBottom();
-
-  } catch (error: any) {
-    console.error("❌ Fehler beim Senden der Nachricht:", error);
-  }
-}
-
-
+  
 
 
 
@@ -352,7 +288,8 @@ async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
 
   addEmoji(event: any): void {
     if (event && event.emoji && event.emoji.native) {
-      this.privateMessage += event.emoji.native;
+    
+      this.messageToAll += event.emoji.native;
     }
     this.isEmojiPickerVisible = false;
   }
@@ -383,7 +320,7 @@ async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
   handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      this.sendPrivateMessage(textArea);
+      this.sendMessageToAll(textArea);
     }
   }
 
@@ -396,22 +333,8 @@ async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
   }
 
   addAtSymbolAndOpenDialog(): void {
-    this.privateMessage += '@';
-  
-    // Alle Benutzer abrufen und an den Dialog übergeben
-    this.userService.getAllUsers().then(users => {
-      const dialogRef = this.dialog.open(AddMemberSelectorComponent, {
-        data: { members: users }
-      });
-  
-      dialogRef.afterClosed().subscribe(selectedMember => {
-        if (selectedMember) {
-          this.privateMessage += ` ${selectedMember.name} `;
-        }
-      });
-    }).catch(error => {
-      console.error('Fehler beim Abrufen der Benutzer:', error);
-    });
+   
+  this.messageToAll += '@';
   }
   
 
@@ -611,27 +534,44 @@ hideTooltip(): void {
   this.tooltipVisible = false;
 }
 
+
+
+selectMember(member: any): void {
+  console.log('Mitglied ausgewählt:', member);
+  this.memberSelected.emit(member); // Mitglied weitergeben
+  this.closeSearch(); // Schließe das Suchfeld nach der Auswahl
+}
+
+closeSearch(): void {
+  this.close.emit();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 onSearchInput(): void {
   if (this.searchQuery.trim()) {
     this.userService.getUsersByFirstLetter(this.searchQuery).then(users => {
       this.filteredMembers = users.map(user => ({
         id: user.id || user.uid,
+        email: user.email,
         name: user.name,
         avatarUrl: user.avatarUrl || 'assets/default-avatar.png',
       }));
       this.noResultsFound = users.length === 0;
-
-      // Öffne den bestehenden AddMemberSelectorComponent Dialog
-      const dialogRef = this.dialog.open(AddMemberSelectorComponent, {
-        width: '400px',
-        data: { members: this.filteredMembers }
-      });
-
-      dialogRef.afterClosed().subscribe(selectedMember => {
-        if (selectedMember) {
-          this.selectMember(selectedMember);
-        }
-      });
     }).catch(() => {
       console.error('Fehler beim Abrufen der Benutzer.');
       this.filteredMembers = [];
@@ -643,15 +583,175 @@ onSearchInput(): void {
   }
 }
 
-selectMember(member: any): void {
-  console.log('Mitglied ausgewählt:', member);
-  this.memberSelected.emit(member); // Mitglied weitergeben
-  this.closeSearch(); // Schließe das Suchfeld nach der Auswahl
+
+
+
+
+
+
+
+
+
+async sendMessageToAll(textArea: HTMLTextAreaElement): Promise<void> {
+  if (!this.messageToAll.trim() && !this.imageUrl) {
+    return; // Keine Nachricht und kein Bild => nicht senden
+  }
+
+  if (!this.currentUser?.id) {
+    console.error('Kein aktueller Benutzer vorhanden.');
+    return;
+  }
+
+  // Schleife über alle ausgewählten Empfänger
+  for (const recipient of this.selectedRecipients) {
+    const conversationId = this.messageService.generateConversationId(
+      this.currentUser.id,
+      recipient.id
+    );
+
+    const messageData = {
+      type: 'private' as const,
+      conversationId,
+      content: {
+        text: this.messageToAll.trim(),
+        image: (typeof this.imageUrl === 'string' ? this.imageUrl : ''),
+        emojis: []
+      },
+      date: formatDate(new Date(), 'dd.MM.yyyy', 'en'),
+      timestamp: new Date(),
+      time: new Date().toLocaleTimeString(),
+      senderId: this.currentUser.id,
+      senderName: this.currentUser.name || 'Unbekannt',
+      senderAvatar: this.currentUser.avatarUrl || '',
+      recipientId: recipient.id
+    };
+
+    try {
+      await this.messageService.sendMessage(messageData);
+      console.log(`✅ Nachricht (inkl. Bild/Emoji) an ${recipient.name || recipient.email} gesendet.`);
+    } catch (error) {
+      console.error('❌ Fehler beim Senden der Nachricht:', error);
+    }
+  }
+
+  // Felder leeren
+  this.messageToAll = '';
+  this.imageUrl = null;
+ // textArea.style.height = 'auto';
+
+  if (textArea) this.resetTextareaHeight(textArea);
+
+
+  // Emoji-Picker schließen
+  this.isEmojiPickerVisible = false;
+
+  // ggf. Scroll ans Ende
+  this.scrollToBottom();
 }
 
-closeSearch(): void {
-  this.close.emit();
+
+addRecipient(member: any) {
+  // Prüfen, ob dieser Benutzer schon ausgewählt ist
+  const alreadySelected = this.selectedRecipients.some(
+    (m) => m.id === member.id
+  );
+  if (!alreadySelected) {
+    this.selectedRecipients.push(member);
+ // Hier kommt die Systemnachricht:
+ const systemMessage = {
+  type: 'system',
+  content: {
+    text: `Benutzer ${member.email} hinzugefügt.`
+  },
+  timestamp: new Date()
+};
+
+// ... in dein privateMessages-Array pushen
+//this.privateMessages.push(systemMessage);
+   
+  }
+
+  // Dropdown schließen, Suche zurücksetzen (optional)
+  this.searchQuery = '';
+  this.filteredMembers = [];
 }
+
+
+
+
+
+removeRecipient(member: any) {
+  const index = this.selectedRecipients.findIndex(m => m.id === member.id);
+  if (index > -1) {
+    this.selectedRecipients.splice(index, 1);
+  }
+}
+
+
+
+// =============== SCROLLEN + SYSTEMMESSAGE (optional) ===============
+
+
+
+addSystemMessage(text: string) {
+  const sysMsg = {
+    type: 'system',
+    content: { text },
+    timestamp: new Date(),
+  };
+  // hier in dein privateMessages oder systemMessages pushen
+  this.privateMessages.push(sysMsg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+toggleAtDropdown(): void {
+  // Wenn wir das Dropdown zum ersten Mal öffnen, laden wir Benutzer
+  if (!this.showAtDropdown) {
+    this.loadAllUsers();
+  }
+  this.showAtDropdown = !this.showAtDropdown;
+}
+
+// Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
+loadAllUsers(): void {
+  this.userService.getAllUsers()
+    .then(users => {
+      this.allMembers = users.map(u => ({
+        id: u.id,
+        //email: u.email,
+        name: u.name,
+        avatarUrl: u.avatarUrl || 'assets/default-avatar.png'
+      }));
+    })
+    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
+}
+
+// Beim Klick auf einen User in der Dropdown-Liste
+addAtSymbolFor(member: any): void {
+  
+  this.messageToAll += '@' + member.name + ' ';
+  this.showAtDropdown = false; // Dropdown schließen
+}
+
 }
 
 

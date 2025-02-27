@@ -8,49 +8,71 @@ import { serverTimestamp } from '@angular/fire/firestore';
 import { getAuth } from 'firebase/auth';
 import { UserService } from './user.service';
 
+// Wo auch immer du deinen Channel-Typ definiert hast:
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChannelService {
   // Channel Typdefinition erweitern
-private channelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string } | null>(null);
+private channelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string; membersUid?: string[]; } | null>(null);
 currentChannel = this.channelSource.asObservable();
 
-private selectedChannelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string } | null>(null);
+private selectedChannelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string;membersUid?: string[];  } | null>(null);
 selectedChannel = this.selectedChannelSource.asObservable();
 
   // Ein Observable zur Übertragung der Mitglieder
   private membersSource = new BehaviorSubject<any[]>([]);
   currentMembers = this.membersSource.asObservable();
 
-  private channelsSource = new BehaviorSubject<{id: string; name: string; members: any[]; description?: string; createdBy?: string }[]>([]);
+  private channelsSource = new BehaviorSubject<{id: string; name: string; members: any[]; description?: string; createdBy?: string; membersUid?: string[]; }[]>([]);
   currentChannels = this.channelsSource.asObservable();
 
   constructor(private firestore: Firestore,private userService:UserService) {}
 
+// In deinem ChannelService:
 
-  async addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): Promise<void> {
-    try {
-      const channelsCollection = collection(this.firestore, 'channels'); // Channels Collection in Firestore
-      const docRef = await addDoc(channelsCollection, channel); // Channel wird hinzugefügt
-      console.log('Channel erfolgreich hinzugefügt mit ID: ', docRef.id);
+/**
+ * CHANNEL ERSTELLEN
+ * - Fügt neben 'members' auch 'membersUid' (nur IDs) hinzu
+ */
+async addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): Promise<void> {
+  try {
+    const channelsCollection = collection(this.firestore, 'channels'); 
 
-      const newChannel = { id: docRef.id, ...channel };
+    // (A) Erzeuge zusätzlich ein String-Array nur mit den UIDs
+    const membersUid = channel.members.map(m => m.uid);
+
+    // (B) Speichere beide Felder: 'members' und 'membersUid'
+    const docRef = await addDoc(channelsCollection, { 
+      ...channel,
+      membersUid 
+    });
+
+    console.log('Channel erfolgreich hinzugefügt mit ID:', docRef.id);
+
+    const newChannel = { 
+      id: docRef.id, 
+      ...channel,
+      membersUid  // optional, falls du's lokal speichern willst
+    };
     
-      await this.loadChannels();
-      
-      // Setze den neu hinzugefügten Channel als aktuellen Channel
-      this.changeChannel(newChannel);
-  
-      // Lade alle Channels neu, nachdem ein neuer hinzugefügt wurde
-    
-    } catch (error) {
-      console.error('Fehler beim Hinzufügen des Channels:', error);
-    }
+    // Nach dem Hinzufügen erneut Channels laden
+    await this.loadChannels();
+
+    // Setze den neu hinzugefügten Channel als aktuellen Channel
+    this.changeChannel(newChannel);
+
+  } catch (error) {
+    console.error('Fehler beim Hinzufügen des Channels:', error);
   }
+}
 
-
-
+/**
+ * CHANNEL VERLASSEN
+ * - Entfernt dich aus 'members' und aus 'membersUid'
+ */
 async leaveChannel(channelId: string, userId: string): Promise<void> {
   try {
     const channelDocRef = doc(this.firestore, 'channels', channelId);
@@ -58,21 +80,29 @@ async leaveChannel(channelId: string, userId: string): Promise<void> {
 
     if (channelDoc.exists()) {
       const channelData = channelDoc.data() || {};
-      const members = channelData['members'] || [];
 
-      // 🟢 Filter nach .uid
+      const members = channelData['members'] || [];
+      const membersUid = channelData['membersUid'] || [];  // Hier das neue Array
+
+      // (A) Mitglieder filtern: Entferne userId
       const updatedMembers = members.filter((member: any) => member.uid !== userId);
+      const updatedMembersUid = membersUid.filter((uid: string) => uid !== userId);
 
       if (updatedMembers.length > 0) {
-        await updateDoc(channelDocRef, { members: updatedMembers });
+        // (B) Update beider Felder
+        await updateDoc(channelDocRef, { 
+          members: updatedMembers, 
+          membersUid: updatedMembersUid 
+        });
         console.log(`Benutzer ${userId} erfolgreich aus dem Channel ${channelId} entfernt.`);
+
       } else {
-        // Keine Mitglieder mehr => Channel löschen
+        // Keine Mitglieder mehr => Channel komplett löschen
         await deleteDoc(channelDocRef);
         console.log(`Channel ${channelId} gelöscht, da keine Mitglieder mehr vorhanden.`);
       }
 
-      // 👉 Falls du lokal das Channel-Objekt entfernen möchtest ...
+      // Lokal entfernen ...
       this.removeChannelLocally(channelId);
 
     } else {
@@ -84,7 +114,53 @@ async leaveChannel(channelId: string, userId: string): Promise<void> {
   }
 }
 
+/**
+ * CHANNEL-MITGLIEDER SETZEN
+ * - Aktualisiert 'members' + 'membersUid' parallel
+ */
+async setMembers(channelId: string, members: any[]): Promise<void> {
+  try {
+    const channels = this.channelsSource.getValue();
+    const channelIndex = channels.findIndex(c => c.id === channelId);
 
+    if (channelIndex > -1) {
+      const channel = channels[channelIndex];
+
+      // (A) Setze das detailreiche Feld 'members'
+      channel.members = members;
+
+      // (B) Erzeuge die UID-Liste
+      const membersUid = members.map(m => m.uid);
+
+      // Firestore-Dokument
+      const channelDocRef = doc(this.firestore, 'channels', channel.id);
+
+      // (C) Speichere beide Felder in Firestore
+      await updateDoc(channelDocRef, { 
+        members, 
+        membersUid 
+      });
+
+      // (D) Lokal updaten
+      channels[channelIndex] = { ...channel, membersUid };
+      this.channelsSource.next([...channels]);
+
+      // Falls der aktuelle Channel derselbe ist, local updaten
+      const currentChannel = this.channelSource.getValue();
+      if (currentChannel && currentChannel.id === channelId) {
+        currentChannel.members = members;
+        // Optional: currentChannel.membersUid = membersUid;
+        this.channelSource.next(currentChannel);
+      }
+
+      console.log(`Mitglieder für Channel "${channelId}" erfolgreich aktualisiert (inkl. membersUid).`);
+    } else {
+      console.error('Channel nicht gefunden, Mitglieder konnten nicht aktualisiert werden.');
+    }
+  } catch (error) {
+    console.error('Fehler beim Aktualisieren der Mitglieder:', error);
+  }
+}
 
 
 
@@ -141,42 +217,6 @@ removeChannelLocally(channelId: string): void {
     } catch (error) {
       console.error('Fehler beim Aktualisieren des Channels:', error);
       throw error;
-    }
-  }
-  async setMembers(channelId: string, members: any[]): Promise<void> {
-    try {
-      // Hole die aktuelle Channels-Liste aus dem Service
-      const channels = this.channelsSource.getValue();
-  
-      // Suche den Channel anhand der ID
-      const channelIndex = channels.findIndex(c => c.id === channelId);
-      
-      if (channelIndex > -1) {
-        const channel = channels[channelIndex];
-  
-        // Aktualisiere die Mitglieder des gefundenen Channels
-        channel.members = members;
-  
-        // Speichere die Mitglieder auch in Firestore
-        const channelDocRef = doc(this.firestore, 'channels', channel.id);
-        await updateDoc(channelDocRef, { members });
-  
-        // Setze die aktualisierte Channels-Liste
-        this.channelsSource.next([...channels]);
-  
-        // Falls der aktuelle Channel auch der aktualisierte Channel ist, aktualisiere ihn ebenfalls
-        const currentChannel = this.channelSource.getValue();
-        if (currentChannel && currentChannel.id === channelId) {
-          currentChannel.members = members;
-          this.channelSource.next(currentChannel); // Aktualisiere den aktuellen Channel im Service
-        }
-  
-        console.log(`Mitglieder für Channel mit ID "${channelId}" erfolgreich aktualisiert.`);
-      } else {
-        console.error('Channel nicht gefunden, Mitglieder konnten nicht aktualisiert werden.');
-      }
-    } catch (error) {
-      console.error('Fehler beim Aktualisieren der Mitglieder:', error);
     }
   }
 
@@ -304,6 +344,8 @@ getAllChannels(callback: (channels: any[]) => void): () => void {
   return unsubscribe; // Gibt die Möglichkeit zurück, das Live-Tracking zu beenden
 }
 
+
+
 async getChannelById(channelId: string): Promise<any> {
   const channelDocRef = doc(this.firestore, 'channels', channelId);
   const channelDoc = await getDoc(channelDocRef);
@@ -316,8 +358,20 @@ async getChannelById(channelId: string): Promise<any> {
 }
 
 async getChannelsByName(channelName: string): Promise<any[]> {
+  const currentUserId = this.userService.getCurrentUserId(); // Deine Methode fürs User-Login
+  if (!currentUserId) {
+    console.warn("Kein currentUser eingeloggt.");
+    return [];
+  }
+
+
+
   const channelsCollection = collection(this.firestore, 'channels');
-  const q = query(channelsCollection, where('name', '>=', channelName), where('name', '<=', channelName + '\uf8ff'));
+  const q = query(channelsCollection,
+     where('name', '>=', channelName), 
+     where('name', '<=', channelName + '\uf8ff'),
+     where('membersUid' , 'array-contains', currentUserId)
+    );
 
   console.log("📡 Firestore-Query für Channels:", channelName);
 
