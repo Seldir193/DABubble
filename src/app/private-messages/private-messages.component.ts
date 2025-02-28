@@ -17,11 +17,22 @@ import { Timestamp } from 'firebase/firestore';
 
 
 import { OverlayModule } from '@angular/cdk/overlay';
+
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
+
+  
+  emojis: Array<{ emoji: string; count: number }>;
+
+  
+} 
+
+
+
+
+
  
-}  emojis: Array<{ emoji: string; count: number }>;
 
 @Component({
   selector: 'app-private-messages',
@@ -40,8 +51,8 @@ export class PrivateMessagesComponent implements OnInit {
   @Output() openThread = new EventEmitter<any>();
   @Input() threadData: any = null; // Daten vom Thread
 
+  
  
-
   parentMessage: any = null; // ✅ Speichert die übergeordnete Nachricht für den Thread
   imageUrl: string | ArrayBuffer | null = null;
   privateMessage: string = '';
@@ -70,11 +81,21 @@ export class PrivateMessagesComponent implements OnInit {
   selectedMember: any = null; 
 
 
-
+ 
   allUsers: any[] = [];
 
   // Steuert Overlay
   showUserDropdown: boolean = false;
+
+
+  // oder
+  
+
+  showLargeImage = false;
+  largeImageUrl: string | null = null;
+
+
+
 
   private replyCache: Map<string, any[]> = new Map(); 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
@@ -381,49 +402,126 @@ startLiveReplyCountUpdates(): void {
   }
   
 
+
+
+
+
+
+
+
   async addEmojiToMessage(event: any, msg: any): Promise<void> {
+    // 1) A) Stelle sicher, dass msg.content.emojis existiert
     if (!msg.content.emojis) {
       msg.content.emojis = [];
     }
   
-    const newEmoji = event.emoji.native;
-    const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
+    // B) Prüfe, ob wir ein valides Emoji-Event haben
+    if (event?.emoji?.native) {
+      const newEmoji = event.emoji.native;
   
-    if (this.conversationId) {
-      const emojiType = msg.senderId === this.currentUser?.id ? 'sent' : 'received';
-      
-      this.messageService.saveLastUsedEmojis(
-        this.conversationId,
-        [newEmoji], // 🔥 Wichtig: Als Array übergeben
-        emojiType
-      ).catch(error => console.error('Emoji-Speicherung fehlgeschlagen:', error));
-    }
-  
-    if (existingEmoji) {
-      existingEmoji.count += 1;
-    } else {
-      msg.content.emojis.push({ emoji: newEmoji, count: 1 });
-    }
-  
-    // 🔥 **Nur `content.emojis` aktualisieren, andere Felder NICHT überschreiben!**
-    try {
-      await this.messageService.updateMessage(msg.id, {
-        'content.emojis': msg.content.emojis
-      });
-  
-      console.log('✅ Emoji erfolgreich zur Nachricht hinzugefügt.');
-  
-      // 🔥 **Lokales UI-Update ohne Firestore-Neuladen**
-      this.privateMessages = this.privateMessages.map(m =>
-        m.id === msg.id
-          ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
-          : m
+      // 2) Emojis im Nachricht-Objekt aktualisieren
+      const existingEmoji = msg.content.emojis.find(
+        (e: any) => e.emoji === newEmoji
       );
-
-    } catch (error) {
-      console.error('❌ Fehler beim Aktualisieren der Nachricht mit Emoji:', error);
+  
+      if (existingEmoji) {
+        // Emoji existiert schon => count++
+        existingEmoji.count += 1;
+      } else {
+        // Falls schon 20 Emojis => nichts mehr hinzufügen (oder entfernt das älteste).
+        if (msg.content.emojis.length < 20) {
+          msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+        } else {
+          console.warn('Maximal 20 Emojis pro Nachricht erlaubt.');
+          // Optional: Entferne das älteste, wenn du willst:
+          // msg.content.emojis.shift();
+          // msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+        }
+      }
+  
+      // 3) Last-Used-Emojis pflegen (abhängig vom Sender)
+      const isSentByMe = (msg.senderId === this.currentUser?.id);
+      const emojiType = isSentByMe ? 'sent' : 'received';
+  
+      if (isSentByMe) {
+        this.lastUsedEmojisSent = this.updateLastUsedEmojis(
+          this.lastUsedEmojisSent,
+          newEmoji
+        );
+      } else {
+        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
+          this.lastUsedEmojisReceived,
+          newEmoji
+        );
+      }
+  
+      // 4) Letzte verwendete Emojis in Firestore/Datenbank speichern
+      if (this.conversationId) {
+        // Beispiel: Du speicherst nur das aktuelle Emoji als Array
+        // oder du könntest your entire lastUsedEmojis array speichern.
+        this.messageService
+          .saveLastUsedEmojis(this.conversationId, [newEmoji], emojiType)
+          .catch(error => console.error('Emoji-Speicherung fehlgeschlagen:', error));
+      } else {
+        console.warn('Keine conversationId vorhanden, saveLastUsedEmojis wird nicht aufgerufen.');
+      }
+  
+      // 5) Emoji-Picker schließen (falls vorhanden)
+      msg.isEmojiPickerVisible = false;
+  
+      // 6) Nachricht in DB aktualisieren
+      try {
+        // Du updatest nur `content.emojis` in Firestore
+        await this.messageService.updateMessage(msg.id, {
+          'content.emojis': msg.content.emojis
+        });
+  
+        console.log('✅ Emoji erfolgreich zur Nachricht hinzugefügt.');
+  
+        // 7) Lokales UI-Update ohne komplettes Firestore-Neuladen
+        this.privateMessages = this.privateMessages.map(m =>
+          m.id === msg.id
+            ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
+            : m
+        );
+  
+      } catch (error) {
+        console.error('❌ Fehler beim Aktualisieren der Nachricht mit Emoji:', error);
+      }
     }
   }
+
+  private updateLastUsedEmojis(
+    emojiArray: string[],
+    newEmoji: string
+  ): string[] {
+    // Erst entfernen, falls schon vorhanden
+    emojiArray = emojiArray.filter(e => e !== newEmoji);
+    // Als erstes Element einfügen
+   // emojiArray.unshift(newEmoji);
+    // Auf 2 Einträge begrenzen
+    return emojiArray.slice(0, 2);
+  }
+  
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 private listenForEmojiUpdates(): void {
   if (!this.conversationId) return;
@@ -1053,5 +1151,80 @@ showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
 hideTooltip(): void {
   this.tooltipVisible = false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+closePopup(msg: any) {
+  // Nur wenn das Popup offen ist => schließen
+  if (msg.showAllEmojisList) {
+    msg.showAllEmojisList = false;
+    msg.expanded = false; // optional, falls du das auch einklappen möchtest
+  }
 }
+
+
+
+
+
+  toggleEmojiPopup(msg: any) {
+    // Falls die Property noch nicht existiert, initialisieren
+    if (msg.showAllEmojisList === undefined) {
+      msg.showAllEmojisList = false;
+    }
+
+    // Umschalten
+    msg.showAllEmojisList = !msg.showAllEmojisList;
+
+    // Wenn wir schließen (false), dann einklappen zurücksetzen
+    if (!msg.showAllEmojisList) {
+      msg.expanded = false;
+    } else {
+      // Wenn wir öffnen und `expanded` gar nicht existiert
+      if (msg.expanded === undefined) {
+        msg.expanded = false;
+      }
+    }
+  }
+
+  onEmojiPlusInPopup(msg: any) {
+    // z.B. Logik, um ein neues Emoji hinzuzufügen
+    // oder den Emoji-Picker zu öffnen
+    console.log('Plus in popup geklickt, msg=', msg);
+  }
+
+}
+  
+
 

@@ -271,7 +271,9 @@ async updateMessage(channelId: string, messageId: string, updatedContent: Messag
     
     // Update Firestore with the new content
     await updateDoc(messageDocRef, {
-      content: updatedContent,timestamp: serverTimestamp()
+      content: updatedContent,
+      editedAt: serverTimestamp()
+     // timestamp: serverTimestamp()
     });
     
     console.log('Nachricht erfolgreich gespeichert');

@@ -75,6 +75,9 @@ export class EntwicklerteamComponent implements OnInit {
         timestamp?: Date ; 
         replyCount?:  number;
         isEditing?: boolean ,
+
+        showAllEmojisList?: boolean;  // bool
+  expanded?: boolean; 
          
         threadId?: string; // ✅ ID des Threads, zu dem diese Nachricht gehört
         parentId?: string; // ✅ ID der Hauptnachricht (erste Nachricht im Thread)
@@ -114,7 +117,13 @@ export class EntwicklerteamComponent implements OnInit {
   // Steuert Overlay
   showUserDropdown: boolean = false;
 
-  
+
+
+  showLargeImage = false;
+  largeImageUrl: string | null = null;
+
+
+
 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeLiveReplyCounts: (() => void) | null = null; // Für Listener
@@ -242,53 +251,79 @@ private isSameDay(date1: Date, date2: Date): boolean {
     msg.isEmojiPickerVisible = !isCurrentlyVisible;
   }
 
+
+
+
+
+
   addEmojiToMessage(event: any, msg: any): void {
+    // A) Stelle sicher, dass msg.content.emojis existiert
     if (!msg.content.emojis) {
-      msg.content.emojis = [];  // Initialisiere das Emoji-Array, falls es noch nicht existiert
+      msg.content.emojis = [];
     }
-  
-    if (event && event.emoji && event.emoji.native) {
+
+    // B) Prüfe, ob wir ein valides Emoji-Event haben
+    if (event?.emoji?.native) {
       const newEmoji = event.emoji.native;
-      const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
-  
+
+      // 1) Zuerst aktualisieren wir die Emojis im Nachricht-Objekt
+      const existingEmoji = msg.content.emojis.find(
+        (e: any) => e.emoji === newEmoji
+      );
+
       if (existingEmoji) {
-        existingEmoji.count += 1;  // Erhöhe die Zählung, wenn das Emoji bereits existiert
+        // Erhöhe count, wenn Emoji schon vorhanden
+        existingEmoji.count += 1;
       } else {
-        if (msg.content.emojis.length >= 2) {
-          // Entferne das älteste (oder z.B. das erste Element)
-          msg.content.emojis.shift();  
-          // shift() entfernt das erste Element aus dem Array
+        // Falls schon 2 Emojis existieren, lösche das älteste
+      
+        if (msg.content.emojis.length < 20) {
+          msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+
         }
-       
-        msg.content.emojis.push({ emoji: newEmoji, count: 1 });  // Füge neues Emoji hinzu
+        // Neues Emoji hinzufügen
+       // msg.content.emojis.push({ emoji: newEmoji, count: 1 });
       }
-  
+
+      // 2) lastUsedEmojis je nach gesendeter oder empfangener Nachricht
       if (msg.senderName === this.currentUser?.name) {
-        // Nachricht wurde gesendet -> Verwalte Emojis für gesendete Nachrichten
-        if (!this.lastUsedEmojisSent.includes(newEmoji)) {
-          // Emoji hinzufügen, nur wenn es nicht vorhanden ist
-          this.lastUsedEmojisSent = [newEmoji, ...this.lastUsedEmojisSent].slice(0, 2);
-        }
+        // -> "sent"
+        this.lastUsedEmojisSent = this.updateLastUsedEmojis(
+          this.lastUsedEmojisSent,
+          newEmoji
+        );
+
         if (this.selectedChannel?.id) {
-          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisSent, 'sent');
+          this.channelService.saveLastUsedEmojis(
+            this.selectedChannel.id,
+            this.lastUsedEmojisSent,
+            'sent'
+          );
         }
       } else {
-        // Nachricht wurde empfangen -> Verwalte Emojis für empfangene Nachrichten
-        if (!this.lastUsedEmojisReceived.includes(newEmoji)) {
-          // Emoji hinzufügen, nur wenn es nicht vorhanden ist
-          this.lastUsedEmojisReceived = [newEmoji, ...this.lastUsedEmojisReceived].slice(0, 2);
-        }
+        // -> "received"
+        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
+          this.lastUsedEmojisReceived,
+          newEmoji
+        );
+
         if (this.selectedChannel?.id) {
-          this.channelService.saveLastUsedEmojis(this.selectedChannel.id, this.lastUsedEmojisReceived, 'received');
+          this.channelService.saveLastUsedEmojis(
+            this.selectedChannel.id,
+            this.lastUsedEmojisReceived,
+            'received'
+          );
         }
       }
     }
-  
-    msg.isEmojiPickerVisible = false;  // Emoji-Picker schließen
-  
-    // Nachricht aktualisieren
+
+    // C) Emoji-Picker schließen
+    msg.isEmojiPickerVisible = false;
+
+    // D) Nachricht aktualisieren (in Firestore / Datenbank / whatever)
     if (this.selectedChannel?.id) {
-      this.channelService.updateMessage(this.selectedChannel.id, msg.id, msg.content)
+      this.channelService
+        .updateMessage(this.selectedChannel.id, msg.id, msg.content)
         .then(() => {
           console.log('Nachricht erfolgreich aktualisiert.');
         })
@@ -296,9 +331,58 @@ private isSameDay(date1: Date, date2: Date): boolean {
           console.error('Fehler beim Aktualisieren der Nachricht:', error);
         });
     } else {
-      console.error('Channel ID ist undefined, Nachricht kann nicht aktualisiert werden.');
+      console.error(
+        'Channel ID ist undefined, Nachricht kann nicht aktualisiert werden.'
+      );
     }
   }
+
+  // ---------------------------------------------------------
+  // Hilfsfunktion, um ein Emoji immer an die erste Stelle 
+  // zu setzen und max. 2 zu speichern
+  // ---------------------------------------------------------
+  private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
+    // Falls das Emoji schon existiert, vorher entfernen
+    emojiArray = emojiArray.filter(e => e !== newEmoji);
+
+    // Als erstes Element einfügen
+   // emojiArray.unshift(newEmoji);
+
+    // Array auf max. 2 Einträge begrenzen
+    return emojiArray.slice(0, 2);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
   
   sendMessage(textArea: HTMLTextAreaElement): void {
 
@@ -1141,7 +1225,115 @@ private watchReplyCountsForMessages(messages: any[]): void {
     }
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+closePopup(msg: any) {
+  // Nur wenn das Popup offen ist => schließen
+  if (msg.showAllEmojisList) {
+    msg.showAllEmojisList = false;
+    msg.expanded = false; // optional, falls du das auch einklappen möchtest
+  }
 }
+
+
+
+
+
+  toggleEmojiPopup(msg: any) {
+    // Falls die Property noch nicht existiert, initialisieren
+    if (msg.showAllEmojisList === undefined) {
+      msg.showAllEmojisList = false;
+    }
+
+    // Umschalten
+    msg.showAllEmojisList = !msg.showAllEmojisList;
+
+    // Wenn wir schließen (false), dann einklappen zurücksetzen
+    if (!msg.showAllEmojisList) {
+      msg.expanded = false;
+    } else {
+      // Wenn wir öffnen und `expanded` gar nicht existiert
+      if (msg.expanded === undefined) {
+        msg.expanded = false;
+      }
+    }
+  }
+
+
+
+
+  onEmojiPlusInPopup(msg: any) {
+    // z.B. Logik, um ein neues Emoji hinzuzufügen
+    // oder den Emoji-Picker zu öffnen
+    console.log('Plus in popup geklickt, msg=', msg);
+  }
+
+
+
+  openLargeImage(imageData: string | ArrayBuffer) {
+    if (typeof imageData !== 'string') {
+      // Konvertiere das ArrayBuffer zu einem String (DataURL) oder blob URL
+      return; // Oder handle es anders
+    }
+    this.largeImageUrl = imageData;
+    this.showLargeImage = true;
+  }
+  
+
+  // Methode zum Schließen
+  closeLargeImage() {
+    this.showLargeImage = false;
+    this.largeImageUrl = null;
+  }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

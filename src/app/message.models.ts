@@ -19,6 +19,9 @@ export interface Message {
 
  threadChannelId?: string;
   parentId?: string;
+
+
+  
 } 
 
 
@@ -26,7 +29,8 @@ export interface Message {
     text?: string;
     image?: string | ArrayBuffer | null;
     emojis?: Array<{ emoji: string; count: number }>; // Emojis als Array von Objekten
+
   }
 
-  
 
+  

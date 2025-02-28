@@ -146,6 +146,18 @@
       padding:25px;
       transition: background-color 0.3s ease, transform 0.3s ease ;
 
+      .avatar {
+        width: 50px;
+        height:50px;
+        object-fit: cover;
+      }
+
+      .sent-image{
+        width:50px;
+        height:50px;
+        object-fit: cover;
+      }
+
     
       &:hover {
         background-color: $lightblue;
@@ -156,6 +168,7 @@
 
           
         }
+
     }
 
       .message-container {
@@ -228,6 +241,7 @@
     top: 0;
     z-index: 3;
     display: none;
+   
 
     .image-wrapper {
       width: 40px; /* Feste Größe für den Wrapper */
@@ -271,7 +285,17 @@
     margin-bottom: 15px;
     transition: background-color 0.3s ease, transform 0.3s ease;
 
-  
+   .avatar {
+      width: 50px;
+      height:50px;
+      object-fit: cover;
+    }
+
+    .received-image{
+      width:50px;
+      height:50px;
+      object-fit: cover;
+    }
 
     &:hover {
       background-color: $lightblue;
@@ -301,6 +325,7 @@
       width:100%;
   
   
+     
 
       &:hover {
         background-color: $lightblue;
@@ -416,10 +441,12 @@
       padding: 15px;
       border-radius: 0px 30px 30px 30px;
       word-wrap: break-word;
-
+     
+      
 
       .sent-message{
         color:white;
+    
       }
 
       p{
@@ -441,6 +468,7 @@
           max-width: 200px;
           border-radius: 10px;
           object-fit: cover;
+          
         }
       }
     }
@@ -959,35 +987,6 @@
 
 
 
-.emoji-message-container{
-  display: flex;
-  gap:10px;
-
-  nav{
-    color:black;
-    font-size:16px;
-    font-weight: 400;
-  }
-
-  span{
-    border:1px solid $hoverColor;
-    padding:5px 10px;
-    border-radius:20px;
-    display: flex;
-    gap:10px;
-  }
-}
-
-
-.emoji-count {
-  margin-left: 5px; /* Abstand zwischen Emoji und der Zahl */
-  font-size: 14px; /* Größe der Zahl anpassen */
-  color: #888; /* Farbe der Zahl anpassen */
-}
-
-
-
-
 .tooltip {
   position: fixed; /* Positioniert das Element relativ zum Viewport */
   display: flex;
@@ -1076,6 +1075,150 @@ font-size: 30px;
   background-color: yellow;
   transition: background-color 1s ease-in-out;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------------------------
+   1) Gemeinsamer Style für alle Emojis 
+      (sowohl in Hauptansicht als auch Popup)
+--------------------------------------------- */
+.emoji-item {
+  border: 1px solid $hoverColor; /* Dein Rahmen-Farb-Variable */
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: white;
+  cursor: pointer;
+
+  .emoji-count {
+    margin-left: 4px;
+    font-size: 0.85em;
+    color: #666;
+  }
+}
+
+
+nav {
+  color: black;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+
+.emoji-message-container {
+  position: relative;  /* Damit .emoji-popup absolute positioniert werden kann */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    background-color: $lightblue;
+    cursor: pointer;
+
+    img {
+      filter: brightness(0) 
+              saturate(100%) 
+              invert(34%) 
+              sepia(39%) 
+              saturate(6834%) 
+              hue-rotate(230deg) 
+              brightness(100%) 
+              contrast(90%);
+    }
+  }
+
+  /* Das Icon neben den ersten 2 Emojis in der Hauptansicht */
+  .emoji-plus-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+}
+
+.emoji-popup {
+  top: 0;           
+  left: 0;
+  z-index: 9999;
+  width: 368px;
+  padding: 12px;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border: 1px solid #ddd;
+  background: #fff;
+  height: auto;
+  max-height: 290px;
+  overflow: auto; /* Oder hidden, je nach Bedarf */
+
+  /* Die Emoji-Liste im Popup */
+  .emoji-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+
+    /* 
+       .emoji-item haben wir oben global definiert. 
+       Hier kannst du optional 
+       weitere Feinheiten fürs Popup ergänzen.
+    */
+
+    /* Zweites Plus-Icon (im Popup) */
+    .emoji-plus-icon-in-list {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      /* Optional: Hover-Effekt etc. */
+    }
+  }
+
+  /* Buttons + X weitere / - 10 weniger */
+  .toggle-more,
+  .toggle-less {
+    margin-top: 4px;
+    cursor: pointer;
+    color: #0066cc;
+    border-radius: 20px;
+    padding: 5px 10px;
+    border: 1px solid $button-border;
+    width: 105px;
+  }
+
+  .toggle-box{
+    display: flex;
+
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1206,4 +1349,95 @@ font-size: 30px;
       right: 20px;
     }
   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 1) Kleines Bild im Chat */
+.small-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px; /* falls du es abgerundet haben willst */
+}
+
+/* 2) Overlay-Hintergrund */
+.image-modal-overlay {
+  position: fixed; /* über dem ganzen Bildschirm */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5); /* halbtransparent, z.B. */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: pointer; 
+}
+
+/* 3) Inhalt im Overlay (Bild + Close-Button) */
+.image-modal-content {
+  position: relative;
+  background: #fff; 
+  padding: 16px; 
+  border-radius: 8px;
+  max-width: 80vw;  /* oder so */
+  max-height: 80vh; /* damit es nicht riesig wird */
+  cursor: auto;     /* beim Inhalt selbst Mauszeiger normal lassen */
+}
+
+/* Großes Bild */
+.large-image {
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+/* Schließen-Button */
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
 }

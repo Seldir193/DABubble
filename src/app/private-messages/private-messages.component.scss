@@ -979,31 +979,162 @@
 
 
 
-.emoji-message-container{
+
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------------------------
+   1) Gemeinsamer Style für alle Emojis 
+      (sowohl in Hauptansicht als auch Popup)
+--------------------------------------------- */
+.emoji-item {
+  border: 1px solid $hoverColor; /* Dein Rahmen-Farb-Variable */
+  padding: 5px 10px;
+  border-radius: 20px;
   display: flex;
-  gap:10px;
+  gap: 10px;
+  align-items: center;
+  background-color: white;
+  cursor: pointer;
 
-  nav{
-    color:black;
-    font-size:16px;
-    font-weight: 400;
+  .emoji-count {
+    margin-left: 4px;
+    font-size: 0.85em;
+    color: #666;
+  }
+}
+
+
+nav {
+  color: black;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+
+.emoji-message-container {
+  position: relative;  /* Damit .emoji-popup absolute positioniert werden kann */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  
+  img {
+    object-fit: cover;
+    border-radius: 50%;
   }
 
-  span{
-    border:1px solid $hoverColor;
-    padding:5px 10px;
-    border-radius:20px;
+  &:hover {
+    background-color: $lightblue;
+    cursor: pointer;
+
+    img {
+      filter: brightness(0) 
+              saturate(100%) 
+              invert(34%) 
+              sepia(39%) 
+              saturate(6834%) 
+              hue-rotate(230deg) 
+              brightness(100%) 
+              contrast(90%);
+    }
+  }
+
+  /* Das Icon neben den ersten 2 Emojis in der Hauptansicht */
+  .emoji-plus-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+}
+
+.emoji-popup {
+  top: 0;           
+  left: 0;
+  z-index: 9999;
+  width: 368px;
+  padding: 12px;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border: 1px solid #ddd;
+  background: #fff;
+  height: auto;
+  max-height: 290px;
+  overflow: auto; /* Oder hidden, je nach Bedarf */
+
+  /* Die Emoji-Liste im Popup */
+  .emoji-list {
     display: flex;
-    gap:10px;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+
+    /* 
+       .emoji-item haben wir oben global definiert. 
+       Hier kannst du optional 
+       weitere Feinheiten fürs Popup ergänzen.
+    */
+
+    /* Zweites Plus-Icon (im Popup) */
+    .emoji-plus-icon-in-list {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      /* Optional: Hover-Effekt etc. */
+    }
+  }
+
+  /* Buttons + X weitere / - 10 weniger */
+  .toggle-more,
+  .toggle-less {
+    margin-top: 4px;
+    cursor: pointer;
+    color: #0066cc;
+    border-radius: 20px;
+    padding: 5px 10px;
+    border: 1px solid $button-border;
+    width: 105px;
+  }
+
+  .toggle-box{
+    display: flex;
+
   }
 }
 
 
-.emoji-count {
-  margin-left: 5px; /* Abstand zwischen Emoji und der Zahl */
-  font-size: 14px; /* Größe der Zahl anpassen */
-  color: #888; /* Farbe der Zahl anpassen */
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1286,4 +1417,36 @@
       right: 20px;
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
 }
