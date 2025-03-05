@@ -147,7 +147,7 @@ ngOnInit() {
   private checkScreenSize(): void {
     const width = window.innerWidth;
     // Ab 1080px => Desktop
-    this.isDesktop = width >= 1080;
+    this.isDesktop = width >= 1278;
   }
 
 

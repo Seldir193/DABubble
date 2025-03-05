@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { UserService } from '../user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -83,7 +83,7 @@ export class SearchFieldComponent {
 
   showAtDropdown: boolean = false; // Steuert Sichtbarkeit des Dropdown
   allMembers: any[] = [];     
-
+  isDesktop = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -98,6 +98,7 @@ export class SearchFieldComponent {
   async ngOnInit(): Promise<void> {
     await this.loadCurrentUser();
     this.loadRecipientData();
+    this.checkDesktopWidth();
     this.currentUser = await this.userService.getCurrentUserData();
 
 
@@ -124,6 +125,18 @@ export class SearchFieldComponent {
       this.loadLastUsedEmojis();
     }
   }
+
+  @HostListener('window:resize')
+   onResize() {
+     this.checkDesktopWidth();
+   }
+ 
+   checkDesktopWidth() {
+     this.isDesktop = window.innerWidth >= 1278;
+   }
+ 
+
+
 
   private async loadLastUsedEmojis(): Promise<void> {
     if (!this.conversationId) return;

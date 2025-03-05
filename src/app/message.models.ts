@@ -14,15 +14,60 @@ export interface Message {
   formattedDate?: string;  // Optional für Datum
   replyCount?: number; // ✅ 
   lastResponseTime?: any;
-  
   channelName?: string; 
-
- threadChannelId?: string;
+  threadChannelId?: string;
   parentId?: string;
 
 
+
+
+
+
+  
+
+ 
+  
+
+
+ 
+   
+ 
+
+  isHighlighted?: boolean;
+  isEditing?: boolean;
+  isEmojiPickerVisible?: boolean;
+  showAllEmojisList?: boolean;
+  expanded?: boolean;
+  type?: string;
+  threadId?: string;
+
+
+
+
+
+
+
+
+
+
+
+  lastReplyTime?: any;
+
+
+  recipientName?: string; 
   
 } 
+
+
+
+
+
+
+
+
+
+
+
 
 
   export interface MessageContent {

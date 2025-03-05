@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 import { Component, Inject, OnInit, Output, EventEmitter,Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ChannelService } from '../channel.service';
@@ -15,11 +5,8 @@ import { UserService } from '../user.service';
 import { CommonModule } from '@angular/common';
 import { MessageService } from '../message.service';
 import { getAuth } from 'firebase/auth';
-
-import { Message } from '../message.models';
-
-
 import { ChangeDetectorRef } from '@angular/core'; 
+
 @Component({
   selector: 'app-select-result-dialog',
   standalone: true,
@@ -33,16 +20,12 @@ export class SelectResultDialogComponent implements OnInit {
   results: any[] = [];
   channelMessages: any[] = [];
   privateMessages: any[] = []; 
+  replyCount: number = 0;  // 🔥 Antwortanzahl wird gespeichert
+  parentMessage: any = {}; 
 
 
   @Input() selectedChannel: any;
-
-  
-
-replyCount: number = 0;  // 🔥 Antwortanzahl wird gespeichert
-    parentMessage: any = {}; 
   @Output() openThread = new EventEmitter<any>();
-  
   @Output() threadSelected = new EventEmitter<any>();
   @Output() threadChannelSelected = new EventEmitter<any>();
 
@@ -98,8 +81,6 @@ replyCount: number = 0;  // 🔥 Antwortanzahl wird gespeichert
 
     console.log('Suchergebnisse in Echtzeit aktualisiert:', this.data.results);
   }
-
-  
 
   selectResult(result: any): void {
     const auth = getAuth();
@@ -184,7 +165,6 @@ replyCount: number = 0;  // 🔥 Antwortanzahl wird gespeichert
     }
   }
   
-
   private handleThreadChannelNavigation(result: any) {
     const threadChannelId = result.threadChannelId || result.parentId || result.id;
     if (!threadChannelId) {
@@ -227,14 +207,6 @@ replyCount: number = 0;  // 🔥 Antwortanzahl wird gespeichert
       })
       .catch((error) => console.error("Fehler:", error));
   }
-  
-
-
-
-
-
-
-
   
   // ----------------------------------------------------------------------------
   // THREAD: Verwende `threadId = result.threadId`

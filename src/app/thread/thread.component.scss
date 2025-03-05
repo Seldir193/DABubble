@@ -142,13 +142,13 @@
       .sent-message-container {
         display: flex;
         justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
-        padding:25px;
+        //padding:25px;
         transition: background-color 0.3s ease, transform 0.3s ease ;
   
-        img{
-          width:70px;
-          height:70px;
-        }
+        .sent-image,.avatar{
+          width:50px;
+          height:50px;
+         }
        
         &:hover {
           background-color: $lightblue;
@@ -166,7 +166,7 @@
           align-items: flex-start;
           gap: 15px;
           flex-direction: row-reverse; // Avatar rechts, Nachricht links
-      margin-bottom: 15px;
+   //   margin-bottom: 15px;
       padding: 25px;
       position: relative;
       background-color: transparent;
@@ -208,7 +208,7 @@
   
     .emoji-container{
       margin-right:auto;
-      margin-top:-75px;
+      margin-top:-55px;
   
       
       
@@ -268,13 +268,13 @@
     .received-message-container {
       display: flex;
       justify-content: flex-start; // Empfangene Nachrichten links positionieren
-      margin-bottom: 15px;
+      //margin-bottom: 15px;
       transition: background-color 0.3s ease, transform 0.3s ease;
   
-      img{
-        width:70px;
-        height:70px;
-      }
+      .received-image,.avatar{
+        width:50px;
+        height:50px;
+       }
   
       &:hover {
         background-color: $lightblue;
@@ -296,7 +296,7 @@
         align-items: flex-start;
         gap: 15px;
   
-        margin-bottom: 15px;
+       // margin-bottom: 15px;
     
         padding: 25px;
         position: relative;
@@ -333,7 +333,7 @@
       .message-info {
         display: flex;
         justify-content: space-between;
-        flex-direction: row-reverse;
+       // flex-direction: row-reverse;
         gap: 20px;
         align-items: center;
       }
@@ -734,8 +734,8 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    margin: 0 auto;
-    margin-bottom:15px;
+    margin: 20px auto;
+   // margin-bottom:15px;
     padding: 0px 25px 0px 25px;
   
     &::before,
@@ -991,33 +991,7 @@
   
   
   
-  .emoji-message-container{
-    display: flex;
-    gap:10px;
-  
-    nav{
-      color:black;
-      font-size:16px;
-      font-weight: 400;
-    }
-  
-    span{
-      border:1px solid $hoverColor;
-      padding:5px 10px;
-      border-radius:20px;
-      display: flex;
-      gap:10px;
-    }
-  }
-  
-  
-  .emoji-count {
-    margin-left: 5px; /* Abstand zwischen Emoji und der Zahl */
-    font-size: 14px; /* Größe der Zahl anpassen */
-    color: #888; /* Farbe der Zahl anpassen */
-  }
-  
-  
+ 
   
   
   
@@ -1157,7 +1131,18 @@
   
   
     
+.user-load{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+
+  p{
+    margin: 0;
+    font-size: 30px;
+    color:$hoverColor;
+  }
+}
 
 
 
@@ -1205,4 +1190,209 @@
   transition: background-color 1s ease-in-out;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------------------------
+   1) Gemeinsamer Style für alle Emojis 
+      (sowohl in Hauptansicht als auch Popup)
+--------------------------------------------- */
+.emoji-item {
+  border: 1px solid $hoverColor; /* Dein Rahmen-Farb-Variable */
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: white;
+  cursor: pointer;
+
+  .emoji-count {
+    margin-left: 4px;
+    font-size: 0.85em;
+    color: #666;
+  }
+}
+
+
+nav {
+  color: black;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+
+.emoji-message-container {
+  position: relative;  /* Damit .emoji-popup absolute positioniert werden kann */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    background-color: $lightblue;
+    cursor: pointer;
+
+    img {
+      filter: brightness(0) 
+              saturate(100%) 
+              invert(34%) 
+              sepia(39%) 
+              saturate(6834%) 
+              hue-rotate(230deg) 
+              brightness(100%) 
+              contrast(90%);
+    }
+  }
+
+  /* Das Icon neben den ersten 2 Emojis in der Hauptansicht */
+  .emoji-plus-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+}
+
+.emoji-popup {
+  top: 0;           
+  left: 0;
+  z-index: 9999;
+  width: 368px;
+  padding: 12px;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border: 1px solid #ddd;
+  background: #fff;
+  height: auto;
+  max-height: 290px;
+  overflow: auto; /* Oder hidden, je nach Bedarf */
+
+  /* Die Emoji-Liste im Popup */
+  .emoji-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex: 1;
+
+    /* 
+       .emoji-item haben wir oben global definiert. 
+       Hier kannst du optional 
+       weitere Feinheiten fürs Popup ergänzen.
+    */
+
+    /* Zweites Plus-Icon (im Popup) */
+    .emoji-plus-icon-in-list {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      /* Optional: Hover-Effekt etc. */
+    }
+  }
+  .toggle-box {
+    display: inline-flex;   /* Bleibt in derselben "Zeile" */
+    align-items: center;
+    gap: 8px;
+
+    .toggle-more,
+    .toggle-less {
+      padding: 2px 6px;
+      border-radius: 10px;
+      border: 1px solid #999;
+      cursor: pointer;
+    }
+
+    .emoji-plus-icon-in-list {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+  }
+
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width: 1278px){
+  .channel-input-box{
+    height:calc(100vh - 11.5rem ) !important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@import "./../../styles.scss";
 

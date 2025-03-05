@@ -26,7 +26,7 @@
   justify-content: center;
 
   img {
-    border-radius: 50%;
+   // border-radius: 50%;
     transition: filter 0.3s ease; /* Übergang für den Filter-Effekt */
    
     &:hover {
@@ -143,8 +143,10 @@
     .sent-message-container {
       display: flex;
       justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
-      padding:25px;
+     // padding:25px;
       transition: background-color 0.3s ease, transform 0.3s ease ;
+     
+
 
       .avatar {
         width: 50px;
@@ -158,9 +160,11 @@
         object-fit: cover;
       }
 
-    
+
       &:hover {
         background-color: $lightblue;
+       
+        
     
         .emoji-box {
           display: flex;
@@ -168,15 +172,15 @@
 
           
         }
-
-    }
+      }
+     
 
       .message-container {
         display: flex;
         align-items: flex-start;
         gap: 15px;
         flex-direction: row-reverse; // Avatar rechts, Nachricht links
-    margin-bottom: 15px;
+   // margin-bottom: 15px;
     padding: 25px;
     position: relative;
     background-color: transparent;
@@ -191,6 +195,8 @@
         align-items: center;
       }
     }
+    
+   
      
       .message-box {
         display: flex;
@@ -218,10 +224,11 @@
 
   .emoji-container{
     margin-right:auto;
-    margin-top:-75px;
+    margin-top:-55px;
 
-    
-    
+
+  
+  
   }
 
   .emoji-container-received{
@@ -282,7 +289,7 @@
   .received-message-container {
     display: flex;
     justify-content: flex-start; // Empfangene Nachrichten links positionieren
-    margin-bottom: 15px;
+   // margin-bottom: 15px;
     transition: background-color 0.3s ease, transform 0.3s ease;
 
    .avatar {
@@ -317,7 +324,7 @@
       align-items: flex-start;
       gap: 15px;
 
-      margin-bottom: 15px;
+      //margin-bottom: 15px;
   
       padding: 25px;
       position: relative;
@@ -355,7 +362,7 @@
     .message-info {
       display: flex;
       justify-content: space-between;
-      flex-direction: row-reverse;
+     // flex-direction: row-reverse;
       gap: 20px;
       align-items: center;
     }
@@ -378,11 +385,20 @@
     border-radius: 25px 25px 0;
     border: 1px solid #ADB0D9;
     background: #fff;
-    left: 0;
-    top: 0;
+   left: 0;
+    top: 0px;
     z-index: 3;
     display: none;
 
+   // position: absolute;
+    /* Standard-Styles, falls gewünscht ... */
+   
+   // transform: none; 
+
+   // position: static;   /* oder einfach gar nicht absolute */
+   
+    
+   
     .image-wrapper {
       width: 40px; /* Feste Größe für den Wrapper */
       height: 40px;
@@ -729,8 +745,11 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  margin: 0 auto;
-  margin-bottom:15px;
+  //margin: 0 auto;
+
+  margin: 20px auto;
+ // margin-bottom:15px;
+
   padding: 0px 25px 0px 25px;
 
   &::before,
@@ -1212,232 +1231,8 @@ nav {
 
 
 
+@import "./../../styles.scss";
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.my-user-dropdown {
-  list-style-type: none;
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-
-  &.pm-scrollable {
-    /* Nativer Scroll, aber unsichtbar machen */
-    overflow-y: auto;
-    max-height: 171px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 10px;
-    padding-top: 20px;
-
-    /* Ecken: top-left=20px, top-right=20px, bottom-right=20px, bottom-left=0 */
-    border-radius: 20px 20px 20px 0;
-
-    /* --- SCROLLBAR UNSICHTBAR MACHEN --- */
-    /* (1) Für Firefox */
-    scrollbar-width: none;         /* Versteckt in Firefox */
-    -ms-overflow-style: none;      /* Evtl. Legacy IE/Edge */
-
-    /* (2) Für Chrome/Safari/Edge (WebKit) */
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-      background: transparent !important;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: transparent;
-      border-radius: 0;
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar-button {
-      display: none;
-      height: 0;
-      width: 0;
-    }
-  }
-
-  li {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    max-width: fit-content;
-    border-radius: 2.1875rem;
-    font-size: 18px;
-    height: 35px;
-
-    &:hover {
-      background-color: $lightblue; // Deine Hover-Farbe
-    }
-
-    .avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-right: 10px;
-      object-fit: cover;
-    }
-
-    .status-icon {
-      position: relative;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid white;
-      right: 20px;
-    }
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 1) Kleines Bild im Chat */
-.small-image {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  cursor: pointer;
-  border-radius: 4px; /* falls du es abgerundet haben willst */
-}
-
-/* 2) Overlay-Hintergrund */
-.image-modal-overlay {
-  position: fixed; /* über dem ganzen Bildschirm */
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.5); /* halbtransparent, z.B. */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  cursor: pointer; 
-}
-
-/* 3) Inhalt im Overlay (Bild + Close-Button) */
-.image-modal-content {
-  position: relative;
-  background: #fff; 
-  padding: 16px; 
-  border-radius: 8px;
-  max-width: 80vw;  /* oder so */
-  max-height: 80vh; /* damit es nicht riesig wird */
-  cursor: auto;     /* beim Inhalt selbst Mauszeiger normal lassen */
-}
-
-/* Großes Bild */
-.large-image {
-  display: block;
-  max-width: 100%;
-  max-height: 80vh;
-  object-fit: contain;
-}
-
-/* Schließen-Button */
-.close-button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}

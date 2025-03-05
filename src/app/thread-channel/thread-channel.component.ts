@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef ,SimpleChanges,OnChanges, 
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef ,SimpleChanges,OnChanges, HostListener,
   OnDestroy,    } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,8 @@ import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
 import { MessageService } from '../message.service';
 import { ChangeDetectorRef } from '@angular/core'; 
+
+import { Message} from '../message.models';
 
 
 @Component({
@@ -17,7 +19,10 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./thread-channel.component.scss'],
 })
 export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
-  @Input() parentMessage: any = null;
+  //@Input() parentMessage: any = null;
+  @Input() parentMessage: Message | null = null;
+
+
   @Input() recipientName: string = '';
   @Output() closeThread = new EventEmitter<void>();
   @Output() openThread = new EventEmitter<any>();
@@ -27,7 +32,7 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
 
   isTextareaExpanded: boolean = false;
   selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
-  threadMessages: any[] = [];
+ // threadMessages: any[] = [];
   privateMessage: string = '';
   currentUser: any;
   imageUrl: string | null = null;
@@ -46,7 +51,17 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
   channelMessage: string = '';
   currentDate: Date = new Date();
   yesterdayDate: Date = this.getYesterdayDate();
-  originalParentMessage: any = null; // Speichert die ursprüngliche `parentMessage`
+  originalParentMessage: any = null; 
+  
+
+  threadMessages: Message[] = [];
+  
+  
+
+  showLargeImage = false;
+  largeImageUrl: string | null = null;
+
+  isDesktop = false;
 
  @Input() selectedThreadChannel: any; // 🔥 Jetzt existiert es als Input
 
@@ -66,6 +81,7 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
 
 
   async ngOnInit(): Promise<void> {
+    this.checkDesktopWidth();
     console.log("🧑‍💻 [ngOnInit] Initialisiere Thread (channel-based):", this.parentMessage?.id);
   
     // 1) Mindestanforderungen prüfen
@@ -74,11 +90,15 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
       return;
     }
   
+    const parentId = this.parentMessage.id;
+
     // 2) Benutzer laden
     await this.loadCurrentUser();
   
     // 3) Thread initialisieren (Nachrichten-Abo + Emojis)
-    await this.initializeThread(this.parentMessage.id);
+   // await this.initializeThread(this.parentMessage.id);
+
+   await this.initializeThread(parentId);
   
     // 4) Einmalig ReplyCounts laden
     this.loadReplyCounts();
@@ -88,18 +108,40 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
       [this.parentMessage.id],
       "thread-channel",
       (replyCounts) => {
-        const data = replyCounts[this.parentMessage.id];
+       // const data = replyCounts[this.parentMessage.id];
+        const data = replyCounts[parentId];
         if (!data) return;
   
         console.log(
-          `📊 Live-Update: ${data.count} Antworten für ThreadChannel ${this.parentMessage.id}`
+          `📊 Live-Update: ${data.count} Antworten für ThreadChannel ${this.parentMessage!.id}`
         );
-        this.parentMessage.replyCount = data.count;
-        this.parentMessage.lastReplyTime = data.lastResponseTime || this.parentMessage.lastReplyTime;
+        this.parentMessage!.replyCount = data.count;
+        this.parentMessage!.lastReplyTime = data.lastResponseTime || this.parentMessage!.lastReplyTime;
         this.cdr.detectChanges();
       }
     );
   }
+
+
+
+
+  
+
+  @HostListener('window:resize')
+   onResize() {
+     this.checkDesktopWidth();
+   }
+ 
+   checkDesktopWidth() {
+     this.isDesktop = window.innerWidth >= 1278;
+   }
+ 
+
+
+  
+
+
+
   
   private async initializeThread(threadChannelId: string): Promise<void> {
     console.log(`[initializeThread] Starte für Thread-ChannelID: ${threadChannelId}`);
@@ -192,13 +234,21 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
   }
   
 
+
+
+
+
+
+
+
+
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    // 1) Prüfe, ob `parentMessage` aktualisiert wurde
+    // 1) Prüfe, ob `parentMessage` geändert wurde
     if (changes['parentMessage'] && changes['parentMessage'].currentValue) {
       const newMessage = changes['parentMessage'].currentValue;
       console.log('📩 [ngOnChanges] `parentMessage` gewechselt:', newMessage);
   
-      // 2) Bestehende Subscriptions beenden
+      // 2) Vorherige Subscriptions beenden
       if (this.unsubscribeFromThreadMessages) {
         this.unsubscribeFromThreadMessages();
         this.unsubscribeFromThreadMessages = undefined;
@@ -207,51 +257,75 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
         this.unsubscribeFromReplyCount();
         this.unsubscribeFromReplyCount = undefined;
       }
-
-
+  
+      // 3) Mergen vs. Neue Nachricht
       if (newMessage.id === this.parentMessage?.id) {
-        // -> Das IST die Parent-Nachricht (möglicherweise ein Update desselben Dokuments)
-        console.log("🔄 Update `parentMessage`.");
-        this.parentMessage = { 
-          ...this.parentMessage, 
-          ...newMessage 
-          // ggf. Fields gezielt mergen
+        // -> Es ist dieselbe Parent-Nachricht, evtl. nur aktualisierte Felder
+        console.log('🔄 Update `parentMessage`.');
+        this.parentMessage = {
+          ...this.parentMessage,
+          ...newMessage
         };
       } else {
-        // -> Eine andere Nachricht => Thread/Kind
-        console.log("📌 Nachricht gehört zu `threadMessages`.");
+        // -> Eine andere Nachricht => Gehört zu threadMessages
+        console.log('📌 Nachricht gehört zu `threadMessages`.');
         this.threadMessages.push(newMessage);
       }
-      
   
-      // 4) Thread neu laden, wenn wir eine valide Thread-Startnachricht haben
-      if (this.parentMessage?.id && this.channelId) {
-        await this.loadCurrentUser();
-        await this.initializeThread(this.parentMessage.id);  // Startet Subscription + Emojis
-  
-        this.loadReplyCounts(); // Einmaliger Count
-  
-        // 4a) Live-ReplyCount-Updates
-        this.unsubscribeFromReplyCount = this.messageService.loadReplyCountsLive(
-          [this.parentMessage.id],
-          'thread-channel',
-          (replyCounts) => {
-            const data = replyCounts[this.parentMessage.id];
-            if (!data) return;
-  
-            console.log(
-              `📊 Live-Update: ${data.count} Antworten für ThreadChannel ${this.parentMessage.id}`
-            );
-            this.parentMessage.replyCount = data.count;
-            this.parentMessage.lastReplyTime = data.lastResponseTime || this.parentMessage.lastReplyTime;
-            this.cdr.detectChanges();
-          }
-        );
+      // 4) Nur fortfahren, wenn wir tatsächlich eine gültige parentMessage haben
+      const pMsg = this.parentMessage;
+      if (!pMsg || !pMsg.id || !this.channelId) {
+        console.warn('⚠️ Fehlende Daten: parentMessage oder channelId ist leer. Abbruch.');
+        this.cdr.detectChanges();
+        return;
       }
   
+      // Benutzer laden
+      await this.loadCurrentUser();
+  
+      // Thread initialisieren (Nachrichten-Abo + Emojis)
+      await this.initializeThread(pMsg.id);
+  
+      // Einmalige ReplyCounts laden
+      this.loadReplyCounts();
+  
+      // 5) Live-ReplyCount-Updates
+      this.unsubscribeFromReplyCount = this.messageService.loadReplyCountsLive(
+        [pMsg.id],
+        'thread-channel',
+        (replyCounts) => {
+          const data = replyCounts[pMsg.id || ''];
+          if (!data) return;
+  
+          console.log(`📊 Live-Update: ${data.count} Antworten für ThreadChannel ${pMsg.id}`);
+          // In-Place Update an `pMsg`
+          pMsg.replyCount = data.count;
+          pMsg.lastReplyTime = data.lastResponseTime || pMsg.lastReplyTime;
+  
+          this.cdr.detectChanges();
+        }
+      );
+  
+      // 6) Abschließendes detectChanges
       this.cdr.detectChanges();
     }
   }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   ngOnDestroy(): void {
     // Listener beenden
@@ -263,33 +337,39 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
     }
   }
 
-  // -----------------------------------
-  // 3) REPLY-COUNT
-  // -----------------------------------
   loadReplyCounts(): void {
-    if (!this.parentMessage?.id) {
-      console.warn('⚠️ Kein Thread ausgewählt. Reply-Counts können nicht geladen werden.');
+    // 1) Lokale Variable anlegen
+    const pMsg = this.parentMessage;
+  
+    // 2) Null / Undefined Check
+    //    => TypeScript erkennt dann, dass pMsg NICHT null ist
+    if (!pMsg || !pMsg.id) {
+      console.warn('⚠️ Kein Thread ausgewählt oder ID fehlt. Reply-Counts können nicht geladen werden.');
       return;
     }
-
-    console.log('🔄 Lade Reply-Counts für ThreadChannel:', this.parentMessage.id);
-
+  
+    console.log('🔄 Lade Reply-Counts für ThreadChannel:', pMsg.id);
+  
+    // 3) Firestore/Service-Aufruf
     this.messageService
-      .getReplyCountsForMessages([this.parentMessage.id], 'thread-channel')
+      .getReplyCountsForMessages([pMsg.id], 'thread-channel')
       .then((replyCounts) => {
-        const replyCountData = replyCounts[this.parentMessage.id];
-        if (replyCountData) {
-          this.parentMessage.replyCount = replyCountData.count;
-          this.parentMessage.lastReplyTime = replyCountData.lastResponseTime || this.parentMessage.lastReplyTime;
-
-          console.log(`✅ Reply-Count aktualisiert: ${this.parentMessage.replyCount}`);
-          this.cdr.detectChanges();
-        }
+        // 4) Index-Access nur mit pMsg.id, das nicht null ist
+        const replyCountData = replyCounts[pMsg.id!];
+        if (!replyCountData) return;
+  
+        // 5) In-place Update
+        pMsg.replyCount = replyCountData.count;
+        pMsg.lastReplyTime = replyCountData.lastResponseTime || pMsg.lastReplyTime;
+  
+        console.log(`✅ Reply-Count aktualisiert: ${pMsg.replyCount}`);
+        this.cdr.detectChanges();
       })
       .catch((error) => {
         console.error('❌ Fehler beim Laden der Reply-Counts:', error);
       });
   }
+  
  // -----------------------------------
   // 5) HILFSFUNKTIONEN
   // -----------------------------------
@@ -319,16 +399,14 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
 
 
 
-
-  // -----------------------------------
-  // 4) SENDEN EINER NACHRICHT
-  // -----------------------------------
   async sendThreadMessage(textArea: HTMLTextAreaElement): Promise<void> {
-    if (!this.channelMessage.trim()) {
-      console.warn('⚠️ Nachricht ist leer.');
+    // 1) Wenn weder Text noch Bild:
+    if (!this.channelMessage.trim() && !this.imageUrl) {
+      console.warn('⚠️ Nachricht ist leer (kein Text und kein Bild).');
       return;
     }
-
+  
+    // 2) User laden (falls nötig)
     if (!this.currentUser) {
       await this.loadCurrentUser();
       if (!this.currentUser) {
@@ -336,57 +414,71 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
         return;
       }
     }
-
+  
+    // 3) parentMessage.id prüfen
     if (!this.parentMessage?.id) {
-      console.error('❌ `parentMessage.id` fehlt!');
+      console.error('❌ Kein parentMessage.id vorhanden!');
       return;
     }
-
-    console.log('📩 Nachricht wird gesendet (thread-channel) mit:', {
-      senderId: this.currentUser.id,
-      senderName: this.currentUser.name,
-      threadChannelId: this.parentMessage.id,
-    });
-
-    // => type:'thread-channel', 
-    // => 'threadChannelId' = this.parentMessage.id (Elternnachricht) 
-    // => parentId = this.parentMessage.id (optional, falls du es willst)
+  
+    console.log('📩 Sende Thread-Nachricht an:', this.parentMessage.id);
+  
+    // 4) content-Objekt bilden
+    const content = {
+      text: this.channelMessage,      // oder this.channelMessage.trim()
+      image: this.imageUrl || null,   // Bild aus Preview (DataURL oder ArrayBuffer)
+      emojis: []                      // Falls du Emojis rein willst
+    };
+  
+    // 5) message-Objekt für Firestore
     const message = {
       type: 'thread-channel' as const,
-      content: { text: this.channelMessage },
+      content, 
       senderId: this.currentUser.id,
       senderName: this.currentUser.name,
       senderAvatar: this.currentUser.avatarUrl,
       threadChannelId: this.parentMessage.id,
-      parentId: this.parentMessage.id,
+      parentId: this.parentMessage.id
+      // ... falls du weitere Felder brauchst
     };
-
+  
     try {
+      // 6) Abschicken (z. B. via messageService)
       const newMessageId = await this.messageService.sendMessage(message);
-      console.log(`✅ Nachricht erfolgreich gesendet mit ID: ${newMessageId}`);
-
-      // Firestore ist asynchron => replyCount manuell erhöhen
-      this.parentMessage.replyCount = (this.parentMessage.replyCount || 0) + 1;
-
-      this.cdr.detectChanges();
+      console.log(`✅ Nachricht gesendet, ID: ${newMessageId}`);
+  
+      // Optional: Manuell replyCount anheben
+      // this.parentMessage.replyCount = (this.parentMessage.replyCount || 0) + 1;
+  
+      // 7) Eingabe zurücksetzen
       this.channelMessage = '';
+      this.imageUrl = null;
+  
+      // 8) TextArea-Größe zurücksetzen + Scroll
       if (textArea) {
         this.resetTextareaHeight(textArea);
       }
       this.scrollToBottom();
+  
     } catch (error) {
-      console.error('❌ Fehler beim Senden der Nachricht:', error);
+      console.error('❌ Fehler beim Senden der Thread-Nachricht:', error);
     }
   }
-
- 
-
+  
 
 
 
 
 
 
+
+
+
+
+
+
+
+  
 
 
 
@@ -475,64 +567,115 @@ convertTimestamp(timestamp: any): Date {
   return new Date(timestamp); // Falls es eine Zahl ist (Millisekunden seit 1970), umwandeln
 }
 
-async addEmojiToMessage(event: any, msg: any): Promise<void> {
+
+
+
+
+
+addEmojiToMessage(event: any, msg: any): void {
+  // A) Stelle sicher, dass msg.content.emojis existiert
   if (!msg.content.emojis) {
     msg.content.emojis = [];
   }
 
-  const newEmoji = event.emoji.native;
-  const existingEmoji = msg.content.emojis.find((e: { emoji: string }) => e.emoji === newEmoji);
+  // B) Prüfe, ob wir ein valides Emoji-Event haben
+  if (event?.emoji?.native) {
+    const newEmoji = event.emoji.native;
 
-  if (existingEmoji) {
-    existingEmoji.count += 1;
-  } else {
-    msg.content.emojis.push({ emoji: newEmoji, count: 1 });
-  }
+    // 1) Zuerst aktualisieren wir die Emojis im Nachricht-Objekt
+    const existingEmoji = msg.content.emojis.find(
+      (e: any) => e.emoji === newEmoji
+    );
 
-  const threadId = this.parentMessage?.id;
-  const isSentMessage = msg.senderId === this.currentUser?.id;
-  const type = isSentMessage ? 'sent' : 'received';
+    if (existingEmoji) {
+      // Erhöhe count, wenn Emoji schon vorhanden
+      existingEmoji.count += 1;
+    } else {
+      // Falls schon 2 Emojis existieren, lösche das älteste
+    
+      if (msg.content.emojis.length < 13) {
+        msg.content.emojis.push({ emoji: newEmoji, count: 1 });
 
-  await this.updateLastUsedEmojis(newEmoji, type);  // 🔥 Hier aktualisieren wir je nach Nachrichtentyp!
-
-  try {
-    await this.messageService.updateMessage(msg.id, {
-      content: {
-        ...msg.content,
-        emojis: msg.content.emojis,
-      },
-    });
-    console.log(`✅ Emoji erfolgreich zur Nachricht hinzugefügt: ${newEmoji} (Type: ${type})`);
-
-    await this.updateLastUsedEmojis(newEmoji, type);
-  } catch (error) {
-    console.error('❌ Fehler beim Aktualisieren der Nachricht mit Emoji:', error);
-  }
-}
-
-private async updateLastUsedEmojis(emoji: string, type: 'sent' | 'received'): Promise<void> {
-  const targetArray = type === 'sent' ? this.lastUsedEmojisSent : this.lastUsedEmojisReceived;
-
-  // Füge das Emoji nur hinzu, wenn es noch nicht in der Liste ist
-  if (!targetArray.includes(emoji)) {
-    targetArray.unshift(emoji);
-
-    // Halte die Liste auf maximal 5 Einträge
-    if (targetArray.length > 5) {
-      targetArray.pop();
+      }
+      // Neues Emoji hinzufügen
+     // msg.content.emojis.push({ emoji: newEmoji, count: 1 });
     }
 
-    try {
-      await this.messageService.saveLastUsedThreadEmojis(this.parentMessage?.id, targetArray, type);
-      console.log(`✅ Zuletzt verwendete Emojis (${type}) aktualisiert:`, targetArray);
+    // 2) lastUsedEmojis je nach gesendeter oder empfangener Nachricht
+    if (msg.senderName === this.currentUser?.name) {
+      // -> "sent"
+      this.lastUsedEmojisSent = this.updateLastUsedEmojis(
+        this.lastUsedEmojisSent,
+        newEmoji
+      );
 
-      // 🔥 Falls es sich um empfangene Emojis handelt, sofort updaten
-     
-    } catch (error) {
-      console.error(`❌ Fehler beim Speichern der zuletzt verwendeten Emojis (${type}):`, error);
+      if (this.selectedChannel?.id) {
+        this.channelService.saveLastUsedEmojis(
+          this.selectedChannel.id,
+          this.lastUsedEmojisSent,
+          'sent'
+        );
+      }
+    } else {
+      // -> "received"
+      this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
+        this.lastUsedEmojisReceived,
+        newEmoji
+      );
+
+      if (this.selectedChannel?.id) {
+        this.channelService.saveLastUsedEmojis(
+          this.selectedChannel.id,
+          this.lastUsedEmojisReceived,
+          'received'
+        );
+      }
     }
   }
+
+  // C) Emoji-Picker schließen
+  msg.isEmojiPickerVisible = false;
+
+  this.messageService.updateMessage(msg.id, {
+    // wir übergeben nur das, was Firestore updaten soll
+    content: {
+      ...msg.content,  // ggf. emojis oder text
+    }
+  }).then(() => {
+    console.log('Nachricht erfolgreich aktualisiert (Thread).');
+  }).catch((error) => {
+    console.error('Fehler beim Aktualisieren der Nachricht:', error);
+  });
 }
+
+// ---------------------------------------------------------
+// Hilfsfunktion, um ein Emoji immer an die erste Stelle 
+// zu setzen und max. 2 zu speichern
+// ---------------------------------------------------------
+private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
+  // Falls das Emoji schon existiert, vorher entfernen
+  emojiArray = emojiArray.filter(e => e !== newEmoji);
+
+  // Als erstes Element einfügen
+ // emojiArray.unshift(newEmoji);
+
+  // Array auf max. 2 Einträge begrenzen
+  return emojiArray.slice(0, 2);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 toggleEmojiPicker(): void {
   this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
@@ -730,4 +873,97 @@ addAtSymbolAndOpenDialog(): void {
 this.channelMessage += '@'; // Füge das "@"-Symbol hinzu
 console.log('Dialog zur Auswahl eines Mitglieds geöffnet');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+closePopup(msg: any) {
+  // Nur wenn das Popup offen ist => schließen
+  if (msg.showAllEmojisList) {
+    msg.showAllEmojisList = false;
+    msg.expanded = false; // optional, falls du das auch einklappen möchtest
+  }
+}
+
+
+
+
+
+  toggleEmojiPopup(msg: any) {
+    // Falls die Property noch nicht existiert, initialisieren
+    if (msg.showAllEmojisList === undefined) {
+      msg.showAllEmojisList = false;
+    }
+
+    // Umschalten
+    msg.showAllEmojisList = !msg.showAllEmojisList;
+
+    // Wenn wir schließen (false), dann einklappen zurücksetzen
+    if (!msg.showAllEmojisList) {
+      msg.expanded = false;
+    } else {
+      // Wenn wir öffnen und `expanded` gar nicht existiert
+      if (msg.expanded === undefined) {
+        msg.expanded = false;
+      }
+    }
+  }
+
+
+
+
+  onEmojiPlusInPopup(msg: any) {
+    // z.B. Logik, um ein neues Emoji hinzuzufügen
+    // oder den Emoji-Picker zu öffnen
+    console.log('Plus in popup geklickt, msg=', msg);
+  }
+
+
+
+  openLargeImage(imageData: string | ArrayBuffer) {
+    if (typeof imageData !== 'string') {
+      // Konvertiere das ArrayBuffer zu einem String (DataURL) oder blob URL
+      return; // Oder handle es anders
+    }
+    this.largeImageUrl = imageData;
+    this.showLargeImage = true;
+  }
+  
+
+  // Methode zum Schließen
+  closeLargeImage() {
+    this.showLargeImage = false;
+    this.largeImageUrl = null;
+  }
 }

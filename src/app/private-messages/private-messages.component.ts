@@ -1,4 +1,4 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, Input, EventEmitter, Output,OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, Input, EventEmitter, Output,OnChanges, SimpleChanges, HostListener} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
@@ -7,7 +7,7 @@ import { UserService } from '../user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { formatDate } from '@angular/common';
 
-import { Message } from '../message.models';
+import { Message} from '../message.models';
 import { MessageService } from '../message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -57,7 +57,7 @@ export class PrivateMessagesComponent implements OnInit {
   imageUrl: string | ArrayBuffer | null = null;
   privateMessage: string = '';
   currentUser: any;
-  privateMessages: any[] = [];
+ // privateMessages: any[] = [];
   conversationId: string | undefined;
   recipientStatus: string = '';  // Status of the recipient
   recipientAvatarUrl: string = ''; // Added recipientAvatarUrl property
@@ -89,13 +89,19 @@ export class PrivateMessagesComponent implements OnInit {
 
 
   // oder
-  
+  privateMessages: Message[] = [];
 
   showLargeImage = false;
   largeImageUrl: string | null = null;
 
+ 
 
 
+  private hasScrolledOnChange: boolean = false;
+
+  private isChatChanging: boolean = false;
+
+  isDesktop = false;
 
   private replyCache: Map<string, any[]> = new Map(); 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
@@ -105,6 +111,7 @@ export class PrivateMessagesComponent implements OnInit {
 
   private unsubscribeFromPrivateMessages: (() => void) | null = null; 
 
+  
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -119,13 +126,18 @@ export class PrivateMessagesComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.loadCurrentUser();
     this.loadRecipientData();
+    this.checkDesktopWidth();
 
     if (this.currentUser?.id && this.recipientId) {
       this.conversationId = this.messageService.generateConversationId(
         this.currentUser.id,
         this.recipientId
       );
-  
+
+     
+     // this.handleChatChange();
+
+     
       this.setupMessageListener();
       this.listenForEmojiUpdates();
       this.loadLastUsedEmojis();
@@ -133,7 +145,16 @@ export class PrivateMessagesComponent implements OnInit {
       this.startDateUpdater();
     }
   }
-
+  
+   @HostListener('window:resize')
+   onResize() {
+     this.checkDesktopWidth();
+   }
+ 
+   checkDesktopWidth() {
+     this.isDesktop = window.innerWidth >= 1278;
+   }
+ 
 
 
   private startDateUpdater(): void {
@@ -153,21 +174,142 @@ export class PrivateMessagesComponent implements OnInit {
   
     console.log("📅 Datum wurde neu berechnet:", this.privateMessages);
   }
+
+
   
+
+
   private setupMessageListener(): void {
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
     }
+   
+    this.hasScrolledOnChange = false;
+    // Wir merken uns die alte Anzahl der Nachrichten
+   // this.scrollToBottom();
+    let oldCount = this.privateMessages.length;
   
     this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
       'private',
       this.conversationId!,
       (rawMessages) => {
         this.processIncomingMessages(rawMessages);
-        this.scrollToBottom();
+
+        // Vorher speichern wir die aktuelle Position
+        const wasNearBottom = this.isNearBottom(150);
+  
+        // Nachrichten verarbeiten
+       
+  
+        // Neue Länge
+        const newCount = rawMessages.length;
+  
+        // Nur dann scrollen, wenn:
+        // A) wirklich neue Nachrichten kamen (newCount > oldCount)
+        // ODER
+        // B) der User noch "unten" war (z.B. warNearBottom = true)
+        if (newCount > oldCount || wasNearBottom) {
+          this.scrollToBottom();  
+        }
+  
+        // Alte Anzahl updaten
+        oldCount = newCount;
       }
     );
   }
+  
+
+  
+  
+
+  
+  private isNearBottom(threshold = 100): boolean {
+    const el = this.messageList?.nativeElement;
+    if (!el) return false;
+  
+    // Wie weit ist man vom unteren Ende entfernt?
+    const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    return distanceToBottom <= threshold;
+  }
+  
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  private scrollToBottom(): void {
+    // Wenn es sich um einen Chatwechsel handelt, scrolle sofort
+    if (this.isChatChanging) {
+      const lastMessage = this.messageList?.nativeElement.lastElementChild;
+      if (lastMessage) {
+        setTimeout(() => {
+          lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          console.log("🔽 Erfolgreich beim Chatwechsel gescrollt!");
+        }, 100);  // 100ms Verzögerung, um sicherzustellen, dass das DOM vollständig geladen ist
+      }
+      return; // Verhindere das Scrollen während des Chatwechsels
+    }
+  
+    // Scrollen nur, wenn der Benutzer am unteren Ende ist
+    if (this.isNearBottom()) {
+      setTimeout(() => {
+        if (this.messageList) {
+          this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+          console.log("🔽 Erfolgreich zum neuesten Chat gescrollt!");
+        }
+      }, 100);  // Verzögerung für eine flüssigere Benutzererfahrung
+    }
+  }
+  
+
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['recipientId'] && !changes['recipientId'].isFirstChange()) {
+      console.log('🔄 Empfänger gewechselt:', changes['recipientId'].currentValue);
+  
+     // this.hasInitialScrollDone = false;
+
+   this.hasScrolledOnChange = true;
+ 
+   this.isChatChanging = true;
+      this.cleanupListeners();
+      this.loadRecipientData();
+      this.loadPrivateMessages();
+      setTimeout(() => {
+        this.scrollToBottom();
+        this.isChatChanging = false;
+      }, 200);  // Verzögerung von 200ms, um sicherzustellen, dass die Nachrichten geladen sind
+    
+    
+      this.startLiveReplyCountUpdates();
+      //this.setupMessageListener();
+  
+    }
+  
+    if (changes['threadData']?.currentValue) {
+      const newThreadData = changes['threadData'].currentValue;
+      console.log('🔄 Thread-Daten aktualisiert:', newThreadData);
+      
+      // 🔥 6. Zeitstempel formatieren
+      if (newThreadData.timestamp) {
+        console.log('⏳ Letzte Antwort:', 
+          this.getFormattedDate(newThreadData.timestamp),
+          formatDate(newThreadData.timestamp, 'HH:mm', 'de')
+        );
+      }
+    }
+  }
+    
 
 
 
@@ -210,37 +352,17 @@ async loadPrivateMessages(): Promise<void> {
         };
       });
 
-      this.scrollToBottom(); // Automatisch zum neuesten Chat scrollen
+     // this.scrollToBottom(); // Automatisch zum neuesten Chat scrollen
+      setTimeout(() => {
+        this.scrollToBottom();  // Automatisch zum neuesten Chat scrollen
+      }, 200);
+      
     }
   );
 }
 
 
 
-ngOnChanges(changes: SimpleChanges): void {
-  if (changes['recipientId'] && !changes['recipientId'].isFirstChange()) {
-    console.log('🔄 Empfänger gewechselt:', changes['recipientId'].currentValue);
-
-    this.cleanupListeners();
-    this.loadRecipientData();
-    this.loadPrivateMessages();
-    this.startLiveReplyCountUpdates();
-  }
-
-  if (changes['threadData']?.currentValue) {
-    const newThreadData = changes['threadData'].currentValue;
-    console.log('🔄 Thread-Daten aktualisiert:', newThreadData);
-    
-    // 🔥 6. Zeitstempel formatieren
-    if (newThreadData.timestamp) {
-      console.log('⏳ Letzte Antwort:', 
-        this.getFormattedDate(newThreadData.timestamp),
-        formatDate(newThreadData.timestamp, 'HH:mm', 'de')
-      );
-    }
-  }
-}
-  
   
 
   // 🔥 7. Zentralisierte Listener-Bereinigung
@@ -352,12 +474,14 @@ private loadThread(threadId: string, msg: any): void {
   );
 }
 
+
+
 startLiveReplyCountUpdates(): void {
   if (this.unsubscribeLiveReplyCounts) {
     this.unsubscribeLiveReplyCounts();
   }
 
-  const messageIds = this.privateMessages.map(m => m.id);
+  const messageIds = this.privateMessages.map(m => m.id  || '' );
   if (messageIds.length === 0) return;
 
   this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
@@ -365,7 +489,9 @@ startLiveReplyCountUpdates(): void {
     'private',
     (partialCounts) => {
       this.privateMessages = this.privateMessages.map(msg => {
-        const data = partialCounts[msg.id];
+        const data = partialCounts[msg.id || '']
+         
+        
         if (!data) return msg;
 
         // 🔥 Korrekte Property-Zuordnung und Timestamp-Konvertierung
@@ -409,7 +535,14 @@ startLiveReplyCountUpdates(): void {
 
 
 
+  
+
+
+
+
+
   async addEmojiToMessage(event: any, msg: any): Promise<void> {
+   
     // 1) A) Stelle sicher, dass msg.content.emojis existiert
     if (!msg.content.emojis) {
       msg.content.emojis = [];
@@ -467,7 +600,7 @@ startLiveReplyCountUpdates(): void {
       }
   
       // 5) Emoji-Picker schließen (falls vorhanden)
-      msg.isEmojiPickerVisible = false;
+      //msg.isEmojiPickerVisible = false;
   
       // 6) Nachricht in DB aktualisieren
       try {
@@ -484,12 +617,27 @@ startLiveReplyCountUpdates(): void {
             ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
             : m
         );
+
+        if (!this.hasScrolledOnChange && this.isNearBottom()) {
+          this.scrollToBottom();
+        }
+
+      
   
       } catch (error) {
         console.error('❌ Fehler beim Aktualisieren der Nachricht mit Emoji:', error);
       }
     }
   }
+
+
+
+
+
+
+
+
+
 
   private updateLastUsedEmojis(
     emojiArray: string[],
@@ -838,21 +986,34 @@ private updateLiveReplyCounts(messages: Message[]): void {
 
 
 
-
-
-
 async loadReplyCounts(): Promise<void> {
-  const messageIds = this.privateMessages.map(m => m.id);
+  let messageIds = this.privateMessages.map(m => m.id || '');
+  // Filter leere IDs raus
+  messageIds = messageIds.filter(id => id !== '');
+
   if (messageIds.length === 0) return;
 
   try {
-    const replyCounts = await this.messageService.getReplyCountsForMessages(messageIds, "private");
-    this.privateMessages = this.privateMessages.map(msg => ({
-      ...msg,
-      replyCount: replyCounts[msg.id] ?? 0
-    }));
+    const replyCounts = await this.messageService.getReplyCountsForMessages(messageIds, 'private');
+
+    this.privateMessages = this.privateMessages.map(msg => {
+      const msgId = msg.id || '';
+      if (!msgId) return msg;
+
+      const data = replyCounts[msgId];
+      if (!data) return msg;
+
+      return {
+        ...msg,
+        replyCount: data.count,
+        lastResponseTime: data.lastResponseTime
+          ? this.safeConvertTimestamp(data.lastResponseTime)
+          : null
+      };
+    });
+
   } catch (err) {
-    console.error("❌ Fehler beim Laden der Antwortanzahlen:", err);
+    console.error('❌ Fehler beim Laden der Antwortanzahlen:', err);
   }
 }
 
@@ -883,6 +1044,11 @@ async saveMessage(msg: any): Promise<void> {
     }
   }
 }
+
+
+
+
+
 
 private isSameDay(date1: Date | null, date2: Date | null): boolean {
   if (!date1 || !date2) return false;
@@ -1000,22 +1166,10 @@ onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
     }
   }
 
-  private scrollToBottom(): void {
-    setTimeout(() => {
-      if (this.messageList) {
-        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-      }
-    }, 100);
-  }
+ 
 
 
-
-
-
-
-
-
-
+  
 
 
 
@@ -1101,6 +1255,7 @@ loadAllUsers(): void {
   }
 
 toggleEditOptions(msgId: string): void {
+ 
   // Umschalten der Sichtbarkeit für das angeklickte Symbol
   if (this.currentMessageId === msgId && this.showEditOptions) {
     this.showEditOptions = false;
@@ -1110,6 +1265,8 @@ toggleEditOptions(msgId: string): void {
     this.currentMessageId = msgId;
   }
 }
+
+
 
 startEditing(msg: any): void {
   msg.isEditing = true; // Bearbeitungsmodus aktivieren
@@ -1224,7 +1381,23 @@ closePopup(msg: any) {
     console.log('Plus in popup geklickt, msg=', msg);
   }
 
-}
+  
+  openLargeImage(imageData: string | ArrayBuffer) {
+    if (typeof imageData !== 'string') {
+      // Konvertiere das ArrayBuffer zu einem String (DataURL) oder blob URL
+      return; // Oder handle es anders
+    }
+    this.largeImageUrl = imageData;
+    this.showLargeImage = true;
+  }
   
 
+  // Methode zum Schließen
+  closeLargeImage() {
+    this.showLargeImage = false;
+    this.largeImageUrl = null;
+  }
+
+}
+  
 

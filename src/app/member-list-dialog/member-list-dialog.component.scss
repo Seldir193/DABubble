@@ -45,6 +45,9 @@ li {
     gap: 20px;
     display: flex;
     flex-direction: column;
+    height: 411px;
+    overflow-y: overlay;
+    overflow-x: hidden;
    }
 
    .remove-btn {
@@ -171,3 +174,25 @@ li {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @media(max-width:1278px){
+    .container{
+      height: 371px;
+      overflow-y: overlay;
+      overflow-x: hidden;
+      padding:20px 16px;
+  }
+  }

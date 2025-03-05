@@ -334,8 +334,8 @@
 
       <div class="buttons-wrapper">
         <div class="input-buttons">
-          <label for="image-upload" class="image-upload-button" >
-            <img class="input-image" src="assets/img/add-pic.png" alt="Bild hinzufügen" />
+          <label *ngIf="isDesktop" for="image-upload" class="image-upload-button" >
+            <img class="input-image"  src="assets/img/add-pic.png" alt="Bild hinzufügen" />
             <input type="file" id="image-upload" (change)="onImageSelected($event, textArea)" style="display: none" />
           </label>
           <button (click)="toggleEmojiPicker()" >

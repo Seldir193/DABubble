@@ -164,6 +164,32 @@ openMembersDialog(): void {
 onCancel(): void {
   this.dialogRef.close(); // Schließt den Dialog, wenn die Methode aufgerufen wird
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

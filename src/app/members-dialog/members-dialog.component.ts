@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog  } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +24,9 @@ export class MembersDialogComponent implements OnInit {
   selectedMembers: any[] = []; 
   allMembers: any[] = [];
 
- 
+  isDesktop = false;
+  isInputFocused = false;
+  
 
   constructor(
     private userService: UserService, 
@@ -36,13 +38,29 @@ export class MembersDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.loadAllMembers(); // Lade alle Mitglieder, sobald der Dialog geöffnet wird
     this.selectedMembers = this.data.members || [];
-   
     this.loadMembers();
     this.loadAllMembers();
+  
+
+
+
+    this.isDesktop = window.innerWidth >= 1278;
   }
 
+  onFocus() {
+    this.isInputFocused = true;
+  }
+
+  onBlur() {
+    this.isInputFocused = false;
+  }
+ 
+  @HostListener('window:resize')
+  onResize() {
+    // Bei jeder Größenänderung:
+    this.isDesktop = window.innerWidth >= 1278;
+  }
   
   loadAllMembers(): void {
     this.userService.getAllUsers().then((members) => {
@@ -51,7 +69,6 @@ export class MembersDialogComponent implements OnInit {
       console.error('Fehler beim Laden der Mitglieder:', error);
     });
   }
-
 
   loadMembers(): void {
     this.userService.getAllUsers()
@@ -84,12 +101,33 @@ export class MembersDialogComponent implements OnInit {
     }
     this.filteredMembers = [];  // Dropdown verstecken
     this.specificMemberName = '';  // Input leeren
+
+    this.closeDropdown();
+   
+
+    if (this.selectedMembers.length > 0) {
+      this.enableButton();
+    }
   }
 
 
+
+  // Optional: Methode, um den Button zu aktivieren, wenn das Input-Feld nicht mehr fokussiert ist
+  enableButton(): void {
+    this.isButtonDisabled = false;
+  }
+
+  
+
+  closeDropdown(): void {
+    this.filteredMembers = [];
+  }
+
   openMembersDialog(): void {
     const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
-      data: { members: this.selectedMembers }
+    
+      data: { members: this.selectedMembers },
+      
     });
   
     dialogRef.afterClosed().subscribe(updatedMembers => {
@@ -99,10 +137,14 @@ export class MembersDialogComponent implements OnInit {
     });
   }
   
-  
   removeMember(member: any): void {
     // Überprüfe, ob das Mitglied in der Liste ist, und entferne es
     this.selectedMembers = this.selectedMembers.filter(m => m !== member);
+
+    if (this.selectedOption === 'specific' && this.selectedMembers.length === 0) {
+      this.disableButton();
+    }
+
   }
   
   showAllMembers(): void {
@@ -129,11 +171,9 @@ export class MembersDialogComponent implements OnInit {
     this.isButtonDisabled = true;
   }
 
-  // Optional: Methode, um den Button zu aktivieren, wenn das Input-Feld nicht mehr fokussiert ist
-  enableButton(): void {
-    this.isButtonDisabled = false;
-  }
+ 
 
+  
   // Methode zum Schließen des Dialogs ohne Aktion
   onCancel(): void {
     this.dialogRef.close();
@@ -142,6 +182,43 @@ export class MembersDialogComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
+
+
+
+
+
+
+
+
+
+
+
+  onRadioChange(): void {
+    if (this.selectedOption === 'all') {
+      // Sobald "Alle" ausgewählt ist, kannst du den Button direkt aktivieren
+      this.enableButton();
+    } else if (this.selectedOption === 'specific') {
+      // Bei "bestimmte Leute" Button nur aktivieren, wenn schon welche ausgewählt sind
+      if (this.selectedMembers.length > 0) {
+        this.enableButton();
+      } else {
+        this.disableButton();
+      }
+    }
+  }
+
+  onFocusInput(): void {
+    // Zeige zunächst alle Member
+    this.showAllMembers();
+  
+    // Nur dann deaktivieren, wenn "specific" aktiv und noch keine ausgewählt
+    if (this.selectedOption === 'specific' && this.selectedMembers.length === 0) {
+      this.disableButton();
+    }
+  }
+  
+
+  
 }
 
 

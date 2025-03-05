@@ -1556,7 +1556,23 @@
 
 
 
+@media (max-width: 1278px){
+  .entwickler-box{
+    padding:20px 16px 20px 16px;
+  }
 
+  .new-message-container h1{
+    font-size: 20px;
+  }
+
+  .channel-input-box{
+    height:calc(100vh - 15rem);
+  }
+
+  .chat-input-container .chat-input{
+    padding: 0px 10px;
+  }
+}
 
 
 

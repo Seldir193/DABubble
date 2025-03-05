@@ -411,7 +411,6 @@ public convertToDate(timestamp: any): Date | null {
   return isNaN(parsed.getTime()) ? null : parsed;
 }
 
-
 async updateMessage(messageId: string, updatedData: Partial<any>): Promise<void> {
   const msgRef = doc(this.firestore, 'messages', messageId);
   //await updateDoc(msgRef, {...updatedData,timestamp: serverTimestamp()});
@@ -419,6 +418,7 @@ async updateMessage(messageId: string, updatedData: Partial<any>): Promise<void>
   await updateDoc(msgRef, updatedData); 
   console.log('✅ Nachricht aktualisiert:', messageId);
 }
+
 
 listenForEmojiUpdates(
   conversationId: string,
@@ -623,4 +623,34 @@ listenForThreadEmojiUpdates(
     }
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+// message.service.ts
+async getChannelMessagesOnce(): Promise<any[]> {
+  const messagesRef = collection(this.firestore, 'messages');
+  // Kanal-Nachrichten erkennst du entweder an "channelId != null"
+  // ODER wenn du 'type' für Channel-Nachrichten hinterlegt hast – 
+  // hier gehen wir vom Feld channelId != null aus:
+  const q = query(
+    messagesRef,
+    where('channelId', '!=', null),
+    orderBy('timestamp', 'asc')
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+}
+
 }

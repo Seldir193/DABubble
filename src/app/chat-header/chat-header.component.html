@@ -1,42 +1,18 @@
 <div class="container">
     <div class="content-container" *ngIf="!showDesktop">
         <div class="container-box" >
-            <div class="vector">
-                <div class="background-pink"></div>
-                <div class="background">
-                    <div class="inner-vectors">
-                        <div class="inner-box"></div>
-                        <div class="inner-box"></div>
-                        <div class="inner-box"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="vector-box">
-                <div class="background-blue"></div>
-                <div class="background-orange">
-                    <div class="inner-vectors">
-                        <div class="inner-box"></div>
-                        <div class="inner-box"></div>
-                        <div class="inner-box"></div>
-                    </div>
-                </div>
-            </div>
+            
+           <img src="assets/img/logo-dabubble.png">
         </div>
+        
         <h1>DABubble</h1>
     </div>
-
-
-
 
     <div class="desktop-content" *ngIf="showDesktop" >
         <img class="left" src="/assets/img/pfeilleft.png" (click)="onBackClick()">
         <img src="assets/img/dev_logo.png" alt="Dev Space"  >
         <h1>Devspace</h1> 
     </div>
-
-
-
 
     <div class="center-section" *ngIf="isDesktop" >
         <input 
@@ -49,24 +25,8 @@
         <img src="assets/img/search.png" class="search-icon" alt="Suche">
       </div>
     
-
-
-
-
-
-
-
-
-
-
-    
-    
-
-     
-
-
-    <div class="right-section" (click)="stopPropagation($event)">
-        <span class="user-name">{{ userName }}</span>
+    <div class="right-section"  (click)="stopPropagation($event)">
+        <span *ngIf="isDesktop" class="user-name">{{ userName }}</span>
 
         <div class="avatar-container">
             <img [src]="userAvatarUrl" class="avatar" (click)="toggleMenu()" alt="User Avatar"/>
@@ -76,16 +36,64 @@
             <img *ngIf="userStatus === 'Abwesend'" src="assets/img/offline.png" class="status-icon" alt="Offline">
           </div>
 
-        <div class="menu-dropdown" (click)="stopPropagation($event)">
-            <div class="menu-toggle" (click)="toggleMenu()">
-                <img class="menu-img" src="assets/img/keyboard_arrow_down-1.png">
-            </div>
 
-            <div class="menu-content" [ngClass]="{ 'show': menuOpen }"(click)="stopPropagation($event)" >
+        <div class="menu-dropdown" (click)="stopPropagation($event)">
+            <div class="menu-toggle"  (click)="toggleMenu()">
+                <img class="menu-img"  *ngIf="isDesktop" src="assets/img/keyboard_arrow_down-1.png">
+            </div>
+ 
+            <div class="menu-content" *ngIf="isDesktop"  [ngClass]="{ 'show': menuOpen }"(click)="stopPropagation($event)" >
                 <button class="menu-item" (click)="openProfileCard()">Profile</button>
                 <button class="menu-item" (click)="logout()">Logout</button>
             </div>
         </div>
+
+
+
+      
+
+
+          
+          <!-- Nur sichtbar, wenn !isDesktop -->
+<div class="bottom-menu" *ngIf="!isDesktop">
+    <!-- Button oder Icon, um das Menü zu öffnen -->
+    
+
+  
+    <!-- Überlagernder Hintergrund (dimmt den Chat) -->
+    <div
+      class="menu-backdrop"
+      [ngClass]="{ 'open': menuOpen }"
+      (click)="toggleMenu()"  
+    >
+    </div>
+  
+    <!-- Das eigentliche Menü, das von unten hochfährt -->
+    <div
+   
+      class="bottom-menu-content"
+      [ngClass]="{ 'open': menuOpen }"
+    >
+    <div class="handle-bar"></div>
+
+      <button class="menu-item" (click)="openProfileCard()"  (click)="toggleMenu()" >
+        <!-- Dein Bild/Icon links -->
+        <img src="assets/img/vollständigername.png" alt="Profile Icon" />
+        <span>Profile</span>
+      </button>
+  
+      <button class="menu-item" (click)="logout()" (click)="toggleMenu()"  >
+        <img src="assets/img/logout.png" alt="Logout Icon" />
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+  
+
+
+
+
+
 
         <div class="profile-card-container" [ngClass]="{ 'show': profileOpen }" (click)="stopPropagation($event)">
             <div class="profile-card">
@@ -126,8 +134,16 @@
                 <div class="profil-box">
                     <div class="profil-settings">
                         <p><strong>{{ userName }}</strong></p>
-                        <div class="profil-settings-button" (click)="openSettingCard()">Bearbeiten</div>
+                   
+                        <div class="profil-settings-button" *ngIf="isDesktop" (click)="openSettingCard()">Bearbeiten</div>
+
+                        <div class="img-wrapper">
+                            <img  src="assets/img/edit.png" (click)="openSettingCard()" *ngIf="!isDesktop">
+                        </div>
+                    
                     </div>
+
+                    
                     <div class="online-aktiv-passiv">
                         <img *ngIf="userStatus === 'Aktiv'" src="assets/img/online.png" alt="Online">
                         <img *ngIf="userStatus === 'Abwesend'" src="assets/img/offline.png" alt="Offline">
@@ -158,9 +174,9 @@
                         [ngClass]="{'active': inputStates['name']}"
                     />
 
-                    <div class="email-box">
+                    <div class="email-box"*ngIf="isDesktop" >
                         <img src="assets/img/pmail.png">
-                        <label for="email">E-Mail-Adresse:</label>
+                        <label  for="email">E-Mail-Adresse:</label>
                     </div>
                     <input
                         placeholder="E-Mail"
@@ -170,10 +186,11 @@
                         (focus)="onInputFocus('email')"
                         (blur)="onInputBlur('email', editableUserEmail)"
                         [ngClass]="{'active': inputStates['email']}"
+                        *ngIf="isDesktop"
                     />
                     <div class="button-box">
-                        <button class="button-abbrechen" (click)="cancelEditing()">Abbrechen</button>
-                        <button (click)="saveProfileChanges()">Speichern</button>
+                        <button class="button-abbrechen" (click)="cancelEditing()"  >Abbrechen</button>
+                        <button (click)="saveProfileChanges()" (click)="closeProfileCard()">Speichern</button>
                     </div>
 
                     <div *ngIf="errorMessage" class="error-message">

@@ -65,10 +65,10 @@
 
     <!-- Container für gesendete Nachrichten -->
     <div *ngIf="msg.senderId === currentUser.id" class="sent-message-container">
-      <div class="message-container sent-message"  (click)="closePopup(msg)">
+      <div class="message-container sent-message "  (click)="closePopup(msg)">
 
         
-        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+        <img class="avatar" [src]="msg.senderAvatar"  alt="{{ msg.senderName }}'s Avatar">
         <div class="message-box">
           <span class="message-info">
             <span class="sender-name">{{ msg.senderName }}</span>
@@ -90,10 +90,25 @@
 
             
           </div>
-          <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" />
+          <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image"  (click)="openLargeImage(msg.content.image!) ; $event.stopPropagation() " />
 
          
-
+          <div 
+          class="image-modal-overlay"
+          *ngIf="showLargeImage"
+          (click)="closeLargeImage()"
+        >
+          <div 
+            class="image-modal-content"
+            (click)="$event.stopPropagation()"
+          >
+            <img 
+              [src]="largeImageUrl" 
+              class="large-image"
+            />
+            <button class="close-button" (click)="closeLargeImage()">X</button>
+          </div>
+        </div>
           
 
           <div 
@@ -116,13 +131,15 @@
             </span>
           
             <!-- B) Plus-Icon nur, wenn > 2 Emojis vorhanden -->
+
             <img
-              *ngIf="msg.content.emojis.length > 2"
-              src="assets/img/emojiplus.png"
-              alt="Mehr Emojis anzeigen"
-              class="emoji-plus-icon"
-              (click)="toggleEmojiPopup(msg); $event.stopPropagation()"
-            />
+          *ngIf="msg.content.emojis.length > 2"
+          src="assets/img/emojiplus.png"
+          alt="Mehr Emojis anzeigen"
+          class="emoji-plus-icon"
+          (click)="toggleEmojiPopup(msg); $event.stopPropagation()"
+        />
+           
           </ng-container>
                     
           
@@ -202,18 +219,18 @@
 
 
 
-        
+          <div class="reply-count"  *ngIf="msg.replyCount! > 0" (click)="openThreadEvent(msg)">
+            {{ msg.replyCount }} Antworten
+            
+            <span class="reply-time" *ngIf="msg.lastResponseTime">
+              Letzte Antwort: {{ msg.lastResponseTime | date: 'HH:mm' }} Uhr
+            </span>
+            
+  
+    </div>
+  
 
 
- <div class="reply-count"  *ngIf="msg.replyCount > 0" (click)="openThreadEvent(msg)">
-          {{ msg.replyCount }} Antworten
-          
-          <span class="reply-time" *ngIf="msg.lastResponseTime">
-            Letzte Antwort: {{ msg.lastResponseTime | date: 'HH:mm' }} Uhr
-          </span>
-          
-
-  </div>
 
        
  
@@ -278,7 +295,9 @@
             <img 
               src="assets/img/more.png" 
               alt="Mehr Optionen" 
-              (click)="toggleEditOptions(msg.id)"
+             
+              (click)="toggleEditOptions(msg.id || '')"
+
             />
             <!-- Bearbeitungsoptionen anzeigen -->
             <div 
@@ -376,7 +395,7 @@
 
     <!-- Container für empfangene Nachrichten -->
     <div *ngIf="msg.senderId !== currentUser.id" class="received-message-container">
-      <div class="message-container received-message"   >
+      <div class="message-container received-message"  (click)="closePopup(msg)" >
         <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
         <div class="message-box">
           <span class="message-info">
@@ -388,26 +407,133 @@
             <p *ngIf="msg.content?.text">{{ msg.content.text }}</p>
             
           </div>
-          <img *ngIf="msg.content?.image" [src]="msg.content.image" class="received-image" />
+          <img *ngIf="msg.content?.image" [src]="msg.content.image" class="received-image"  (click)="openLargeImage(msg.content.image!) ; $event.stopPropagation() "/>
          
-          
 
-          <div class="emoji-message-container" *ngIf="msg.content.emojis && msg.content.emojis.length > 0">
-            <span  *ngFor="let emojiObj of msg.content.emojis" 
-            (mouseover)="showTooltip($event,emojiObj.emoji, msg.senderName )" 
-            (mouseleave)="hideTooltip()" >
-              {{ emojiObj.emoji }}  <!-- Emoji anzeigen -->
-              <nav class="emoji-count">{{ emojiObj.count }}</nav>  <!-- Zählung des Emojis anzeigen -->
-          </span>
-
-
+          <div 
+          class="image-modal-overlay"
+          *ngIf="showLargeImage"
+          (click)="closeLargeImage()"
+        >
+          <div 
+            class="image-modal-content"
+            (click)="$event.stopPropagation()"
+          >
+            <img 
+              [src]="largeImageUrl" 
+              class="large-image"
+            />
+            <button class="close-button" (click)="closeLargeImage()">X</button>
           </div>
+        </div>
+
+
+
+
+       
+          <div 
+          class="emoji-message-container" 
+          *ngIf="msg.content.emojis && msg.content.emojis.length > 0"
+          
+          (click)="closePopup(msg)"
+          >
+          <!-- 1) Hauptansicht: nur sichtbar, wenn das Popup NICHT offen ist -->
+          <ng-container *ngIf="!msg.showAllEmojisList">
+
+            <img
+              *ngIf="msg.content.emojis.length > 2"
+              src="assets/img/emojiplus.png"
+              alt="Mehr Emojis anzeigen"
+              class="emoji-plus-icon"
+              (click)="toggleEmojiPopup(msg); $event.stopPropagation()"
+            />
+            <!-- A) Zeige die ersten 2 Emojis -->
+            <span
+             class="emoji-item"
+            *ngFor="let emojiObj of (msg.content?.emojis || []) | slice : 0 : 2"
+             
+            
+            >
+            {{ emojiObj.emoji }}    
+              <nav class="emoji-count">{{ emojiObj.count }}</nav>
+            </span>
+          
+            <!-- B) Plus-Icon nur, wenn > 2 Emojis vorhanden -->
+            
+          </ng-container>
+                    
+          
+          
+          <!-- 2) Popup: Enthält ALLE Emojis + evtl. zweites Plus-Icon -->
+          <div
+            class="emoji-popup"
+            *ngIf="msg.showAllEmojisList"
+            (click)="$event.stopPropagation()"
+          >
+            <!-- A) Liste aller Emojis -->
+            <div class="emoji-list">
+              <span
+                class="emoji-item"
+                *ngFor="let emojiObj of (
+                  msg.expanded
+                    ? msg.content.emojis          
+                    : (msg.content.emojis | slice :0 :10) 
+                )"
+              >
+                {{ emojiObj.emoji }}
+                <span class="emoji-count">{{ emojiObj.count }}</span>
+              </span>
+          
+              <!-- Optional: Plus-Icon auch IN der Liste -->
+              
+            </div>
+          
+            <!-- B) + X weitere / - 10 weniger -->
+            <div class="toggle-box">
+            <div
+              class="toggle-more"
+              *ngIf="msg.content.emojis.length > 10 && !msg.expanded"
+              (click)="msg.expanded = true; $event.stopPropagation()"
+            >
+              [+ {{ msg.content.emojis.length - 10 }} weitere]
+            </div>
+          
+           
+            <div
+              class="toggle-less"
+              *ngIf="msg.content.emojis.length > 10 && msg.expanded"
+              (click)="msg.expanded = false; $event.stopPropagation()"
+            >
+              [- 10 weniger]
+          
+            </div>
+           
+            <img
+              src="assets/img/emojiplus.png"
+              alt="Plus Icon in Popup"
+              class="emoji-plus-icon-in-list"
+              (click)="onEmojiPlusInPopup(msg); $event.stopPropagation()"
+            />
+          
+            </div>
+          </div>
+          </div>
+
+
+
+
+  
+
+
+
+
+          
           
 
           
       
 
-          <div class="reply-count"  *ngIf="msg.replyCount > 0"   (click)="openThreadEvent(msg)"
+          <div class="reply-count"  *ngIf="msg.replyCount! > 0"   (click)="openThreadEvent(msg)"
           
             >
             {{ msg.replyCount }} Antworten
@@ -438,38 +564,100 @@
 
 
 
+
+
         <div class="emoji-container-received">
           <div class="emoji-box-received">
+        
+            <!-- IMMER zwei statische Emojis (✅, 👍) -->
             <div class="image-wrapper">
-              <!-- Zeige Emojis für empfangene Nachrichten -->
-              <span *ngIf="lastUsedEmojisReceived.length > 0" 
-                    (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[0] } }, msg)">
-                {{ lastUsedEmojisReceived[0] }}
+              <span (click)="addEmojiToMessage({ emoji: { native: '✅' } }, msg)">
+                ✅
               </span>
             </div>
-            
             <div class="image-wrapper">
-              <span *ngIf="lastUsedEmojisReceived.length > 1" 
-                    (click)="addEmojiToMessage({ emoji: { native: lastUsedEmojisReceived[1] } }, msg)">
-                {{ lastUsedEmojisReceived[1] }}
+              <span (click)="addEmojiToMessage({ emoji: { native: '👍' } }, msg)">
+                👍
               </span>
             </div>
-            
-
-            <div *ngIf="msg.isEmojiPickerVisible" class="emoji-picker-received" >
-              <!-- Emoji-Picker anzeigen -->
-              <emoji-mart (emojiSelect)="addEmojiToMessage($event, msg)"></emoji-mart>
-            </div>
-            
+        
+            <!-- Plus-Icon zum Öffnen des Emoji-Pickers -->
             <div class="image-wrapper" (click)="toggleEmojiPickerForMessage(msg)">
               <img src="assets/img/emojiplus.png" alt="Reaction" />
             </div>
-            
-            <div class="image-wrapper">
-              <img src="assets/img/comment.png" alt="Comment"  (click)="openThreadEvent(msg)"/>
+        
+            <!-- Emoji-Picker selbst -->
+            <div 
+              *ngIf="msg.isEmojiPickerVisible" 
+              class="emoji-picker-received"
+            >
+              <emoji-mart (emojiSelect)="addEmojiToMessage($event, msg)"></emoji-mart>
             </div>
-          </div>
-        </div>
+        
+            <!-- Buttons für Kommentar / Thread -->
+            <div class="image-wrapper">
+              <img 
+                src="assets/img/comment.png" 
+                alt="Comment"  
+                (click)="openThreadEvent(msg)"
+              />
+            </div>
+        
+            <!-- 'Mehr Optionen' -->
+            <div class="image-wrapper">
+              <img 
+                src="assets/img/more.png" 
+                alt="Mehr Optionen" 
+               
+                (click)="toggleEditOptions(msg.id || '')"
+  
+              />
+              <!-- Bearbeitungsoptionen anzeigen -->
+              <div 
+                *ngIf="showEditOptions && currentMessageId === msg.id" 
+                class="edit-options"
+              >
+                <button (click)="startEditing(msg)">
+                  Nachricht bearbeiten
+                </button>
+              </div>
+            </div>
+        
+          </div><!-- .emoji-box -->
+        </div><!-- .emoji-container -->
+        
+        
+  
+  
+  
+        
+  
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
 
 
@@ -510,7 +698,7 @@
 
       <div class="buttons-wrapper">
         <div class="input-buttons">
-          <label for="image-upload" class="image-upload-button">
+          <label for="image-upload" *ngIf="isDesktop" class="image-upload-button">
             <img class="input-image" src="assets/img/add-pic.png" alt="Bild hinzufügen" />
             <input type="file" id="image-upload" (change)="onImageSelected($event, textArea)" style="display: none" />
           </label>

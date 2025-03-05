@@ -407,6 +407,9 @@ async getUsersByFirstLetter(firstLetter: string): Promise<any[]> {
   }
 }
 
+
+
+
 getAllMessagesLive(callback: (messages: any[]) => void): () => void {
   const messagesCollection = collection(this.firestore, 'messages');
   const q = query(messagesCollection, orderBy('timestamp', 'asc'));

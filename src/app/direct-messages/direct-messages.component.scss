@@ -135,13 +135,22 @@
 
 
 
-@media (max-width: 1080px) {
+@media (max-width: 1278px) {
  
   
-  .mitglieder,
+ 
+
+  .selection
+  .mitglieder{
+  .status-icon{
+    width:14px;
+    height:14px;
+  }
+
   h2{
     font-size: 17px !important;
   }
+}
 
 }
 

@@ -67,7 +67,7 @@ label {
 .custom-input {
   position: relative; // Stelle sicher, dass die Positionierung relativ zur Custom-Input-Box ist.
   border-radius: 40px;
-  padding-top: 20px;
+  padding-top: 25px;
 
   .input-icon {
     position: absolute;
@@ -83,7 +83,7 @@ label {
     border-radius: 100px;
     color: black;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 400;
     height: 60px;
     width: 100%;
     border: 1px solid transparent;
@@ -119,29 +119,40 @@ label {
 
 
 
-
-
-
-
-
-
-
-
-
 .description-input {
-  input {
+  textarea {
     background: $lightblue;
     border-radius: 100px;
     color: black;
     font-size: 18px;
-    font-weight: 500;
-    height: 60px;
+    font-weight: 700;
+    height: 65px;
     width: 100%;
     border: 1px solid transparent;
     cursor: pointer;
     box-sizing: border-box;
     max-width: 792px;
-    padding-left: 50px;
+    resize: none;
+    overflow-x: hidden;  
+    overflow-y: auto; 
+   // padding: 10px 20px;  // oben/unten: 10px, links/rechts: 20px
+
+  padding: 10px 20px; 
+  padding-top:1.2rem; 
+  font-family: 'Nunito', sans-serif; 
+ 
+
+    &::placeholder {
+      font-family: "Nunito",
+ "Noto Color Emoji",
+ "Segoe UI Emoji",
+ sans-serif;
+
+     
+      font-size: 18px;
+      font-weight: 400;
+      // color: ...
+    }
 
     &:hover {
       border-color: #686868;
@@ -161,6 +172,19 @@ label {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .container {
   max-width: 792px;
@@ -210,6 +234,7 @@ label {
 
 ::ng-deep.mat-mdc-dialog-content .mdc-dialog__content {
   padding: 0;  /* Entferne das Padding komplett */
+  
 }
 
 ::ng-deep.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
@@ -230,5 +255,84 @@ label {
 .mdc-dialog__title{
   margin:  0 0 20px !important ;
 }
+
+
+
+
+.mdc-dialog__content>:first-child{
+  font-size:18px;
+  color:black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @media (max-width: 600px) {
+    .container {
+      position: fixed; 
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;      
+      border-radius: 0; 
+      max-width: 100%; 
+      padding: 20px;  /* oder so, falls du einen Rand willst */
+      overflow-y: auto; /* bei Bedarf scrollbar in der Höhe */
+      box-sizing: border-box; /* wichtig, damit padding + width harmonieren */
+      background-color: white;
+    }
+
+    .mdc-dialog__content>:first-child{
+      font-size:17px;
+    }
+
+    .custom-input .input-icon{
+      left:10px;
+    }
+
+    .custom-input input{
+      padding: 1.125rem 2.30rem;
+    }
+
+
+  }
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

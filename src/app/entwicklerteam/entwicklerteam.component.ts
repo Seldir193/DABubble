@@ -18,6 +18,7 @@ import { MessageService } from '../message.service';
 
 import { OverlayModule } from '@angular/cdk/overlay';
 
+
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
@@ -122,8 +123,10 @@ export class EntwicklerteamComponent implements OnInit {
   showLargeImage = false;
   largeImageUrl: string | null = null;
 
+  isDesktop = false;
 
-
+ 
+  private hasInitialScrollDone: boolean = false;
 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeLiveReplyCounts: (() => void) | null = null; // Für Listener
@@ -131,17 +134,34 @@ export class EntwicklerteamComponent implements OnInit {
 
   private replyCountsUnsubscribe: (() => void) | null = null;
 
+    // Bsp: Falls du die Subscription von currentChannel beenden willst
+  
+    
+
   constructor(private channelService: ChannelService,
     private dialog: MatDialog,
     private userService: UserService,
     private messageService: MessageService,
+
+
  
  ){}
   @Input() isEditingChannel: boolean = false;
   @Output() channelSelected = new EventEmitter<void>();
   @Output() channelLeft = new EventEmitter<void>();
 
+  
 
+
+ 
+  @HostListener('window:resize')
+  onResize() {
+    this.checkDesktopWidth();
+  }
+
+  checkDesktopWidth() {
+    this.isDesktop = window.innerWidth >= 1278;
+  }
 
 
   getFormattedDate(dateString: string): string {
@@ -335,6 +355,9 @@ private isSameDay(date1: Date, date2: Date): boolean {
         'Channel ID ist undefined, Nachricht kann nicht aktualisiert werden.'
       );
     }
+
+
+   
   }
 
   // ---------------------------------------------------------
@@ -411,6 +434,29 @@ private isSameDay(date1: Date, date2: Date): boolean {
     }
   }
 
+
+  
+  
+
+  addMessage(message: any): void {
+    if (this.selectedChannel) {
+      this.channelService.addMessage(this.selectedChannel.id, message)
+        .then((docRefId) => {
+          
+        
+
+          // ID zur Nachricht hinzufügen, nachdem sie erfolgreich hinzugefügt wurde
+        //  message.id = docRefId; 
+          //this.messages.push(message); // Nachricht in die lokale Liste aufnehmen
+          this.scrollToBottom();
+        })
+        .catch((error) => {
+          console.error('Fehler beim Hinzufügen der Nachricht:', error);
+        });
+    }
+  }
+  
+
   getFormattedTime(timeString: string): string {
     if (!timeString) return '—';
   
@@ -422,82 +468,192 @@ private isSameDay(date1: Date, date2: Date): boolean {
   openChannel(channel: any): void {
     console.log('Channel ausgewählt:', channel);
     this.channelService.changeChannel(channel); // Den neuen Channel setzen
+
+  
   }
+
+
+
+
   
   ngOnInit(): void {
     this.loadCurrentUser();
+    this.checkDesktopWidth();
+
+    // 1) Höre auf channelService.currentChannel
+    //    => Jedes Mal, wenn channelService einen neuen Channel über currentChannel ausgibt,
+    //       führen wir den Code aus.
     this.channelService.currentChannel.subscribe(channel => {
-      if (channel) {
-        if (!channel.id) {
-          console.error('Fehlende ID im Channel:', channel);
-        } else if (!channel.createdBy) {
-          channel.createdBy = '';
+      if (!channel) {
+        console.warn('Es wurde kein Channel von channelService.currentChannel geliefert.');
+        return;
+      }
+
+      // Jedes Mal, wenn wir hier reinkommen, haben wir einen neuen Channel vom Service
+      // => Zurücksetzen, damit wir beim ersten Nachrichteneingang scrollen
+      this.hasInitialScrollDone = false;
+
+      // Falls channel-Daten inkonsistent => Log-Fehler
+      if (!channel.id) {
+        console.error('Fehlende ID im Channel:', channel);
+      } else if (!channel.createdBy) {
+        channel.createdBy = '';
+      }
+
+      // 2) channels und selectedChannel setzen
+      this.channels = [{
+        id: channel.id,
+        name: channel.name,
+        members: channel.members,
+        description: channel.description,
+        createdBy: channel.createdBy
+      }];
+      this.channels = this.channels.map(ch =>
+        ch.id === channel.id ? { ...ch, members: channel.members, name: channel.name } : ch
+      );
+      this.selectedChannel = channel;
+
+      // 3) Emojis usw. laden
+      this.watchReplyCountsForMessages(this.messages);
+
+      this.channelService.getLastUsedEmojis(channel.id, 'sent').then(emojisSent => {
+        this.lastUsedEmojisSent = emojisSent || [];
+      });
+      this.channelService.getLastUsedEmojis(channel.id, 'received').then(emojisReceived => {
+        this.lastUsedEmojisReceived = emojisReceived || [];
+      });
+
+      // 4) Abonniere die Nachrichten
+      this.channelService.getMessages(channel.id).subscribe(messages => {
+        // Vorherige IDs merken, damit wir "neue" erkennen
+        this.messages = messages;
+        const oldIds = new Set(this.messages.map(m => m.id));
+
+        // Neues Messages-Array
+        this.messages = messages.map(msg => ({
+          ...msg,
+          content: { ...msg.content, emojis: msg.content?.emojis || [] },
+          replyCount: msg.replyCount || 0,
+          threadId: msg.threadId || null,
+          parentId: msg.parentId || null
+        }));
+
+        // Zusätzliche Live-Reply-Logik
+        this.messages.forEach(msg => {
+          const threadId = msg.threadId || msg.parentId || msg.id;
+          if (threadId) {
+            this.messageService.loadReplyCountsLive([threadId], 'thread-channel', (replyCounts) => {
+              const { count, lastResponseTime } = replyCounts[threadId] || { count: 0, lastResponseTime: null };
+              msg.replyCount = count;
+              msg.threadLastResponseTime = lastResponseTime || msg.threadLastResponseTime;
+              if (msg.threadLastResponseTime) {
+                msg.lastReplyTime = new Date(msg.threadLastResponseTime);
+              }
+            });
+          }
+        });
+
+        // 5) ERSTER Laden => einmal Scrollen
+        if (!this.hasInitialScrollDone) {
+          this.scrollToBottom();
+          this.hasInitialScrollDone = true;
+          return; // restliche Logik wird übersprungen
         }
-       
-        this.channels = [{
-          id: channel.id,
-          name: channel.name,
-          members: channel.members,
-          description: channel.description,
-          createdBy: channel.createdBy
-        }];
 
-        this.channels = this.channels.map(ch => 
-          ch.id === channel.id ? { ...ch, members: channel.members, name: channel.name } : ch
-        );
-  
-        this.selectedChannel = channel;
+        // 6) Prüfen, ob neue Nachrichten IDs dazukamen
+        let newMessageDetected = false;
+        for (const newMsg of messages) {
+          if (!oldIds.has(newMsg.id)) {
+            newMessageDetected = true;
+            break;
+          }
+        }
+        if (newMessageDetected) {
+          this.scrollToBottom();
+        }
 
-        this.watchReplyCountsForMessages(this.messages);
-  
-        this.channelService.getLastUsedEmojis(channel.id, 'sent').then(emojisSent => {
-          this.lastUsedEmojisSent = emojisSent || [];
-        });
-  
-        // Letzte Emojis für empfangene Nachrichten laden
-        this.channelService.getLastUsedEmojis(channel.id, 'received').then(emojisReceived => {
-          this.lastUsedEmojisReceived = emojisReceived || [];
-        });
-
-         // Nachrichten für den aktuellen Channel abonnieren und in Echtzeit empfangen
-         this.channelService.getMessages(channel.id).subscribe(messages => {
-          // Initialisiere die emojis als leeres Array, falls nicht vorhanden
-          this.messages = messages.map(msg => ({
-            ...msg,
-           
-            content: { ...msg.content, emojis: msg.content?.emojis || [] },
-            replyCount: msg.replyCount || 0,
-            threadId: msg.threadId || null, // ✅ `threadId` sicherstellen
-            parentId: msg.parentId || null  
-          }));
-          
-
-          this.messages.forEach(msg => {
-            const threadId = msg.threadId || msg.parentId || msg.id; // ✅ Falls `parentId` fehlt, nutze `msg.id`
-            if (threadId) {
-              this.messageService.loadReplyCountsLive([threadId], "thread-channel", (replyCounts) => {
-                const { count, lastResponseTime } = replyCounts[threadId] || { count: 0, lastResponseTime: null };
-                msg.replyCount = count;
-                msg.threadLastResponseTime = lastResponseTime || msg.threadLastResponseTime;
-              
-                if (msg.threadLastResponseTime) {
-                  msg.lastReplyTime = new Date(msg.threadLastResponseTime);
-                }
-              });
-            }
-          });
-          this.scrollToBottom(); // Automatisch nach unten scrollen
-        }, error => {
-          console.error('Fehler beim Laden der Nachrichten:', error);
-        });
-      }
-
-      if (this.selectedChannel) {
-       
-      }
+      }, error => {
+        console.error('Fehler beim Laden der Nachrichten:', error);
+      });
     });
-   
+
+
+
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+  
+  ngOnDestroy(): void {
+    if (this.unsubscribeLiveReplyCounts) {
+      console.log('🛑 Entferne Live-Reply-Listener');
+      this.unsubscribeLiveReplyCounts();
+    }
+    
+    if (this.unsubscribeFromThreadDetails) {
+      console.log('🛑 Entferne Thread-Details-Listener');
+      this.unsubscribeFromThreadDetails();
+    }
+    
+    if (this.unsubscribeFromThreadMessages) {
+      console.log('🛑 Entferne Thread-Nachrichten-Listener');
+      this.unsubscribeFromThreadMessages();
+    }
   }
+
+
+
+
+
+
+
+
+  
+
+
+  // ...
+  // restlicher Code, z.B. loadCurrentUser, scrollToBottom, etc.
+  // ...
+
+
+
+
+  
+  ngOnChanges(changes: SimpleChanges): void {
+    // Du kannst das leer lassen, wenn du NICHT mehr 
+    // über `[selectedChannel]` reagierst, sondern rein über currentChannel-Subscribe.
+    if (changes['selectedChannel'] && !changes['selectedChannel'].isFirstChange()) {
+      console.log('Channel hat sich geändert (per Input-Property), aber wir lauschen über currentChannel. Kein doppeltes Laden mehr.');
+      // Optional: Cleanup, falls du z.B. unsubscribe-LiveReplyCounts etc. machen willst
+    }
+
+   
+
+    // Falls du 'threadData' checkst...
+    if (changes['threadData'] && changes['threadData'].currentValue) {
+      // ...
+    }
+  }
+
+
+  
+
+
+
+
+
+
+
+
 
 
 
@@ -540,18 +696,35 @@ private isSameDay(date1: Date, date2: Date): boolean {
   }
   
 
-  
+
   scrollToBottom(): void {
     try {
+      // Erster Versuch nach 100ms
       setTimeout(() => {
         if (this.messageList?.nativeElement) {
-          this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+          this.messageList.nativeElement.scrollTop =
+            this.messageList.nativeElement.scrollHeight;
         }
-      }, 100); // Eine kleine Verzögerung, um sicherzustellen, dass das DOM fertig gerendert ist
+  
+        // Zweiter Versuch nach weiteren 200ms
+        setTimeout(() => {
+          if (this.messageList?.nativeElement) {
+            this.messageList.nativeElement.scrollTop =
+              this.messageList.nativeElement.scrollHeight;
+          }
+        }, 200);
+      }, 100);
     } catch (err) {
       console.error('Fehler beim Scrollen:', err);
     }
   }
+  
+
+
+
+
+
+  
 
   loadCurrentUser(): void {
     this.userService.getCurrentUserData().then(user => {
@@ -656,20 +829,6 @@ handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
   }
 }
 
-addMessage(message: any): void {
-  if (this.selectedChannel) {
-    this.channelService.addMessage(this.selectedChannel.id, message)
-      .then((docRefId) => {
-        // ID zur Nachricht hinzufügen, nachdem sie erfolgreich hinzugefügt wurde
-        message.id = docRefId; 
-        this.messages.push(message); // Nachricht in die lokale Liste aufnehmen
-        this.scrollToBottom();
-      })
-      .catch((error) => {
-        console.error('Fehler beim Hinzufügen der Nachricht:', error);
-      });
-  }
-}
 
 
 toggleEditMessage(msg: any): void {
@@ -906,34 +1065,6 @@ hideTooltip(): void {
   this.tooltipVisible = false;
 }
 
-private loadCurrentChannelMessages(): void {
-  if (!this.selectedChannel?.id) {
-    console.error('❌ Kein Kanal ausgewählt. Nachrichten können nicht geladen werden.');
-    return;
-  }
-
-  console.log(`📥 Lade Nachrichten für Channel: ${this.selectedChannel.id}`);
-
-  this.channelService.getMessages(this.selectedChannel.id).subscribe((messages) => {
-    this.messages = messages.map((msg) => {
-      if (msg.timestamp && typeof msg.timestamp.toDate === 'function') {
-        msg.timestamp = msg.timestamp.toDate(); // 🔥 Firestore-Timestamp in Date umwandeln
-      }
-      return {
-        ...msg,
-        replyCount: msg.replyCount || 0,
-        content: { ...msg.content, emojis: msg.content?.emojis || [] },
-      };
-    });
-
-    // 🚀 Live-Update-Listener erneut starten
-    this.scrollToBottom();
-  }, (error) => {
-    console.error('❌ Fehler beim Laden der Nachrichten für den aktuellen Kanal:', error);
-  });
-}
-
-
 
 
 
@@ -1064,30 +1195,6 @@ async openThreadEvent(msg: any): Promise<void> {
 
 
 
-ngOnChanges(changes: SimpleChanges): void {
-  if (changes['selectedChannel'] && !changes['selectedChannel'].isFirstChange()) {
-    console.log('Channel hat sich geändert:', changes['selectedChannel'].currentValue);
-
-    // Entferne bestehende Listener, falls vorhanden
-    if (this.unsubscribeLiveReplyCounts) {
-      this.unsubscribeLiveReplyCounts();
-    }
-    this.loadCurrentChannelMessages();
-   
-    
-  }
-
-  if (changes['threadData'] && changes['threadData'].currentValue) {
-    const newThreadData = changes['threadData'].currentValue;
-    console.log('Thread-Daten aktualisiert (Entwicklerteam):', newThreadData);
-
-    if (newThreadData.timestamp) {
-      console.log('Letzte Antwort-Zeit des Threads:', newThreadData.timestamp);
-    }
-  }
-}
-
-
 
 
 
@@ -1108,32 +1215,21 @@ ngOnChanges(changes: SimpleChanges): void {
 closeThreadChannel(): void {
   this.selectedThreadChannel = null; // Thread zurücksetzen
   console.log('Thread-Channel wurde geschlossen');
+
+
+
 }
 
 
   changeChannel(newChannel: any): void {
     this.selectedThreadChannel = null; // Thread zurücksetzen, wenn Channel gewechselt wird
     console.log('Channel gewechselt:', newChannel);
+
+
   }
 
 
 
-ngOnDestroy(): void {
-  if (this.unsubscribeLiveReplyCounts) {
-    console.log('🛑 Entferne Live-Reply-Listener');
-    this.unsubscribeLiveReplyCounts();
-  }
-  
-  if (this.unsubscribeFromThreadDetails) {
-    console.log('🛑 Entferne Thread-Details-Listener');
-    this.unsubscribeFromThreadDetails();
-  }
-  
-  if (this.unsubscribeFromThreadMessages) {
-    console.log('🛑 Entferne Thread-Nachrichten-Listener');
-    this.unsubscribeFromThreadMessages();
-  }
-}
 
 trackByMsgId(index: number, msg: any) {
   return msg.id; // oder eine andere eindeutige ID

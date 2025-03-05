@@ -21,6 +21,10 @@ h1 {
 .container-box {
   @include dFlex(null, null, 8px);
   flex-direction: column;
+
+  img{
+    height:70px;
+  }
 }
 
 .vector {
@@ -219,8 +223,8 @@ h1 {
   padding: 45px 40px;
 
   &.show {
-    right: 0;
-    border-radius: 30px;
+    right: 20px;
+    border-radius: 30px 0px 30px 30px;
     display: block;
   }
 
@@ -336,6 +340,7 @@ h1 {
   width: 420px;
   height: 44px;
 
+
   p {
     font-size: 32px !important;
     font-weight: 700 !important;
@@ -347,6 +352,7 @@ h1 {
     color: $hoverColor;
     cursor: pointer;
     transition: color 0.3s ease, transform 0.6s ease;
+    margin-left:auto;
 
     &:hover {
       color: $hoverColor;
@@ -493,6 +499,293 @@ h1 {
 .dropDownContainer{
   display: flex;
   justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Container für das Mobile-Menü insgesamt */
+.bottom-menu {
+  position: relative; /* oder position: fixed, wenn du willst, dass es am Bildschirmrand klebt */
+  z-index: 999;      /* damit es vor dem restlichen Chat angezeigt wird */
+  text-align: center;
+}
+
+/* Button zum Öffnen des Menüs */
+.open-menu-btn {
+  /* z. B. ein kleiner Button oben oder unten in der Ecke */
+  margin-top: 10px;
+  /* dein Design nach Geschmack */
+}
+
+/* Halbtransparentes Overlay über den gesamten Bildschirm */
+.menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4); /* abgedunkelt */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 998; /* unterhalb des Menüs, aber über dem Chat */
+}
+
+/* Offen (sichtbar) */
+.menu-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Das eigentliche Menü, das "von unten hochfährt" */
+.bottom-menu-content {
+  position: fixed; 
+  left: 0;
+  right: 0;
+  bottom: 0;                 /* feste Höhe */
+  padding: 30px 25px;              /* Padding */
+  border-radius: 30px 30px 0 0;    /* oben abgerundet, unten grade, oder rundherum 30px – nach Belieben */
+  background-color: #fff;          /* Hintergrund weiß */
+  box-shadow: 0px -3px 10px 0px #00000033; /* Schatten nach oben */
+  transform: translateY(100%);     /* Anfangszustand: komplett nach unten verschoben */
+  transition: transform 0.3s;
+  z-index: 9999;  /* ganz oben */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* Profile oben, Logout unten */
+  gap:15px;
+
+
+  overflow: hidden;
+
+}
+
+
+.handle-bar {
+  width: 63px;                /* Deine gewünschte Breite */
+  height: 6px;               /* Deine gewünschte Höhe */
+  background: #D9D9D9;       /* Deine gewünschte Farbe */
+  border-radius: 3px;        /* Abgerundete Ecken */
+  margin: 0 auto 10px auto;  /* Zentrieren (horizontal) und Abstand nach unten */
+  /* Falls du es ein wenig weiter unten platzieren willst, 
+     könntest du z.B. margin-top: 23px; oder padding-top 
+     im .bottom-menu-content verwenden. */
+}
+/* Wenn das Menü "geöffnet" ist => translateY(0) */
+.bottom-menu-content.open {
+  transform: translateY(0);
+}
+
+
+
+
+.menu-item {
+  /* Damit die Größe nicht wechselt */
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+
+  /* Gleiches Padding im Normalzustand */
+  padding: 10px;  
+  box-sizing: border-box;
+
+  /* Hover-State */
+  &:hover {
+    background-color: $lightblue;  // deine Hover-Farbe
+    border-radius: 100px;
+    color: $hoverColor;           // deine Hover-Font-Farbe
+    /* Kein zusätzliches Padding hier – das ist schon oben gesetzt */
+    max-width: 222px;
+    width: 100%;
+  }
+
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+    /* Hover-Filter kannst du drinlassen, das ändert ja nur die Farbe */
+  }
+
+  &:hover img {
+    filter: brightness(0) saturate(100%) invert(34%) 
+            sepia(39%) saturate(6834%) hue-rotate(230deg) 
+            brightness(100%) contrast(90%);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+/* Optional: Icon-Styles */
+.menu-item img {
+  width: 20px;
+  height: 20px;
+}
+
+/* 
+   Du möchtest es NUR mobil haben? 
+   Im Desktop unsichtbar machen (falls du beides kombinierst):
+*/
+@media (min-width: 1278px) {
+  .bottom-menu {
+    display: none;
+  }
+}
+
+
+
+
+@media (max-width: 1278px) {
+  .container {
+    padding:15px 16px;
+
+  }
+
+  .desktop-content{
+    h1{
+        font-size: 20px !important;
+    }
+  }
+
+  .container-box {
+    img{
+      height:45px;
+    }
+  }
+
+
+
+
+
+
+  .profile-card-container {
+    padding:unset;
+    width:100%;
+    max-width:398px;
+    top:70px;
+
+  }
+
+  .profile-card-container .profile-card{
+    padding:45px 20px;
+    gap:unset;
+  }
+
+
+  .profil-container{
+    width:100%;
+    max-width:420px;
+   // padding:45px 20px;
+   
+  }
+
+  .profil-settings{
+    width:100%;
+    max-width:358px;
+  }
+
+  .profile-card-container .profile-info{
+    max-width:358px;
+    width:100%;
+    gap:20px;
+  }
+
+  .profile-edit{
+    width:100%;
+  }
+
+
+  .profil-settings {
+    
+    .img-wrapper {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      overflow: hidden; /* Damit das Bild nicht übersteht */
+      
+      /* Weiche Übergänge */
+      transition: 
+        background-color 0.3s ease, 
+        transform 0.3s ease,
+        filter 0.3s ease;
+    
+      /* NUR EIN Hover */
+      &:hover {
+        background-color: $lightblue; /* Der Kreis wird hellblau */
+        transform: scale(1.1);       /* Kreis wird größer */
+        cursor: pointer;
+    
+        /* Bild-Farbfilter => wir greifen direkt auf das <img> im Wrapper zu */
+        img {
+          filter: brightness(0) 
+                  saturate(100%) 
+                  invert(34%) 
+                  sepia(39%) 
+                  saturate(6834%) 
+                  hue-rotate(230deg) 
+                  brightness(100%) 
+                  contrast(90%);
+        }
+      }
+    
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        /* Keine separate Hover-Regel mehr hier! */
+        transition: filter 0.3s ease;
+       
+      }
+    }
+}
+
+.profile-card-container.show{
+  right:0;
+}
+
+}
+
+
+
+@media (max-width: 468px){
+  .profile-card-container {
+   
+    max-width:unset;
+   
+
+  }
+
 }
 
 

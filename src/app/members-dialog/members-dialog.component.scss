@@ -243,6 +243,7 @@ label {
   display: flex;
   align-items: center; /* Zentriere Input vertikal */
   gap: 15px; /* Abstand zwischen Kindern */
+  padding-bottom:20px;
 }
 
   .specific-members {
@@ -269,10 +270,11 @@ label {
 
     border-radius: 2.1875rem;
         font-size: 18px;
-        height: 35px;
+       // height: 35px;
   
     &:hover {
       background-color: $lightblue;
+     // height:35px;
     }
   
     .avatar {
@@ -330,7 +332,7 @@ label {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    gap:10px;
+    //gap:10px;
     max-width:335px;
     width:100%;
     box-shadow: 0px 2px 10px 0px #00000014;
@@ -385,3 +387,80 @@ label {
 
 
  
+
+
+
+
+  
+  .mobile-wrapper .mobile-container  {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    animation: slideInUp 0.3s ease-out forwards;    padding: 40px 20px;
+    box-sizing: border-box;
+
+
+   // height: 50vh;
+  transition: height 0.3s ease;
+
+  &.expanded {
+    height: 70vh; /* Wenn Input fokussiert */
+  }
+
+  .specific-members input{
+    max-width:unset;
+  }
+
+  .member-selection{
+    width:unset;
+  }
+
+  .option{
+    width:350px;
+  }
+
+  label{
+    font-size: 14px;
+  }
+
+  .close-dialog h1{
+    font-size: 20px;
+  }
+
+  .button-box{
+    padding-top:10px;
+  }
+
+  .specific-members{
+    padding-bottom:unset;
+  }
+  }
+
+  
+
+ 
+  .handle-bar {
+    width: 63px;                /* Deine gewünschte Breite */
+    height: 6px;               /* Deine gewünschte Höhe */
+    background: #D9D9D9;       /* Deine gewünschte Farbe */
+    border-radius: 3px;        /* Abgerundete Ecken */
+    margin: 0 auto 10px auto;  /* Zentrieren (horizontal) und Abstand nach unten */
+    /* Falls du es ein wenig weiter unten platzieren willst, 
+       könntest du z.B. margin-top: 23px; oder padding-top 
+       im .bottom-menu-content verwenden. */
+  }
+  
+  @keyframes slideInUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  
+
+
+
+
+ 
+

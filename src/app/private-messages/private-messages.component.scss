@@ -126,6 +126,8 @@
     flex-grow: 1;
 
     
+
+    
     .message-time {
       font-size: 14px;
       font-weight:400;
@@ -141,77 +143,122 @@
       cursor: pointer;
     }
   }
-    .sent-message-container {
-      display: flex;
-      justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
-      padding:25px;
-      transition: background-color 0.3s ease, transform 0.3s ease ;
 
-     
-     
-      &:hover {
-        background-color: $lightblue;
+
+
+
+  
+  .sent-message-container {
     
-        .emoji-box {
-          display: flex;
-          align-items: center;
+    display: flex;
+    justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
+   // padding:25px;
+    transition: background-color 0.3s ease, transform 0.3s ease ;
 
-          
-        }
+    .avatar{
+      width:50px;
+      height:50px;
+      object-fit: cover;
     }
-
-      .message-container {
-        display: flex;
-        align-items: flex-start;
-        gap: 15px;
-        flex-direction: row-reverse; // Avatar rechts, Nachricht links
-    margin-bottom: 15px;
-    padding: 25px;
-    position: relative;
-    background-color: transparent;
-    width:100%;
-
-
+   
+  
     &:hover {
       background-color: $lightblue;
   
       .emoji-box {
         display: flex;
         align-items: center;
+
+        
       }
     }
+
+    .message-container {
      
-      .message-box {
-        display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: flex-end;
-      gap:8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      flex-direction: row-reverse; // Avatar rechts, Nachricht links
+ // margin-bottom: 15px;
+  padding: 25px;
+  position: relative;
+  background-color: transparent;
+  width:100%;
 
-      
 
-    
-      .message-info {
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row-reverse;
-        gap: 20px;
-        align-items: center;
-      }
-      }
-    
+
+  .sent-image{
+    width:50px;
+    height:50px;
+    object-fit: cover;
+  }
+
+  &:hover {
+    background-color: $lightblue;
+
+
+
+    .emoji-box {
+      display: flex;
+      align-items: center;
     }
 
+  }
+
+
+
+
+
+
+
+
+    
+  
+
+   
+    .message-box {
+      display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap:8px;
+
+    
+
+  
+    .message-info {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+      gap: 20px;
+      align-items: center;
+    }
+    }
   
   }
 
-  .emoji-container{
-    margin-right:auto;
-    margin-top:-75px;
 
-    
-    
-  }
+}
+
+.emoji-container{
+  margin-right:auto;
+  margin-top:-55px;
+
+  
+  
+}
+
+
+
+
+
+
+ 
+
+  
+
+
+
 
   .emoji-container-received{
     margin-left:auto;
@@ -263,10 +310,14 @@
   .received-message-container {
     display: flex;
     justify-content: flex-start; // Empfangene Nachrichten links positionieren
-    margin-bottom: 15px;
+    //margin-bottom: 15px;
     transition: background-color 0.3s ease, transform 0.3s ease;
 
-   
+    .avatar{
+      width:50px;
+      height:50px;
+      object-fit: cover;
+    }
 
     &:hover {
       background-color: $lightblue;
@@ -288,14 +339,22 @@
       align-items: flex-start;
       gap: 15px;
 
-      margin-bottom: 15px;
+      //margin-bottom: 15px;
   
       padding: 25px;
       position: relative;
       background-color: transparent;
       width:100%;
   
+      .received-image{
+        width:50px;
+        height:50px;
+        object-fit: cover;
+      }
+
   
+
+     
 
       &:hover {
         background-color: $lightblue;
@@ -308,6 +367,7 @@
         .message-content {
           background-color: white;
 
+          
           p{
             color: black;
           }
@@ -325,7 +385,7 @@
     .message-info {
       display: flex;
       justify-content: space-between;
-      flex-direction: row-reverse;
+     // flex-direction: row-reverse;
       gap: 20px;
       align-items: center;
     }
@@ -338,35 +398,43 @@
   }
   }
 
-
   
-  .emoji-box {
-    //position: absolute;
-    //height: 46px;
-    padding: 3px 15px 3px 20px;
-    gap: 5px;
-    border-radius: 25px 25px 0;
-    border: 1px solid #ADB0D9;
-    background: #fff;
-    left: 0;
-    top: 0;
-    z-index: 3;
-    display: none;
 
-    .image-wrapper {
-      width: 40px; /* Feste Größe für den Wrapper */
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: transparent;
-      border-radius: 50%;
-    
-      &:hover {
-        background-color: $lightblue; /* Hintergrundfarbe beim Hover */
-        cursor: pointer;
-      }
 
+
+
+
+
+
+
+.emoji-box {
+  //position: absolute;
+  //height: 46px;
+  padding: 3px 15px 3px 20px;
+  gap: 5px;
+  border-radius: 25px 25px 0;
+  border: 1px solid #ADB0D9;
+  background: #fff;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: none;
+
+  .image-wrapper {
+    width: 40px; /* Feste Größe für den Wrapper */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border-radius: 50%;
+  
+    &:hover {
+      background-color: $lightblue; /* Hintergrundfarbe beim Hover */
+      cursor: pointer;
+    }
+
+ 
       img {
        // width: 24px; /* Bild bleibt konstant */
         //height: 24px;
@@ -407,6 +475,8 @@
       padding: 15px;
       border-radius: 0px 30px 30px 30px;
       word-wrap: break-word;
+
+     
 
 
       .sent-message{
@@ -722,8 +792,9 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  margin: 0 auto;
-  margin-bottom:15px;
+ // margin: 0 auto;
+  margin: 20px auto;
+  //margin-bottom:15px;
   padding: 0px 25px 0px 25px;
 
   &::before,
@@ -987,9 +1058,6 @@
 
 
 
-
-
-
 /* ---------------------------------------------
    1) Gemeinsamer Style für alle Emojis 
       (sowohl in Hauptansicht als auch Popup)
@@ -1047,12 +1115,20 @@ nav {
     }
   }
 
-  /* Das Icon neben den ersten 2 Emojis in der Hauptansicht */
+
+  
+
+
   .emoji-plus-icon {
     width: 40px;
     height: 40px;
     cursor: pointer;
   }
+
+ 
+
+
+
 }
 
 .emoji-popup {
@@ -1108,6 +1184,11 @@ nav {
 
   }
 }
+
+
+
+
+
 
 
 
@@ -1306,120 +1387,19 @@ nav {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.my-user-dropdown {
-  list-style-type: none;
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-
-  &.pm-scrollable {
-    /* Nativer Scroll, aber unsichtbar machen */
-    overflow-y: auto;
-    max-height: 171px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 10px;
-    padding-top: 20px;
-
-    /* Ecken: top-left=20px, top-right=20px, bottom-right=20px, bottom-left=0 */
-    border-radius: 20px 20px 20px 0;
-
-    /* --- SCROLLBAR UNSICHTBAR MACHEN --- */
-    /* (1) Für Firefox */
-    scrollbar-width: none;         /* Versteckt in Firefox */
-    -ms-overflow-style: none;      /* Evtl. Legacy IE/Edge */
-
-    /* (2) Für Chrome/Safari/Edge (WebKit) */
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-      background: transparent !important;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: transparent;
-      border-radius: 0;
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar-button {
-      display: none;
-      height: 0;
-      width: 0;
-    }
+@media(max-width: 1278px){
+  .channel-input-box{
+    height:calc(100vh - 11.5rem ) !important;
   }
-
-  li {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    max-width: fit-content;
-    border-radius: 2.1875rem;
-    font-size: 18px;
-    height: 35px;
-
-    &:hover {
-      background-color: $lightblue; // Deine Hover-Farbe
-    }
-
-    .avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-right: 10px;
-      object-fit: cover;
-    }
-
-    .status-icon {
-      position: relative;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid white;
-      right: 20px;
-    }
-  }
+}
 
 
 
+
+
+
+
+@import "./../../styles.scss";
 
 
 
@@ -1446,7 +1426,3 @@ nav {
 
 
   
-
-
-
-}

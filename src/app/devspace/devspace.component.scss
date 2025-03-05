@@ -101,22 +101,20 @@
 
 
 .center-section {
-
-
-
-
-  /* Standard = verstecken für große Bildschirme */
   display: none;
-
   /* Ab max-width: 1080px => sichtbar */
-  @media (max-width: 1080px) {
+  @media (max-width: 1278px) {
     display: block;
 
-
   }
+}
 
 
-
+@media (max-width:1278px){
+  
+  .center-section{
+    max-width: unset;
+  }
 }
 
 
