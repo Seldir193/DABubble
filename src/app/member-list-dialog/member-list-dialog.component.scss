@@ -40,7 +40,8 @@ li {
   .container {
     padding: 40px;
     gap: 20px;
-    border-radius: 40px 0px 0px 0px;
+    
+    border-radius: 30px 0px 30px 30px;
     border: 1px 0px 0px 0px;
     gap: 20px;
     display: flex;
@@ -48,6 +49,8 @@ li {
     height: 411px;
     overflow-y: overlay;
     overflow-x: hidden;
+
+    background-color: white;
    }
 
    .remove-btn {
@@ -93,6 +96,7 @@ li {
   }
 
 
+  
   ::ng-deep .mat-mdc-dialog-container {
     border-radius: 30px 0 30px 30px  !important;
   }
@@ -102,6 +106,8 @@ li {
     
     overflow: hidden;
   }
+
+
 
   .member-box {
     display: flex;
@@ -160,19 +166,19 @@ li {
 
 
 .avatar-container {
-    position: relative;  /* Erlaubt das Status-Icon auf dem Avatar */
+  position: relative;  /* Erlaubt das Status-Icon auf dem Avatar */
 
-    /* Status-Icons (Online/Offline) unten rechts auf dem Avatar-Bild */
-    .status-icon {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid white;
-    }
+  /* Status-Icons (Online/Offline) unten rechts auf dem Avatar-Bild */
+  .status-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
   }
+}
 
 
 

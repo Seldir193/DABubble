@@ -1,11 +1,39 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../user.service'; 
 import { OverlayModule } from '@angular/cdk/overlay';
-import { SelectedMembersDialogComponent } from '../selected-members-dialog/selected-members-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+
+import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
+import { SelectedMembersDialogComponent } from '../selected-members-dialog/selected-members-dialog.component';
 
 @Component({
   selector: 'app-add-members-dialog',
@@ -15,185 +43,122 @@ import { ChannelService } from '../channel.service';
   styleUrls: ['./add-members-dialog.component.scss']
 })
 export class AddMembersDialogComponent implements OnInit {
-  specificMemberName: string = ''; // Eingabefeld wird geleert
-  members: any[] = []; // Alle Mitglieder
-  filteredMembers: any[] = []; // Gefilterte Mitglieder basierend auf der Suche
-  selectedMembers: any[] = []; 
-  existingMembers: any[] = []; // Bereits vorhandene Mitglieder aus Entwicklerteam/MemberList
-  isMembersListVisible: boolean = false; // Zeigt an, ob die Liste der Mitglieder sichtbar ist
-  isButtonDisabled: boolean = false;
+
+  @Input() channelId!: string;
+  @Input() channelName: string = '';
+  @Input() existingMembers: any[] = [];  // Statt this.data.members
+
+  @Output() close = new EventEmitter<void>();
+  @Output() membersAdded = new EventEmitter<any[]>();
+
+  specificMemberName: string = '';
+  filteredMembers: any[] = [];
+  selectedMembers: any[] = [];
+  isMembersListVisible = false;
+  allUsers: any[] = [];
 
   constructor(
-    private userService: UserService, 
+    private userService: UserService,
     private channelService: ChannelService,
-    private dialog: MatDialog,
-
-    public dialogRef: MatDialogRef<AddMembersDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any // Übergebe bestehende Mitglieder als `data`
+    private dialog: MatDialog, // Falls du den nested DialogSelectedMembers beibehalten möchtest
   ) {}
 
   ngOnInit(): void {
-    
-    console.log('Mitglieder im Dialog:', this.data.members);
-    this.specificMemberName = ''; // Leere das Eingabefeld beim Öffnen
-    this.existingMembers = this.data.members || []; // Lade bereits vorhandene Mitglieder (Entwicklerteam + MemberList)
-    this.loadMembers();
+    console.log('[Overlay init] existingMembers:', this.existingMembers);
+    this.loadAllUsers();
   }
 
-  // Lade alle Mitglieder und filtere diejenigen heraus, die bereits ausgewählt oder in den bestehenden Listen vorhanden sind
-  loadMembers(): void {
+  // Lade alle Nutzer
+  loadAllUsers(): void {
     this.userService.getAllUsers()
-      .then((data) => {
-        this.members = data.map(member => ({
-          ...member,
-          userStatus: member.isOnline ? 'Aktiv' : 'Abwesend'
-        }));
-        this.filterAlreadySelectedMembers(); // Filtere Mitglieder, die bereits vorhanden sind
+      .then(users => {
+        this.allUsers = users;
+        this.filterAlreadySelectedMembers();
       })
-      .catch((error) => {
-        console.error('Fehler beim Laden der Mitglieder:', error);
-      });
+      .catch(err => console.error('Fehler beim Laden', err));
   }
 
-  // Filtere die Mitglieder, die bereits in Entwicklerteam oder MemberList vorhanden sind
+  // Filterlogik
   filterAlreadySelectedMembers(): void {
-    this.filteredMembers = this.members.filter(member => 
-      !this.existingMembers.some(existing => existing.name === member.name) && 
+    this.filteredMembers = this.allUsers.filter(member => 
+      !this.existingMembers.some(existing => existing.name === member.name) &&
       !this.selectedMembers.some(selected => selected.name === member.name)
     );
   }
 
-  disableButton(): void {
-    this.isButtonDisabled = true;
-  }
-
-  // Optional: Methode, um den Button zu aktivieren, wenn das Input-Feld nicht mehr fokussiert ist
-  enableButton(): void {
-    this.isButtonDisabled = false;
-  }
-
-  // Zeige Mitglieder, die noch nicht ausgewählt oder bereits vorhanden sind
   showAllMembers(): void {
     this.isMembersListVisible = true;
-    this.filterAlreadySelectedMembers(); // Filtere die Liste erneut, falls neue Mitglieder hinzugefügt wurden
+    this.filterAlreadySelectedMembers();
   }
-
-  // Verstecke die Liste, wenn das Input-Feld verlassen wird
   hideMembersList(): void {
     setTimeout(() => {
       this.isMembersListVisible = false;
-    }, 200); // Timeout, um Klicks auf Mitglieder zu erlauben
+    }, 200);
   }
-
-  // Suche nach Mitgliedern und filtere diejenigen heraus, die bereits in Entwicklerteam oder MemberList sind
   onSearchMembers(): void {
-    if (this.specificMemberName) {
-      const searchTerm = this.specificMemberName.toLowerCase();
-      this.filteredMembers = this.members
-        .filter(member => 
-          member.name.toLowerCase().includes(searchTerm) && 
-          !this.existingMembers.some(existing => existing.name === member.name) && 
-          !this.selectedMembers.some(selected => selected.name === member.name)
-        );
-    } else {
-      this.filterAlreadySelectedMembers(); // Filtere nur nicht hinzugefügte Mitglieder
-    }
+    const term = this.specificMemberName.toLowerCase();
+    this.filteredMembers = this.allUsers
+      .filter(member =>
+        member.name.toLowerCase().includes(term) &&
+        !this.existingMembers.some(ex => ex.name === member.name) &&
+        !this.selectedMembers.some(se => se.name === member.name)
+      );
   }
 
-  // Füge ein Mitglied zur Liste hinzu, wenn es noch nicht in Entwicklerteam/MemberList ist
   selectMember(member: any): void {
-    if (!this.selectedMembers.some(selected => selected.name === member.name)) {
+    if (!this.selectedMembers.some(m => m.name === member.name)) {
       this.selectedMembers.push(member);
     }
-
-    this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste
-    this.specificMemberName = '';  // Leere das Eingabefeld nach Auswahl
-    this.isMembersListVisible = false; // Verstecke die Mitgliederliste
+    this.specificMemberName = '';
+    this.isMembersListVisible = false;
+    this.filterAlreadySelectedMembers();
   }
 
-
-  // Entferne ein Mitglied aus der Liste
   removeMember(member: any): void {
     this.selectedMembers = this.selectedMembers.filter(m => m !== member);
-    this.filterAlreadySelectedMembers(); // Aktualisiere die gefilterte Liste nach dem Entfernen
+    this.filterAlreadySelectedMembers();
   }
 
+  // Speichern
   onCreate(): void {
-    console.log('Mitglieder vor dem Speichern:', this.selectedMembers);
-  
-    const uniqueMembers = this.selectedMembers.filter(member =>
-      !this.data.members.some((m: any) => m.name === member.name)
+    const uniqueMembers = this.selectedMembers.filter(
+      member => !this.existingMembers.some(m => m.name === member.name)
     );
-  
     if (uniqueMembers.length > 0) {
-      console.log('Neue Mitglieder hinzugefügt:', uniqueMembers);
-  
-      // Kombiniere die bereits vorhandenen und neu ausgewählten Mitglieder
-      const updatedMembers = [...this.data.members, ...uniqueMembers];
-  
-      // Aktualisiere die Mitglieder im ChannelService und speichere in Firestore
-      this.channelService.setMembers(this.data.channelName, updatedMembers)
+      console.log('Neue Mitglieder:', uniqueMembers);
+      const updatedMembers = [...this.existingMembers, ...uniqueMembers];
+      
+      // ChannelService
+      this.channelService.setMembers(this.channelId, updatedMembers)
         .then(() => {
-          console.log('Mitglieder erfolgreich gespeichert.');
-          
-          // Schließe den Dialog und übergebe die aktualisierte Mitgliederliste
-          this.dialogRef.close(updatedMembers);  // Stelle sicher, dass die aktualisierte Mitgliederliste zurückgegeben wird
+          console.log('Erfolgreich gespeichert');
+          // Output-Event an Eltern
+          this.membersAdded.emit(updatedMembers);
+          // Overlay schließen
+          this.close.emit();
         })
-        .catch(error => {
-          console.error('Fehler beim Speichern der Mitglieder:', error);
-        });
-  
+        .catch(err => console.error('Fehler beim Speichern:', err));
     } else {
-      console.log('Keine neuen Mitglieder ausgewählt.');
-      this.dialogRef.close(null); // Falls keine neuen Mitglieder, Dialog schließen ohne Änderung
+      console.log('Keine neuen Mitglieder ausgewählt');
+      this.close.emit();
     }
   }
-  
-openMembersDialog(): void {
-  const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
-    data: { members: this.selectedMembers }
-  });
 
-  dialogRef.afterClosed().subscribe(updatedMembers => {
-    if (updatedMembers) {
-      this.selectedMembers = updatedMembers; // Aktualisiere die Liste mit den ausgewählten Mitgliedern
-    }
-  });
+  // Optional
+  openMembersDialog(): void {
+    // Nested Dialog -> Nur wenn du es willst
+    const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
+      data: { members: this.selectedMembers }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.selectedMembers = result;
+      }
+    });
+  }
+
+  onCancel(): void {
+    // Overlay schließen, ohne was zu tun
+    this.close.emit();
+  }
 }
-
-onCancel(): void {
-  this.dialogRef.close(); // Schließt den Dialog, wenn die Methode aufgerufen wird
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
-
-
-

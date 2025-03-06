@@ -5,6 +5,7 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { HostListener } from '@angular/core';
 import { ChannelService } from '../channel.service';
 import { MemberListDialogComponent } from '../member-list-dialog/member-list-dialog.component';
+
 import { MatDialog } from '@angular/material/dialog';
 import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
 import { EditChannelDialogComponent } from '../edit-channel-dialog/edit-channel-dialog.component';
@@ -44,7 +45,7 @@ interface ThreadChannelParentDoc {
 @Component({
   selector: 'app-entwicklerteam',
   standalone: true,
-  imports: [CommonModule,FormsModule,PickerModule, OverlayModule],
+  imports: [CommonModule,FormsModule,PickerModule, OverlayModule, MemberListDialogComponent,AddMembersDialogComponent ],
   templateUrl: './entwicklerteam.component.html',
   styleUrls: ['./entwicklerteam.component.scss'] ,
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -128,6 +129,19 @@ export class EntwicklerteamComponent implements OnInit {
  
   private hasInitialScrollDone: boolean = false;
 
+
+
+
+
+  isOverlayOpen = false;
+  isAddMembersOverlayOpen = false;
+
+  isMobileMemberListOpen = false;
+  isMobileAddOpen = false;
+
+ 
+
+
   private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeLiveReplyCounts: (() => void) | null = null; // Für Listener
   private unsubscribeFromThreadDetails: (() => void) | null = null
@@ -150,18 +164,82 @@ export class EntwicklerteamComponent implements OnInit {
   @Output() channelSelected = new EventEmitter<void>();
   @Output() channelLeft = new EventEmitter<void>();
 
+    // toggelt das Overlay
+  toggleOverlay() {
+    this.isOverlayOpen = !this.isOverlayOpen;
+  }
+
+  closeOverlay() {
+    this.isOverlayOpen = false;
+  }
+
+
+  //toggleAddMembersOverlay() {
+   // this.isAddMembersOverlayOpen = !this.isAddMembersOverlayOpen;
+ //}
   
+  closeAddMembersOverlay() {
+    this.isAddMembersOverlayOpen = false;
+  }
+
+  toggleAddMembersOverlay() {
+    // Schließt MemberList
+    this.isOverlayOpen = false;
+    // Öffnet AddMembers
+    this.isAddMembersOverlayOpen = true;
+  }
+  
+
+
+
+
+
+  // Methode, die beim Klick auf das Member-Icon (Mobile) aufgerufen wird
+  openMemberList() {
+    this.isMobileAddOpen = false;
+    this.isMobileMemberListOpen = true;
+  }
+
+  closeMemberList() {
+    this.isMobileMemberListOpen = false;
+  }
+
+  switchToAddMembers() {
+    this.isMobileMemberListOpen = false;
+    this.isMobileAddOpen = true;
+  }
+
+  closeAddMembers() {
+    this.isMobileAddOpen = false;
+  }
+
+
+
+
+
+
+
+ 
 
 
  
   @HostListener('window:resize')
   onResize() {
+    const wasDesktop = this.isDesktop;
     this.checkDesktopWidth();
+  
+    // Wenn wir vorher Desktop waren und jetzt Mobile sind => Overlays schließen
+    if (wasDesktop && !this.isDesktop) {
+      console.log('Wechsel auf Mobile => Schließe alle Overlays');
+      this.closeOverlay();          // z.B. MemberList-Overlay
+      this.closeAddMembersOverlay(); // z.B. AddMembers-Overlay
+    }
   }
-
+  
   checkDesktopWidth() {
     this.isDesktop = window.innerWidth >= 1278;
   }
+  
 
 
   getFormattedDate(dateString: string): string {
@@ -768,43 +846,7 @@ private isSameDay(date1: Date, date2: Date): boolean {
       }
     });
   }
-  
-  openAddMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
-    const dialogRef = this.dialog.open(AddMembersDialogComponent, {
-      data: { members: channel.members }
-    });
-  
-    dialogRef.afterClosed().subscribe((updatedMembers: any[] | undefined) => {
-      if (updatedMembers && updatedMembers.length > 0) {
-        const uniqueMembers = updatedMembers.filter(member =>
-          !channel.members.some(m => m.name === member.name)
-        );
-        channel.members = [...channel.members, ...uniqueMembers]; // Füge neue Mitglieder hinzu
-        console.log('Aktualisierte Mitgliederliste:', channel.members);
-  
-        // Setze die Mitglieder im ChannelService, um sie zu speichern
-        this.channelService.setMembers(channel.id, channel.members);
-      }
-    });
-  }
-  
-  openMembersDialog(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
-    const dialogRef = this.dialog.open(MemberListDialogComponent, {
-      data: { channelId: channel.id, channelName: channel.name, members: channel.members }
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.members) {
-        channel.members = result.members; // Aktualisiere die Mitglieder des Channels
-  
-        // Setze die Mitglieder im ChannelService, um sie zu speichern
-        this.channelService.setMembers(channel.id, result.members);
-  
-        // Aktualisiere die lokale channels-Liste
-        this.channels = this.channels.map(ch => ch.id === channel.id ? { ...ch, members: result.members } : ch);
-      }
-    });
-  }
+
   
   openImageModal() {
     this.isImageModalOpen = true;

@@ -1,35 +1,179 @@
 <div class="entwickler-box">
   <div *ngIf="!isEditingChannel">
-    <div *ngFor="let channel of channels"  class="channel-container"  >
+    <div *ngFor="let channel of channels"  class="channel-container" >
       <!-- Channel Name -->
-      <div class="office-box"   (click)="openEditChannelDialog(channel)" >
-        <img src="assets/img/tag-black.png" alt="Tag Icon" />
-        <h1>{{ channel.name }}</h1>
-        <img class="arrow" src="assets/img/keyboard_arrow_down-1.png" />
+      <div class="office-box"    >
+
+        <div class="hover-box">
+           <img src="assets/img/tag-black.png" alt="Tag Icon" (click)="openEditChannelDialog(channel)"/>
+           <h1 (click)="openEditChannelDialog(channel)" >{{ channel.name }}  </h1>
+           <img class="arrow" src="assets/img/keyboard_arrow_down-1.png" (click)="openEditChannelDialog(channel)" />
+        </div>
       </div>
       <!-- Avatare der Mitglieder -->
+  
+
+    
      
-     
-      <ul class="avatar-list" *ngIf="isDesktop && channel.members && channel.members.length > 0" (click)="openMembersDialog(channel)">
-        <li *ngFor="let member of channel.members.slice(0,3)">
-          <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar">
-        </li>
-        <li *ngIf="channel.members.length > 3" class="member-counter" >
-          +{{ channel.members.length - 3 }}
-        </li>
-      </ul>
+<!-- 
+  1) DESKTOP-BLOCK
+  Zeigt Avatare + Overlay 
+-->
 
 
+<div  *ngIf="isDesktop"  class="avatar-box">
 
-      <!-- Desktop: -->
-<div class="static-member" *ngIf="isDesktop" (click)="openAddMembersDialog(channel)">
-  <img src="assets/img/member.png" />
+  
+ 
+  <div
+   
+    cdkOverlayOrigin
+    #desktopTrigger="cdkOverlayOrigin"
+    (click)="toggleOverlay()"
+  >
+    <!-- Zeige bis zu 3 Avatare -->
+    <ul class="avatar-list" *ngIf="selectedChannel?.members?.length">
+      <li *ngFor="let member of selectedChannel!.members.slice(0,3)">
+        <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar" />
+      </li>
+      <li *ngIf="selectedChannel!.members.length > 3" class="member-counter">
+        +{{ selectedChannel!.members.length - 3 }}
+      </li>
+    </ul>
+  </div>
+  
+
+  <!-- Overlay (MemberList) für Desktop -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="desktopTrigger"
+    [cdkConnectedOverlayOpen]="isOverlayOpen"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    (backdropClick)="closeOverlay()"
+    [cdkConnectedOverlayPositions]="[
+      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+      { originX: 'end',   originY: 'bottom', overlayX: 'end',   overlayY: 'top' }
+    ]"
+  >
+    <app-member-list-dialog
+      [channelId]="selectedChannel?.id ?? ''"
+      [members]="selectedChannel?.members ?? []"
+      (close)="closeOverlay()"
+      (openAddMembersOverlay)="toggleAddMembersOverlay()" 
+    ></app-member-list-dialog>
+  </ng-template>
+
+ 
+  <div
+    cdkOverlayOrigin
+    #desktopAddTrigger="cdkOverlayOrigin"
+    (click)="toggleAddMembersOverlay()"
+  >
+    <img src="assets/img/member.png" alt="Add Member (Desktop)" />
+  </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="desktopAddTrigger"
+    [cdkConnectedOverlayOpen]="isAddMembersOverlayOpen"
+   
+    [cdkConnectedOverlayHasBackdrop]="true"
+    ...
+  >
+    <app-add-members-dialog
+      [channelId]="selectedChannel?.id ?? ''"
+      [members]="selectedChannel?.members ?? []"
+      (close)="closeAddMembersOverlay()"
+    ></app-add-members-dialog>
+  </ng-template>
+  
+
 </div>
 
-<!-- Mobile: -->
-<div class="static-member" *ngIf="!isDesktop" (click)="openMembersDialog(channel)">
-  <img src="assets/img/member.png" />
-</div>
+
+<!-- 
+  2) MOBILE-BLOCK 
+  Nur *ngIf="!isDesktop"
+  Zeigt EINE Icon + 2 Overlays (MemberList und AddMembers) an derselben Stelle
+-->
+<ng-container *ngIf="!isDesktop">
+  
+  <!-- Gemeinsames Trigger-Element -->
+  <div
+    cdkOverlayOrigin
+    #mobileTrigger="cdkOverlayOrigin"
+    (click)="openMemberList()"
+  >
+    <img src="assets/img/member.png" alt="Member Icon (Mobile)" />
+  </div>
+
+  <!-- Overlay A: MemberListDialog -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="mobileTrigger"
+    [cdkConnectedOverlayOpen]="isMobileMemberListOpen"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    (backdropClick)="closeMemberList()"
+    [cdkConnectedOverlayPositions]="[
+      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+      { originX: 'end',   originY: 'bottom', overlayX: 'end',   overlayY: 'top' }
+    ]"
+  >
+    <app-member-list-dialog
+      [channelId]="selectedChannel?.id ?? ''"
+      [members]="selectedChannel?.members ?? []"
+
+      (close)="closeMemberList()"                 
+      (openAddMembersOverlay)="switchToAddMembers()" 
+    ></app-member-list-dialog>
+  </ng-template>
+
+  <!-- Overlay B: AddMembersDialog -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="mobileTrigger"
+    [cdkConnectedOverlayOpen]="isMobileAddOpen"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    (backdropClick)="closeAddMembers()"
+    [cdkConnectedOverlayPositions]="[
+      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+      { originX: 'end',   originY: 'bottom', overlayX: 'end',   overlayY: 'top' }
+    ]"
+  >
+    <app-add-members-dialog
+      [channelId]="selectedChannel?.id ?? ''"
+      [members]="selectedChannel?.members ?? []"
+      (close)="closeAddMembers()" 
+    ></app-add-members-dialog>
+  </ng-template>
+
+</ng-container>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
