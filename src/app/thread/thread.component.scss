@@ -140,6 +140,9 @@
       }
     }
       .sent-message-container {
+        position: relative;
+
+
         display: flex;
         justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
         //padding:25px;
@@ -158,6 +161,8 @@
             align-items: center;
   
             
+      position: absolute;
+      top: -20px; 
           }
       }
   
@@ -227,7 +232,7 @@
       border-radius: 25px 25px 0;
       border: 1px solid #ADB0D9;
       background: #fff;
-      left: 0;
+      //left: 0;
       top: 0;
       z-index: 3;
       display: none;
@@ -266,6 +271,9 @@
   
   
     .received-message-container {
+      position: relative;
+
+
       display: flex;
       justify-content: flex-start; // Empfangene Nachrichten links positionieren
       //margin-bottom: 15px;
@@ -282,6 +290,10 @@
         .emoji-box-received {
           display: flex;
           align-items: center;
+
+          position: absolute;
+      top: -20px;
+      right: 0;
         }
   
         p{
@@ -302,6 +314,17 @@
         position: relative;
         background-color: transparent;
         width:100%;
+
+         /* Nachrichteninhalt: Bild oder Text */
+      .message-content {
+        background-color: $middleblue;
+        padding: 15px;
+        border-radius: 0px 30px 30px 30px;
+        word-break: break-all;
+  
+  
+       
+      }
     
     
   
@@ -351,7 +374,7 @@
     .emoji-box {
       //position: absolute;
       //height: 46px;
-      padding: 3px 15px 3px 20px;
+      padding: 3px 13px 3px 13px;
       gap: 5px;
       border-radius: 25px 25px 0;
       border: 1px solid #ADB0D9;
@@ -381,7 +404,7 @@
   
         img {
           width: 40px; /* Bild bleibt konstant */
-          height: 40px;
+         // height: 40px;
           object-fit: cover;
           border-radius: 50%;
         }
@@ -417,8 +440,9 @@
       .message-content {
         background-color: $middleblue;
         padding: 15px;
-        border-radius: 0px 30px 30px 30px;
-        word-wrap: break-word;
+      
+        border-radius: 30px 0px 30px 30px;
+        word-break: break-all;
   
   
         .sent-message{
@@ -512,7 +536,7 @@
     .chat-input {
       display: flex;
       align-items: center;
-      padding:0px 45px;
+      padding:0px 20px;
   
       .textarea-wrapper {
         position: relative;  
@@ -877,8 +901,8 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     margin-top: 5px;
-    left:260px;
-    top:-30px;
+    left:10px;
+    top:50px;
     //width:308px;
     //text-align: center;
    
@@ -1371,14 +1395,26 @@ nav {
 
 
 
-
-
-
-
 @media(max-width: 1278px){
   .channel-input-box{
     height:calc(100vh - 11.5rem ) !important;
   }
+
+   
+  .channel-box .message-list .emoji-box-received {
+    padding: 3px 15px 3px 20px !important;
+    position: absolute;
+    transform: none; 
+  
+   // left: 270px !important;
+    top: -20px;
+  }
+
+
+
+
+
+
 }
 
 

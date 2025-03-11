@@ -456,11 +456,12 @@
     <div class="chat-input">
       <div class="textarea-wrapper">
         
-    <textarea 
+    <textarea
     placeholder="Nachricht im Thread {{ recipientName  }}" 
     [(ngModel)]="privateMessage" 
     #textArea 
-    (keydown)="handleKeyDown($event, textArea)">
+    (keydown)="handleKeyDown($event, textArea)"    cdkOverlayOrigin
+    #userTrigger="cdkOverlayOrigin" >
   </textarea>
         <div class="image-preview"  *ngIf="imageUrl" >
           <img class="image-border" [src]="imageUrl" alt="Hochgeladenes Bild" (click)="openImageModal()" />
@@ -481,10 +482,67 @@
               
               <img class="input-image" src="assets/img/emoji.png" alt="Emoji hinzufügen" />
             </button>
-            <button (click)="addAtSymbolAndOpenDialog()" class="at-button">
+
+
+            <button  class="at-button"  (click)="toggleUserDropdown()" >
               <img class="input-image" src="assets/img/qr.png" alt="@ hinzufügen" />
             </button>
           </div>
+
+
+          <!-- Das Dropdown mit cdkConnectedOverlay -->
+<ng-template
+cdkConnectedOverlay
+[cdkConnectedOverlayOrigin]="userTrigger"
+[cdkConnectedOverlayOpen]="showUserDropdown"
+[cdkConnectedOverlayHasBackdrop]="true"
+(backdropClick)="showUserDropdown = false"
+
+[cdkConnectedOverlayPositions]="[
+            
+{
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetX: -0 
+    }
+
+
+]"
+
+
+>
+<ul class="my-user-dropdown pm-scrollable" >
+  <li
+      *ngFor="let member of allUsers"
+      (click)="addUserSymbol(member)"
+    >
+      <!-- Avatar -->
+      <img
+        [src]="member.avatarUrl || 'assets/img/avatar.png'"
+        alt="Avatar"
+        class="avatar"
+      />
+      <!-- Name oder E-Mail, je nach Bedarf -->
+      {{ member.name }}
+    </li>
+
+</ul>
+</ng-template>
+
+
+
+
+
+
+
+
+
+
+
+
+
   
           <div class="send-button">
             <button (click)="sendThreadMessage(privateMessage, imageUrl, textArea)">

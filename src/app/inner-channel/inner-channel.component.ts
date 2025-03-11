@@ -11,7 +11,7 @@ import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-inner-channel',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, ChannelDialogComponent],
+  imports: [CommonModule, MatDialogModule],
   templateUrl: './inner-channel.component.html',
   styleUrls: ['./inner-channel.component.scss']  // Korrektur: "styleUrls" im Plural
 })
@@ -26,13 +26,6 @@ export class InnerChannelComponent {
 
   constructor(public dialog: MatDialog, private channelService: ChannelService, private userService: UserService,private cdr: ChangeDetectorRef) {}
 
- 
-  
-
-
-
-  
-
   ngOnInit(): void {
     this.channelService.loadChannels();
     // Abonniere die Channels, um sie zu aktualisieren
@@ -46,36 +39,64 @@ export class InnerChannelComponent {
   }
   
 
-
+  async createChannel(name: string, selectedMembers: any[]): Promise<void> {
+    try {
+      // 1) Userdaten laden (aktuell eingeloggter User)
+      const userData = await this.userService.getCurrentUserData();
+      if (!userData) {
+        console.error('Kein User eingeloggt oder Daten nicht gefunden.');
+        return;
+      }
   
-  createChannel(name: string, members: any[]): void {
-    this.userService.getCurrentUserData().then((userData) => {
-      const currentUserName = userData?.name || 'Unbekannt';
-      const exists = this.entwicklerTeams.some(channel => channel.name.toLowerCase() === name.toLowerCase());
-
+      // Wichtige Infos
+      const currentUserId = userData.uid;        // UID des aktuellen Nutzers
+      const currentUserName = userData.name || 'Unbekannt';
+  
+      // 2) Prüfe, ob Channel-Name schon existiert (indem du in this.entwicklerTeams suchst)
+      const exists = this.entwicklerTeams.some(channel =>
+        channel.name.toLowerCase() === name.toLowerCase()
+      );
       if (exists) {
         this.channelNameExists = true;
         console.error(`Channel "${name}" existiert bereits.`);
-      } else {
-        const newChannel = {
-          id: Math.random().toString(36).substring(2, 15),
-          name,
-          members,
-          createdBy: currentUserName
-        };
-
-        this.entwicklerTeams.push(newChannel);
-        this.channelService.addChannel(newChannel);
-        this.channelService.changeChannel(newChannel);
-        this.channelNameExists = false;
+        return;
       }
-    }).catch((error) => {
-      console.error('Fehler beim Abrufen des Benutzers:', error);
-    });
-  }
-
-
+      this.channelNameExists = false; // Reset Flag
   
+      // 3) Sicherstellen, dass der aktuelle User im Array von "selectedMembers" enthalten ist
+      if (!selectedMembers.some((m: any) => m.uid === currentUserId)) {
+        selectedMembers.push({
+          uid: currentUserId,
+          name: currentUserName,
+          // avatarUrl: userData.avatarUrl ? userData.avatarUrl : 'assets/img/default.png',
+          // isOnline: userData.isOnline,  // falls du so was hast
+        });
+      }
+  
+      // 4) Channel-Objekt erstellen
+      const newChannel = {
+        // Falls du eine echte Firestore-ID brauchst, 
+        // überlässt du das `id: ...` dem Service (oder setz testweise eine pseudo-ID):
+        id: Math.random().toString(36).substring(2, 15),
+        name,
+        members: selectedMembers,
+        createdBy: currentUserName,
+      };
+  
+      // 5) Direkt in der lokalen Liste einfügen (damit es sofort sichtbar ist)
+      this.entwicklerTeams.push(newChannel);
+  
+      // 6) ChannelService aufrufen, um den Channel in Firestore zu speichern
+      await this.channelService.addChannel(newChannel);
+  
+      // 7) Optional: Direkt als aktuellen Channel setzen
+      this.channelService.changeChannel(newChannel);
+  
+      console.log('Neuer Channel erstellt und im Service gespeichert:', newChannel);
+    } catch (error) {
+      console.error('Fehler beim Erstellen des Channels:', error);
+    }
+  }
 
   selectChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
     // Wähle den Kanal aus und speichere ihn im Zustand
@@ -84,9 +105,6 @@ export class InnerChannelComponent {
     this.channelSelected.emit(channel);
   }
 
- 
-  
-
   openDialog(): void {
     const dialogRef = this.dialog.open(ChannelDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
@@ -94,7 +112,7 @@ export class InnerChannelComponent {
         console.log('InnerChannelComponent: Channel erstellt:', result.channelName);
         this.createChannel(result.channelName, result.selectedMembers);
       } else {
-        console.error('Kein Channel erstellt');
+        //console.error('Kein Channel erstellt');
       }
     });
   }
@@ -123,9 +141,4 @@ export class InnerChannelComponent {
       console.error('Benutzer-ID konnte nicht abgerufen werden.');
     }
   }
-  
-
-
-
-
 }

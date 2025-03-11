@@ -13,7 +13,7 @@ import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Firestore, collection, addDoc,setDoc,doc } from '@angular/fire/firestore';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-import { PrivacyComponent } from '../privacy/privacy.component';
+
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -24,7 +24,6 @@ import { RouterModule } from '@angular/router';
     ReactiveFormsModule,
     HeaderComponent,
     FooterComponent,
-    PrivacyComponent,
     RouterModule,
   ],
   templateUrl: './signup.component.html',

@@ -205,11 +205,10 @@
         width: 100%;
         margin-top: 40px;
       }
-
-      .name-icon,
+     
       .email-icon,
+      .name-icon,
       .passwort-icon {
-        background-image: url("/assets/img/mail.png ");
         background-repeat: no-repeat;
         background-position: 15px center;
         background-size: 24px 24px;
@@ -219,19 +218,10 @@
       }
 
       .filled {
-        &.name-icon {
-          background-image: url("/assets/img/person-black.png");
-        }
-        &.email-icon {
-          background-image: url("/assets/img/black-mail.png");
-        }
+       
         &.passwort-icon {
           background-image: url("/assets/img/black-passwort.png");
         }
-      }
-
-      .name-icon {
-        background-image: url("/assets/img/person.png");
       }
 
       .passwort-icon {
@@ -241,10 +231,66 @@
   }
 }
 
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  //margin: 20px 0;
+
+  img {
+    position: absolute;
+    left: 15px;
+    width: 24px;
+    height: 24px;
+  }
+
+  input, button {
+    padding-left: 50px; 
+    height: 50px;
+    border-radius: 100px;
+    border: 1px solid #ccc;
+    width: 100%;
+    // dein restliches Styling ...
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .button-anmelden {
   width: 107px;
   font-size: 16px;
 }
+
+@media (max-width: 1278px) {
+  
+
+  .registration-ok{
+    max-width:323px !important;
+    width:100%;
+    gap:10px;
+  }
+
+}
+
 
 @media (max-width: 780px) {
   .container {

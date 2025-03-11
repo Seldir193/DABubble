@@ -1,8 +1,50 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { Component, Input, Output, EventEmitter, Optional, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
-
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChannelService } from '../channel.service';
+
+/**
+ * Falls du Material-Dialog-Daten übergeben willst,
+ * definieren wir ein optionales Interface:
+ */
+export interface MemberListDialogData {
+  channelId?: string;
+  members?: any[];
+}
 
 @Component({
   selector: 'app-member-list-dialog',
@@ -11,25 +53,46 @@ import { ChannelService } from '../channel.service';
   templateUrl: './member-list-dialog.component.html',
   styleUrls: ['./member-list-dialog.component.scss']
 })
-export class MemberListDialogComponent {
-  @Input() channelId!: string;     // Falls du channelId brauchst
-  @Input() members: any[] = [];    // Die anzuzeigenden Mitglieder
+export class MemberListDialogComponent implements OnInit {
 
-  @Output() close = new EventEmitter<void>();                // Schließen des Dialogs
-  @Output() openAddMembersOverlay = new EventEmitter<void>(); // Klick auf "Mitglieder hinzufügen"
+  // === cdkOverlay Inputs ===
+  @Input() channelId!: string;
+  @Input() members: any[] = [];
 
-  constructor(private channelService: ChannelService) {}
+  // === cdkOverlay Outputs ===
+  @Output() close = new EventEmitter<void>();
+  @Output() openAddMembersOverlay = new EventEmitter<void>();
+  @Output() openPrivateChat = new EventEmitter<{ id: string; name: string }>();
+  @Output() openProfileRequested = new EventEmitter<any>(); 
 
-  // Methode, um ein Mitglied zu entfernen
+  constructor(
+    private channelService: ChannelService,
+
+    // Für Material-Dialog:
+    @Optional() public dialogRef?: MatDialogRef<MemberListDialogComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: MemberListDialogData
+  ) {}
+
+  ngOnInit(): void {
+    // (1) Falls wir Material-Dialog-Daten übergeben haben => channelId, members ...
+    if (this.data) {
+      if (this.data.channelId) {
+        this.channelId = this.data.channelId;
+      }
+      if (this.data.members) {
+        this.members = this.data.members;
+      }
+    }
+  }
+
+  // ========== Remove Member ==========
   removeMember(member: any): void {
     this.members = this.members.filter(m => m !== member);
     this.updateChannelMembers();
   }
 
-  // Aktualisiert die Mitglieder im ChannelService
   updateChannelMembers(): void {
     if (!this.channelId) return;
-
     this.channelService.setMembers(this.channelId, this.members)
       .then(() => {
         console.log('Mitglieder erfolgreich aktualisiert:', this.channelId);
@@ -39,13 +102,71 @@ export class MemberListDialogComponent {
       });
   }
 
-  // Wird aufgerufen, wenn der User auf das "X" klickt
+  // ========== Schließen ==========
   onCancel(): void {
-    this.close.emit();
+    // Material-Dialog => dialogRef.close()
+    // cdkOverlay => (close).emit()
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    } else {
+      this.close.emit();
+    }
   }
 
-  openAddMembersOverlayMethod(): void {
-    this.openAddMembersOverlay.emit();
+
+
+  // ========== Private Chat ==========
+  startPrivateChat(member: any) {
+    const payload = { id: member.uid, name: member.name };
+    if (this.dialogRef) {
+      // Material => .close({ openChatWith: payload })
+      this.dialogRef.close({ openChatWith: payload });
+    } else {
+      // cdkOverlay => emit
+      this.openPrivateChat.emit(payload);
+      this.close.emit();
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  openProfileDialog(member: any) {
+    if (this.dialogRef) {
+      // Mobile-Fall => Material-Dialog
+      this.dialogRef.close({ openProfile: member });
+    } else {
+      // Desktop-Fall => cdkOverlay
+      this.openProfileRequested.emit(member);
+      this.close.emit();
+    }
   }
   
+  openAddMembersOverlayMethod() {
+    if (this.dialogRef) {
+      // Mobile-Fall => Material-Dialog
+      this.dialogRef.close({ addMembers: true });
+    } else {
+      // Desktop-Fall => cdkOverlay
+      this.openAddMembersOverlay.emit();
+    }
+  }
+  
+
+
+
+
+
 }

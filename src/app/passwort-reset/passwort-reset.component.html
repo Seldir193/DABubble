@@ -15,7 +15,14 @@
       </div>
 
       <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()">
-        <div class="input-container">
+        <div class="input-container icon-wrapper " [ngClass]="{ 'filled': filledStates['emailFilled'] }" >
+          <img 
+          [src]="filledStates['emailFilled'] 
+                 ? 'assets/img/black-mail.png' 
+                 : 'assets/img/mail.png'" 
+          alt="Email Icon"
+        >
+
           <input
             [ngClass]="{
               'email-icon': true,

@@ -184,23 +184,43 @@
       }
 
       .email-icon {
-        background-image: url("/assets/img/mail.png ");
-        background-repeat: no-repeat;
-        background-position: 15px center;
-        background-size: 24px 24px;
-        color: black;
-        transition: background-image 0.3s ease;
+       
         padding-left: 70px;
       }
 
-      .filled {
-        &.email-icon {
-          background-image: url("/assets/img/black-mail.png");
-        }
-      }
+      
     }
   }
 }
+
+
+
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  //margin: 20px 0;
+
+  img {
+    position: absolute;
+    left: 15px;
+    width: 24px;
+    height: 24px;
+  }
+
+  input, button {
+    padding-left: 50px; 
+    height: 50px;
+    border-radius: 100px;
+    border: 1px solid #ccc;
+    width: 100%;
+    // dein restliches Styling ...
+  }
+}
+
+
+
 
 .button-anmelden {
   width: 170px;
@@ -211,6 +231,18 @@
 .registration-ok {
   max-width: 441px;
   gap:28px;
+}
+
+
+@media (max-width: 1278px) {
+  
+
+  .registration-ok{
+    max-width:269px !important;
+    width:100%;
+    gap:18px;
+  }
+
 }
 
 @media (max-width: 780px) {

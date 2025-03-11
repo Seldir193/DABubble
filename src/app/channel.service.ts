@@ -155,16 +155,12 @@ async setMembers(channelId: string, members: any[]): Promise<void> {
 
       console.log(`Mitglieder für Channel "${channelId}" erfolgreich aktualisiert (inkl. membersUid).`);
     } else {
-      console.error('Channel nicht gefunden, Mitglieder konnten nicht aktualisiert werden.');
+      
     }
   } catch (error) {
     console.error('Fehler beim Aktualisieren der Mitglieder:', error);
   }
 }
-
-
-
-
 
 
 // Lade alle Channels von Firestore
@@ -426,4 +422,29 @@ getAllMessagesLive(callback: (messages: any[]) => void): () => void {
 
   return unsubscribe;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// channel.service.ts
+async getAllChannelsOnce(): Promise<any[]> {
+  const channelsCollection = collection(this.firestore, 'channels');
+  const querySnapshot = await getDocs(channelsCollection);
+  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
 }

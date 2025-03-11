@@ -9,12 +9,12 @@ import { MessageService } from '../message.service';
 import { ChangeDetectorRef } from '@angular/core'; 
 
 import { Message} from '../message.models';
-
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-thread-channel',
   standalone: true,
-  imports: [CommonModule, FormsModule, PickerModule],
+  imports: [CommonModule, FormsModule, PickerModule, OverlayModule],
   templateUrl: './thread-channel.component.html',
   styleUrls: ['./thread-channel.component.scss'],
 })
@@ -62,6 +62,12 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
   largeImageUrl: string | null = null;
 
   isDesktop = false;
+
+  
+  allUsers: any[] = [];
+
+  // Steuert Overlay
+  showUserDropdown: boolean = false;
 
  @Input() selectedThreadChannel: any; // 🔥 Jetzt existiert es als Input
 
@@ -819,11 +825,34 @@ sendMessage(): void {
   this.channelMessage = ''; // Zurücksetzen des Eingabefelds
 }
 
-saveMessage(msg: any): void {
-  msg.isEditing = false; // Beende den Bearbeitungsmodus
-  console.log('Nachricht gespeichert:', msg);
-}
 
+
+async saveMessage(msg: any): Promise<void> {
+  // Überprüfen, ob die Thread-ID und die Nachricht-ID vorhanden sind
+  if (!this.parentMessage?.id || !msg.id) {
+    console.error('❌ Thread ID oder Nachricht ID fehlt.');
+    return;
+  }
+
+  try {
+    // Nachricht in Firestore aktualisieren
+    await this.messageService.updateMessage(msg.id, {
+      content: {
+        text: msg.content.text,
+        // Behalte vorhandene Felder wie `image` und `emojis` bei
+        ...(msg.content.image && { image: msg.content.image }),
+        ...(msg.content.emojis && { emojis: msg.content.emojis }),
+      },
+    });
+
+    console.log('✅ Nachricht erfolgreich gespeichert.');
+
+    // Bearbeitungsmodus deaktivieren
+    msg.isEditing = false;
+  } catch (error) {
+    console.error('❌ Fehler beim Speichern der Nachricht:', error);
+  }
+}
 cancelEditing(msg: any): void {
   msg.isEditing = false; // Setze den Bearbeitungsmodus auf `false`
   if (this.originalMessage) {
@@ -869,13 +898,48 @@ closeImageModal(): void {
 this.isImageModalOpen = false;
 }
 
-addAtSymbolAndOpenDialog(): void {
-this.channelMessage += '@'; // Füge das "@"-Symbol hinzu
-console.log('Dialog zur Auswahl eines Mitglieds geöffnet');
+
+
+
+
+
+
+
+
+toggleUserDropdown(): void {
+  // Wenn wir das erste Mal öffnen, Nutzer laden
+  if (!this.showUserDropdown) {
+    this.loadAllUsers();
+  }
+  this.showUserDropdown = !this.showUserDropdown;
+}
+
+ // Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
+ loadAllUsers(): void {
+  this.userService.getAllUsers()
+    .then(users => {
+      this.allUsers = users.map(u => ({
+        id: u.id,
+        //email: u.email,
+        name: u.name,
+        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
+      }));
+    })
+    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
 }
 
 
 
+  // Beim Klick auf einen Nutzer im Dropdown
+  addUserSymbol(member: any) {
+    // Füge in privateMessage ein @Name ein
+    // => Oder user.email, je nachdem was du brauchst
+    //this.privateMessage += ` @${member.name} `;
+
+    this.channelMessage  += ` @${member.name} `; 
+    // Overlay schließen
+    this.showUserDropdown = false;
+  }
 
 
 

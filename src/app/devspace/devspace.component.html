@@ -8,7 +8,8 @@
       placeholder="Gehe zu..." 
       class="search-input"
       [(ngModel)]="searchQuery"
-      (input)="onSearchInput()"
+      
+      (keyup.enter)="onSearchEnter()"
     >
     <img src="assets/img/search.png" class="search-icon" alt="Suche">
   </div>

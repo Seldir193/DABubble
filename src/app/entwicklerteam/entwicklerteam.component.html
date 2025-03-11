@@ -13,35 +13,29 @@
       <!-- Avatare der Mitglieder -->
   
 
-    
-     
-<!-- 
-  1) DESKTOP-BLOCK
-  Zeigt Avatare + Overlay 
--->
 
 
-<div  *ngIf="isDesktop"  class="avatar-box">
+      <!-- A) DESKTOP-BLOCK -->
+<!-- Zeigt Avatare + cdkOverlay (MemberList, AddMembers) -->
 
-  
- 
+<div *ngIf="isDesktop" class="avatar-box">
+
+  <!-- Icon -> toggelt MemberList-Overlay -->
   <div
-   
     cdkOverlayOrigin
     #desktopTrigger="cdkOverlayOrigin"
     (click)="toggleOverlay()"
   >
     <!-- Zeige bis zu 3 Avatare -->
     <ul class="avatar-list" *ngIf="selectedChannel?.members?.length">
-      <li *ngFor="let member of selectedChannel!.members.slice(0,3)">
-        <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar" />
+      <li *ngFor="let member of selectedChannel!.members.slice(0, 3)">
+        <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar" />
       </li>
       <li *ngIf="selectedChannel!.members.length > 3" class="member-counter">
         +{{ selectedChannel!.members.length - 3 }}
       </li>
     </ul>
   </div>
-  
 
   <!-- Overlay (MemberList) für Desktop -->
   <ng-template
@@ -58,12 +52,15 @@
     <app-member-list-dialog
       [channelId]="selectedChannel?.id ?? ''"
       [members]="selectedChannel?.members ?? []"
+
       (close)="closeOverlay()"
-      (openAddMembersOverlay)="toggleAddMembersOverlay()" 
+      (openAddMembersOverlay)="toggleAddMembersOverlay()"
+      (openPrivateChat)="onOpenPrivateChat($event)"
+      (openProfileRequested)="onOpenProfile($event)"
     ></app-member-list-dialog>
   </ng-template>
 
- 
+  <!-- 2) Add-Members-Overlay (Desktop) -->
   <div
     cdkOverlayOrigin
     #desktopAddTrigger="cdkOverlayOrigin"
@@ -76,9 +73,12 @@
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="desktopAddTrigger"
     [cdkConnectedOverlayOpen]="isAddMembersOverlayOpen"
-   
     [cdkConnectedOverlayHasBackdrop]="true"
-    ...
+    (backdropClick)="closeAddMembersOverlay()"
+    [cdkConnectedOverlayPositions]="[
+      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+      { originX: 'end',   originY: 'bottom', overlayX: 'end',   overlayY: 'top' }
+    ]"
   >
     <app-add-members-dialog
       [channelId]="selectedChannel?.id ?? ''"
@@ -86,68 +86,23 @@
       (close)="closeAddMembersOverlay()"
     ></app-add-members-dialog>
   </ng-template>
-  
 
 </div>
 
 
-<!-- 
-  2) MOBILE-BLOCK 
-  Nur *ngIf="!isDesktop"
-  Zeigt EINE Icon + 2 Overlays (MemberList und AddMembers) an derselben Stelle
--->
+<!-- B) MOBILE-BLOCK -->
+<!-- Keine Overlays mehr – statt dessen ein Klick, der Material-Dialog öffnet -->
+
 <ng-container *ngIf="!isDesktop">
-  
-  <!-- Gemeinsames Trigger-Element -->
-  <div
-    cdkOverlayOrigin
-    #mobileTrigger="cdkOverlayOrigin"
-    (click)="openMemberList()"
-  >
+  <!-- Nur ein Icon, das die MemberListDialog im Material-Dialog öffnet -->
+  <div (click)="openMemberListDialogMobile()">
     <img src="assets/img/member.png" alt="Member Icon (Mobile)" />
   </div>
-
-  <!-- Overlay A: MemberListDialog -->
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="mobileTrigger"
-    [cdkConnectedOverlayOpen]="isMobileMemberListOpen"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    (backdropClick)="closeMemberList()"
-    [cdkConnectedOverlayPositions]="[
-      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
-      { originX: 'end',   originY: 'bottom', overlayX: 'end',   overlayY: 'top' }
-    ]"
-  >
-    <app-member-list-dialog
-      [channelId]="selectedChannel?.id ?? ''"
-      [members]="selectedChannel?.members ?? []"
-
-      (close)="closeMemberList()"                 
-      (openAddMembersOverlay)="switchToAddMembers()" 
-    ></app-member-list-dialog>
-  </ng-template>
-
-  <!-- Overlay B: AddMembersDialog -->
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="mobileTrigger"
-    [cdkConnectedOverlayOpen]="isMobileAddOpen"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    (backdropClick)="closeAddMembers()"
-    [cdkConnectedOverlayPositions]="[
-      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
-      { originX: 'end',   originY: 'bottom', overlayX: 'end',   overlayY: 'top' }
-    ]"
-  >
-    <app-add-members-dialog
-      [channelId]="selectedChannel?.id ?? ''"
-      [members]="selectedChannel?.members ?? []"
-      (close)="closeAddMembers()" 
-    ></app-add-members-dialog>
-  </ng-template>
-
 </ng-container>
+
+
+
+
 
 
 
@@ -420,9 +375,11 @@
                
                 <div class="reply-count" *ngIf="msg.replyCount !== undefined && msg.replyCount > 0" (click)="openThreadEvent(msg)">
                   {{ msg.replyCount }} Antworten
+
+
                   <span class="reply-time">
-                   
-                    Letzte Antwort:  {{ convertFirestoreTimestampToDate(msg.lastReplyTime) | date:'HH:mm' }} Uhr
+                    <span class="letzte-antwort-label">Letzte Antwort:</span>
+                     {{ convertFirestoreTimestampToDate(msg.lastReplyTime) | date:'HH:mm' }} Uhr
 
 
                   </span>
@@ -772,8 +729,8 @@ class="emoji-message-container"
       <div class="reply-count" *ngIf="msg.replyCount !== undefined && msg.replyCount > 0" (click)="openThreadEvent(msg)">
         {{ msg.replyCount }} Antworten
         <span class="reply-time">
-         
-          Letzte Antwort:  {{ convertFirestoreTimestampToDate(msg.lastReplyTime) | date:'HH:mm' }} Uhr
+          <span class="letzte-antwort-label">Letzte Antwort:</span>
+           {{ convertFirestoreTimestampToDate(msg.lastReplyTime) | date:'HH:mm' }} Uhr
 
 
         </span>
@@ -928,6 +885,14 @@ class="emoji-message-container"
 
 
             </div>
+
+
+
+    
+    
+
+
+
           </div>
         </div>
       </div>

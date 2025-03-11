@@ -18,7 +18,11 @@
      <span>Workspace-Menü schließen <img src="assets/img/Show menu.png" alt="Menu"></span>
   </div>
 
-  <div class="container"  [ngClass]="{'show-mobile': currentMobileView === 'container'}"  *ngIf="isWorkspaceVisible">
+
+
+  <div class="container"  [ngClass]="{'show-mobile': currentMobileView === 'container'}"  *ngIf="isWorkspaceVisible"  >
+
+  
     <app-devspace 
     #devspaceRef
   (searchTriggered)="openSearchField($event)"
@@ -61,13 +65,16 @@
   <!-- =========================
        1) ENTWICKLERTEAM (Kanal-Ansicht)
       ========================= -->
-  <div class="team-container" [ngClass]="{'show-mobile': currentMobileView === 'team'}"
+  <div class="team-container scrollable-area " [ngClass]="{'show-mobile': currentMobileView === 'team'}"
        *ngIf="selectedChannel && !isSearchActive"  >
     <!-- Nur anzeigen, wenn KEIN private Chat aktiv ist -->
     <div *ngIf="!isPrivateChat && selectedChannel">
       <app-entwicklerteam
         (channelLeft)="onChannelSelected(null)"
         [selectedChannel]="selectedChannel"
+
+
+       (openPrivateChatFromEntwicklerteam)="onOpenPrivateChat($event)"
        
         (openThread)="openThreadChannel($event)">
       </app-entwicklerteam>
@@ -77,23 +84,31 @@
   <!-- =========================
        2) PRIVATER CHAT
       ========================= -->
-  <div class="privat-chat-container" [ngClass]="{'show-mobile': currentMobileView === 'private'}"
+  <div class="privat-chat-container scrollable-area " [ngClass]="{'show-mobile': currentMobileView === 'private'}"
        *ngIf="isPrivateChat && selectedMember && !isSearchActive">
     <app-private-messages
       [recipientId]="selectedMember.id"
       [recipientName]="selectedMember.name"
       [threadData]="selectedThread"
-      (openThread)="openThread($event)">
-
+      (openThread)="openThread($event)"
       
+      >
     </app-private-messages>
   </div>
+
+
+
+
+
+
+
+  
 
   <!-- =========================
        3) THREAD-CHANNEL ANSICHT
       ========================= -->
-  <div *ngIf="selectedThreadChannel"
-       class="thread-area" 
+  <div *ngIf="selectedThreadChannel "
+       class="thread-area scrollable-area " 
        [ngClass]="{'thread-activ': isThreadChannelFromSearch , 'show-mobile': currentMobileView === 'threadChannel'   }">
 
 
@@ -109,8 +124,9 @@
   <!-- =========================
        4) THREAD ANSICHT
       ========================= -->
-  <div *ngIf="selectedThread"
-       [ngClass]="{'thread-area': !isThreadFromSearch, 'thread-activ': isThreadFromSearch , 'show-mobile': currentMobileView === 'thread'   }" >
+  <div *ngIf="selectedThread "
+       class="thread-area scrollable-area " 
+       [ngClass]="{'thread-activ': isThreadFromSearch , 'show-mobile': currentMobileView === 'thread'   }">
     <app-thread
       [parentMessage]="selectedThread"
       [recipientName]="selectedThread.recipientName || selectedMember?.name || 'Unbekannt'"
@@ -129,6 +145,9 @@
       (memberSelected)="handleMemberSelection($event)">
     </app-search-field>
   </div>
+
+
+
 
 
   <!-- WELCOME-SCREEN -->

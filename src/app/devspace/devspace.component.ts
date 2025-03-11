@@ -180,9 +180,59 @@ ngOnInit() {
  
   
 
+
+
+
+
+
+
+
   
-  onSearchInput(): void {
-    if (this.searchQuery.trim().length < 3) {
+
+
+
+
+  onSearchEnter(): void {
+    const trimmedQuery = this.searchQuery.trim();
+  
+    // 1) Wenn genau "@", lade alle Benutzer
+    if (trimmedQuery === '@') {
+      console.log("👥 Lade alle Benutzer, da nur '@' eingegeben wurde.");
+      this.userService.getAllUsers().then(users => {
+        // Mappe die Users auf das Format, das dein Dialog braucht
+        const allUsersResults = users.map(u => ({
+          id: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
+          isOnline: u.isOnline ?? false,
+          type: 'user'
+        }));
+        // Dialog öffnen
+        this.openSearchDialog(allUsersResults, 'user');
+      }).catch(error => {
+        console.error("❌ Fehler beim Laden aller Benutzer:", error);
+      });
+      return; // WICHTIG: Brich hier ab, damit deine "normale" Suche nicht mehr ausgeführt wird.
+    }
+  
+    // 2) Wenn genau "#", lade alle Channels
+    if (trimmedQuery === '#') {
+      console.log("📡 Lade alle Channels, da nur '#' eingegeben wurde.");
+      this.channelService.getAllChannelsOnce().then(channels => {
+        const allChannelResults = channels.map(ch => ({
+          id: ch.id,
+          name: ch.name,
+          type: 'channel'
+        }));
+        this.openSearchDialog(allChannelResults, 'channel');
+      }).catch(error => {
+        console.error("❌ Fehler beim Laden aller Channels:", error);
+      });
+      return;
+    }
+  
+    // 3) Deine bestehende Logik für Eingaben ab 3 Zeichen
+    if (trimmedQuery.length < 3) {
       this.filteredChannels = [];
       this.filteredMembers = [];
       this.noResultsFound = false;
@@ -196,23 +246,30 @@ ngOnInit() {
   
     console.log("🔍 Starte parallele Suche für:", this.searchQuery);
   
-    // Paralleler Abruf: Channels, Benutzer, private, thread, thread-channel
+    // Parallele Abfragen:
     Promise.all([
-      this.channelService.getChannelsByName(this.searchQuery),
-      this.userService.getUsersByFirstLetter(this.searchQuery),
-      this.messageService.getMessagesOnce('private'),
-      this.messageService.getMessagesOnce('thread'),
-      this.messageService.getMessagesOnce('thread-channel'), 
-    ]).then(([channels, users, privateMessages, threadMessages, threadChannelMessages]) => {
-      
+      this.channelService.getChannelsByName(this.searchQuery),   // Kanäle nach Name
+      this.userService.getUsersByFirstLetter(this.searchQuery),  // Benutzer nach Name
+      this.messageService.getMessagesOnce('private'),            // Private Nachrichten
+      this.messageService.getMessagesOnce('thread'),             // Thread-Nachrichten
+      this.messageService.getMessagesOnce('thread-channel'),     // Thread-Channel-Nachrichten
+      this.messageService.getChannelMessagesOnce()               // NEU: Kanalnachrichten (Einmal-Abfrage)
+    ])
+    .then(([channels, users, privateMessages, threadMessages, threadChannelMsgs, channelMsgs]) => {
+  
+      // ---------------------------
       // 1) Channels
+      // ---------------------------
       this.filteredChannels = channels.map(channel => ({
         id: channel.id,
         name: channel.name,
+        description: channel.description,
         type: 'channel'
       }));
   
-      // 2) Benutzer
+      // ---------------------------
+      // 2) Benutzer (Members)
+      // ---------------------------
       this.filteredMembers = users.map(user => ({
         id: user.id || user.uid,
         name: user.name,
@@ -221,92 +278,122 @@ ngOnInit() {
         type: 'user'
       }));
   
-      // Firestore-Live-Abfrage aller messages (Kanalnachrichten)
-      this.channelService.getAllMessagesLive((messages) => {
-        // (a) Gefilterte Kanalnachrichten
-        const filteredChannelMessages = messages
-          .filter(msg => msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase()))
-          .map(msg => ({
-            id: msg.id,
-            text: msg.content.text,
-            timestamp: msg.timestamp,
-            type: 'message',
-            channelId: msg.channelId || null,
-            senderId: msg.senderId || null
-          }));
+      // ---------------------------
+      // 3) Private Nachrichten
+      // ---------------------------
+      const filteredPrivateMessages = privateMessages
+        .filter(msg =>
+          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        .map(msg => ({
+          id: msg.id,
+          text: msg.content?.text || '⚠️ Kein Text',
+          timestamp: msg.timestamp,
+          type: 'private-message',
+          senderId: msg.senderId,
+          recipientId: msg.recipientId,
+          conversationId: msg.conversationId || null
+        }));
   
-        // (b) Gefilterte privateMessages (bereits von this.messageService)
-        const filteredPrivateMessages = privateMessages
-          .filter(msg => msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase()))
-          .map(msg => ({
-            id: msg.id || null,
-            text: msg.content?.text || '⚠️ Kein Text',
-            timestamp: msg.timestamp,
-            type: 'private-message',
-            senderId: msg.senderId,
-            recipientId: msg.recipientId,
-            conversationId: msg.conversationId || null
-          }));
+      // ---------------------------
+      // 4) Thread-Nachrichten
+      // ---------------------------
+      const filteredThreadMessages = threadMessages
+        .filter(msg =>
+          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        .map(msg => ({
+          id: msg.id,
+          text: msg.content?.text || '',
+          timestamp: msg.timestamp,
+          type: 'thread',
+          threadId: msg.threadId || msg.parentId || msg.id,
+          parentId: msg.parentId ?? msg.threadId ?? msg.id,
+          senderId: msg.senderId,
+          senderName: msg.senderName || "❌ Unbekannt"
+        }));
   
-        // (c) Gefilterte ThreadMessages
-        const filteredThreadMessages = threadMessages
-          .filter(msg => msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase()))
-          .map(msg => ({
-            id: msg.id,
-            text: msg.content?.text || '',
-            timestamp: msg.timestamp,
-            type: 'thread',
-            // Wichtig: "threadId" = msg.threadId
-            // Fallback: parentId oder msg.id
-            threadId: msg.threadId || msg.parentId || msg.id,
-            parentId: msg.parentId ?? msg.threadId ?? msg.id,
-            senderId: msg.senderId,
-            senderName: msg.senderName || "❌ Unbekannt",
-            senderAvatar: msg.senderAvatar || 'assets/default-avatar.png'
-          }));
+      // ---------------------------
+      // 5) Thread-Channel-Nachrichten
+      // ---------------------------
+      const filteredThreadChannelMessages = threadChannelMsgs
+        .filter(msg =>
+          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        .map(msg => ({
+          id: msg.id,
+          text: msg.content?.text || '',
+          timestamp: msg.timestamp,
+          type: 'thread-channel',
+          threadChannelId: msg.threadChannelId || msg.threadId || msg.parentId || msg.id,
+          senderId: msg.senderId,
+          senderName: msg.senderName || "❌ Unbekannt"
+        }));
   
-        // (d) Gefilterte Thread-Channel-Messages
-        const filteredThreadChannelMessages = threadChannelMessages
-          .filter(msg => msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase()))
-          .map(msg => ({
-            id: msg.id,
-            text: msg.content?.text || '',
-            timestamp: msg.timestamp,
-            type: 'thread-channel',
-            // Wichtig: "threadChannelId" = msg.threadChannelId
-            // Fallback: threadId, parentId oder msg.id
-            threadChannelId: msg.threadChannelId || msg.threadId || msg.parentId || msg.id,
-            senderId: msg.senderId,
-            senderName: msg.senderName || "❌ Unbekannt",
-            senderAvatar: msg.senderAvatar || 'assets/default-avatar.png',
-          }));
+      // ---------------------------
+      // 6) Kanalnachrichten (NEU)
+      // ---------------------------
+      const filteredChannelMessages = channelMsgs
+        .filter(msg =>
+          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        .map(msg => ({
+          id: msg.id,
+          text: msg.content?.text || '',
+          timestamp: msg.timestamp,
+          type: 'message',
+          channelId: msg.channelId || null,
+          senderId: msg.senderId || null
+        }));
   
-        console.log("🔎 Suchergebnisse geladen!", {
-          channels: this.filteredChannels,
-          users: this.filteredMembers,
-          channelMessages: filteredChannelMessages,
-          privateMessages: filteredPrivateMessages,
-          threadMessages: filteredThreadMessages,
-          threadChannelMessages: filteredThreadChannelMessages
-        });
+      // ---------------------------
+      // ALLES ZUSAMMENFÜHREN
+      // ---------------------------
+      const combined = [
+        ...this.filteredChannels,
+        ...this.filteredMembers,
+        ...filteredChannelMessages,
+        ...filteredPrivateMessages,
+        ...filteredThreadMessages,
+        ...filteredThreadChannelMessages
+      ];
   
-        // => "mixed" => wir zeigen alles in einem Dialog
-        this.openSearchDialog(
-          [
-            ...this.filteredChannels,
-            ...this.filteredMembers,
-            ...filteredChannelMessages,
-            ...filteredPrivateMessages,
-            ...filteredThreadMessages,
-            ...filteredThreadChannelMessages
-          ],
-          'mixed'
-        );
-      });
-    }).catch(error => {
+      // ---------------------------
+      // Optionale Duplikat-Entfernung
+      // ---------------------------
+      const deduplicated = Array.from(
+        new Map(combined.map(obj => [obj.id, obj])).values()
+      );
+  
+      // Dialog öffnen
+      this.openSearchDialog(deduplicated, 'mixed');
+    })
+    .catch(error => {
       console.error("❌ Fehler bei der Suche:", error);
     });
   }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
     // ----------------------------------------------------------------------------
   // openMessage(...) => navigiere zu passendem Chat/Thread
@@ -453,6 +540,11 @@ ngOnInit() {
       }
       if (this.searchQuery.trim() === '') {
         console.warn("⚠️ Keine gültige Suchanfrage – Dialog wird nicht geöffnet.");
+        return;
+      }
+
+      if (!results || results.length === 0) {
+        // Nichts gefunden => Kein Dialog
         return;
       }
     

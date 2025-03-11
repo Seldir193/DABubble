@@ -59,62 +59,13 @@ h1 {
 .container-box {
   @include dFlex(null, null, 8px);
   flex-direction: column;
+
+  img{
+    width:70px;
+  }
 }
 
-.vector {
-  @include dFlex(null, flex-end, 8px);
-}
 
-.vector-box {
-  @include dFlex(null, null, 8px);
-  flex-direction: row-reverse;
-}
-
-.inner-vectors {
-  @include dFlex(center, center, 10px);
-}
-
-.inner-box {
-  width: 5.06px;
-  height: 5.06px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-.background,
-.background-orange,
-.background-pink,
-.background-blue {
-  @include dFlex(center);
-}
-
-.background {
-  width: 42.49px;
-  height: 31.77px;
-  background-color: #92c83e;
-  border-radius: 16px 16px 16px 0;
-}
-
-.background-orange {
-  width: 42.49px;
-  height: 31.77px;
-  background-color: #fbb03b;
-  border-radius: 16px 0 16px 16px;
-}
-
-.background-pink {
-  width: 21.38px;
-  height: 21.43px;
-  background-color: #ed1e79;
-  border-radius: 50% 50% 0 50%;
-}
-
-.background-blue {
-  width: 21.38px;
-  height: 21.43px;
-  background-color: #3fa9f5;
-  border-radius: 0 50% 50% 50%;
-}
 
 @keyframes moveDiagonal {
   from {
@@ -144,10 +95,18 @@ h1 {
     max-width: 0px;
     padding: 4rem 0rem;
     animation: moveVertical 1s ease-in-out forwards;
+
+   
   }
 
   .container .register {
     display: none;
+  }
+
+  .container-box{
+    img{
+    width:56px;
+    }
   }
 }
 

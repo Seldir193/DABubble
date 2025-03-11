@@ -263,6 +263,24 @@
   width: 107px;
 }
 
+@media (max-width: 1278px) {
+  
+
+  .registration-ok{
+    max-width:323px !important;
+    width:100%;
+    gap:10px;
+
+    p{
+      margin:0 !important;
+    }
+  }
+
+ 
+
+}
+
+
 @media (max-width: 780px) {
   .profile-avatar {
     &:hover::after {

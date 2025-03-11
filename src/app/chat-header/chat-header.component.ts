@@ -390,9 +390,63 @@ resetInputBorders() {
 
 
 
-  onSearchInput(): void {
-    // Mindestlänge für die Suche
-    if (this.searchQuery.trim().length < 3) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  onSearchEnter(): void {
+    const trimmedQuery = this.searchQuery.trim();
+  
+    // 1) Wenn genau "@", lade alle Benutzer
+    if (trimmedQuery === '@') {
+      console.log("👥 Lade alle Benutzer, da nur '@' eingegeben wurde.");
+      this.userService.getAllUsers().then(users => {
+        // Mappe die Users auf das Format, das dein Dialog braucht
+        const allUsersResults = users.map(u => ({
+          id: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
+          isOnline: u.isOnline ?? false,
+          type: 'user'
+        }));
+        // Dialog öffnen
+        this.openSearchDialog(allUsersResults, 'user');
+      }).catch(error => {
+        console.error("❌ Fehler beim Laden aller Benutzer:", error);
+      });
+      return; // WICHTIG: Brich hier ab, damit deine "normale" Suche nicht mehr ausgeführt wird.
+    }
+  
+    // 2) Wenn genau "#", lade alle Channels
+    if (trimmedQuery === '#') {
+      console.log("📡 Lade alle Channels, da nur '#' eingegeben wurde.");
+      this.channelService.getAllChannelsOnce().then(channels => {
+        const allChannelResults = channels.map(ch => ({
+          id: ch.id,
+          name: ch.name,
+          type: 'channel'
+        }));
+        this.openSearchDialog(allChannelResults, 'channel');
+      }).catch(error => {
+        console.error("❌ Fehler beim Laden aller Channels:", error);
+      });
+      return;
+    }
+  
+    // 3) Deine bestehende Logik für Eingaben ab 3 Zeichen
+    if (trimmedQuery.length < 3) {
       this.filteredChannels = [];
       this.filteredMembers = [];
       this.noResultsFound = false;
@@ -421,11 +475,9 @@ resetInputBorders() {
       // 1) Channels
       // ---------------------------
       this.filteredChannels = channels.map(channel => ({
-        // Wichtige Felder direkt mappen
         id: channel.id,
         name: channel.name,
         description: channel.description,
-        // ...
         type: 'channel'
       }));
   
@@ -444,7 +496,7 @@ resetInputBorders() {
       // 3) Private Nachrichten
       // ---------------------------
       const filteredPrivateMessages = privateMessages
-        .filter(msg => 
+        .filter(msg =>
           msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
         .map(msg => ({
@@ -461,7 +513,7 @@ resetInputBorders() {
       // 4) Thread-Nachrichten
       // ---------------------------
       const filteredThreadMessages = threadMessages
-        .filter(msg => 
+        .filter(msg =>
           msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
         .map(msg => ({
@@ -479,7 +531,7 @@ resetInputBorders() {
       // 5) Thread-Channel-Nachrichten
       // ---------------------------
       const filteredThreadChannelMessages = threadChannelMsgs
-        .filter(msg => 
+        .filter(msg =>
           msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
         .map(msg => ({
@@ -496,14 +548,14 @@ resetInputBorders() {
       // 6) Kanalnachrichten (NEU)
       // ---------------------------
       const filteredChannelMessages = channelMsgs
-        .filter(msg => 
+        .filter(msg =>
           msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
         .map(msg => ({
           id: msg.id,
           text: msg.content?.text || '',
           timestamp: msg.timestamp,
-          type: 'message',       // oder 'channel-message' – ganz wie du willst
+          type: 'message',
           channelId: msg.channelId || null,
           senderId: msg.senderId || null
         }));
@@ -512,25 +564,22 @@ resetInputBorders() {
       // ALLES ZUSAMMENFÜHREN
       // ---------------------------
       const combined = [
-        ...this.filteredChannels,        // Channels
-        ...this.filteredMembers,         // Benutzer
-        ...filteredChannelMessages,      // Kanalnachrichten
-        ...filteredPrivateMessages,      // Private
-        ...filteredThreadMessages,       // Thread
-        ...filteredThreadChannelMessages // Thread-Channel
+        ...this.filteredChannels,
+        ...this.filteredMembers,
+        ...filteredChannelMessages,
+        ...filteredPrivateMessages,
+        ...filteredThreadMessages,
+        ...filteredThreadChannelMessages
       ];
   
       // ---------------------------
       // Optionale Duplikat-Entfernung
       // ---------------------------
-      // Z.B. nach reinem "id"
       const deduplicated = Array.from(
         new Map(combined.map(obj => [obj.id, obj])).values()
       );
   
-      // ---------------------------
       // Dialog öffnen
-      // ---------------------------
       this.openSearchDialog(deduplicated, 'mixed');
     })
     .catch(error => {
@@ -538,9 +587,6 @@ resetInputBorders() {
     });
   }
   
-
-
-
 
 
 
@@ -693,8 +739,6 @@ resetInputBorders() {
 
 
 
-
-
   
   openSearchDialog(results: any[], type: 'channel' | 'user' | 'message' | 'private-message' | 'thread' | 'thread-channel' | 'mixed'): void {
     if (this.isDialogOpen) {
@@ -705,6 +749,12 @@ resetInputBorders() {
       console.warn("⚠️ Keine gültige Suchanfrage – Dialog wird nicht geöffnet.");
       return;
     }
+
+    if (!results || results.length === 0) {
+      // Nichts gefunden => Kein Dialog
+      return;
+    }
+  
   
     this.isDialogOpen = true; 
   

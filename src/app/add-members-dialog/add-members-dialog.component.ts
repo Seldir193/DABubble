@@ -23,17 +23,22 @@
 
 
 
-
-
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, Optional, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
 import { SelectedMembersDialogComponent } from '../selected-members-dialog/selected-members-dialog.component';
+
+// OPTIONAL: Data interface, falls wir per Material-Dialog .open({ data: {...} }) aufrufen
+export interface AddMembersDialogData {
+  channelId?: string;
+  channelName?: string;
+  members?: any[];
+}
 
 @Component({
   selector: 'app-add-members-dialog',
@@ -44,13 +49,16 @@ import { SelectedMembersDialogComponent } from '../selected-members-dialog/selec
 })
 export class AddMembersDialogComponent implements OnInit {
 
+  // === cdkOverlay Inputs ===
   @Input() channelId!: string;
   @Input() channelName: string = '';
-  @Input() existingMembers: any[] = [];  // Statt this.data.members
+  @Input() members: any[] = [];  // <-- Vorhandene Mitglieder
 
+  // === cdkOverlay Outputs ===
   @Output() close = new EventEmitter<void>();
   @Output() membersAdded = new EventEmitter<any[]>();
 
+  // Lokale Variablen für die Komponenten-Logik
   specificMemberName: string = '';
   filteredMembers: any[] = [];
   selectedMembers: any[] = [];
@@ -60,15 +68,32 @@ export class AddMembersDialogComponent implements OnInit {
   constructor(
     private userService: UserService,
     private channelService: ChannelService,
-    private dialog: MatDialog, // Falls du den nested DialogSelectedMembers beibehalten möchtest
+    private dialog: MatDialog, // Falls du Nested DialogSelectedMembers brauchst
+
+    // Falls Material-Dialog:
+    @Optional() public dialogRef?: MatDialogRef<AddMembersDialogComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: AddMembersDialogData
   ) {}
 
   ngOnInit(): void {
-    console.log('[Overlay init] existingMembers:', this.existingMembers);
+    // (1) Falls wir per Material-Dialog Daten übergeben haben => channelId, members ...
+    if (this.data) {
+      if (this.data.channelId) {
+        this.channelId = this.data.channelId;
+      }
+      if (this.data.channelName) {
+        this.channelName = this.data.channelName;
+      }
+      if (this.data.members) {
+        this.members = this.data.members;
+      }
+    }
+
+    console.log('[AddMembersDialog] init => members:', this.members);
     this.loadAllUsers();
   }
 
-  // Lade alle Nutzer
+  // Alle Nutzer laden
   loadAllUsers(): void {
     this.userService.getAllUsers()
       .then(users => {
@@ -78,10 +103,9 @@ export class AddMembersDialogComponent implements OnInit {
       .catch(err => console.error('Fehler beim Laden', err));
   }
 
-  // Filterlogik
   filterAlreadySelectedMembers(): void {
     this.filteredMembers = this.allUsers.filter(member => 
-      !this.existingMembers.some(existing => existing.name === member.name) &&
+      !this.members.some(existing => existing.name === member.name) &&
       !this.selectedMembers.some(selected => selected.name === member.name)
     );
   }
@@ -90,17 +114,19 @@ export class AddMembersDialogComponent implements OnInit {
     this.isMembersListVisible = true;
     this.filterAlreadySelectedMembers();
   }
+
   hideMembersList(): void {
     setTimeout(() => {
       this.isMembersListVisible = false;
     }, 200);
   }
+
   onSearchMembers(): void {
     const term = this.specificMemberName.toLowerCase();
     this.filteredMembers = this.allUsers
       .filter(member =>
         member.name.toLowerCase().includes(term) &&
-        !this.existingMembers.some(ex => ex.name === member.name) &&
+        !this.members.some(ex => ex.name === member.name) &&
         !this.selectedMembers.some(se => se.name === member.name)
       );
   }
@@ -121,32 +147,45 @@ export class AddMembersDialogComponent implements OnInit {
 
   // Speichern
   onCreate(): void {
+    // Finde nur die neuen Mitglieder, die noch nicht in this.members sind
     const uniqueMembers = this.selectedMembers.filter(
-      member => !this.existingMembers.some(m => m.name === member.name)
+      member => !this.members.some(m => m.name === member.name)
     );
+
     if (uniqueMembers.length > 0) {
       console.log('Neue Mitglieder:', uniqueMembers);
-      const updatedMembers = [...this.existingMembers, ...uniqueMembers];
-      
-      // ChannelService
+
+      // Füge neue hinzu: alte + neue
+      const updatedMembers = [...this.members, ...uniqueMembers];
+
+      // Speichere in Firestore
       this.channelService.setMembers(this.channelId, updatedMembers)
         .then(() => {
           console.log('Erfolgreich gespeichert');
-          // Output-Event an Eltern
-          this.membersAdded.emit(updatedMembers);
-          // Overlay schließen
-          this.close.emit();
+          // => cdkOverlay vs. MaterialDialog
+          if (this.dialogRef) {
+            // Material-Dialog => schließe mit Rückgabe
+            this.dialogRef.close(updatedMembers);
+          } else {
+            // cdkOverlay => Output-Events
+            this.membersAdded.emit(updatedMembers);
+            this.close.emit();
+          }
         })
         .catch(err => console.error('Fehler beim Speichern:', err));
     } else {
       console.log('Keine neuen Mitglieder ausgewählt');
-      this.close.emit();
+      if (this.dialogRef) {
+        this.dialogRef.close();
+      } else {
+        this.close.emit();
+      }
     }
   }
 
-  // Optional
+  // Optional: Nested Dialog
   openMembersDialog(): void {
-    // Nested Dialog -> Nur wenn du es willst
+    // Nested => selectedMembers
     const dialogRef = this.dialog.open(SelectedMembersDialogComponent, {
       data: { members: this.selectedMembers }
     });
@@ -158,7 +197,11 @@ export class AddMembersDialogComponent implements OnInit {
   }
 
   onCancel(): void {
-    // Overlay schließen, ohne was zu tun
-    this.close.emit();
+    // => cdkOverlay vs. MaterialDialog
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    } else {
+      this.close.emit();
+    }
   }
 }

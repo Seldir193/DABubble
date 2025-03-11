@@ -16,8 +16,6 @@ import { ThreadChannelComponent } from '../thread-channel/thread-channel.compone
 import { MessageService } from '../message.service';
 import { ChangeDetectorRef } from '@angular/core';
 
-
-
 interface ThreadChannelParentDoc {
   senderName?: string;
   senderAvatar?: string;
@@ -29,9 +27,7 @@ interface ThreadChannelParentDoc {
   replyCount?: number;
   channelName?: string;
   channelId?: string;
-  // ... je nach Bedarf
 }
-
 
 @Component({
   selector: 'app-chat',
@@ -47,7 +43,7 @@ interface ThreadChannelParentDoc {
     WelcomeScreenComponent,
     SearchFieldComponent,
     ThreadComponent,
-    ThreadChannelComponent
+    ThreadChannelComponent,
   ],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
@@ -72,8 +68,7 @@ export class ChatComponent implements OnInit {
   threadData: any = null
   private recipientCache: Map<string, string> = new Map(); // Cache für Namen
 
-  @ViewChild(ChatComponent) chatComponent!: ChatComponent;
-  @ViewChild(EntwicklerteamComponent) entwicklerteam!: EntwicklerteamComponent;
+ 
 
   currentMobileView: 'container' | 'team' | 'private' | 'thread' | 'threadChannel' | 'welcome' | 'search'
     = 'container';
@@ -81,19 +76,17 @@ export class ChatComponent implements OnInit {
     = 'container';
 
   showDesktopHeader = false;
-
+  showMemberListDialog = false;   
  
-
-
   @ViewChild('chatHeaderRef') chatHeaderRef!: ChatHeaderComponent;
   @Output() editSquareClicked = new EventEmitter<void>();
   @ViewChild('devspaceRef') devspaceRef!: DevspaceComponent;
+  @ViewChild(ChatComponent) chatComponent!: ChatComponent;
+  @ViewChild(EntwicklerteamComponent) entwicklerteam!: EntwicklerteamComponent;
 
 private forcedMobileActive = false;
 private oldDesktopView: 'container'|'team'|'private'|'thread'|'threadChannel'|'welcome'|'search' = 'container';
 private oldIsSearchActive = false;
-
-
 private oldIsWorkspaceVisible = true;
 
   constructor(
@@ -108,6 +101,24 @@ private oldIsWorkspaceVisible = true;
     this.showWelcomeContainer = this.appStateService.getShowWelcomeContainer();
     this.checkScreenSize();
  }
+
+onOpenPrivateChat(payload: { id: string; name: string }) {
+  console.log('[ChatComponent] => openPrivateChat fired with', payload);
+  this.showMemberListDialog = false;  // Schließe Liste
+
+  this.isPrivateChat = true;
+  this.selectedMember = { id: payload.id, name: payload.name };
+  this.isSearchActive = false; // zur Sicherheit
+
+  this.selectedChannel = null;
+
+  if (window.innerWidth < 1278) {
+    this.currentMobileView = 'private';
+    this.showDesktopHeader = true;  // falls gewünscht
+  }
+
+  console.log('=> isPrivateChat=', this.isPrivateChat, 'selectedMember=', this.selectedMember, 'isSearchActive=', this.isSearchActive);
+}
 
 onEditSquareIconClick(): void {
   console.log('property-box clicked!');
@@ -133,6 +144,7 @@ private checkScreenSize(): void {
 @HostListener('window:resize')
 onResize() {
   const width = window.innerWidth;
+  
   if (width < 1278) {
 
     this.isWorkspaceVisible = true;
@@ -149,12 +161,6 @@ onResize() {
   }
 }
 
-
-
-
-
-
-
 private enterForcedMobileMode() {
   this.forcedMobileActive = true;
   // 1) Speichere den Desktop-Zustand
@@ -167,8 +173,6 @@ private enterForcedMobileMode() {
   console.log('ENTER forcedMobile => war vorher', this.oldDesktopView, this.oldIsSearchActive,  this.oldIsWorkspaceVisible);
 }
 
-
-
 private exitForcedMobileMode() {
   console.log('EXIT forcedMobile => restore oldDesktopView=',
                this.oldDesktopView,
@@ -179,7 +183,7 @@ private exitForcedMobileMode() {
   
   if (this.oldDesktopView === 'search') {
     this.currentMobileView = 'search';
-   
+   // this.isSearchActive = this.oldIsSearchActive; 
     this.showDesktopHeader = true;
     console.log("=> Re-Showing search, because oldDesktopView= 'search'");
   } else {
@@ -190,44 +194,28 @@ private exitForcedMobileMode() {
     console.log("=> Re-Showing oldDesktopView:", this.oldDesktopView);
   }
   this.isWorkspaceVisible = this.oldIsWorkspaceVisible;
- 
-
-   
 }
-
-
 
 onHeaderBackClicked() {
   this.showDesktopHeader = false;
-
- 
-
   if (this.isPrivateChat && this.selectedMember) {
     console.log('Zurück zum privaten Chat');
   } else if (this.selectedChannel) {
     console.log('Zurück zum Kanal');
   } else if (this.selectedThread) {
-    console.log('Zurück zum Thread');
+    // this.closeThread();
+     console.log('Zurück zum Thread');
   } else {
     console.log('Standard/Willkommen');
   }
 
- // this.isWorkspaceVisible = true;
- 
   this.showDesktopHeader = false;
- // this.currentMobileView = this.previousView;
- // this.isSearchActive = false;
   this.currentMobileView = 'container';
- 
- 
 }
-
-
 
 backToContainer() {
   this.currentMobileView = 'container';
 }
-
 
  async openThreadChannelFromSearch(result: any): Promise<void> {
   console.log("🔍 Öffne Thread-Channel aus Suche:", result);
@@ -237,6 +225,7 @@ backToContainer() {
     this.closeThread();
   }
   this.isThreadChannelFromSearch = true;
+ 
   this.isPrivateChat = false;
   this.isSearchActive = false;
   this.showWelcomeContainer = false;
@@ -282,8 +271,6 @@ backToContainer() {
     timestamp: msg.timestamp || new Date(),
   }));
 
-  // 6) Fallbacks für parentDoc
-  //    Nimm ggf. Daten aus `result`, falls in `parentDoc` etwas fehlt
   const parentMessage = {
     id: threadChannelId,
     text: parentDoc?.content?.text ?? result?.content?.text ?? "Kein Text",
@@ -316,55 +303,18 @@ backToContainer() {
   }
 
   console.log("✅ `selectedThreadChannel` (inkl. Antworten):", this.selectedThreadChannel);
-}
 
-async openThreadFromSearch(message: any): Promise<void> {
-  console.log("🔍 Thread aus Suche geöffnet:", message);
+  if (window.innerWidth < 1278) {
+    this.currentMobileView = 'threadChannel';
+    // Falls du oben an „Desktop-Header“ gewöhnt bist, kannst du ggf.:
+     this.showDesktopHeader = true;  // Nur wenn du es möchtest
 
-  this.closeThreadChannel();
-  // Beende ggf. Private Chat + Welcome Screen
-  this.isPrivateChat = false;
-  this.showWelcomeContainer = false;
-  this.selectedChannel = null;
-
-  this.selectedMember = null;
-
-  // *** NEU: threadId statt parentId. 
-  // (Falls Firestore-Kind-Nachrichten "threadId = <Eltern>" haben.)
-  const threadId = message.threadId 
-    || message.parentId  // Fallback
-    || message.id;
-
-  // Empfänger-Name ermitteln (falls du private Threads hast o.ä.)
-  let recipientName = message.recipientName || message.senderName;
-  if (!recipientName && message.recipientId) {
-    console.log("📡 Lade Empfängername aus Firestore...");
-    recipientName = await this.fetchRecipientName(message.recipientId);
   }
-
-  // Setze selectedThread
-  this.selectedThread = {
-    ...message,
-    recipientName: recipientName || "Unbekannt",
-    recipientId: message.recipientId || message.senderId,
-    threadId: threadId // Falls du es im Template brauchst
-  };
-
-  this.isThreadActive = true;
-  this.isThreadFromSearch = true;
-  console.log("✅ Thread erfolgreich geöffnet mit Empfänger:", this.selectedThread.recipientName);
 }
-
-  
-
-
 
 toggleWorkspace(): void {
   this.isWorkspaceVisible = !this.isWorkspaceVisible;
-
-
 }
-
 
   onChannelSelected(channel: any): void {
     if (channel) {
@@ -381,7 +331,6 @@ toggleWorkspace(): void {
         this.previousView = this.currentMobileView;
         this.currentMobileView = 'team';
       }
-
 
       if (this.isThreadFromSearch) {
         this.closeThread();
@@ -408,9 +357,7 @@ toggleWorkspace(): void {
     if (window.innerWidth < 1278) {
       this.currentMobileView = 'team';
     }
-
   }
-
 
   onMemberSelected(member: any): void {
     if (!member || !member.id) {
@@ -452,9 +399,7 @@ toggleWorkspace(): void {
     if (window.innerWidth < 1278) {
       this.currentMobileView = 'private';
     }
-
   }
-
 
   handleMemberSelected(event: { uid: string, name: string }): void {
     console.log('Mitglied empfangen:', event);
@@ -475,18 +420,20 @@ toggleWorkspace(): void {
     console.log('Channel-Modus aktiviert');
   }
 
-
   openSearchField(searchQuery?: string): void {
-
     this.selectedThread = null;
-  this.selectedThreadChannel = null;
-
-   
+    this.selectedThreadChannel = null;
 
     if (window.innerWidth < 1278) {
       this.previousView = this.currentMobileView;
       this.currentMobileView = 'search';
       this.showDesktopHeader = true;
+ 
+      if (this.forcedMobileActive) {
+       this.oldDesktopView = 'search';
+       this.oldIsSearchActive = true;
+     }
+
     } else {
       // Ansonsten kein Desktop
       this.previousView = this.currentMobileView;
@@ -494,7 +441,6 @@ toggleWorkspace(): void {
       this.showDesktopHeader = false; 
     }
 
-   
     this.isSearchActive = true; // Aktiviert das Suchfeld
     this.isPrivateChat = false;
     this.selectedChannel = null;
@@ -511,18 +457,12 @@ toggleWorkspace(): void {
     this.showDesktopHeader = false;
     this.currentMobileView = this.previousView;
 
-    
-
-
     this.isSearchActive = false; // Deaktiviert das Suchfeld
     if (!this.selectedChannel && !this.isPrivateChat) {
       this.showWelcomeContainer = true;
     }
-
   }
 
-
-  
   handleMemberSelection(member: any): void {
     console.log('Mitglied ausgewählt:', member);
     this.isSearchActive = false; // Schließt das Suchfeld
@@ -537,10 +477,9 @@ toggleWorkspace(): void {
     if (window.innerWidth < 1278) {
       this.currentMobileView = 'threadChannel';
     }
-
-  
   }
 
+  
   closeThreadChannel(): void {
     console.log("❌ Thread-Channel schließen");
     this.selectedThreadChannel = null;
@@ -585,7 +524,6 @@ private scrollToMessage(messageId: string, retries = 5): void {
   }, 300);
 }
 
-
 openThread(message: any): void {
   console.log("🔍 openThread() called with:", message);
   this.selectedThreadChannel = null; 
@@ -626,10 +564,108 @@ openThread(message: any): void {
   if (window.innerWidth < 1278) {
     this.currentMobileView = 'thread';
   }
+}
 
- 
+
+
+
+async openThreadFromSearch(message: any): Promise<void> {
+  console.log("🔍 Thread aus Suche geöffnet:", message);
+
+  this.closeThreadChannel();
+  // Beende ggf. Private Chat + Welcome Screen
+  this.isPrivateChat = false;
+  this.showWelcomeContainer = false;
+  this.selectedChannel = null;
+  this.selectedMember = null;
+
+
+
+
+  // *** NEU: threadId statt parentId. 
+  // (Falls Firestore-Kind-Nachrichten "threadId = <Eltern>" haben.)
+  const threadId = message.threadId 
+    || message.parentId  // Fallback
+    || message.id;
+
+  // Empfänger-Name ermitteln (falls du private Threads hast o.ä.)
+  let recipientName = message.recipientName || message.senderName;
+  if (!recipientName && message.recipientId) {
+    console.log("📡 Lade Empfängername aus Firestore...");
+    recipientName = await this.fetchRecipientName(message.recipientId);
+  }
+
+  // Setze selectedThread
+  this.selectedThread = {
+    ...message,
+    recipientName: recipientName || "Unbekannt",
+    recipientId: message.recipientId || message.senderId,
+    threadId: threadId // Falls du es im Template brauchst
+  };
+
+  this.isThreadActive = true;
+  this.isThreadFromSearch = true;
+  console.log("✅ Thread erfolgreich geöffnet mit Empfänger:", this.selectedThread.recipientName);
+
+  if (window.innerWidth < 1278) {
+    this.currentMobileView = 'thread';
+    // Falls du oben an „Desktop-Header“ gewöhnt bist, kannst du ggf.:
+     this.showDesktopHeader = true;  // Nur wenn du es möchtest
+
+  }
+}
+
+
+closeThread(): void {
+  console.log("❌ Thread schließen");
+  this.selectedThread = null; // Schließe den Thread-Bereich
+  this.isThreadActive = false;
+  this.isThreadFromSearch = false; // Zurücksetzen, falls vorher über Suche geöffnet
+  this.selectedThreadChannel = null;
+
+  if (this.isPrivateChat && this.selectedMember) {
+    console.log('🔙 Zurück zum privaten Chat');
+    
+  } else if (this.selectedChannel) {
+    console.log('🔙 Zurück zum Kanal-Chat');
+  } else {
+    this.showWelcomeContainer = true; // Zeige den Welcome-Screen an, falls kein Kontext existiert
+  }
+
+  // Logik: Wohin soll‘s zurückgehen?
+  if (this.isPrivateChat && this.selectedMember) {
+    // → zurück zum privaten Chat
+    this.currentMobileView = 'private';
+    console.log('🔙 Zurück zum privaten Chat');
+  } 
+  else if (this.selectedChannel) {
+    // → zurück zum Team-/Channel-Container
+    this.currentMobileView = 'team';
+    console.log('🔙 Zurück zum Kanal-Chat');
+  } 
+  else {
+    // Nichts aktiv? => Zeige den container oder den Welcome-Screen
+    this.currentMobileView = 'container';
+    this.showWelcomeContainer = !this.selectedChannel && !this.selectedMember;
+  }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 openThreadFromPrivateMessage(message: any): void {
@@ -640,7 +676,6 @@ openThreadFromPrivateMessage(message: any): void {
   this.isThreadFromSearch = false; 
   console.log("✅ Thread erfolgreich geöffnet (neben Private Chat):", message);
 }
-
 
 handleThreadFromSearch(result: any): void {
   console.log('🔥 Thread aus Suche öffnen:', result);
@@ -679,8 +714,6 @@ handleThreadFromSearch(result: any): void {
     });
 }
 
-
-
 private async fetchRecipientName(recipientId: string): Promise<string> {
     if (!recipientId) return "Unbekannt";
 
@@ -705,39 +738,4 @@ private async fetchRecipientName(recipientId: string): Promise<string> {
     }
 }
 
-
-closeThread(): void {
-  console.log("❌ Thread schließen");
-  this.selectedThread = null; // Schließe den Thread-Bereich
-  this.isThreadActive = false;
-  this.isThreadFromSearch = false; // Zurücksetzen, falls vorher über Suche geöffnet
-  this.selectedThreadChannel = null;
-
-  if (this.isPrivateChat && this.selectedMember) {
-    console.log('🔙 Zurück zum privaten Chat');
-    
-  } else if (this.selectedChannel) {
-    console.log('🔙 Zurück zum Kanal-Chat');
-  } else {
-    this.showWelcomeContainer = true; // Zeige den Welcome-Screen an, falls kein Kontext existiert
-  }
-
-  // Logik: Wohin soll‘s zurückgehen?
-  if (this.isPrivateChat && this.selectedMember) {
-    // → zurück zum privaten Chat
-    this.currentMobileView = 'private';
-    console.log('🔙 Zurück zum privaten Chat');
-  } 
-  else if (this.selectedChannel) {
-    // → zurück zum Team-/Channel-Container
-    this.currentMobileView = 'team';
-    console.log('🔙 Zurück zum Kanal-Chat');
-  } 
-  else {
-    // Nichts aktiv? => Zeige den container oder den Welcome-Screen
-    this.currentMobileView = 'container';
-    this.showWelcomeContainer = !this.selectedChannel && !this.selectedMember;
-  }
-
-}
 }

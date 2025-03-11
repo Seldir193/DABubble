@@ -9,10 +9,12 @@ import { serverTimestamp } from '@angular/fire/firestore';
 import { ChangeDetectorRef } from '@angular/core'; 
 
 import { Message} from '../message.models';
+
+import { OverlayModule } from '@angular/cdk/overlay';
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [CommonModule, FormsModule, PickerModule],
+  imports: [CommonModule, FormsModule, PickerModule, OverlayModule],
   templateUrl: './thread.component.html',
   styleUrls: ['./thread.component.scss'],
 })
@@ -61,6 +63,12 @@ export class ThreadComponent implements OnInit {
 
 
   isDesktop = false;
+
+  
+  allUsers: any[] = [];
+
+  // Steuert Overlay
+  showUserDropdown: boolean = false;
 
   private recipientCache: Map<string, string> = new Map(); // Cache für Namen
   private unsubscribeFromThreadMessages: (() => void) | null = null; // Speichert das onSnapshot-Abonnement
@@ -955,9 +963,47 @@ closeImageModal(): void {
   this.isImageModalOpen = false;
 }
 
-addAtSymbolAndOpenDialog(): void {
-  this.privateMessage += '@';
+
+
+
+
+
+toggleUserDropdown(): void {
+  // Wenn wir das erste Mal öffnen, Nutzer laden
+  if (!this.showUserDropdown) {
+    this.loadAllUsers();
+  }
+  this.showUserDropdown = !this.showUserDropdown;
 }
+
+ // Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
+ loadAllUsers(): void {
+  this.userService.getAllUsers()
+    .then(users => {
+      this.allUsers = users.map(u => ({
+        id: u.id,
+        //email: u.email,
+        name: u.name,
+        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
+      }));
+    })
+    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
+}
+
+
+
+  // Beim Klick auf einen Nutzer im Dropdown
+  addUserSymbol(member: any) {
+    // Füge in privateMessage ein @Name ein
+    // => Oder user.email, je nachdem was du brauchst
+    this.privateMessage += ` @${member.name} `;
+    // Overlay schließen
+    this.showUserDropdown = false;
+  }
+
+
+
+
 
 onClose(): void {
   this.closeThread.emit();

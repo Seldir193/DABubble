@@ -1,3 +1,33 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Component, OnInit ,CUSTOM_ELEMENTS_SCHEMA,ViewChild, ElementRef,Input, EventEmitter, Output , SimpleChanges, OnChanges} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +48,8 @@ import { MessageService } from '../message.service';
 
 
 import { OverlayModule } from '@angular/cdk/overlay';
+
+import { ProfilDialogComponent } from '../profil-dialog/profil-dialog.component';
 
 
 export interface MessageContent {
@@ -51,6 +83,8 @@ interface ThreadChannelParentDoc {
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class EntwicklerteamComponent implements OnInit {
+
+
   @ViewChild('messageList') messageList!: ElementRef;
   @Output() memberSelected = new EventEmitter<{ uid: string, name: string }>();
   @Input() selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
@@ -61,7 +95,7 @@ export class EntwicklerteamComponent implements OnInit {
   @Input() threadData: any = null; // Daten vom Thread
   parentMessage: any = null; // Speichert die ursprüngliche Nachricht
   threadMessages: any[] = []; 
-  channelMessage: string = ''; // Wenn `channelMessage` verwendet wird
+  channelMessage: string = ''; // Wenn channelMessage verwendet wird
   message: string = '';
   isEmojiPickerVisible: boolean = false;
   imageUrl: string | ArrayBuffer | null | undefined = null;  
@@ -136,10 +170,15 @@ export class EntwicklerteamComponent implements OnInit {
   isOverlayOpen = false;
   isAddMembersOverlayOpen = false;
 
-  isMobileMemberListOpen = false;
-  isMobileAddOpen = false;
 
- 
+
+
+
+
+
+  
+
+
 
 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
@@ -164,53 +203,143 @@ export class EntwicklerteamComponent implements OnInit {
   @Output() channelSelected = new EventEmitter<void>();
   @Output() channelLeft = new EventEmitter<void>();
 
-    // toggelt das Overlay
+
+  @Output() openPrivateChatInChat = new EventEmitter<{id: string, name: string}>();
+
+  @Output() openPrivateChatFromEntwicklerteam = new EventEmitter<{id: string, name: string}>();
+
+
+
+onOpenAddMembersOverlay() {
+  if (this.isDesktop) {
+    this.toggleAddMembersOverlay(); // cdkOverlay 
+  } else {
+    this.openAddMembersDialogMobile(); // Material-Dialog
+  }
+}
+
+  @HostListener('window:resize')
+  onResize() {
+    const wasDesktop = this.isDesktop;
+    this.checkDesktopWidth();
+    const nowDesktop = this.isDesktop;
+
+    if (wasDesktop && !nowDesktop) {
+      // Desktop => Mobile
+      console.log('Wechsel Desktop -> Mobile => schließe Desktop Overlays');
+      this.closeOverlay();
+      this.closeAddMembersOverlay();
+    } 
+    else if (!wasDesktop && nowDesktop) {
+      // Mobile => Desktop
+      console.log('Wechsel Mobile -> Desktop => ggf. Mobile Dialog geschlossen');
+    }
+  }
+
+  checkDesktopWidth() {
+    this.isDesktop = window.innerWidth >= 1278;
+  }
+
+  // ------------------------------------------------------
+  // DESKTOP: Overlay-Methoden
+  // ------------------------------------------------------
   toggleOverlay() {
     this.isOverlayOpen = !this.isOverlayOpen;
   }
-
   closeOverlay() {
     this.isOverlayOpen = false;
   }
-
-
-  //toggleAddMembersOverlay() {
-   // this.isAddMembersOverlayOpen = !this.isAddMembersOverlayOpen;
- //}
-  
-  closeAddMembersOverlay() {
-    this.isAddMembersOverlayOpen = false;
-  }
-
   toggleAddMembersOverlay() {
     // Schließt MemberList
     this.isOverlayOpen = false;
     // Öffnet AddMembers
     this.isAddMembersOverlayOpen = true;
   }
+  closeAddMembersOverlay() {
+    this.isAddMembersOverlayOpen = false;
+  }
+
+  // ------------------------------------------------------
+  // MOBILE: Material-Dialogs
+  // ------------------------------------------------------
+
+  // (1) MemberList => Material-Dialog
+  openMemberListDialogMobile() {
+    if (!this.selectedChannel) return;
+    const dialogRef = this.dialog.open(MemberListDialogComponent, {
+     // width: '90%',
+      data: {
+        channelId: this.selectedChannel.id,
+        members: this.selectedChannel.members
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('MemberListDialog (mobile) closed =>', result);
+      if (!result) return;
+
+      if (result.addMembers) {
+        // => Öffne AddMembersDialog
+        this.openAddMembersDialogMobile();
+      } 
+      else if (result.openProfile) {
+        // => Profil öffnen
+        this.onOpenProfile(result.openProfile);
+      } 
+      else if (result.openChatWith) {
+        // => Private Chat
+        this.onOpenPrivateChat({ id: result.openChatWith, name: result.openProfile?.name || 'Unbekannt' });
+      }
+      // Weitere Fälle ...
+    });
+  }
+
+  // (2) AddMembers => Material-Dialog
+  openAddMembersDialogMobile() {
+    if (!this.selectedChannel) return;
+    const dialogRef = this.dialog.open(AddMembersDialogComponent, {
+     // width: '90%',
+      data: {
+        channelId: this.selectedChannel.id,
+        members: this.selectedChannel.members
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('AddMembersDialog (mobile) closed =>', result);
+      // falls du was tun willst
+    });
+  }
+
+  // ------------------------------------------------------
+  // Profil-Dialog => Mobile + Desktop (immer Material-Dialog)
+  // ------------------------------------------------------
+  onOpenProfile(member: any): void {
+    const dialogRef = this.dialog.open(ProfilDialogComponent, {
+      width: '400px',
+      data: {
+        userId: member.id,
+        userName: member.name,
+        userAvatarUrl: member.avatarUrl,
+        userStatus: member.isOnline ? 'Aktiv' : 'Abwesend',
+        userEmail: member.email
+      }
+    });
   
-
-
-
-
-
-  // Methode, die beim Klick auf das Member-Icon (Mobile) aufgerufen wird
-  openMemberList() {
-    this.isMobileAddOpen = false;
-    this.isMobileMemberListOpen = true;
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.openChatWith) {
+        console.log('User möchte Chat mit:', result.openChatWith);
+        this.onOpenPrivateChat({ id: result.openChatWith, name: member.name });
+      }
+    });
   }
 
-  closeMemberList() {
-    this.isMobileMemberListOpen = false;
-  }
-
-  switchToAddMembers() {
-    this.isMobileMemberListOpen = false;
-    this.isMobileAddOpen = true;
-  }
-
-  closeAddMembers() {
-    this.isMobileAddOpen = false;
+  // ------------------------------------------------------
+  // Private Chat => Event
+  // ------------------------------------------------------
+  onOpenPrivateChat(payload: { id: string; name: string }): void {
+    console.log('[Entwicklerteam] openPrivateChat =>', payload);
+    this.openPrivateChatFromEntwicklerteam.emit(payload);
   }
 
 
@@ -219,27 +348,28 @@ export class EntwicklerteamComponent implements OnInit {
 
 
 
- 
 
 
- 
-  @HostListener('window:resize')
-  onResize() {
-    const wasDesktop = this.isDesktop;
-    this.checkDesktopWidth();
-  
-    // Wenn wir vorher Desktop waren und jetzt Mobile sind => Overlays schließen
-    if (wasDesktop && !this.isDesktop) {
-      console.log('Wechsel auf Mobile => Schließe alle Overlays');
-      this.closeOverlay();          // z.B. MemberList-Overlay
-      this.closeAddMembersOverlay(); // z.B. AddMembers-Overlay
-    }
-  }
-  
-  checkDesktopWidth() {
-    this.isDesktop = window.innerWidth >= 1278;
-  }
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   getFormattedDate(dateString: string): string {

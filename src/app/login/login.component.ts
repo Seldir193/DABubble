@@ -75,7 +75,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+   
+  }
+
+
+
  
   emailValidator(control: AbstractControl): ValidationErrors | null {
     const email = control.value;
@@ -93,11 +98,17 @@ export class LoginComponent implements OnInit {
 
   onBlur(type: string) {
     this.filledStates[type + 'Filled'] = Boolean(this.myForm.get(type)?.value);
+
+   
   }
 
   updateFilledState(type: string, value: string) {
     this.filledStates[type + 'Filled'] = value !== '';
   }
+
+
+
+
 
   async checkEmailExists(email: string): Promise<boolean> {
     const usersCollection = collection(this.firestore, 'users');

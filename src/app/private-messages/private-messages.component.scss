@@ -1,3 +1,4 @@
+
 @import "./../../styles.scss";
 
 
@@ -149,7 +150,7 @@
 
   
   .sent-message-container {
-    
+    position: relative;
     display: flex;
     justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
    // padding:25px;
@@ -169,6 +170,8 @@
         display: flex;
         align-items: center;
 
+        position: absolute;
+        top: -20px;
         
       }
     }
@@ -181,7 +184,7 @@
       flex-direction: row-reverse; // Avatar rechts, Nachricht links
  // margin-bottom: 15px;
   padding: 25px;
-  position: relative;
+ // position: relative;
   background-color: transparent;
   width:100%;
 
@@ -273,9 +276,10 @@
     border-radius: 25px 25px 0;
     border: 1px solid #ADB0D9;
     background: #fff;
-    left: 0;
+    //left: 0;
     top: 0;
     z-index: 3;
+   
     display: none;
 
     .image-wrapper {
@@ -308,6 +312,9 @@
 
 
   .received-message-container {
+
+ position: relative;
+
     display: flex;
     justify-content: flex-start; // Empfangene Nachrichten links positionieren
     //margin-bottom: 15px;
@@ -325,6 +332,11 @@
       .emoji-box-received {
         display: flex;
         align-items: center;
+
+        position: absolute;
+        top: -20px;
+        right: 0;
+       
       }
 
       p{
@@ -570,7 +582,7 @@
   .chat-input {
     display: flex;
     align-items: center;
-    padding:0px 45px;
+    padding:0px 20px;
 
     .textarea-wrapper {
       position: relative;  
@@ -936,8 +948,13 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   margin-top: 5px;
-  left:260px;
-  top:-30px;
+  
+ 
+
+  
+  left:220px;
+  top:15px;
+
   //width:308px;
   //text-align: center;
  
@@ -953,6 +970,8 @@
     border-radius: 30px;
     height: 45px;
     width:268px;
+   
+
     
 
     &:hover {
@@ -1338,14 +1357,24 @@ nav {
 
 
 
+
+
+
+
 .reply-count {
+  display: flex;              // Legt die Kinder nebeneinander
+  align-items: center;        // Vertikale Zentrierung
+  flex-wrap: nowrap;          // Kein Umbruch
+  white-space: nowrap;  
+gap:20px;
+
   color: $hoverColor;
   font-family: 400;
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
   align-self: flex-start;
-  padding: 5px 10px;
+//  padding: 5px 10px;
   border-radius: 4px;
   transition: background-color 0.2s ease-in-out;
 
@@ -1354,17 +1383,15 @@ nav {
   }
 }
 
-  
-
-
-
 .reply-time {
-  margin: 10px 0;
+ // margin: 10px 0;
   font-size: 14px;
   color: $lightgray;
   font-family: 400;
   text-align: right; /* Oder links, je nach Design */
 }
+
+
 
 
 
@@ -1379,10 +1406,7 @@ nav {
 
 
 
-
-
-
-
+  
 
 
 
@@ -1391,6 +1415,15 @@ nav {
   .channel-input-box{
     height:calc(100vh - 11.5rem ) !important;
   }
+
+    
+  .letzte-antwort-label {
+    display: none;
+  }
+
+  
+
+
 }
 
 
@@ -1412,6 +1445,17 @@ nav {
 
 
 
+
+
+
+
+
+
+
+
+
+
+  
 
 
 

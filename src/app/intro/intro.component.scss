@@ -9,12 +9,6 @@
   background: linear-gradient(1.46deg, #313ae6 1.22%, #797ef3 98.76%);
 }
 
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-  }
-}
-
 h1 {
   color: white;
   font-size: 90px;
@@ -37,67 +31,12 @@ h1 {
   z-index: 2;
 }
 
-.vector {
-  @include dFlex(null, flex-end, 20px);
-}
 
-.vector-box {
-  @include dFlex(null, null, 20px);
-  flex-direction: row-reverse;
-}
 
-.background {
-  @include dFlex(center);
-  width: 113.48px;
-  height: 83.51px;
-  background-color: #92c83e;
-  border-radius: 16px 16px 16px 0;
-  text-decoration: none;
-}
 
-.inner-vectors {
-  @include dFlex(center, center, 10px);
-}
 
-.inner-box {
-  width: 13.52px;
-  height: 13.3px;
-  background-color: white;
-  border-radius: 50%;
-}
 
-.background-orange {
-  @include dFlex(center);
-  width: 113.48px;
-  height: 83.51px;
-  background-color: #fbb03b;
-  border-radius: 16px 0 16px 16px;
-  text-decoration: none;
-}
-
-.inner-box-orange {
-  width: 13.52px;
-  height: 13.3px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-.background-pink {
-  width: 57.1px;
-  height: 56.33px;
-  background-color: #ed1e79;
-  display: flex;
-  border-radius: 50% 50% 0 50%;
-}
-
-.background-blue {
-  width: 57.1px;
-  height: 56.33px;
-  background-color: #3fa9f5;
-  display: flex;
-  border-radius: 0 50% 50% 50%;
-}
-
+/* Hier nutzen wir moveLeft und moveRight */
 @keyframes moveLeft {
   from {
     opacity: 0;
@@ -120,62 +59,35 @@ h1 {
   }
 }
 
-@keyframes moveVertical {
-  from {
-    opacity: 0;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-30vh);
-  }
-}
-
 @media (max-width: 850px) {
   .container {
-    opacity: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
     animation-delay: 5s;
-    h1 {
-      animation: moveVertical 1s ease-in-out forwards;
-      opacity: 0;
-      transform: translateX(-100%);
-      animation: moveRight 500ms ease-in-out forwards;
-      animation-delay: 2000ms;
-      font-size: 45px;
-      padding-top: 100px;
-    }
+    padding: 0;
+  }
 
-    .container-box {
-      animation: moveVertical 1s ease-in-out forwards;
-      transform: translateX(0);
-      animation: moveLeft 0.25s ease-in-out forwards;
-      animation-delay: 1.5s;
-      padding-top: 100px;
-    }
+  .container-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
 
-    .background-pink {
-      width: 27.1px;
-      height: 26.33px;
+    img {
+      width: 56px;
     }
+  }
 
-    .background-blue {
-      width: 27.1px;
-      height: 26.33px;
-    }
-
-    .background {
-      width: 73.48px;
-      height: 53.51px;
-    }
-
-    .background-orange {
-      width: 73.48px;
-      height: 53.51px;
-    }
-
-    .inner-box {
-      width: 7.52px;
-      height: 7.3px;
-    }
+  h1 {
+    color: white;
+    font-size: 25px;
+    opacity: 0;
+    transform: translateX(-100%);
+    animation: moveRight 500ms ease-in-out forwards;
+    animation-delay: 2000ms;
   }
 }

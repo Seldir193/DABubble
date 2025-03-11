@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-import { PrivacyComponent } from '../privacy/privacy.component';
+
 import { RouterModule } from '@angular/router';
 import {
   Firestore,
@@ -30,7 +30,6 @@ import {
     ReactiveFormsModule,
     HeaderComponent,
     FooterComponent,
-    PrivacyComponent,
     RouterModule,
   ],
   templateUrl: './passwort-reset.component.html',

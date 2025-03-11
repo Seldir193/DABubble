@@ -10,6 +10,13 @@
 
 
 
+
+
+
+
+
+
+
 <div class="container">
   <div mat-dialog-content>
       <div class="close-dialog">
@@ -21,37 +28,24 @@
           <li *ngFor="let member of members; let i = index">
               <div class="avatar-container">
                   <!-- Avatar des Mitglieds -->
-                  <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar">
+                  <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar" (click)="openProfileDialog(member)">
           
                   <!-- Status-Icon (Online/Offline) -->
                   <img *ngIf="member.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
                   <img *ngIf="!member.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
                 </div>
-                <span>{{ member.name }}</span>
+                <span (click)="openProfileDialog(member)">{{ member.name }}</span>
             </li>
 
-            <div class="member-box"  (click)="openAddMembersOverlay.emit()">
+            <div class="member-box"   (click)="openAddMembersOverlayMethod()" >
               <div class="img-container">
                   <img src="assets/img/member.png" alt="Member">
-              </div>
-              <h2 >Mitglieder Hinzufügen</h2>
+              </div  >
+              <h2    >Mitglieder Hinzufügen</h2>
           </div>
       </ul>
     </div>
   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

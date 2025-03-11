@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-import { PrivacyComponent } from '../privacy/privacy.component';
+
 import { query, where, getDocs, collection } from '@angular/fire/firestore';
 
 @Component({
@@ -18,7 +18,7 @@ import { query, where, getDocs, collection } from '@angular/fire/firestore';
     FooterComponent,
     CommonModule,
     FormsModule,
-    PrivacyComponent,
+    
     RouterLink,
   ],
   templateUrl: './avatar.component.html',
