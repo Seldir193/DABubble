@@ -239,14 +239,16 @@
 
 
 
-
+@media(min-width:1278px){
+  .profil-settings img{
+    display: none;
+  }
+}
 
 
 @media(max-width:1278px){
-  .profile-card-container{
-    padding:40px 20px;
-  }
-
+ 
+ 
 
   .profil-settings{
     width:unset;
@@ -257,20 +259,85 @@
   }
 
   .button-anmelden{
-    display: none;
+    //display: none;
+    margin-top:10px;
+    height:25px;
   }
 
   .profile-card-container .profile-info{
     gap:20px;
+    width:100%;
   }
 
+
   .profile-card-container .profile-card{
+    width:100vw;
+    max-width:358px;
     gap:unset;
   }
 
-  .profile-card-container .profile-card{
-    width:100%;
+  .profile-card-container{
+    padding:40px 20px;
   }
+
+
+
+
+
+
+
+   
+    
+    .profil-settings {
+      
+      display: flex;
+     
+      justify-content: space-between;
+      
+      
+    
+    
+     
+    
+      img {
+        width:30px;
+        height:30px;
+  
+        object-fit: cover;
+        border-radius: 50%;
+        /* Keine separate Hover-Regel mehr hier! */
+        transition: filter 0.3s ease;
+       
+
+         /* NUR EIN Hover */
+      &:hover {
+        background-color: $lightblue; /* Der Kreis wird hellblau */
+        transform: scale(1.1);       /* Kreis wird größer */
+        cursor: pointer;
+    
+        /* Bild-Farbfilter => wir greifen direkt auf das <img> im Wrapper zu */
+        img {
+          filter: brightness(0) 
+                  saturate(100%) 
+                  invert(34%) 
+                  sepia(39%) 
+                  saturate(6834%) 
+                  hue-rotate(230deg) 
+                  brightness(100%) 
+                  contrast(90%);
+        }
+      }
+      }
+    
+}
+
+
+
+
+
+
+
+
 
  
 }

@@ -29,7 +29,7 @@
     <!-- Zeige bis zu 3 Avatare -->
     <ul class="avatar-list" *ngIf="selectedChannel?.members?.length">
       <li *ngFor="let member of selectedChannel!.members.slice(0, 3)">
-        <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar" />
+        <img [src]="member.avatarUrl || 'assets/img/avatar.png'" alt="{{ member.name }}" class="avatar" />
       </li>
       <li *ngIf="selectedChannel!.members.length > 3" class="member-counter">
         +{{ selectedChannel!.members.length - 3 }}

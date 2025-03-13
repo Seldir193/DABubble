@@ -17,7 +17,7 @@
     <div class="profile-avatar">
       <!-- Profilansicht: Nur Bild anzeigen -->
       <img 
-        [src]="data.userAvatarUrl"
+        [src]="data.userAvatarUrl || 'assets/img/avatar.png'"
         alt="User Avatar"
       />
     </div>
@@ -26,6 +26,7 @@
       <div class="profil-box">
         <div class="profil-settings">
           <p><strong>{{ data.userName }}</strong></p>
+          
         </div>
   
         <div class="online-aktiv-passiv">

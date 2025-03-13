@@ -137,6 +137,7 @@ async getCurrentUserData(): Promise<any> {
     }
   }
 
+
   async getAllUsers(): Promise<any[]> {
     const usersCollection = collection(this.firestore, 'users');
     const querySnapshot = await getDocs(usersCollection);
@@ -146,6 +147,7 @@ async getCurrentUserData(): Promise<any> {
     });
     return users;
   }
+
 
 
   

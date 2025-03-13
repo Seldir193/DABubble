@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" >
   <div class="close-dialog">
     <h1>Leute hinzufügen</h1>
     <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen">
@@ -34,7 +34,7 @@
           <ul *ngIf="filteredMembers.length > 0" class="dropdown-list scrollable-area">
             <li *ngFor="let member of filteredMembers" (click)="selectMember(member)">
               <div class="avatar-container">
-                <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar">
+                <img [src]="member.avatarUrl || 'assets/img/avatar.png'" alt="{{member.name}}" class="avatar">
                 <img *ngIf="member.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
                 <img *ngIf="!member.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
               </div>
@@ -45,7 +45,7 @@
 
         <!-- Zeige ausgewählte Mitglieder -->
         <div *ngIf="selectedMembers.length > 0" class="selected-member">
-          <img [src]="selectedMembers[0].avatarUrl" alt="{{selectedMembers[0].name}}" class="avatar">
+          <img [src]="selectedMembers[0].avatarUrl || 'assets/img/avatar.png'" alt="{{selectedMembers[0].name}}" class="avatar">
           <span>{{ selectedMembers[0].name }}</span>
           
           <button class="remove-btn" (click)="removeMember(selectedMembers[0])">×</button>
@@ -59,11 +59,46 @@
     </div>
   
 
+
+
   <div class="button-box">
     <button class="primary-button" (click)="onCreate()" [disabled]="selectedMembers.length === 0">Hinzufügen</button>
   </div>
 </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

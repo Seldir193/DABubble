@@ -37,7 +37,7 @@
     <li *ngFor="let member of filteredMembers" (click)="addRecipient(member)">
       <div class="avatar-container">
         <img
-          [src]="member.avatarUrl"
+          [src]="member.avatarUrl || 'assets/img/avatar.png'"
           alt="Avatar"
           class="avatar"
         />
@@ -58,7 +58,7 @@
      
       <ul>
         <li *ngFor="let recipient of selectedRecipients">
-          <img [src]="recipient.avatarUrl" alt="Avatar" class="avatar" />
+          <img [src]="recipient.avatarUrl || 'assets/img/avatar.png'" alt="Avatar" class="avatar" />
            {{ recipient.email }}
           
            <img (click)="removeRecipient(recipient)" src="assets/img/close.png" class="close-icon">
@@ -85,7 +85,7 @@
     <!-- Container für gesendete Nachrichten -->
     <div *ngIf="msg.senderId === currentUser.id" class="sent-message-container">
       <div class="message-container sent-message">
-        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+        <img class="avatar" [src]="msg.senderAvatar || 'assets/img/avatar.png'"  alt="{{ msg.senderName }}'s Avatar">
         <div class="message-box">
           <span class="message-info">
             <span class="sender-name">{{ msg.senderName }}</span>
@@ -213,7 +213,7 @@
     <!-- Container für empfangene Nachrichten -->
     <div *ngIf="msg.senderId !== currentUser.id" class="received-message-container">
       <div class="message-container received-message">
-        <img class="avatar" [src]="msg.senderAvatar" alt="{{ msg.senderName }}'s Avatar">
+        <img class="avatar" [src]="msg.senderAvatar || 'assets/img/avatar.png'" alt="{{ msg.senderName }}'s Avatar">
         <div class="message-box">
           <span class="message-info">
             <span class="sender-name">{{ msg.senderName }}</span>
@@ -381,7 +381,7 @@
           <!-- Beispiel-Liste aller Mitglieder (Nutzern) -->
           <ul   class="at-dropdown-list scrollable-area" >    
             <li *ngFor="let member of allMembers" (click)="addAtSymbolFor(member)">
-              <img [src]="member.avatarUrl" alt="Avatar" class="avatar" />
+              <img [src]="member.avatarUrl || 'assets/img/avatar.png'"  alt="Avatar" class="avatar" />
               {{ member.name }}
             </li>
           </ul>

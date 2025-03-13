@@ -4,7 +4,7 @@
   <div class="private-message-container"  >
   <div class="private-message-header">
     <div class="avatar-container">
-      <img [src]="recipientAvatarUrl" alt="{{ recipientName }}" class="avatar">
+      <img [src]="recipientAvatarUrl  || 'assets/img/avatar.png'"      alt="{{ recipientName }}" class="avatar">
       <img *ngIf="recipientStatus === 'Aktiv'" src="assets/img/online.png" class="status-icon" alt="Online">
     <img *ngIf="recipientStatus === 'Abwesend'" src="assets/img/offline.png" class="status-icon" alt="Offline">
     </div>

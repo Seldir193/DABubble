@@ -50,7 +50,7 @@
               <li *ngFor="let member of filteredMembers" (click)="selectMember(member)" >
 
                 <div class="avatar-container">
-                  <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar"> 
+                  <img [src]="member.avatarUrl || 'assets/img/avatar.png'"   alt="{{member.name}}" class="avatar"> 
                   <!-- Online-/Offline-Status-Icon -->
                   <img *ngIf="member.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
                   <img *ngIf="!member.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
@@ -153,7 +153,7 @@
             <li *ngFor="let member of filteredMembers" (click)="selectMember(member)" >
 
               <div class="avatar-container">
-                <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar"> 
+                <img [src]="member.avatarUrl || 'assets/img/avatar.png'"    alt="{{member.name}}" class="avatar"> 
                 <!-- Online-/Offline-Status-Icon -->
                 <img *ngIf="member.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
                 <img *ngIf="!member.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
@@ -169,7 +169,7 @@
         </ng-template>
 
         <div *ngIf="selectedMembers.length > 0" class="selected-member">
-          <img [src]="selectedMembers[0].avatarUrl" alt="{{selectedMembers[0].name}}" class="avatar">
+          <img [src]="selectedMembers[0].avatarUrl  || 'assets/img/avatar.png'" alt="{{selectedMembers[0].name}}" class="avatar">
           <span>{{ selectedMembers[0].name }}</span>
           
           <!-- Verwende selectedMembers[0], um das erste Mitglied zu entfernen -->

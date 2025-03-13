@@ -262,11 +262,13 @@ label {
   }
   
   .dropdown-list li {
-    padding: 10px;
+    padding: 20px 21px;
     display: flex;
     align-items: center;
     cursor: pointer;
     max-width: fit-content;
+    height:45px;
+   
 
     border-radius: 2.1875rem;
         font-size: 18px;
@@ -274,7 +276,8 @@ label {
   
     &:hover {
       background-color: $lightblue;
-     // height:35px;
+     //height:35px;
+    //height:45px;
     }
   
     .avatar {

@@ -9,7 +9,7 @@
         <ul>
     
             <li *ngFor="let member of selectedMembers; let i = index">
-                <img [src]="member.avatarUrl" alt="{{member.name}}" class="avatar">
+                <img [src]="member.avatarUrl || 'assets/img/avatar.png'" alt="{{member.name}}" class="avatar">
                 <span>{{ member.name }}</span>
                 <!-- Lösch-Button hinzufügen -->
                 <button (click)="removeMember(i)" class="remove-btn">×</button>

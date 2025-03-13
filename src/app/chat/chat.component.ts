@@ -217,6 +217,9 @@ backToContainer() {
   this.currentMobileView = 'container';
 }
 
+
+
+
  async openThreadChannelFromSearch(result: any): Promise<void> {
   console.log("🔍 Öffne Thread-Channel aus Suche:", result);
 

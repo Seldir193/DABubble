@@ -114,11 +114,9 @@ async leaveChannel(channelId: string, userId: string): Promise<void> {
   }
 }
 
-/**
- * CHANNEL-MITGLIEDER SETZEN
- * - Aktualisiert 'members' + 'membersUid' parallel
- */
-async setMembers(channelId: string, members: any[]): Promise<void> {
+
+
+async setMembers(channelId: string, newMembers: any[]): Promise<void> {
   try {
     const channels = this.channelsSource.getValue();
     const channelIndex = channels.findIndex(c => c.id === channelId);
@@ -126,41 +124,51 @@ async setMembers(channelId: string, members: any[]): Promise<void> {
     if (channelIndex > -1) {
       const channel = channels[channelIndex];
 
-      // (A) Setze das detailreiche Feld 'members'
-      channel.members = members;
-
-      // (B) Erzeuge die UID-Liste
-      const membersUid = members.map(m => m.uid);
-
-      // Firestore-Dokument
+      // 🔥 (A) Lade die alten Mitglieder aus Firestore
       const channelDocRef = doc(this.firestore, 'channels', channel.id);
+      const channelDoc = await getDoc(channelDocRef);
+      const oldMembers = channelDoc.exists() ? channelDoc.data()['members'] || [] : [];
 
-      // (C) Speichere beide Felder in Firestore
+
+      const updatedMembers = [...oldMembers, ...newMembers.filter(m => 
+        !oldMembers.some((existing: { uid: string }) => existing.uid === m.uid) // ✅ Typ definiert
+      )];
+      
+
+      // 🔥 (C) UID-Liste aktualisieren
+      const membersUid = updatedMembers.map(m => m.uid);
+
+      // 🔥 (D) Firestore-Update
       await updateDoc(channelDocRef, { 
-        members, 
+        members: updatedMembers,
         membersUid 
       });
 
-      // (D) Lokal updaten
-      channels[channelIndex] = { ...channel, membersUid };
+      // 🔥 (E) Lokale Liste updaten
+      channels[channelIndex] = { ...channel, members: updatedMembers, membersUid };
       this.channelsSource.next([...channels]);
 
-      // Falls der aktuelle Channel derselbe ist, local updaten
+      // Falls der aktuelle Channel derselbe ist, auch hier updaten
       const currentChannel = this.channelSource.getValue();
       if (currentChannel && currentChannel.id === channelId) {
-        currentChannel.members = members;
-        // Optional: currentChannel.membersUid = membersUid;
+        currentChannel.members = updatedMembers;
         this.channelSource.next(currentChannel);
       }
 
-      console.log(`Mitglieder für Channel "${channelId}" erfolgreich aktualisiert (inkl. membersUid).`);
+      console.log(`✅ Mitglieder für Channel "${channelId}" erfolgreich aktualisiert.`);
     } else {
-      
+      console.log(`❌ Channel mit ID "${channelId}" nicht gefunden.`);
     }
   } catch (error) {
-    console.error('Fehler beim Aktualisieren der Mitglieder:', error);
+    console.error('❌ Fehler beim Aktualisieren der Mitglieder:', error);
   }
 }
+
+
+
+
+
+
 
 
 // Lade alle Channels von Firestore

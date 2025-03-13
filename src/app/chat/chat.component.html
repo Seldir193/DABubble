@@ -65,7 +65,7 @@
   <!-- =========================
        1) ENTWICKLERTEAM (Kanal-Ansicht)
       ========================= -->
-  <div class="team-container scrollable-area " [ngClass]="{'show-mobile': currentMobileView === 'team'}"
+  <div class="team-container  " [ngClass]="{'show-mobile': currentMobileView === 'team'}"
        *ngIf="selectedChannel && !isSearchActive"  >
     <!-- Nur anzeigen, wenn KEIN private Chat aktiv ist -->
     <div *ngIf="!isPrivateChat && selectedChannel">
@@ -84,7 +84,7 @@
   <!-- =========================
        2) PRIVATER CHAT
       ========================= -->
-  <div class="privat-chat-container scrollable-area " [ngClass]="{'show-mobile': currentMobileView === 'private'}"
+  <div class="privat-chat-container " [ngClass]="{'show-mobile': currentMobileView === 'private'}"
        *ngIf="isPrivateChat && selectedMember && !isSearchActive">
     <app-private-messages
       [recipientId]="selectedMember.id"
@@ -108,7 +108,7 @@
        3) THREAD-CHANNEL ANSICHT
       ========================= -->
   <div *ngIf="selectedThreadChannel "
-       class="thread-area scrollable-area " 
+       class="thread-area  " 
        [ngClass]="{'thread-activ': isThreadChannelFromSearch , 'show-mobile': currentMobileView === 'threadChannel'   }">
 
 
@@ -125,7 +125,7 @@
        4) THREAD ANSICHT
       ========================= -->
   <div *ngIf="selectedThread "
-       class="thread-area scrollable-area " 
+       class="thread-area  " 
        [ngClass]="{'thread-activ': isThreadFromSearch , 'show-mobile': currentMobileView === 'thread'   }">
     <app-thread
       [parentMessage]="selectedThread"

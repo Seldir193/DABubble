@@ -140,6 +140,7 @@ selectedThreadChannel: any = null;
    this.isDesktop = window.innerWidth >= 1278;
   }
 
+
   checkIfDesktop() {
     this.isDesktop = window.innerWidth >= 1278;
   }

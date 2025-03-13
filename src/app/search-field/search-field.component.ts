@@ -582,7 +582,7 @@ onSearchInput(): void {
         id: user.id || user.uid,
         email: user.email,
         name: user.name,
-        avatarUrl: user.avatarUrl || 'assets/default-avatar.png',
+        avatarUrl: user.avatarUrl || 'assets/img/avatar.png',
       }));
       this.noResultsFound = users.length === 0;
     }).catch(() => {
@@ -752,7 +752,7 @@ loadAllUsers(): void {
         id: u.id,
         //email: u.email,
         name: u.name,
-        avatarUrl: u.avatarUrl || 'assets/default-avatar.png'
+        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
       }));
     })
     .catch(err => console.error('Fehler beim Laden der Nutzer:', err));

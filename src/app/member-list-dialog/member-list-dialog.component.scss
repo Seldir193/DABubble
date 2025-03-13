@@ -51,7 +51,7 @@ li {
     overflow-x: hidden;
 
     background-color: white;
-
+   max-width:335px;
   
    }
 
@@ -234,15 +234,16 @@ li {
 
 
 
-
-
   @media(max-width:1278px){
     .container{
       height: 371px;
       overflow-y: overlay;
       overflow-x: hidden;
       padding:20px 16px;
+
+      max-width:398px;
   }
+
 
 
 

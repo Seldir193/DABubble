@@ -1,6 +1,11 @@
 @import "./../../styles.scss";
 
 
+::ng-deep .mat-bottom-sheet-container{
+  min-width: 100vw!important;
+}
+
+
 mat-form-field {
     width: 100%; // Eingabefelder nehmen die volle Breite des Dialogs ein
   }
@@ -212,14 +217,14 @@ mat-form-field {
       display: flex;
       flex-direction: column;
       gap:20px;
-      width:434px;
+      //width:434px;
   }
   
   
   .specific-members input[type="text"] {
      
     width: 100%;
-    max-width: 630px; /* Breite festlegen */
+    //max-width: 630px; /* Breite festlegen */
     height: 60px;
     border: 1px solid #ccc;
     border-radius: 30px;
@@ -377,12 +382,77 @@ mat-form-field {
 
 
 
+   
+      
+      .overlay-box {
+        width:180px;
+        border: 1px solid #ccc;
+        border-radius: 0px 30px 30px 30px;
+        background: white;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        padding: 10px;
+       
+        margin-top:-30px;
+        
+
+
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 200px; /* optional => max. Höhe */
+            overflow-y: auto;
+           
+          }
+        
+          ul li {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            
+            /* Hover-Effekt */
+            &:hover {
+              background-color: $lightblue; /* oder #f0f0f0 etc. */
+            }
+        
+            /* Avatar / Status-Icons etc. */
+            .avatar-container {
+              position: relative;
+              .avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+              }
+              .status-icon {
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                border: 2px solid white;
+                bottom: 0;
+                right: 0;
+              }
+            }
+        
+            span {
+              font-size: 16px;
+              font-weight: 400;
+            }
+          }
 
 
 
 
 
 
+
+
+        // etc.
+      }
+      
 
 
     
@@ -418,11 +488,55 @@ mat-form-field {
 
 
 
+    ::ng-deep .mat-bottom-sheet-container {
+    padding: 0 !important;
+    border-radius: 30px 30px 0 0;
+    //min-width:1000px;
+  }
+
+
+
+
+
+  
+  .handle-bar {
+    width: 63px;                /* Deine gewünschte Breite */
+    height: 6px;               /* Deine gewünschte Höhe */
+    background: #D9D9D9;       /* Deine gewünschte Farbe */
+    border-radius: 3px;        /* Abgerundete Ecken */
+    margin: 0 auto 10px auto;  /* Zentrieren (horizontal) und Abstand nach unten */
+    /* Falls du es ein wenig weiter unten platzieren willst, 
+       könntest du z.B. margin-top: 23px; oder padding-top 
+       im .bottom-menu-content verwenden. */
+  }
+
+
+  @media(min-width:1278px){
+    .container{
+    display: none;
+    }
+
+
+  }
+
+@media(max-width:1278px){
+    .container{
+        padding:30px 16px;
+        gap:20px;
+    }
+
+    .primary-button:disabled{
+        margin-top:20px;
+    }
+
+  
+   
+}
+
+
 
 @media(max-width: 768px){
-  .specific-members input[type=text]{
-    max-width:366px;
-  }
+  
 
   .member-selection{
     width:100%;
@@ -447,8 +561,48 @@ mat-form-field {
     font-size: 16px;
   }
 
-  .specific-members input[type=text]{
-    width:unset;
-  }
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

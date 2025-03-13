@@ -53,6 +53,10 @@ mat-form-field {
   .mdc-dialog__title {
     margin: 0 0 20px !important ;
   }
+
+  ::ng-deep .mat-bottom-sheet-container-medium{
+    min-width: 100vw;
+  }
   
   .container {
     width:792px;
@@ -64,10 +68,11 @@ mat-form-field {
     flex-direction: column;
   
     .close-dialog,
-    
+   
     .edit-box{
       width: 100%; // Alle Kind-Container übernehmen die Breite von .close-container
     }
+    
 
     .info-box{
        
@@ -122,54 +127,88 @@ mat-form-field {
     }
   }
   
+
+
+
+  
+
+
+
+
+
+
   .edit-box {
-      display: flex;
-      flex-direction: column;
-      border-radius: 40px;
-      padding: 20px 0;
-      //gap:20px;
-    
-      .input-icon {
-        position: absolute;
-        left: 25px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        transition: filter 0.3s ease;
-        font-size: 25px;
-        font-weight: 700;
-    
-      }
-    
-      input {
-        display: none;  // Standardmäßig Eingabefeld verstecken
-        background: $lightblue;
-        border-radius: 100px;
-        color: black;
-        font-size: 18px;
-        font-weight: 500;
-        height: 60px;
-        width: 100%;
-        border: 1px solid transparent;
-        box-sizing: border-box;
-        padding-left: 60px; // Platz für das Bild
-       
-        &.visible {
-          display: block;  // Zeige das Eingabefeld im Bearbeitungsmodus
-        }
-    
-        &:hover {
-          border-color: #686868;
-          transition: border-color 0.3s;
-        }
-    
-        &:focus,
-        &:focus-within {
-          outline: none;
-          border-color: $button-blue;
-        }
-      }
+    display: flex;
+    flex-direction: column;
+    border-radius: 40px;
+    padding: 20px 0;
+  
+    .input-icon {
+      position: absolute;
+      left: 25px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      transition: filter 0.3s ease;
+      font-size: 25px;
+      font-weight: 700;
     }
+  
+    /* Hier statt nur "input" => "input, textarea" */
+    input,
+    textarea {
+      display: none; /* Standardmäßig verstecken (weil du es nur im Bearbeitungsmodus zeigst) */
+      background: $lightblue;
+      border-radius: 100px;
+      color: black;
+      font-size: 18px;
+      font-weight: 500;
+      height: 60px;            /* selbe Höhe wie dein Input */
+      width: 100%;
+      border: 1px solid transparent;
+      box-sizing: border-box;
+      padding-left: 60px; 
+      align-content: center;     /* Platz für das Icon links */
+  
+      &.visible {
+        display: block;        /* wird bei Bearbeitung angezeigt */
+      }
+  
+      &:hover {
+        border-color: #686868;
+        transition: border-color 0.3s;
+      }
+  
+      &:focus,
+      &:focus-within {
+        outline: none;
+        border-color: $button-blue;
+      }
+
+     
+    }
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     .channel-box {
      // padding: 20px;
@@ -233,12 +272,20 @@ mat-form-field {
       }
     }
   
-  
+
+
+
+
+
+
+
     .header-button-box{
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding:0 20px;
+
+
   
       label {
           font-size: 18px;
@@ -250,7 +297,17 @@ mat-form-field {
           }
         }
   
-    }
+      }
+
+
+
+
+  
+
+
+
+  
+   
   
     .profil-settings-button {
       font-size: 18px;
@@ -267,12 +324,13 @@ mat-form-field {
   
       &.move-initial {
           transform: translate(0, 0); // Ausgangsposition (ohne Verschiebung)
+          margin-left:auto;
           
         }
   
         &.move-right {
           transform: translate(20px, -0px); // Verschiebung nach rechts oben beim Bearbeiten
-          
+          margin-left:auto;
         }
   
          
@@ -319,3 +377,337 @@ mat-form-field {
          max-width: 739px; 
          margin: 0 auto;
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+        gap: 13px;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+    }
+    
+    li {
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 15px;
+        width:fit-content;
+        border-radius: 100px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    
+        &:hover {
+            background-color: $lightblue;
+            border-radius: 100px;
+          }
+        }
+      
+        span {
+          font-size: 18px;
+          font-weight: 400;
+          color: black;
+          transition: color 0.3s ease;
+        }
+      
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+      
+     
+      
+    
+      .box{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        img{
+          width: 50px;
+          height: 50px;
+        }
+      }
+    
+    
+   
+
+
+
+
+
+      .member-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 0 29px;
+        width: fit-content;
+        border-radius: 100px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    
+        /* Standardzustand */
+        .img-container {
+            width: 32px;
+            height: 32px;
+            background-color: $lightblue;  // Hintergrund der Box
+            border-radius: 50%;  // Runde Form
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease;  
+    
+            img {
+                width: 24px;  // Inneres Bild
+                height: 24px;
+                transition: filter 0.3s ease, transform 0.3s ease; 
+            }
+        }
+    
+        h2 {
+            font-size: 18px;
+            font-weight: 400;
+            color: #333;  // Standardfarbe für den Text
+            transition: color 0.3s ease;
+        }
+    
+        /* Hover-Effekt für die gesamte Box */
+        &:hover {
+            background-color: $lightblue;  // Die gesamte Box ändert die Farbe
+            border-radius: 100px;
+           
+            /* Textfarbe ändern */
+            h2 {
+                color: $hoverColor;  // Farbe für den Text bei Hover
+            }
+    
+            /* Bild-Box und Bild beim Hover ändern */
+            .img-container {
+                background-color: transparent;  // Hintergrund der Box beim Hover
+    
+                img {
+                    filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+                }
+            }
+        }
+    }
+    
+
+
+
+      .avatar-container {
+        position: relative;  /* Erlaubt das Status-Icon auf dem Avatar */
+      
+        /* Status-Icons (Online/Offline) unten rechts auf dem Avatar-Bild */
+        .status-icon {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          border: 2px solid white;
+        }
+      }
+      
+      
+
+
+      
+      @media(max-width:1278px){
+        .header-button-box {
+    
+          .img-wrapper {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden; /* Damit das Bild nicht übersteht */
+            
+            /* Weiche Übergänge */
+            transition: 
+              background-color 0.3s ease, 
+              transform 0.3s ease,
+              filter 0.3s ease;
+          
+            /* NUR EIN Hover */
+            &:hover {
+              background-color: $lightblue; /* Der Kreis wird hellblau */
+              transform: scale(1.1);       /* Kreis wird größer */
+              cursor: pointer;
+          
+              /* Bild-Farbfilter => wir greifen direkt auf das <img> im Wrapper zu */
+              img {
+                filter: brightness(0) 
+                        saturate(100%) 
+                        invert(34%) 
+                        sepia(39%) 
+                        saturate(6834%) 
+                        hue-rotate(230deg) 
+                        brightness(100%) 
+                        contrast(90%);
+              }
+            }
+          
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 50%;
+              /* Keine separate Hover-Regel mehr hier! */
+              transition: filter 0.3s ease;
+             
+            }
+          }
+      }
+
+      .container {
+        position: fixed; 
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;      
+        border-radius: 0; 
+        max-width: 100%; 
+        padding: 20px;  /* oder so, falls du einen Rand willst */
+        overflow-y: auto; /* bei Bedarf scrollbar in der Höhe */
+        box-sizing: border-box; /* wichtig, damit padding + width harmonieren */
+        background-color: white;
+      }
+  
+      .mdc-dialog__content>:first-child{
+        font-size:17px;
+      }
+  
+      .custom-input .input-icon{
+        left:10px;
+      }
+  
+      .custom-input input{
+        padding: 1.125rem 2.30rem;
+      }
+
+      .seperator {
+        width: calc(100% - 40px);
+        max-width: none;
+        margin: 0 auto;
+      }
+
+      .desktop-off{
+       padding:20px;
+        border: 1px solid $button-border;
+        border-radius:20px;
+        overflow-y: overlay;
+      }
+    }
+
+
+
+    @media(min-width:1278px){
+      .desktop-off{
+        display: none;
+      
+    
+      }
+    }
+    
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

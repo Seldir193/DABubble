@@ -17,6 +17,35 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="container">
   <div mat-dialog-content>
       <div class="close-dialog">
@@ -28,13 +57,15 @@
           <li *ngFor="let member of members; let i = index">
               <div class="avatar-container">
                   <!-- Avatar des Mitglieds -->
-                  <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar" (click)="openProfileDialog(member)">
+                  <img [src]="member.avatarUrl || 'assets/img/avatar.png'"  alt="{{ member.name }}" class="avatar" (click)="openProfileDialog(member)">
           
                   <!-- Status-Icon (Online/Offline) -->
                   <img *ngIf="member.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
                   <img *ngIf="!member.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
+                 
                 </div>
                 <span (click)="openProfileDialog(member)">{{ member.name }}</span>
+                
             </li>
 
             <div class="member-box"   (click)="openAddMembersOverlayMethod()" >
@@ -46,6 +77,34 @@
       </ul>
     </div>
   </div>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
