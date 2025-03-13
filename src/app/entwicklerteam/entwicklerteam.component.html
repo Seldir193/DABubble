@@ -212,6 +212,11 @@
                  
                  
                 </span>
+                
+
+
+
+
                 <div class="message-content" [ngClass]="{'image-message': msg.type === 'image', 'text-message': msg.type === 'text'}">
                   <!-- Display message if not in editing mode -->
                   <p *ngIf="!msg.isEditing && msg.content?.text" class="sent-message">{{ msg.content.text }}</p>
@@ -225,6 +230,11 @@
                     </div>
                   </div>
                 </div>
+
+
+
+
+
                 <!-- Display image content (if exists) -->
                 <img *ngIf="msg.content?.image" [src]="msg.content.image" class="sent-image" (click)="openLargeImage(msg.content.image!) ; $event.stopPropagation() "  />
 
