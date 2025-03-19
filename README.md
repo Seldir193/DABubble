@@ -1,6 +1,6 @@
 # DABubble
 
-DABubble ist eine **Angular**-basierte Chat-Anwendung (TypeScript + SCSS), die **Firebase (Firestore & Auth)** im Backend nutzt. Sie ermöglicht Echtzeit-Kommunikation in Kanälen (Channels), Threads und privaten Nachrichten (Direktnachrichten). Außerdem können Benutzer ihr Profil (Avatar, Name, E-Mail-Adresse) bearbeiten.  
+DABubble is an **Angular**-based chat application (TypeScript + SCSS) that uses **Firebase (Firestore & Auth)** as its backend. It enables real-time communication in channels (Channels), threads, and private messages (direct messages). Additionally, users can customize their profile (avatar, name, email address).
 
 ## Table of Contents
 
@@ -12,45 +12,44 @@ DABubble ist eine **Angular**-basierte Chat-Anwendung (TypeScript + SCSS), die *
 6. [Tests](#tests)  
 7. [Screenshots (Optional)](#screenshots-optional)  
 8. [Project Structure](#project-structure)  
-9. [Angular CLI Info](#angular-cli-info)  
-10. [Contributing](#contributing)  
-11. [License](#license)
+9. [Contributing](#contributing)  
+10. [License](#license)
 
 ---
 
 ## Overview
 
-Die DABubble-App wurde entwickelt, um ein **intuitives und responsives** Chat-Erlebnis zu bieten. Nutzer können in **Kanälen** oder **Thread-Channels** schreiben und andere Mitglieder einladen. Zudem stehen **private Nachrichten** (1:1-Chats) und **Threads** für fokussierte Unterhaltungen zur Verfügung.
+The DABubble app was created to provide an **intuitive and responsive** chat experience. Users can write messages in **channels** or **thread-channels** and invite other members. Additionally, there are **private messages** (1:1 chats) and **threads** for in-depth conversations.
 
-Zusätzlich gibt es einen **Gastzugang**, falls sich ein Anwender nicht registrieren möchte. Mit Profilanpassungen (Avatar, Anzeigename, E-Mail) können User ihre Identität personalisieren.
+There is also a **guest mode** for those who prefer not to register. Users can personalize their profiles by adjusting their avatar, display name, and email address.
 
 ---
 
 ## Features
 
-- **Channel & Threads**  
-  - Kanäle (Channels) mit mehreren Teilnehmern, Echtzeit-Updates  
-  - Threads oder Thread-Channels, um Nachrichten thematisch zu vertiefen  
+- **Channels & Threads**  
+  - Channels with multiple participants and real-time updates  
+  - Threads or thread-channels for structured, topic-specific discussions  
 
-- **Private Nachrichten (DM)**  
-  - 1:1-Kommunikation  
-  - Unterstützung von Threads auch in privaten Chats  
+- **Private Messages (DM)**  
+  - 1:1 communication  
+  - Thread support in private chats  
 
-- **Profilverwaltung**  
-  - Avatar/Profilbild, Name, E-Mail ändern  
-  - Online-/Offline-Status (Echtzeit)  
+- **Profile Management**  
+  - Edit avatar/profile picture, name, and email  
+  - Online/offline status in real time  
 
-- **Nachrichtenbearbeitung**  
-  - Nachricht bearbeiten, löschen, Emojis einfügen, Bilder hochladen  
+- **Message Editing**  
+  - Edit or delete messages, add emojis, upload images  
 
-- **Authentifizierung**  
-  - E-Mail/Passwort-Registrierung oder Gast-Login  
-  - Passwort-Zurücksetzen  
-  - Impressum und Datenschutzbelehrung  
+- **Authentication**  
+  - Email/password registration or guest login  
+  - Password reset  
+  - Legal notice (Impressum) and privacy policy  
 
 - **Responsive Design**  
-  - Desktop- und Mobilgeräte-Unterstützung  
-  - Keine separate Mobile-App benötigt  
+  - Desktop and mobile support  
+  - No separate mobile app required  
 
 ---
 
@@ -58,27 +57,27 @@ Zusätzlich gibt es einen **Gastzugang**, falls sich ein Anwender nicht registri
 
 - **Angular** (TypeScript + SCSS)  
 - **Firebase**  
-  - Firestore (Echtzeit-Datenbank)  
-  - Firebase Auth (Registrierung & Login)  
-  - Optional: Firebase Storage (Bilder)  
-- **Angular CLI** (z. B. Version 17.x)  
+  - Firestore (real-time database)  
+  - Firebase Auth (registration & login)  
+  - Optional: Firebase Storage (images)  
+- **Angular CLI** (e.g., version 17.x)  
 
-*(Passe die Versionsnummern an deine tatsächliche Umgebung an.)*
+*(Adjust the version number to match your actual environment.)*
 
 ---
 
 ## Installation
 
-### Voraussetzungen
+### Prerequisites
 
-- **Node.js** (Version 16 oder höher)  
-- **NPM** oder **Yarn**  
+- **Node.js** (version 16 or higher)  
+- **NPM** or **Yarn**  
 - **Angular CLI** (optional)  
-- **Firebase-Konto** (für Firestore/Auth)
+- **Firebase account** (for Firestore/Auth)
 
-### Schritte
+### Steps
 
-1. **Repository klonen**  
+1. **Clone the repository**  
    ```bash
    git clone https://github.com/Seldir193/DABubble.git
    cd dabubble
@@ -86,113 +85,123 @@ Zusätzlich gibt es einen **Gastzugang**, falls sich ein Anwender nicht registri
 
 ## Screenshots (Optional)
 
-Hier einige Beispiel-Screenshots der Anwendung:
+Below are some sample screenshots of the application:
 
 <details>
 <summary>1. Channel Overview</summary>
-<img src="screenshots/channel-overview.png" alt="Channel Overview" style="max-width:100%;">
-<p>In diesem Screenshot sieht man die Übersicht der Kanäle, in denen mehrere Mitglieder in Echtzeit chatten können.</p>
+<img src="assets/img/channel.jpg" alt="Channel Overview" style="max-width:100%;">
+<p>This screenshot shows an overview of the channels in which multiple members can chat in real time.</p>
 </details>
 
 <details>
-<summary>2. Thread Feature</summary>
-<img src="screenshots/thread-feature.png" alt="Thread Feature" style="max-width:100%;">
-<p>Dieses Beispiel zeigt, wie man in einem Channel-Thread eine Unterdiskussion führt – nützlich, um Themen vom Hauptchat zu trennen.</p>
+<summary>2. Thread-Channel Feature</summary>
+<img src="assets/img/thread.jpg" alt="Thread Feature" style="max-width:100%;">
+<p>This example illustrates how to start a sub-discussion (thread) within a channel—helpful for separating topics from the main chat.</p>
 </details>
 
 <details>
-<summary>3. Private Nachrichten</summary>
-<img src="screenshots/direct-messages.png" alt="Direct Messages" style="max-width:100%;">
-<p>Hier die Direktnachrichten (1:1), in denen Emojis, Bilder und Threads ebenfalls genutzt werden können.</p>
+<summary>3. Private Messages</summary>
+<img src="img/assets/privat.jpg" alt="Direct Messages" style="max-width:100%;">
+<p>Here you can see direct (1:1) messages where you can also use emojis, images, and threads.</p>
 </details>
 
+<details>
+<summary>4. Thread Messages</summary>
+<img src="assets/img/privthre.jpg" alt="Direct Messages" style="max-width:100%;">
+<p>This example shows how you can hold a sub-discussion (thread) within a channel, separate from the main chat.</p>
+</details>
+
+---
 
 ## Usage
 
-1. **Starten der Anwendung**  
-   - Führe <code>ng serve</code> aus oder starte in der IDE (z. B. Visual Studio Code) mit dem Angular-CLI-Befehl.
-   - Öffne [http://localhost:4200](http://localhost:4200) im Browser.  
-   - Bei Änderungen an den Quelldateien wird die Anwendung automatisch neu kompiliert und neu geladen.
+1. **Starting the Application**  
+   - Run <code>ng serve</code> or start it in your IDE (e.g., Visual Studio Code) using an Angular CLI command.  
+   - Open [http://localhost:4200](http://localhost:4200) in your browser.  
+   - The application automatically recompiles and reloads when you make changes to the source files.
 
-2. **Registrierung oder Gast-Login**  
-   - Beim ersten Start kannst du einen Account anlegen (E-Mail/Passwort) oder dich als Gast einloggen.
-   - Gastnutzer haben eingeschränkte Profilfunktionen.
+2. **Registration or Guest Login**  
+   - On first launch, you can create an account (email/password) or log in as a guest.  
+   - Guest users have limited profile features.
 
 3. **Channels & Threads**  
-   - Erstelle über das „+“-Icon einen neuen Kanal, lade Mitglieder ein und beginne zu chatten.
-   - Klicke auf eine Nachricht, um einen Thread zu starten oder Bilder/Emojis hinzuzufügen.
+   - Click the “+” icon to create a new channel, invite members, and start chatting.  
+   - Click on a message to start a thread or to attach images/emojis.
 
 4. **Private Messages**  
-   - Wähle einen Nutzer aus, um eine Direktnachricht zu starten. Auch hier kannst du Threads nutzen, um Unterhaltungen zu vertiefen.
+   - Select a user to start a direct (1:1) message. You can also use threads here for more in-depth discussions.
 
-5. **Profil bearbeiten**  
-   - Klicke auf dein Avatar-Icon (oben rechts), um Name, E-Mail oder Avatar zu ändern und deinen Online-Status zu verwalten.
+5. **Edit Your Profile**  
+   - Click your avatar icon (top right) to change your name, email, or avatar, and to manage your online status.
 
-6. **Datenschutz & Impressum**  
-   - Über den Footer-Link oder das Menü zugänglich. Enthält rechtliche Hinweise und Kontaktinformationen.
+6. **Privacy Policy & Legal Notice**  
+   - Accessible via the footer link or the menu, containing legal notices and contact info.
 
-7. **Passwort zurücksetzen**  
-   - Über „Passwort vergessen?“ kannst du ein neues Passwort anfordern (E-Mail-Verifizierung nötig).
+7. **Password Reset**  
+   - Use “Forgot Password?” to request a new password (email verification required).
 
+---
 
-## tests
+## Tests
 
-Um die Tests auszuführen, stelle sicher, dass du die erforderlichen Abhängigkeiten installiert hast und führe den folgenden Befehl im Terminal aus:
+To run the tests, ensure that you have installed the required dependencies, then execute the following command in the terminal:
+
+```bash
 ng test
 
 ## Project Structure
 
-DABubble/
-├─ src/
-│  ├─ app/
-│  │  ├─ components/
-│  │  │  ├─ chat-component.html
-│  │  │  ├─ add-members-dialog.html
-│  │  │  ├─ add-members-dialog-mobile.html
-│  │  │  ├─ auth-action.html
-│  │  │  ├─ avatar.html
-│  │  │  ├─ channel-dialog.html
-│  │  │  ├─ chat-header.html
-│  │  │  ├─ devspace.html
-│  │  │  ├─ direct-messages.html
-│  │  │  ├─ edit-channel-dialog.html
-│  │  │  ├─ entwicklerteam.html
-│  │  │  ├─ footer.html
-│  │  │  ├─ header.html
-│  │  │  ├─ imprint.html
-│  │  │  ├─ inner-channel.html
-│  │  │  ├─ intro.html
-│  │  │  ├─ login.html
-│  │  │  ├─ members-list-dialog.html
-│  │  │  ├─ member-section-dialog.html
-│  │  │  ├─ members-dialog.html
-│  │  │  ├─ new-passwort.html
-│  │  │  ├─ passwort-reset.html
-│  │  │  ├─ privacy.html
-│  │  │  ├─ private-messages.html
-│  │  │  ├─ profil-dialog.html
-│  │  │  ├─ search-field.html
-│  │  │  ├─ search-result-dialog.html
-│  │  │  ├─ selected-mebers-dialog.html
-│  │  │  ├─ signup.html
-│  │  │  ├─ thread.html
-│  │  │  ├─ thread-channel.html
-│  │  │  ├─ verify-email.html
-│  │  │  └─ welcome-screen.html
+DABubble/  
+├─ src/  
+│  ├─ app/  
+│  │  ├─ components/  
+│  │  │  ├─ chat-component.html  
+│  │  │  ├─ add-members-dialog.html  
+│  │  │  ├─ add-members-dialog-mobile.html  
+│  │  │  ├─ auth-action.html  
+│  │  │  ├─ avatar.html  
+│  │  │  ├─ channel-dialog.html  
+│  │  │  ├─ chat-header.html  
+│  │  │  ├─ devspace.html  
+│  │  │  ├─ direct-messages.html  
+│  │  │  ├─ edit-channel-dialog.html  
+│  │  │  ├─ entwicklerteam.html  
+│  │  │  ├─ footer.html  
+│  │  │  ├─ header.html  
+│  │  │  ├─ imprint.html  
+│  │  │  ├─ inner-channel.html  
+│  │  │  ├─ intro.html  
+│  │  │  ├─ login.html  
+│  │  │  ├─ members-list-dialog.html  
+│  │  │  ├─ member-section-dialog.html  
+│  │  │  ├─ members-dialog.html  
+│  │  │  ├─ new-passwort.html  
+│  │  │  ├─ passwort-reset.html  
+│  │  │  ├─ privacy.html  
+│  │  │  ├─ private-messages.html  
+│  │  │  ├─ profil-dialog.html  
+│  │  │  ├─ search-field.html  
+│  │  │  ├─ search-result-dialog.html  
+│  │  │  ├─ selected-mebers-dialog.html  
+│  │  │  ├─ signup.html  
+│  │  │  ├─ thread.html  
+│  │  │  ├─ thread-channel.html  
+│  │  │  ├─ verify-email.html  
+│  │  │  └─ welcome-screen.html  
 │  │  │  
-│  │  │  /* Hinweis:
-│  │  │     Zu jedem .html gehört eine passende .ts und .scss,
-│  │  │     z.B. "chat-component.ts" und "chat-component.scss" */
+│  │  │  /* Note:
+│  │  │     Each .html file has a corresponding .ts & .scss,
+│  │  │     e.g. \"chat-component.ts\" and \"chat-component.scss\" */
 │  │  ├─ services/
 │  │  │  ├─ user.service.ts
 │  │  │  ├─ message.service.ts
 │  │  │  ├─ channel.service.ts
 │  │  │  └─ app-state.service.ts
 │  │  ├─ pages/
-|  |  ├─ app.component.html
-|  |  ├─ app.component.scss
-|  |  ├─ app.component.spec.ts
-|  |  ├─ app.component.ts
+│  │  │  ├─ app.component.html
+│  │  │  ├─ app.component.scss
+│  │  │  ├─ app.component.spec.ts
+│  │  │  └─ app.component.ts
 │  │  ├─ app.config.ts
 │  │  ├─ app.routes.ts
 │  │  ├─ message.model.ts
@@ -208,17 +217,19 @@ DABubble/
 ├─ README.md
 └─ ...
 
-
+---
 
 ## Contributing
 
-Contributions are welcome! Fork the repository, create a new branch, and submit a pull request. 
+Contributions are welcome! Fork the repository, create a new branch, and submit a pull request.
 
-Please ensure that your code adheres to the following standards:
+Please ensure that your code follows these guidelines:
 - **Clean Code principles**: Write simple, understandable, and maintainable code.
+
+---
 
 ## License
 
-Dieses Projekt steht unter der **MIT License**. Details findest du in der [LICENSE](./LICENSE)-Datei.  
+This project is licensed under the **MIT License**. For more details, see the [LICENSE](./LICENSE) file.
 
 
