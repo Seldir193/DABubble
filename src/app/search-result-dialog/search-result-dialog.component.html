@@ -1,56 +1,55 @@
-
 <div class="container">
   <ul>
     <li *ngFor="let result of data.results" (click)="selectResult(result)">
-      
-      <!-- Channel-Ergebnisse -->
-      <div *ngIf="result.type === 'channel'"   class="channel-container">
-        <img src="assets/img/tag-black.png" class="icon">
-        
+      <div *ngIf="result.type === 'channel'">
+        <img src="assets/img/tag-black.png" />
       </div>
 
-      <!-- Benutzer-Ergebnisse -->
       <div *ngIf="result.type === 'user'" class="avatar-container">
-       
-
-       
-
-       
-       
-       
-      
         <img
-  [src]="
-    (result.avatarUrl && result.avatarUrl !== 'assets/default-avatar.png')
-    ? result.avatarUrl
-    : 'assets/img/avatar.png'
-  "
-  alt="{{ result.name }}"
-  class="avatar"
-/>
+          [src]="
+            result.avatarUrl &&
+            result.avatarUrl !== 'assets/img/avatar.png' &&
+            result.avatarUrl !== 'assets/default-avatar.png'
+              ? result.avatarUrl
+              : 'assets/img/avatar.png'
+          "
+          alt="{{ result.name }}"
+          class="avatar"
+        />
 
-
-
-
-        <img *ngIf="result.isOnline" src="assets/img/online.png" class="status-icon" alt="Online">
-        <img *ngIf="!result.isOnline" src="assets/img/offline.png" class="status-icon" alt="Offline">
-        
+        <img
+          *ngIf="result.isOnline"
+          src="assets/img/online.png"
+          class="status-icon"
+          alt="Online"
+        />
+        <img
+          *ngIf="!result.isOnline"
+          src="assets/img/offline.png"
+          class="status-icon"
+          alt="Offline"
+        />
       </div>
       <span>{{ result.name }}</span>
-  
-     
-      <div *ngIf="result.type === 'thread' || result.type === 'message' || result.type === 'private-message' || result.type === 'thread-channel'" class="message-container">
-        
-       
 
+      <div
+        *ngIf="
+          result.type === 'thread' ||
+          result.type === 'message' ||
+          result.type === 'private-message' ||
+          result.type === 'thread-channel'
+        "
+      >
         <span class="message-preview">
-          {{ result.text | slice:0:15 }}
-          <ng-container *ngIf="(result.text?.length || 0) > 15">...</ng-container>
+          {{ result.text | slice : 0 : 15 }}
+          <ng-container *ngIf="(result.text?.length || 0) > 15"
+            >...</ng-container
+          >
         </span>
-       
-        <span class="message-timestamp">
-      
-          {{ result.formattedTimestamp | date:'dd.MM.yyyy HH:mm' }}
+
+        <span>
+          {{ result.formattedTimestamp | date : "dd.MM.yyyy HH:mm" }}
         </span>
       </div>
     </li>

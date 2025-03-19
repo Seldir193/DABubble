@@ -1,3 +1,8 @@
+/**
+ * The LoginComponent is responsible for handling user sign-in, whether by email/password
+ * or via Google sign-in. It validates user input, checks for existing users, updates
+ * Firestore records, and navigates to the appropriate pages upon successful login.
+ */
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -6,7 +11,7 @@ import {
   FormGroup,
   Validators,
   AbstractControl,
-  ValidationErrors,
+  ValidationErrors
 } from '@angular/forms';
 import { FirebaseError } from '@firebase/util';
 import {
@@ -15,24 +20,24 @@ import {
   where,
   getDocs,
   collection,
-  addDoc,
-  updateDoc,
-  getDoc,
   setDoc,
   doc,
+  getDoc,
+  updateDoc
 } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import {
   getAuth,
+  signInAnonymously,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithPopup
 } from '@angular/fire/auth';
-import { AppStateService } from '../app-state.service'; 
+import { AppStateService } from '../app-state.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-login',
@@ -43,218 +48,244 @@ import { AppStateService } from '../app-state.service';
     FooterComponent,
     HeaderComponent,
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  /** Indicates whether the email field is currently filled. */
   emailFilled = false;
+  /** Indicates whether the password field is currently filled. */
   passwordFilled = false;
+  /** A map of states for each field, indicating if it is filled or not. */
   filledStates: { [key: string]: boolean } = {};
-  errorMessage: string = '';
-  email: string = '';
-  password: string = '';
-  successMessage: string = '';
+  /** Displays an error message when login fails. */
+  errorMessage = '';
+  /** Displays a success message when login succeeds. */
+  successMessage = '';
+  /** Stores the user's email input. */
+  email = '';
+  /** Stores the user's password input. */
+  password = '';
+  /** Displays an error related to password input. */
+  errorPassword = '';
+  /** A regex pattern used for validating email format. */
   emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  /** Reactive form group for validation of name, email, password, and a checkbox. */
   myForm: FormGroup;
-
-  errorPassword: string = '';
 
   constructor(
     private firestore: Firestore,
     private router: Router,
     private fb: FormBuilder,
-    private appStateService: AppStateService
+    private appStateService: AppStateService,
+    private userService: UserService
   ) {
     this.myForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, this.emailValidator.bind(this)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      checkbox: [false, Validators.requiredTrue],
+      checkbox: [false, Validators.requiredTrue]
     });
   }
 
-  ngOnInit(): void {
-   
-  }
+  /** Lifecycle hook that runs after component initialization. */
+  ngOnInit(): void {}
 
-
-
- 
+  /** Validates the email format using a regex pattern. */
   emailValidator(control: AbstractControl): ValidationErrors | null {
-    const email = control.value;
-    if (!this.emailPattern.test(email)) {
-      return { invalidEmail: true };
-    }
+    const value = control.value;
+    if (!this.emailPattern.test(value)) return { invalidEmail: true };
     return null;
   }
 
-  onFocus(type: string) {
+  /** Sets the form field's filled state to true when focused, clearing any error messages. */
+  onFocus(type: string): void {
     this.filledStates[type + 'Filled'] = true;
     this.errorMessage = '';
     this.errorPassword = '';
   }
 
-  onBlur(type: string) {
-    this.filledStates[type + 'Filled'] = Boolean(this.myForm.get(type)?.value);
-
-   
+  /** Updates the field's filled state on blur, depending on its current value. */
+  onBlur(type: string): void {
+    const val = this.myForm.get(type)?.value;
+    this.filledStates[type + 'Filled'] = !!val;
   }
 
-  updateFilledState(type: string, value: string) {
+  /** Updates the filled state for a given field by checking if the string is non-empty. */
+  updateFilledState(type: string, value: string): void {
     this.filledStates[type + 'Filled'] = value !== '';
   }
 
-
-
-
-
+  /** Checks Firestore to see if a given email already exists in the 'users' collection. */
   async checkEmailExists(email: string): Promise<boolean> {
-    const usersCollection = collection(this.firestore, 'users');
-    const q = query(usersCollection, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
-
-    return !querySnapshot.empty;
+    const colRef = collection(this.firestore, 'users');
+    const q = query(colRef, where('email', '==', email));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
   }
 
-  async onSubmit() {
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.errorPassword = '';
-
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Bitte füllen Sie alle Felder aus.';
-      this.errorPassword = 'Bitte füllen Sie alle Felder aus.'
-      return;
-    }
-
+  /** Handles the login form submission with email/password credentials. */
+  async onSubmit(): Promise<void> {
+    this.clearMessages();
+    if (this.fieldsAreEmpty()) return;
     const emailExists = await this.checkEmailExists(this.email);
     if (!emailExists) {
       this.errorMessage = 'Diese E-Mail-Adresse ist nicht registriert.';
       return;
     }
+    await this.attemptEmailSignIn();
+  }
 
+  /** Clears all error and success messages. */
+  private clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.errorPassword = '';
+  }
+
+  /** Checks if email or password is empty, sets an error message if so. */
+  private fieldsAreEmpty(): boolean {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Bitte füllen Sie alle Felder aus.';
+      this.errorPassword = 'Bitte füllen Sie alle Felder aus.';
+      return true;
+    }
+    return false;
+  }
+
+  /** Attempts sign-in with email and password, handles success or error feedback. */
+  private async attemptEmailSignIn(): Promise<void> {
     try {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, this.email, this.password);
-
       this.appStateService.setShowWelcomeContainer(true);
-
-      this.successMessage = 'Anmelden';
-      setTimeout(() => {
-        this.successMessage = '';
-        this.router.navigate(['/chat']);
-      }, 3000);
-    } catch (error) {
-      console.error('Fehler bei der Anmeldung:', error);
-
-      const firebaseError = error as FirebaseError;
-      console.log('Error code:', firebaseError.code);
-      if (firebaseError.code === 'auth/invalid-password') {
-        this.errorPassword = 'Das Passwort ist falsch.';
-      } else if (firebaseError.code === 'auth/too-many-requests') {
-        this.errorMessage =
-          'Ihre Anmeldung wurde vorübergehend gesperrt, weil Sie zu viele falsche Anmeldeversuche gemacht haben. Bitte versuchen Sie es später erneut oder setzen Sie Ihr Passwort zurück.';
-      } else {
-        this.errorPassword = 'Das Passwort ist falsch.';
-      }
+      this.handleLoginSuccess();
+    } catch (err) {
+      this.handleLoginError(err);
     }
   }
 
-  async loadUserData(email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
+  /** Sets a success message and navigates to chat after a short delay. */
+  private handleLoginSuccess(): void {
+    this.successMessage = 'Anmelden';
+    setTimeout(() => {
+      this.successMessage = '';
+      this.router.navigate(['/chat']);
+    }, 3000);
+  }
+
+  /** Handles login error: sets appropriate error messages for known Firebase errors. */
+  private handleLoginError(error: unknown): void {
+    const fbErr = error as FirebaseError;
+    if (fbErr.code === 'auth/invalid-password') {
+      this.errorPassword = 'Das Passwort ist falsch.';
+    } else if (fbErr.code === 'auth/too-many-requests') {
+      this.errorMessage =
+        'Ihre Anmeldung wurde vorübergehend gesperrt, weil Sie zu viele falsche Anmeldeversuche gemacht haben. Bitte versuchen Sie es später erneut oder setzen Sie Ihr Passwort zurück.';
+    } else {
+      this.errorPassword = 'Das Passwort ist falsch.';
+    }
+  }
+
+  /**
+   * Loads user data from Firestore based on the authenticated user's ID.
+   * If no record exists, creates a new one; otherwise updates the existing record.
+   */
+  async loadUserData(
+    email: string,
+    name: string | undefined = undefined,
+    avatarUrl: string | undefined = undefined
+  ): Promise<void> {
     const auth = getAuth();
     const user = auth.currentUser;
-  
-    if (user && user.uid) {
+    if (user?.uid) {
       try {
-        const userDocRef = doc(this.firestore, 'users', user.uid); // Verwende die UID
-        const userDocSnap = await getDoc(userDocRef);
-  
-        if (userDocSnap.exists()) {
-          // Update the existing user data in Firestore
-          await this.updateExistingUser(userDocRef, {
-            lastLogin: new Date(),
-            name: name,
-            avatarUrl: avatarUrl,
-          });
-        } else {
-          // Save a new user if it doesn't exist in Firestore
-          await this.saveNewUser(user.uid, email, name, avatarUrl);
-        }
-      } catch (error) {
-        console.error('Error loading user data:', error);
-      }
-    } else {
-      console.error('No authenticated user found.');
+        const ref = doc(this.firestore, 'users', user.uid);
+        const snap = await getDoc(ref);
+        snap.exists()
+          ? await this.updateExistingUser(ref, {
+              lastLogin: new Date(),
+              name,
+              avatarUrl
+            })
+          : await this.saveNewUser(user.uid, email, name, avatarUrl);
+      } catch (_) {}
     }
   }
-  
-  async saveNewUser(uid: string, email: string, name: string | undefined = undefined, avatarUrl: string | undefined = undefined) {
-    try {
-      const user = {
-        uid: uid,
-        email: email,
-        name: name || 'Unbekannt',
-        avatarUrl: avatarUrl || '',
-        createdAt: new Date(),
-        lastLogin: new Date(),
-      };
-      // Verwende setDoc mit der UID des Benutzers
-      await setDoc(doc(this.firestore, 'users', uid), user);
-      console.log('New user created with UID:', uid);
-    } catch (error) {
-      console.error('Error creating new user:', error);
-    }
+
+  /** Creates a new user document in Firestore with the given data if none exists. */
+  private async saveNewUser(
+    uid: string,
+    email: string,
+    name?: string,
+    avatarUrl?: string
+  ): Promise<void> {
+    const user = {
+      uid,
+      email,
+      name: name || 'Unbekannt',
+      avatarUrl: avatarUrl || '',
+      createdAt: new Date(),
+      lastLogin: new Date()
+    };
+    await setDoc(doc(this.firestore, 'users', uid), user);
   }
-  
-  async updateExistingUser(userDoc: any, data: Partial<{ lastLogin: Date; name?: string; avatarUrl?: string }>) {
-    try {
-      const updateData = {
-        ...data,
-        lastLogin: data.lastLogin || new Date(),
-      };
-  
-      console.log('Updating user data with:', updateData);
-      await updateDoc(userDoc, updateData);
-      console.log('User data updated:', userDoc.id);
-    } catch (error) {
-      console.error('Error updating user data:', error);
-    }
+
+  /** Updates an existing user's Firestore document with new data. */
+  private async updateExistingUser(
+    userDoc: any,
+    data: Partial<{ lastLogin: Date; name?: string; avatarUrl?: string }>
+  ): Promise<void> {
+    const updateData = { ...data, lastLogin: data.lastLogin || new Date() };
+    await updateDoc(userDoc, updateData);
   }
-  
-  async signInWithGoogle() {
+
+  /** Signs the user in with Google, then loads/creates their Firestore record. */
+  async signInWithGoogle(): Promise<void> {
     try {
       const provider = new GoogleAuthProvider();
       const auth = getAuth();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      if (user && user.email) {
-        console.log('User signed in with Google:', user);
+      if (user?.email) {
         const avatarUrl = user.photoURL || '';
-
-        await this.loadUserData(
-          user.email,
-          user.displayName || undefined,
-          avatarUrl
-        );
-
+        await this.loadUserData(user.email, user.displayName || undefined, avatarUrl);
         this.router.navigate(['/avatar']);
-      } else {
-        throw new Error('Google sign-in result does not contain user email.');
       }
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
+    } catch (_) {
       this.errorMessage = 'Fehler bei der Google-Anmeldung.';
     }
   }
 
-  navigateToSignup() {
+  /** Navigates to the signup page if the user chooses to register. */
+  navigateToSignup(): void {
     this.router.navigate(['/signup']);
   }
 
-  navigateToGuestLogin() {
-    this.router.navigate(['/chat']);
+  /** Signs in user as a guest (anonymous), creates a Firestore doc, then goes to /chat. */
+  navigateToGuestLogin(): void {
+    const auth = getAuth();
+    signInAnonymously(auth)
+      .then(async (cred) => {
+        if (!cred.user) return;
+        const randomSuffix = Math.random().toString(36).substring(2, 6);
+        const guestName = `Guest-${randomSuffix}`;
+        const ref = doc(this.firestore, 'users', cred.user.uid);
+        await setDoc(ref, {
+          uid: cred.user.uid,
+          name: guestName,
+          isOnline: true,
+          createdAt: new Date()
+        });
+        this.router.navigate(['/chat']);
+      })
+      .catch(() => {});
+  }
+
+  /** Logs the user out via the UserService. */
+  logout(): void {
+    this.userService.logout();
   }
 }

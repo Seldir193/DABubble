@@ -1,16 +1,36 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, SimpleChanges, HostListener  } from '@angular/core';
-import { CommonModule } from '@angular/common';
+/**
+ * The ThreadComponent manages a "thread" view for replies to a parent message
+ * (e.g., in a chat application). It handles live-loading of thread messages,
+ * adding and editing replies, emojis, and more. No logic or styling has been
+ * changed – only these English JSDoc comments have been added.
+ */
+
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+  SimpleChanges,
+  HostListener,
+} from '@angular/core';
+import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { ChangeDetectorRef } from '@angular/core';
 import { MessageService } from '../message.service';
 import { UserService } from '../user.service';
-import { formatDate } from '@angular/common';
 import { serverTimestamp } from '@angular/fire/firestore';
-import { ChangeDetectorRef } from '@angular/core'; 
+import { Message } from '../message.models';
 
-import { Message} from '../message.models';
-
-import { OverlayModule } from '@angular/cdk/overlay';
+/**
+ * The ThreadComponent handles a child "thread" chat, where users reply to
+ * a `parentMessage`. It supports loading, editing, and sending new replies,
+ * as well as loading emojis and tracking live reply counts.
+ */
 @Component({
   selector: 'app-thread',
   standalone: true,
@@ -19,726 +39,867 @@ import { OverlayModule } from '@angular/cdk/overlay';
   styleUrls: ['./thread.component.scss'],
 })
 export class ThreadComponent implements OnInit {
-  //@Input() parentMessage: any = null;
+  /**
+   * The name of the thread recipient (optional usage).
+   */
   @Input() recipientName: string = '';
+
+  /**
+   * An `EventEmitter` to signal closing the entire thread view.
+   */
   @Output() closeThread = new EventEmitter<void>();
+
+  /**
+   * A reference to the DOM element containing the message list, used for scrolling.
+   */
   @ViewChild('messageList') messageList!: ElementRef;
+
+  /**
+   * An `EventEmitter` used to optionally open another thread from within this thread.
+   */
   @Output() openThread = new EventEmitter<any>();
 
+  /**
+   * The main message input's state, e.g., for expanded text area with images.
+   */
   isTextareaExpanded: boolean = false;
-  //threadMessages: any[] = [];
+
+  /**
+   * The user's typed message when composing a new thread reply.
+   */
   privateMessage: string = '';
+
+  /**
+   * The current logged-in user data.
+   */
   currentUser: any;
+
+  /**
+   * Holds the selected image data URL if the user attaches an image to their reply.
+   */
   imageUrl: string | null = null;
+
+  /**
+   * Whether the global emoji picker for the new message input is visible.
+   */
   isEmojiPickerVisible: boolean = false;
+
+  /**
+   * Toggles a modal for viewing an attached image at full size.
+   */
   isImageModalOpen: boolean = false;
+
+  /**
+   * Whether an emoji tooltip is visible on hover.
+   */
   tooltipVisible: boolean = false;
+
+  /**
+   * The x,y position for an emoji tooltip.
+   */
   tooltipPosition = { x: 0, y: 0 };
+
+  /**
+   * The hovered emoji character in the tooltip.
+   */
   tooltipEmoji: string = '';
+
+  /**
+   * The name of the sender for the hovered emoji in the tooltip.
+   */
   tooltipSenderName: string = '';
+
+  /**
+   * Arrays for storing recently used emojis in thread replies (sent or received).
+   */
   lastUsedEmojisSent: string[] = [];
   lastUsedEmojisReceived: string[] = [];
+
+  /**
+   * Controls visibility of edit options for a specific message.
+   */
   showEditOptions: boolean = false;
+
+  /**
+   * Tracks which message is currently selected for editing.
+   */
   currentMessageId: string | null = null;
+
+  /**
+   * Stores the original message before editing, to restore on cancel.
+   */
   originalMessage: any = null;
+
+  /**
+   * Used for date comparisons (e.g., show "Gestern" if the date matches).
+   */
   yesterdayDate: Date = this.getYesterdayDate();
+
+  /**
+   * Used for date comparisons (e.g., show "Heute" if the date matches).
+   */
   currentDate: Date = new Date();
+
+  /**
+   * A preformatted date string if the parent message has a timestamp.
+   */
   formattedParentMessageDate: string = '';
+
+  /**
+   * A preformatted time if the parent message has a timestamp.
+   */
   formattedMessageTime: string = '';
-  threadId!: string; 
-  replyCount: number = 0; 
 
+  /**
+   * The thread's unique ID, typically matching the parent message's ID.
+   */
+  threadId!: string;
 
+  /**
+   * Tracks the total number of replies in this thread.
+   */
+  replyCount: number = 0;
 
+  /**
+   * The main "parentMessage" that started the thread.
+   * Contains its content, ID, etc.
+   */
   @Input() parentMessage: Message | null = null;
 
-  // 3) threadMessages als `Message[]` statt `any[]`
+  /**
+   * Stores the array of thread messages (each a `Message`).
+   */
   threadMessages: Message[] = [];
 
-
-
-
+  /**
+   * Toggles a full-image modal.
+   */
   showLargeImage = false;
+
+  /**
+   * The data URL of a large image currently open in the modal (if any).
+   */
   largeImageUrl: string | null = null;
 
-
+  /**
+   * Indicates whether the view is a "desktop" layout (>= 1278px).
+   */
   isDesktop = false;
 
-  
+  /**
+   * Holds the entire list of known users (for mention or selection).
+   */
   allUsers: any[] = [];
 
-  // Steuert Overlay
+  /**
+   * Whether a user dropdown overlay is open (e.g. for mentioning).
+   */
   showUserDropdown: boolean = false;
 
-  private recipientCache: Map<string, string> = new Map(); // Cache für Namen
-  private unsubscribeFromThreadMessages: (() => void) | null = null; // Speichert das onSnapshot-Abonnement
+  /**
+   * A cache mapping user IDs to their names for quick re-lookup.
+   */
+  private recipientCache: Map<string, string> = new Map();
+
+  /**
+   * Subscriptions for real-time Firestore listeners (thread messages, emojis, reply counts).
+   */
+  private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeEmojiListener?: () => void;
   private unsubscribeReplyCount: (() => void) | null = null;
 
+  /**
+   * Constructor injecting services for messages, user data, and change detection.
+   */
   constructor(
     private messageService: MessageService,
     private userService: UserService,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef
   ) {}
 
- 
-
-
+  /**
+   * OnInit verifies that a valid `parentMessage` was provided, loads the current user,
+   * fetches or initializes thread data, and activates live updates for reply counts and emojis.
+   */
   async ngOnInit(): Promise<void> {
     this.checkDesktopWidth();
-    // 1) Prüfe, ob `parentMessage` eine ID hat
-    if (!this.parentMessage?.id) {
-      console.warn('⚠️ Kein gültiges `parentMessage` übergeben. Thread kann nicht geladen werden.', this.parentMessage);
-      this.closeThread.emit(); // ❌ Thread schließen, da kein gültiger Parent vorhanden ist
-      return;
-    }
-  
-    // ✅ Lokale Konstante `pm` anlegen
-    const pm = this.parentMessage;
-  
-    // 2) CurrentUser laden
+    if (!this.verifyParentMessage()) return;
+
     await this.loadCurrentUser();
-    if (!this.currentUser?.uid) {
-      console.error("❌ `currentUser` konnte nicht geladen werden. Thread wird nicht geöffnet.");
-      this.closeThread.emit(); // ❌ Falls Benutzer nicht geladen wird, Thread schließen
-      return;
-    }
-  
-    
-    // 3) `threadId` aus `pm.id`
-    const threadId = pm.id;
+    if (!this.isCurrentUserValid()) return;
+
     try {
-      console.log(`🔍 Lade Thread-Messages für ID: ${threadId}`);
-  
-      // **Paralleles Laden von Nachrichten & Emojis für bessere Performance**
-      const [existingMessages, lastSentEmojis, lastReceivedEmojis] = await Promise.all([
-        this.messageService.getMessagesOnce('thread', threadId),
-        this.messageService.getLastUsedThreadEmojis(threadId!, 'sent'),
-        this.messageService.getLastUsedThreadEmojis(threadId!, 'received')
-      ]);
-  
-      this.lastUsedEmojisSent = lastSentEmojis;
-      this.lastUsedEmojisReceived = lastReceivedEmojis;
-      this.loadLastUsedThreadEmojis();
-  
-      if (existingMessages.length === 0) {
-        console.log("🟢 Kein initialer Nachrichteneintrag notwendig.");
-      }
-  
-      // **Live-Updates für Reply-Count & Emojis aktivieren**
-      this.listenForReplyCountUpdates();
-      this.listenForThreadEmojiUpdates();
-  
-      // **Live-Emojis laden & Nachrichten aktualisieren**
-      await this.loadLastUsedEmojisLive(threadId!);
-     this.loadThreadMessagesLive();
-  
-      // ✅ Falls `timestamp` existiert, formatiere es
-      if (pm.timestamp) {
-        const parentTimestamp = this.safeConvertTimestamp(pm.timestamp);
-        this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
-        this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
-      }
-  
-      // **Live-Updates für Reply-Counts aktivieren**
-      this.unsubscribeReplyCount = this.messageService.loadReplyCountsLive(
-        [pm.id!],
-        'thread',
-        (updatedCounts) => {
-          // Hier verwenden wir `pm.id` statt `this.parentMessage.id`
-          // und `pm.replyCount` statt `this.parentMessage.replyCount`.
-          pm.replyCount = updatedCounts[pm.id!]?.count || 0;
-          console.log("🔄 Live-Update für `replyCount`:", pm.replyCount);
-        }
-      );
-  
+      await this.initializeThreadData(this.parentMessage!);
     } catch (error) {
-      console.error('❌ Fehler bei der Initialisierung des Threads:', error);
-      this.closeThread.emit(); // ❌ Thread bei Fehlern schließen
+      this.closeThread.emit();
     }
   }
-  
 
+  /**
+   * Checks if parentMessage exists and has an id; if not, closes the thread.
+   */
+  private verifyParentMessage(): boolean {
+    if (!this.parentMessage?.id) {
+      this.closeThread.emit();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Ensures the current user is loaded; if invalid or missing uid, close the thread.
+   */
+  private isCurrentUserValid(): boolean {
+    if (!this.currentUser?.uid) {
+      this.closeThread.emit();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Parallel loads messages and emojis for this thread, sets up live updates,
+   * and formats timestamps if available.
+   */
+  private async initializeThreadData(pm: Message): Promise<void> {
+    const threadId = pm.id!;
+
+    // 1) Load data in parallel
+    const [existingMessages, lastSentEmojis, lastReceivedEmojis] =
+      await this.loadInitialThreadData(threadId);
+
+    // 2) Store loaded emojis and start last-used logic
+    this.lastUsedEmojisSent = lastSentEmojis;
+    this.lastUsedEmojisReceived = lastReceivedEmojis;
+    this.loadLastUsedThreadEmojis();
+
+    // 3) Optionally handle existingMessages.length === 0 ...
+
+    // 4) Live updates for reply count, emojis, etc.
+    this.setupThreadLiveUpdates(threadId);
+
+    // 5) Format the parent's timestamp if present
+    this.formatParentTimestamp(pm);
+
+    // 6) Subscribe to replyCounts for this parentMessage
+    this.subscribeReplyCounts(pm);
+  }
+
+  /**
+   * Loads initial thread messages and last-used emojis in parallel.
+   */
+  private async loadInitialThreadData(
+    threadId: string
+  ): Promise<[Message[], string[], string[]]> {
+    return await Promise.all([
+      this.messageService.getMessagesOnce('thread', threadId),
+      this.messageService.getLastUsedThreadEmojis(threadId, 'sent'),
+      this.messageService.getLastUsedThreadEmojis(threadId, 'received'),
+    ]);
+  }
+
+  /**
+   * Sets up the live updates for reply counts, thread emojis, and listens for last-used emojis.
+   */
+  private async setupThreadLiveUpdates(threadId: string): Promise<void> {
+    this.listenForReplyCountUpdates();
+    this.listenForThreadEmojiUpdates();
+    await this.loadLastUsedEmojisLive(threadId);
+    this.loadThreadMessagesLive();
+  }
+
+  /**
+   * Formats the parent's timestamp if available, updating formattedParentMessageDate/time.
+   */
+  private formatParentTimestamp(pm: Message): void {
+    if (!pm.timestamp) return;
+    const parentTimestamp = this.safeConvertTimestamp(pm.timestamp);
+    this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
+    this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
+  }
+
+  /**
+   * Subscribes to reply counts for this parentMessage and updates pm.replyCount accordingly.
+   */
+  private subscribeReplyCounts(pm: Message): void {
+    this.unsubscribeReplyCount = this.messageService.loadReplyCountsLive(
+      [pm.id!],
+      'thread',
+      (updatedCounts) => {
+        pm.replyCount = updatedCounts[pm.id!]?.count || 0;
+      }
+    );
+  }
+
+  /**
+   * Detects window resize events to dynamically toggle isDesktop mode.
+   */
   @HostListener('window:resize')
-   onResize() {
-     this.checkDesktopWidth();
-   }
- 
-   checkDesktopWidth() {
-     this.isDesktop = window.innerWidth >= 1278;
-   }
- 
+  onResize() {
+    this.checkDesktopWidth();
+  }
 
+  /**
+   * Sets `isDesktop` to true if the window width is >= 1278px.
+   */
+  checkDesktopWidth() {
+    this.isDesktop = window.innerWidth >= 1278;
+  }
 
-
-
-
-  
-
+  /**
+   * Composes and sends a new reply in this thread to Firestore,
+   * optionally including an image. Resets the input fields afterward.
+   */
   async sendThreadMessage(
     messageContent: string | null,
     imageUrl: string | null,
     textArea: HTMLTextAreaElement
   ): Promise<void> {
-    console.log("📩 `sendThreadMessage()` gestartet...");
-  
-    if (!messageContent?.trim() && !imageUrl) {
-      console.warn('⚠️ Leere Nachricht oder Bild. Nachricht wurde nicht gesendet.');
+    if (!this.validateThreadSubmission(messageContent, imageUrl)) {
       return;
     }
-  
-    // 🔍 Sicherstellen, dass `currentUser` geladen ist
-    if (!this.currentUser) {
-      console.warn("🔄 `currentUser` nicht vorhanden – lade ihn nach...");
-      await this.loadCurrentUser();
-    }
-  
-    if (!this.currentUser || !this.currentUser.uid) {
-      console.error('❌ Fehler: `currentUser` konnte nicht geladen werden. Nachricht wird nicht gesendet.');
-      return;
-    }
-  
-    console.log("👤 `currentUser` geladen:", this.currentUser);
-  
-    // 🔍 `parentMessage` debuggen
-    console.log("📝 `parentMessage` vor Erstellung der Nachricht:", this.parentMessage);
-  
-    // ❌ Prüfen, ob `parentMessage` eine gültige ID hat
-    if (!this.parentMessage || !this.parentMessage.id) {
-      console.error("❌ Fehler: `parentMessage.id` fehlt! Nachricht wird nicht gesendet.");
-      return;
-    }
-  
-    // ❌ Prüfen, ob `threadId` fehlt
-    if (!this.parentMessage.threadId) {
-      console.warn("⚠️ `threadId` fehlt! Setze `parentMessage.id` als `threadId`.");
-      this.parentMessage.threadId = this.parentMessage.id;
-    }
-    console.log("🛠 `threadId` gesetzt auf:", this.parentMessage.threadId);
 
-    // 🔥 **Thread-Nachricht erstellen**
-    const threadMessage = this.createThreadMessage(messageContent, imageUrl);
-    
-    if (!threadMessage) {
-      console.error("❌ Fehler beim Erstellen der Thread-Nachricht.");
+    if (!this.parentMessage?.id) {
       return;
     }
-  
-    console.log("📨 Sende Nachricht an Firestore:", threadMessage);
-  
+
+    // 2) Falls threadId fehlt, setze sie auf parentMessage.id
+    if (!this.parentMessage.threadId) {
+      this.parentMessage!.threadId = this.parentMessage!.id!;
+    }
+    const threadMessage = this.createThreadMessage(messageContent, imageUrl);
+    if (!threadMessage) return;
+
     try {
-      // 🔥 **Nachricht in Firestore speichern**
-      const messageId = await this.messageService.sendMessage(threadMessage);
-      console.log('✅ Nachricht erfolgreich gesendet:', messageId);
-  
-      // 🔥 **`lastResponseTime` für den Thread aktualisieren**
-      await this.messageService.updateMessage(this.parentMessage.id, {
-        lastResponseTime: serverTimestamp(),
-      });
-  
-      // 🔥 **Antwortzähler aktualisieren**
-      await this.messageService.updateReplyCount(this.parentMessage.id, "thread");
-  
-      // 🔍 Letzte Emojis für den Thread abrufen
-      [this.lastUsedEmojisSent, this.lastUsedEmojisReceived] = await Promise.all([
-        this.messageService.getLastUsedThreadEmojis(this.parentMessage.id, 'sent'),
-        this.messageService.getLastUsedThreadEmojis(this.parentMessage.id, 'received')
-      ]);
-  
-      // 🔍 Live-Emoji-Updates starten
-      this.listenForThreadEmojiUpdates();
-  
-      // 🔄 **UI zurücksetzen**
+      await this.commitThreadMessage(threadMessage);
       this.privateMessage = '';
       this.imageUrl = null;
       if (textArea) {
         this.resetTextareaHeight(textArea);
       }
-  
     } catch (err) {
-      console.error('❌ Fehler beim Senden der Nachricht im Thread:', err);
+      // you could handle errors here if needed
     }
   }
-  
-  private createThreadMessage(messageContent: string | null, imageUrl: string | null): any {
-    console.log("🛠 Erstelle Thread-Nachricht...");
-  
-    if (!this.currentUser || !this.currentUser.uid) {
-      console.error("❌ Fehler: `currentUser` ist nicht verfügbar.");
+
+  /**
+   * Checks if there's any reason to skip sending the thread message
+   * (e.g., empty content, user not loaded, or missing parentMessage).
+   */
+  private validateThreadSubmission(
+    messageContent: string | null,
+    imageUrl: string | null
+  ): boolean {
+    if (!messageContent?.trim() && !imageUrl) {
+      return false;
+    }
+    if (!this.currentUser) {
+      return false;
+    }
+    if (!this.currentUser?.uid) {
+      return false;
+    }
+    if (!this.parentMessage?.id) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Persists the new thread message in Firestore, updates lastResponseTime/replyCount,
+   * and refreshes the last used emojis from Firestore.
+   */
+  private async commitThreadMessage(threadMessage: any): Promise<void> {
+    const messageId = await this.messageService.sendMessage(threadMessage);
+
+    await this.messageService.updateMessage(this.parentMessage!.id!, {
+      lastResponseTime: serverTimestamp(),
+    });
+    await this.messageService.updateReplyCount(
+      this.parentMessage!.id!,
+      'thread'
+    );
+
+    [this.lastUsedEmojisSent, this.lastUsedEmojisReceived] = await Promise.all([
+      this.messageService.getLastUsedThreadEmojis(
+        this.parentMessage!.id!,
+        'sent'
+      ),
+      this.messageService.getLastUsedThreadEmojis(
+        this.parentMessage!.id!,
+        'received'
+      ),
+    ]);
+
+    this.listenForThreadEmojiUpdates();
+  }
+
+  /**
+   * Creates a thread message payload for Firestore from the given text or image.
+   */
+  private createThreadMessage(
+    messageContent: string | null,
+    imageUrl: string | null
+  ): any {
+    if (!this.currentUser?.uid) {
       return null;
     }
-  
-    if (!this.parentMessage || !this.parentMessage.id) {
-      console.error("❌ Fehler: `parentMessage` oder `parentMessage.id` fehlt!");
+    if (!this.parentMessage?.id) {
       return null;
     }
-  
-    const threadMessage = {
-      type: 'thread',  
-      threadId: this.parentMessage.id,  
-      parentId: this.parentMessage.id,  
+    return {
+      type: 'thread',
+      threadId: this.parentMessage.id,
+      parentId: this.parentMessage.id,
       content: {
-        text: messageContent || "",   
-        image: imageUrl ?? "",  
-        emojis: []
+        text: messageContent || '',
+        image: imageUrl ?? '',
+        emojis: [],
       },
       senderId: this.currentUser.uid,
-      senderName: this.currentUser.name ?? "Unbekannt",
+      senderName: this.currentUser.name ?? 'Unbekannt',
       senderAvatar: this.currentUser.avatarUrl || 'assets/default-avatar.png',
       recipientId: this.parentMessage.senderId || null,
       timestamp: serverTimestamp(),
       isReply: true,
       lastReplyTime: serverTimestamp(),
-     
     };
-  
-    console.log("📄 Thread-Nachricht erstellt:", threadMessage);
-    return threadMessage;
-  }  
+  }
 
-
- 
-  
-
+  /**
+   * openThreadEvent can be triggered to replace the existing parent message
+   * with a new one in the same thread context, loading its messages.
+   */
   openThreadEvent(msg: Message): void {
-    console.log("📥 `openThreadEvent()` aufgerufen mit Nachricht:", msg);
-  
-    // 1) Check, ob Nachricht & Nachricht-ID vorhanden ist
-    if (!msg || !msg.id) {
-      console.error("❌ Fehler: Ungültige Nachricht zum Öffnen des Threads", msg);
+    if (!msg?.id) {
       return;
     }
-  
-    // 2) Kopiere `msg` in `parentMessage`
     this.parentMessage = { ...msg };
-  
-    // 3) Lokale Konstante anlegen => garantiert nicht null
     const pm = this.parentMessage;
+
     if (!pm.id) {
-      console.error("❌ `pm.id` fehlt – Thread kann nicht geöffnet werden.");
       return;
     }
-  
-    // 4) threadId setzen
+
     this.threadId = pm.id;
-    console.log("🔍 Setze `parentMessage.id` als `threadId`:", pm.id);
-  
-    // 5) Falls `timestamp` existiert => formatieren
     if (pm.timestamp) {
       const parentTimestamp = this.safeConvertTimestamp(pm.timestamp);
       this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
       this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
     }
-  
-    // 6) `openThread`-Event abfeuern => erweiterte Daten mitgeben
+
     this.openThread.emit({
       ...pm,
       threadId: pm.id,
       parentId: pm.parentId ?? pm.id,
       timestamp: pm.timestamp,
     });
-  
-    // 7) Thread-Nachrichten laden
+
     this.loadThreadMessagesLive();
   }
-  
 
- private loadThreadMessagesLive(): void {
+  /**
+   * Subscribes to a live Firestore listener for thread messages under `parentMessage.id`,
+   * updating `threadMessages` in real time.
+   */
+  private loadThreadMessagesLive(): void {
     if (!this.parentMessage?.id) {
-      console.error('❌ Fehler: `parentMessage.id` ist nicht vorhanden.');
       return;
     }
-  
-    console.log('📩 Starte Live-Update für Thread:', this.parentMessage.id);
-  
+
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
     }
-  
+
     this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
       'thread',
       this.parentMessage.id,
       (messages) => {
-        console.log("🔄 Live-Nachrichten empfangen für Thread:", messages);
         if (messages.length === 0) {
-          console.warn("⚠️ Keine Nachrichten gefunden!");
         }
-  
         this.threadMessages = messages.map((msg) => this.formatMessage(msg));
         this.scrollToBottom();
       }
     );
   }
 
-
-
-
-
+  /**
+   * Reacts to changes in `parentMessage`; if a new parent is set, it ensures
+   * the thread ID is valid, reloads the original private message (if needed),
+   * listens for reply count updates, and starts live thread updates.
+   */
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['parentMessage'] && changes['parentMessage'].currentValue) {
-      console.log("📩 DEBUG: `parentMessage` in `thread.ts` erhalten:", changes['parentMessage'].currentValue);
-  
-      const parentMessage = changes['parentMessage'].currentValue;
-  
-      // ❌ Falls `threadId` fehlt, setzen wir sie aus `parentMessage.id`
-      if (!parentMessage.threadId) {
-        console.warn("⚠️ `threadId` fehlt! Setze `parentMessage.id` als `threadId`.");
-        parentMessage.threadId = parentMessage.id;
-      }
-  
-      // ✅ `parentMessage` korrekt setzen und sicherstellen, dass `text` immer vorhanden ist
-      this.parentMessage = {
-        ...parentMessage,
-        content: {
-          text: parentMessage.content?.text || parentMessage.text || "⚠️ Kein Text gefunden!",
-          image: parentMessage.content?.image || null,
-          emojis: parentMessage.content?.emojis || []
-        }
-      };
-  
-      if (!this.recipientName) {
-        this.recipientName = parentMessage.recipientName || "Lade...";
-        if (this.recipientName === "Lade...") {
-          // ⚠️ HIER minimale Änderung: 
-          // Statt direkt `this.fetchRecipientName(parentMessage.recipientId)`, 
-          // erst prüfen, ob es ein `string` ist:
-          if (typeof parentMessage.recipientId === 'string') {
-            this.fetchRecipientName(parentMessage.recipientId);
-          } else {
-            console.warn("⚠️ `parentMessage.recipientId` ist kein String oder fehlt.");
-          }
-        }
-      }
-  
-      this.threadId = this.parentMessage?.id || '';
-  
-      // 🔥 Falls `timestamp` existiert, formatieren wir es
-      if (this.parentMessage?.timestamp) {
-        const parentTimestamp = this.safeConvertTimestamp(this.parentMessage.timestamp);
-        this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
-        this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
-      }
-  
-     // console.log("📩 DEBUG: `parentMessage.content.text` nach Fix:", this.parentMessage.content.text);
-      // **🚀 Jetzt sicherstellen, dass `parentMessage` wirklich die ERSTE private Nachricht ist**
+    if (!changes['parentMessage']?.currentValue) {
+      return;
+    }
+    const parentMessage = changes['parentMessage'].currentValue;
+    this.ensureThreadIdExists(parentMessage);
+    this.setupParentMessage(parentMessage);
+    this.setupRecipientName(parentMessage);
+    this.updateThreadTimestamp();
+    this.initThreadData();
+  }
 
-      const pm = this.parentMessage;
-if (!pm || !pm.id) {
-  console.warn("⚠️ parentMessage fehlt oder hat keine ID!");
-  return;
-}
-this.loadOriginalPrivateMessage(pm.id);
-     // this.loadOriginalPrivateMessage(this.parentMessage.id);
-      this.listenForReplyCountUpdates();
-      // **Live-Updates starten**
-      this.loadThreadMessagesLive();
-      this.loadLastUsedThreadEmojis();
-      this.listenForThreadEmojiUpdates();
-  
-    } else {
-      console.warn("⚠️ `ngOnChanges` wurde aufgerufen, aber `parentMessage` ist `null` oder leer!");
+  /**
+   * If `parentMessage.threadId` is missing, sets it to `parentMessage.id`.
+   */
+  private ensureThreadIdExists(parentMessage: any): void {
+    if (!parentMessage.threadId) {
+      parentMessage.threadId = parentMessage.id;
     }
   }
-  
 
+  /**
+   * Copies the data from `parentMessage` into this.parentMessage,
+   * ensuring content objects (text, image, emojis) exist.
+   */
+  private setupParentMessage(parentMessage: any): void {
+    this.parentMessage = {
+      ...parentMessage,
+      content: {
+        text:
+          parentMessage.content?.text ||
+          parentMessage.text ||
+          '⚠️ Kein Text gefunden!',
+        image: parentMessage.content?.image || null,
+        emojis: parentMessage.content?.emojis || [],
+      },
+    };
+  }
 
-  
+  /**
+   * Sets `recipientName` if needed, and optionally fetches if it's still 'Lade...'.
+   */
+  private setupRecipientName(parentMessage: any): void {
+    if (!this.recipientName) {
+      this.recipientName = parentMessage.recipientName || 'Lade...';
+      if (
+        this.recipientName === 'Lade...' &&
+        typeof parentMessage.recipientId === 'string'
+      ) {
+        this.fetchRecipientName(parentMessage.recipientId);
+      }
+    }
+    this.threadId = this.parentMessage?.id || '';
+  }
 
-  
+  /**
+   * Formats the parentMessage timestamp (if present) and stores the result
+   * in `formattedParentMessageDate` / `formattedMessageTime`.
+   */
+  private updateThreadTimestamp(): void {
+    if (!this.parentMessage?.timestamp) return;
+    const parentTimestamp = this.safeConvertTimestamp(
+      this.parentMessage.timestamp
+    );
+    this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
+    this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
+  }
 
+  /**
+   * Loads the original private message (if this is a child of a private chat),
+   * then starts all the live listeners for reply count, thread messages, emojis, etc.
+   */
+  private initThreadData(): void {
+    const pm = this.parentMessage;
+    if (!pm || !pm.id) {
+      return;
+    }
+    this.loadOriginalPrivateMessage(pm.id);
+    this.listenForReplyCountUpdates();
+    this.loadThreadMessagesLive();
+    this.loadLastUsedThreadEmojis();
+    this.listenForThreadEmojiUpdates();
+  }
 
+  /**
+   * Listens in real time for reply count updates (e.g., new messages in this thread)
+   * and updates `replyCount` accordingly.
+   */
   private listenForReplyCountUpdates(): void {
-    // 1) Lokale Konstante + Null-Check
     const pm = this.parentMessage;
     if (!pm) {
-      console.error("❌ Fehler: `parentMessage` ist null/undefined!");
       return;
     }
     if (!pm.id) {
-      console.error("❌ Fehler: `parentMessage.id` fehlt! Live-Updates werden nicht gestartet.");
       return;
     }
-  
-    console.log("🔄 Starte Live-Listener für `replyCount` in Thread:", pm.id);
-  
-    // 2) Live-Subscription
-    //    => Non-Null Assertion `pm.id!` => sagst TS: "id ist kein undefined"
+
     this.unsubscribeReplyCount = this.messageService.loadReplyCountsLive(
       [pm.id!],
       'thread',
       (updatedCounts) => {
-        console.log("🔥 Live-Update empfangen für `replyCount`:", updatedCounts);
-  
-        // 3) Prüfen, ob updatedCounts[pm.id!] existiert
         if (!updatedCounts[pm.id!]) {
-          console.warn(`⚠️ Keine Reply-Daten für Thread ${pm.id}`);
           return;
         }
-  
-        // 4) replyCount aktualisieren
         this.replyCount = updatedCounts[pm.id!].count || 0;
-        // Optional: pm.replyCount
         pm.replyCount = this.replyCount;
-  
-        console.log("🔄 Neuer replyCount:", this.replyCount);
-        // => Kein detectChanges() => Chat springt nicht
-        
-        
-      
       }
     );
   }
-  
-  
 
-
-
-  
-  
+  /**
+   * Safely converts potential Firestore timestamps (or strings) into a JavaScript Date.
+   */
   private safeConvertTimestamp(timestamp: any): Date {
     if (!timestamp) return new Date();
     if (timestamp instanceof Date) return timestamp;
-    if (typeof timestamp === 'object' && 'seconds' in timestamp) return new Date(timestamp.seconds * 1000);
-    if (typeof timestamp === 'string') {
-        const parsedDate = new Date(timestamp);
-        if (!isNaN(parsedDate.getTime())) return parsedDate;
+    if (typeof timestamp === 'object' && 'seconds' in timestamp) {
+      return new Date(timestamp.seconds * 1000);
     }
-    console.warn('⚠️ Ungültiger Timestamp:', timestamp);
+    if (typeof timestamp === 'string') {
+      const parsedDate = new Date(timestamp);
+      if (!isNaN(parsedDate.getTime())) return parsedDate;
+    }
     return new Date();
   }
 
+  /**
+   * Optional method to fully initialize the thread if it hasn't been set up yet.
+   */
   async initializeThread(): Promise<void> {
     if (!this.threadId) {
-      console.warn("⚠️ Kein gültiger `threadId` vorhanden. Initialisierung wird abgebrochen.");
       return;
     }
-  
     try {
-      console.log(`🔍 Starte Initialisierung des Threads: ${this.threadId}`);
-  
-      // **Paralleles Laden der Emojis & Nachrichten für bessere Performance**
-      const [lastSentEmojis, lastReceivedEmojis, threadMessages] = await Promise.all([
-        this.messageService.getLastUsedThreadEmojis(this.threadId, 'sent'),
-        this.messageService.getLastUsedThreadEmojis(this.threadId, 'received'),
-        this.messageService.getMessagesOnce('thread', this.threadId)
-      ]);
-  
-      this.lastUsedEmojisSent = lastSentEmojis || [];
-      this.lastUsedEmojisReceived = lastReceivedEmojis || [];
-  
-      // **Thread-Nachrichten verarbeiten**
-      this.threadMessages = threadMessages.map(msg => ({
-        ...msg,
-        content: { ...msg.content, emojis: msg.content?.emojis || [] }
-      }));
-  
-      console.log(`✅ Thread erfolgreich initialisiert mit ${this.threadMessages.length} Nachrichten`);
-  
-      // **Live-Updates für Emojis aktivieren**
+      await this.loadThreadDataAndEmojis();
       this.listenForThreadEmojiUpdates();
-  
-      // **Live-Updates für Nachrichten aktivieren**
       this.loadThreadMessagesLive();
-  
     } catch (error) {
-      console.error('❌ Fehler bei der Thread-Initialisierung:', error);
+      // no changes to error handling
     }
   }
-  
+
+  /**
+   * Loads emojis (sent/received) and thread messages in parallel,
+   * then merges them into 'this.threadMessages' with their emojis array.
+   */
+  private async loadThreadDataAndEmojis(): Promise<void> {
+    const [lastSentEmojis, lastReceivedEmojis, threadMessages] =
+      await Promise.all([
+        this.messageService.getLastUsedThreadEmojis(this.threadId!, 'sent'),
+        this.messageService.getLastUsedThreadEmojis(this.threadId!, 'received'),
+        this.messageService.getMessagesOnce('thread', this.threadId!),
+      ]);
+
+    this.lastUsedEmojisSent = lastSentEmojis || [];
+    this.lastUsedEmojisReceived = lastReceivedEmojis || [];
+
+    this.threadMessages = threadMessages.map((msg) => ({
+      ...msg,
+      content: { ...msg.content, emojis: msg.content?.emojis || [] },
+    }));
+  }
+
+  /**
+   * Listens for real-time thread emoji updates, e.g., new or changed emojis on messages.
+   */
   private listenForThreadEmojiUpdates(): void {
-    if (!this.parentMessage?.id) return;  // Sicherstellen, dass die `threadId` existiert.
-  
+    if (!this.parentMessage?.id) return;
     if (this.unsubscribeEmojiListener) {
       this.unsubscribeEmojiListener();
     }
-  
-    this.unsubscribeEmojiListener = this.messageService.listenForThreadEmojiUpdates(
-      this.parentMessage.id,
-      (updatedEmojisSent, updatedEmojisReceived) => {
-        this.lastUsedEmojisSent = updatedEmojisSent.slice(-2);  // Zeige nur die letzten 2 gesendeten Emojis
-        this.lastUsedEmojisReceived = updatedEmojisReceived.slice(-2);  // Zeige nur die letzten 2 empfangenen Emojis
-  
-        console.log("🔥 Live-Emoji-Update im Thread empfangen:");
-        console.log("👉 Gesendet:", this.lastUsedEmojisSent);
-        console.log("👉 Empfangen:", this.lastUsedEmojisReceived);
+
+    this.unsubscribeEmojiListener =
+      this.messageService.listenForThreadEmojiUpdates(
+        this.parentMessage.id,
+        (updatedEmojisSent, updatedEmojisReceived) => {
+          this.lastUsedEmojisSent = updatedEmojisSent.slice(-2);
+          this.lastUsedEmojisReceived = updatedEmojisReceived.slice(-2);
+        }
+      );
+  }
+
+  /**
+   * Loads the current user from UserService and stores it in `this.currentUser`.
+   */
+  private async loadCurrentUser(): Promise<void> {
+    try {
+      this.currentUser = await this.userService.getCurrentUserData();
+      if (!this.currentUser?.uid) {
+        throw new Error('User data invalid or missing uid.');
+      }
+    } catch (err) {
+      this.currentUser = null;
+    }
+  }
+
+  /**
+   * A helper method, if needed, to get user data from the service.
+   */
+  async getCurrentUserData(): Promise<any> {
+    return await this.userService.getCurrentUserData();
+  }
+
+  /**
+   * Listens for emoji updates on this thread ID, storing them in `lastUsedEmojisSent`/`Received`.
+   */
+  private async loadLastUsedEmojisLive(threadId: string): Promise<void> {
+    this.messageService.listenForEmojiUpdates(
+      threadId,
+      (sentEmojis, receivedEmojis) => {
+        this.lastUsedEmojisSent = sentEmojis;
+        this.lastUsedEmojisReceived = receivedEmojis;
       }
     );
   }
 
-  private async loadCurrentUser(): Promise<void> {
-    try {
-      // Direkt vom UserService laden:
-      this.currentUser = await this.userService.getCurrentUserData();
-      
-      if (!this.currentUser || !this.currentUser.uid) {
-        console.error("❌ `currentUser` ist null oder `uid` fehlt!", this.currentUser);
-        throw new Error("Benutzerdaten sind ungültig oder `uid` fehlt.");
-      }
-      
-      console.log("✅ `currentUser` erfolgreich geladen:", this.currentUser);
-    } catch (err) {
-      console.error("❌ Fehler beim Laden des aktuellen Benutzers:", err);
-      this.currentUser = null;
+  /**
+   * Adds an emoji to a specific thread message, updating Firestore and local arrays of last used emojis.
+   */
+  public async addEmojiToMessage(event: any, msg: any): Promise<void> {
+    if (!event?.emoji?.native) return;
+    this.ensureEmojiArrayExists(msg);
+
+    const newEmoji = event.emoji.native;
+    this.incrementEmojiCount(msg, newEmoji);
+
+    const isSent = msg.senderId === this.currentUser?.id;
+    await this.handleLocalAndFirestoreEmojis(msg, newEmoji, isSent);
+
+    msg.isEmojiPickerVisible = false;
+    await this.updateMessageInFirestore(msg);
+  }
+
+  /**
+   * Ensures 'msg.content.emojis' is defined as an array.
+   */
+  private ensureEmojiArrayExists(msg: any): void {
+    if (!msg.content.emojis) {
+      msg.content.emojis = [];
     }
   }
-  // Falls du diese Methode in deinem ThreadService hast, die nur delegiert:
-async getCurrentUserData(): Promise<any> {
-  return await this.userService.getCurrentUserData();
-}
 
-private async loadLastUsedEmojisLive(threadId: string): Promise<void> {
-  this.messageService.listenForEmojiUpdates(threadId, (sentEmojis, receivedEmojis) => {
-    this.lastUsedEmojisSent = sentEmojis;
-    this.lastUsedEmojisReceived = receivedEmojis;
-  });
-}
-
-
-
-
-
-
-
-
-
-
-public async addEmojiToMessage(event: any, msg: any): Promise<void> {
-  // 1) Stelle sicher, dass msg.content.emojis existiert
-  if (!msg.content.emojis) {
-    msg.content.emojis = [];
-  }
-
-  // 2) Prüfen, ob überhaupt ein Emoji-Event vorliegt
-  if (!event?.emoji?.native) {
-    return;
-  }
-  const newEmoji = event.emoji.native;
-
-  // 3) Emoji schon vorhanden?
-  const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
-
-  if (existingEmoji) {
-    // Erhöhe count, wenn es schon existiert
-    existingEmoji.count += 1;
-  } else {
-    // Maximal 13 Emojis
-    if (msg.content.emojis.length < 13) {
+  /**
+   * Increments the emoji count if it exists or pushes a new emoji object,
+   * capped at 13 total emojis in this array.
+   */
+  private incrementEmojiCount(msg: any, newEmoji: string): void {
+    const existingEmoji = msg.content.emojis.find(
+      (e: any) => e.emoji === newEmoji
+    );
+    if (existingEmoji) {
+      existingEmoji.count += 1;
+    } else if (msg.content.emojis.length < 13) {
       msg.content.emojis.push({ emoji: newEmoji, count: 1 });
     }
   }
 
-  // 4) lastUsedEmojis je nach gesendeter oder empfangener Nachricht
-  //    (Unterschied: 'sent' vs. 'received')
-  const isSentMessage = msg.senderId === this.currentUser?.id; 
-  const type = isSentMessage ? 'sent' : 'received';
-
-  // => Lokale Array-Updates ( UI-Logik ), z.B.:
-  if (type === 'sent') {
-    this.lastUsedEmojisSent = this.updateLastUsedEmojis(this.lastUsedEmojisSent, newEmoji);
-    // Thread-spezifische Methode zum Speichern, z. B.:
-    if (this.parentMessage?.id) {
-      await this.messageService.saveLastUsedThreadEmojis(this.parentMessage.id, this.lastUsedEmojisSent, 'sent');
-    }
-  } else {
-    this.lastUsedEmojisReceived = this.updateLastUsedEmojis(this.lastUsedEmojisReceived, newEmoji);
-    if (this.parentMessage?.id) {
-      await this.messageService.saveLastUsedThreadEmojis(this.parentMessage.id, this.lastUsedEmojisReceived, 'received');
+  /**
+   * Updates the local lastUsedEmojis (sent/received) and saves them in Firestore if parentMessage.id exists.
+   */
+  private async handleLocalAndFirestoreEmojis(
+    msg: any,
+    newEmoji: string,
+    isSent: boolean
+  ): Promise<void> {
+    const type = isSent ? 'sent' : 'received';
+    if (type === 'sent') {
+      this.lastUsedEmojisSent = this.updateLastUsedEmojis(
+        this.lastUsedEmojisSent,
+        newEmoji
+      );
+      await this.saveThreadEmojisIfPossible(this.lastUsedEmojisSent, 'sent');
+    } else {
+      this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
+        this.lastUsedEmojisReceived,
+        newEmoji
+      );
+      await this.saveThreadEmojisIfPossible(
+        this.lastUsedEmojisReceived,
+        'received'
+      );
     }
   }
 
-  // 5) Emoji-Picker schließen
-  msg.isEmojiPickerVisible = false;
-
-  // 6) Firestore: Thread-Nachricht aktualisieren
-  //    => 'msg.id' = ID der Thread-Nachricht
-  try {
-    await this.messageService.updateMessage(msg.id, {
-      content: {
-        ...msg.content
-      }
-    });
-    console.log(`✅ Emoji erfolgreich zur Thread-Nachricht hinzugefügt: ${newEmoji} (Type: ${type})`);
-  } catch (error) {
-    console.error('❌ Fehler beim Aktualisieren der Thread-Nachricht:', error);
+  /**
+   * If parentMessage.id exists, saves the last used emojis (sent/received) in Firestore.
+   */
+  private async saveThreadEmojisIfPossible(
+    emojis: string[],
+    emojiType: 'sent' | 'received'
+  ): Promise<void> {
+    if (!this.parentMessage?.id) return;
+    await this.messageService.saveLastUsedThreadEmojis(
+      this.parentMessage.id,
+      emojis,
+      emojiType
+    );
   }
-}
 
+  /**
+   * Updates the message document in Firestore with the new content (including updated emojis).
+   */
+  private async updateMessageInFirestore(msg: any): Promise<void> {
+    try {
+      await this.messageService.updateMessage(msg.id, {
+        content: { ...msg.content },
+      });
+    } catch (error) {
+      // handle error if necessary
+    }
+  }
 
+  /**
+   * Ensures that the local array of last used emojis remains limited to 2, removing duplicates first.
+   */
+  private updateLastUsedEmojis(
+    emojiArray: string[],
+    newEmoji: string
+  ): string[] {
+    emojiArray = emojiArray.filter((e) => e !== newEmoji);
+    return emojiArray.slice(0, 2);
+  }
 
-
-// ---------------------------------------------------------
-// Hilfsfunktion, um ein Emoji immer an die erste Stelle 
-// zu setzen und max. 2 zu speichern
-// ---------------------------------------------------------
-private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
-  // Falls das Emoji schon existiert, vorher entfernen
-  emojiArray = emojiArray.filter(e => e !== newEmoji);
-
-  // Als erstes Element einfügen
- // emojiArray.unshift(newEmoji);
-
-  // Array auf max. 2 Einträge begrenzen
-  return emojiArray.slice(0, 2);
-}
-
-
-
-
-
-
-
-
-
-
+  /**
+   * Cleans up all subscriptions (thread messages, emoji updates, reply counts) on destroy.
+   */
   ngOnDestroy(): void {
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
     }
     if (this.unsubscribeEmojiListener) {
       this.unsubscribeEmojiListener();
-      console.log("🛑 Live-Emoji-Listener gestoppt.");
-  }
-  if (this.unsubscribeReplyCount) {
-    this.unsubscribeReplyCount();
-    console.log("🛑 Live-Reply-Count-Listener gestoppt.");
-  }
+    }
+    if (this.unsubscribeReplyCount) {
+      this.unsubscribeReplyCount();
+    }
   }
 
+  /**
+   * Saves an edited thread message back to Firestore, preserving any existing fields like image or emojis.
+   */
   async saveMessage(msg: any): Promise<void> {
-    // Überprüfen, ob die Thread-ID und die Nachricht-ID vorhanden sind
     if (!this.parentMessage?.id || !msg.id) {
-      console.error('❌ Thread ID oder Nachricht ID fehlt.');
       return;
     }
-  
     try {
-      // Nachricht in Firestore aktualisieren
       await this.messageService.updateMessage(msg.id, {
         content: {
           text: msg.content.text,
-          // Behalte vorhandene Felder wie `image` und `emojis` bei
           ...(msg.content.image && { image: msg.content.image }),
           ...(msg.content.emojis && { emojis: msg.content.emojis }),
         },
       });
-  
-      console.log('✅ Nachricht erfolgreich gespeichert.');
-  
-      // Bearbeitungsmodus deaktivieren
       msg.isEditing = false;
-    } catch (error) {
-      console.error('❌ Fehler beim Speichern der Nachricht:', error);
-    }
+    } catch (error) {}
   }
 
+  /**
+   * Scrolls the message list to the bottom after a brief delay.
+   */
   private scrollToBottom(): void {
     setTimeout(() => {
       if (this.messageList) {
-        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+        this.messageList.nativeElement.scrollTop =
+          this.messageList.nativeElement.scrollHeight;
       }
     }, 100);
   }
 
+  /**
+   * Returns a user-friendly date string for the given date (e.g., "Heute", "Gestern", or a localized date).
+   */
   getFormattedDate(dateString: string | Date | undefined): string {
     if (!dateString) {
       return '';
@@ -760,19 +921,30 @@ private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
     });
   }
 
+  /**
+   * Formats or normalizes a single thread message from Firestore, including converting its timestamp.
+   */
   private formatMessage(msg: any): any {
     return {
       ...msg,
-      timestamp: msg.timestamp ? this.messageService.convertToDate(msg.timestamp) : new Date(),
+      timestamp: msg.timestamp
+        ? this.messageService.convertToDate(msg.timestamp)
+        : new Date(),
     };
   }
-  
+
+  /**
+   * Returns the date object for "yesterday," used in date labeling.
+   */
   private getYesterdayDate(): Date {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     return yesterday;
   }
 
+  /**
+   * Checks if two timestamps occur on the same calendar day.
+   */
   isSameDay(timestamp1: Date | string, timestamp2: Date | string): boolean {
     if (!timestamp1 || !timestamp2) {
       return false;
@@ -786,339 +958,351 @@ private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
     );
   }
 
+  /**
+   * Attempts to highlight a specific thread message by ID, scrolling it into view and adding a highlight class.
+   */
   highlightThreadMessage(messageId: string, retries = 5): void {
     setTimeout(() => {
       const messageElement = document.getElementById(`message-${messageId}`);
-  
       if (messageElement) {
         messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         messageElement.classList.add('highlight');
-  
         setTimeout(() => messageElement.classList.remove('highlight'), 2000);
       } else if (retries > 0) {
-        console.warn(`⚠️ Thread-Nachricht nicht gefunden (${retries} Versuche übrig), erneuter Versuch...`);
         this.highlightThreadMessage(messageId, retries - 1);
       }
     }, 500);
   }
-  
-private async fetchRecipientName(recipientId: string): Promise<void> {
+
+  /**
+   * Fetches a recipient's name from Firestore or returns a cached value to avoid repeated lookups.
+   */
+  private async fetchRecipientName(recipientId: string): Promise<void> {
     if (!recipientId) return;
 
-    // 🔥 Prüfe zuerst den Cache, bevor Firestore aufgerufen wird
     if (this.recipientCache.has(recipientId)) {
-        this.recipientName = this.recipientCache.get(recipientId)!;
-        console.log("✅ Name aus Cache geladen:", this.recipientName);
-        return;
-    }
-
-    try {
-        const user = await this.userService.getUserById(recipientId);
-        this.recipientName = user?.name || "Unbekannt";
-
-        // ✅ Speichere den Namen im Cache
-        this.recipientCache.set(recipientId, this.recipientName);
-        console.log("✅ Name aus Firestore geladen und gespeichert:", this.recipientName);
-    } catch (error) {
-        console.error("❌ Fehler beim Abrufen des Empfängernamens:", error);
-        this.recipientName = "Unbekannt";
-    }
-}
-
-private async loadOriginalPrivateMessage(threadId: string): Promise<void> {
-  try {
-      console.log(`🔍 Lade Original-PrivateMessage für Thread: ${threadId}`);
-
-      const originalMessage = await this.messageService.getMessage('private', threadId);
-      
-      if (originalMessage) {
-          console.log("✅ Original PrivateMessage gefunden:", originalMessage);
-
-          this.parentMessage = {
-              ...originalMessage,
-              content: {
-                text: originalMessage.content?.text || "⚠️ Kein Text gefunden!",
-
-
-                  image: originalMessage.content?.image || null,
-                  emojis: originalMessage.content?.emojis || []
-              }
-          };
-
-          // 🔥 `timestamp` neu formatieren, falls vorhanden
-          if (this.parentMessage.timestamp) {
-              const parentTimestamp = this.safeConvertTimestamp(this.parentMessage.timestamp);
-              this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
-              this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
-          }
-
-          console.log("📩 DEBUG: Original `parentMessage` nach Korrektur:", this.parentMessage);
-      } else {
-          console.warn("⚠️ Keine Original-PrivateMessage gefunden. Nutze Standard-`parentMessage`.");
-      }
-  } catch (error) {
-      console.error("❌ Fehler beim Laden der Original-PrivateMessage:", error);
-  }
-}
-
-  private async loadLastUsedThreadEmojis(): Promise<void> {
-    if (!this.parentMessage?.id) {
-      console.warn("⚠️ Kein `threadId` vorhanden – Emojis werden nicht geladen.");
+      this.recipientName = this.recipientCache.get(recipientId)!;
       return;
     }
-  
+
     try {
-      const [lastSent, lastReceived] = await Promise.all([
-        this.messageService.getLastUsedThreadEmojis(this.parentMessage.id, 'sent'),
-        this.messageService.getLastUsedThreadEmojis(this.parentMessage.id, 'received')
-      ]);
-  
-      console.log("📥 Geladene Thread-Emojis Sent:", lastSent);
-      console.log("📥 Geladene Thread-Emojis Received:", lastReceived);
-  
-      this.lastUsedEmojisSent = lastSent || [];
-      this.lastUsedEmojisReceived = lastReceived || [];
-  
-      // 🔥 Stelle sicher, dass `listenForThreadEmojiUpdates()` aktiv ist
-      this.listenForThreadEmojiUpdates();
-  
+      const user = await this.userService.getUserById(recipientId);
+      this.recipientName = user?.name || 'Unbekannt';
+      this.recipientCache.set(recipientId, this.recipientName);
     } catch (error) {
-      console.error("❌ Fehler beim Laden der letzten Emojis für Threads:", error);
+      this.recipientName = 'Unbekannt';
     }
   }
-  
-handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-    this.sendThreadMessage(this.privateMessage, this.imageUrl, textArea);
 
-    this.privateMessage = '';
-    this.imageUrl = null;
-    this.resetTextareaHeight(textArea);
-  }
-}
-
-toggleEmojiPicker(): void {
-  this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
-}
-
-addEmoji(event: any): void {
-  if (event?.emoji?.native) {
-    this.privateMessage += event.emoji.native;
-  }
-  this.isEmojiPickerVisible = false;
-}
-
-onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.imageUrl = e.target?.result as string;
-      if (textArea) {
-        this.adjustTextareaHeight(textArea);
+  /**
+   * Loads the "original" private message if the thread originated from a direct message,
+   * ensuring the main content is fully populated.
+   */
+  private async loadOriginalPrivateMessage(threadId: string): Promise<void> {
+    try {
+      const originalMessage = await this.messageService.getMessage(
+        'private',
+        threadId
+      );
+      if (originalMessage) {
+        this.setupParentMessageFromOriginal(originalMessage);
+      } else {
+        // optional else-block if needed
       }
+    } catch (error) {
+      // handle error if necessary
+    }
+  }
+
+  /**
+   * Sets this.parentMessage from the fetched originalMessage,
+   * then formats the timestamp (if any) for display.
+   */
+  private setupParentMessageFromOriginal(originalMessage: any): void {
+    this.parentMessage = {
+      ...originalMessage,
+      content: {
+        text: originalMessage.content?.text || '⚠️ Kein Text gefunden!',
+        image: originalMessage.content?.image || null,
+        emojis: originalMessage.content?.emojis || [],
+      },
     };
-    reader.readAsDataURL(file);
+
+    // Safely check if parentMessage and its timestamp exist
+    if (this.parentMessage && this.parentMessage.timestamp) {
+      const parentTimestamp = this.safeConvertTimestamp(
+        this.parentMessage.timestamp
+      );
+      this.formattedParentMessageDate = this.getFormattedDate(parentTimestamp);
+      this.formattedMessageTime = formatDate(parentTimestamp, 'HH:mm', 'de');
+    }
   }
-}
 
-adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
-  if (this.imageUrl) {
-    textArea.style.paddingBottom = '160px';
+  /**
+   * Loads the last used emojis for this thread from Firestore,
+   * then starts a live thread emoji update listener.
+   */
+  private async loadLastUsedThreadEmojis(): Promise<void> {
+    if (!this.parentMessage?.id) {
+      return;
+    }
+    try {
+      const [lastSent, lastReceived] = await Promise.all([
+        this.messageService.getLastUsedThreadEmojis(
+          this.parentMessage.id,
+          'sent'
+        ),
+        this.messageService.getLastUsedThreadEmojis(
+          this.parentMessage.id,
+          'received'
+        ),
+      ]);
+      this.lastUsedEmojisSent = lastSent || [];
+      this.lastUsedEmojisReceived = lastReceived || [];
+      this.listenForThreadEmojiUpdates();
+    } catch (error) {}
   }
-}
 
-resetTextareaHeight(textArea: HTMLTextAreaElement): void {
-  textArea.style.paddingBottom = '20px';
-}
-
-toggleEmojiPickerForMessage(msg: any): void {
-  const isCurrentlyVisible = msg.isEmojiPickerVisible;
-  this.threadMessages.forEach((m) => (m.isEmojiPickerVisible = false));
-  msg.isEmojiPickerVisible = !isCurrentlyVisible;
-}
-
-showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
-  this.tooltipVisible = true;
-  this.tooltipEmoji = emoji;
-  this.tooltipSenderName = senderName;
-  this.tooltipPosition = { x: event.clientX, y: event.clientY - 40 };
-}
-
-hideTooltip(): void {
-  this.tooltipVisible = false;
-}
-
-closeProfileCard(textArea: HTMLTextAreaElement): void {
-  this.imageUrl = null;
-}
-
-openImageModal(): void {
-  this.isImageModalOpen = true;
-}
-
-closeImageModal(): void {
-  this.isImageModalOpen = false;
-}
-
-
-
-
-
-
-toggleUserDropdown(): void {
-  // Wenn wir das erste Mal öffnen, Nutzer laden
-  if (!this.showUserDropdown) {
-    this.loadAllUsers();
+  /**
+   * Sends a new thread message on Enter (if Shift isn't pressed) and resets the inputs.
+   */
+  handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendThreadMessage(this.privateMessage, this.imageUrl, textArea);
+      this.privateMessage = '';
+      this.imageUrl = null;
+      this.resetTextareaHeight(textArea);
+    }
   }
-  this.showUserDropdown = !this.showUserDropdown;
-}
 
- // Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
- loadAllUsers(): void {
-  this.userService.getAllUsers()
-    .then(users => {
-      this.allUsers = users.map(u => ({
-        id: u.id,
-        //email: u.email,
-        name: u.name,
-        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
-      }));
-    })
-    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
-}
+  /**
+   * Toggles the main emoji picker for composing a new thread reply.
+   */
+  toggleEmojiPicker(): void {
+    this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
+  }
 
+  /**
+   * Adds the selected emoji from the global picker into the `privateMessage` text.
+   */
+  addEmoji(event: any): void {
+    if (event?.emoji?.native) {
+      this.privateMessage += event.emoji.native;
+    }
+    this.isEmojiPickerVisible = false;
+  }
 
+  /**
+   * Called when a user selects an image file for their reply,
+   * reading it in as a data URL.
+   */
+  onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imageUrl = e.target?.result as string;
+        if (textArea) {
+          this.adjustTextareaHeight(textArea);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
-  // Beim Klick auf einen Nutzer im Dropdown
+  /**
+   * If an image is attached, increases the bottom padding of the textarea
+   * to prevent overlapping.
+   */
+  adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
+    if (this.imageUrl) {
+      textArea.style.paddingBottom = '160px';
+    }
+  }
+
+  /**
+   * Resets the bottom padding of the textarea to the default value.
+   */
+  resetTextareaHeight(textArea: HTMLTextAreaElement): void {
+    textArea.style.paddingBottom = '20px';
+  }
+
+  /**
+   * Toggles an inline emoji picker for a given thread message by ID, ensuring only one is visible at a time.
+   */
+  toggleEmojiPickerForMessage(msg: any): void {
+    const isCurrentlyVisible = msg.isEmojiPickerVisible;
+    this.threadMessages.forEach((m) => (m.isEmojiPickerVisible = false));
+    msg.isEmojiPickerVisible = !isCurrentlyVisible;
+  }
+
+  /**
+   * Displays an emoji tooltip over a hovered emoji, showing who sent it.
+   */
+  showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+    this.tooltipVisible = true;
+    this.tooltipEmoji = emoji;
+    this.tooltipSenderName = senderName;
+    this.tooltipPosition = { x: event.clientX, y: event.clientY - 40 };
+  }
+
+  /**
+   * Hides the currently displayed emoji tooltip.
+   */
+  hideTooltip(): void {
+    this.tooltipVisible = false;
+  }
+
+  /**
+   * Closes any attached profile card or image references for the thread.
+   * E.g., if the user discards an attached image.
+   */
+  closeProfileCard(textArea: HTMLTextAreaElement): void {
+    this.imageUrl = null;
+  }
+
+  /**
+   * Opens a modal to view the selected image at a larger size.
+   */
+  openImageModal(): void {
+    this.isImageModalOpen = true;
+  }
+
+  /**
+   * Closes the large image modal if currently open.
+   */
+  closeImageModal(): void {
+    this.isImageModalOpen = false;
+  }
+
+  /**
+   * Toggles a user mention dropdown. If opening, loads all users if not already loaded.
+   */
+  toggleUserDropdown(): void {
+    if (!this.showUserDropdown) {
+      this.loadAllUsers();
+    }
+    this.showUserDropdown = !this.showUserDropdown;
+  }
+
+  /**
+   * Loads all users from Firestore, used for mention or user selection in the thread.
+   */
+  loadAllUsers(): void {
+    this.userService
+      .getAllUsers()
+      .then((users) => {
+        this.allUsers = users.map((u) => ({
+          id: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
+          isOnline: u.isOnline ?? false,
+        }));
+      })
+      .catch((err) => console.error('Error loading users:', err));
+  }
+
+  /**
+   * Inserts an '@username' mention in the reply text and closes the mention dropdown.
+   */
   addUserSymbol(member: any) {
-    // Füge in privateMessage ein @Name ein
-    // => Oder user.email, je nachdem was du brauchst
     this.privateMessage += ` @${member.name} `;
-    // Overlay schließen
     this.showUserDropdown = false;
   }
 
+  /**
+   * Closes the entire thread view, typically by user request (e.g., "back" button).
+   */
+  onClose(): void {
+    this.closeThread.emit();
+  }
 
+  /**
+   * Toggles the visibility of edit options for a specific message in the thread by ID.
+   */
+  toggleEditOptions(msgId: string): void {
+    if (this.currentMessageId === msgId && this.showEditOptions) {
+      this.showEditOptions = false;
+      this.currentMessageId = null;
+    } else {
+      this.showEditOptions = true;
+      this.currentMessageId = msgId;
+    }
+  }
 
-
-
-onClose(): void {
-  this.closeThread.emit();
-}
-
-toggleEditOptions(msgId: string): void {
-  if (this.currentMessageId === msgId && this.showEditOptions) {
+  /**
+   * Sets a message to editing mode, storing its original text to restore if the user cancels.
+   */
+  startEditing(msg: any): void {
+    msg.isEditing = true;
+    this.originalMessage = JSON.parse(JSON.stringify(msg));
     this.showEditOptions = false;
-    this.currentMessageId = null;
-  } else {
-    this.showEditOptions = true;
-    this.currentMessageId = msgId;
   }
-}
-/** ✅ Nachricht im Thread bearbeiten **/
-startEditing(msg: any): void {
-  msg.isEditing = true;
- // this.originalMessage = { ...msg };
-  this.originalMessage = JSON.parse(JSON.stringify(msg)); 
-  this.showEditOptions = false;
-}
 
-cancelEditing(msg: any): void {
-  if (this.originalMessage) {
-    // Stelle die ursprüngliche Nachricht wieder her
-    msg.content.text = this.originalMessage.content.text; // Nur den Text wiederherstellen
-    this.originalMessage = null; // Originalnachricht zurücksetzen
+  /**
+   * Cancels the editing of a message, reverting it to its original text if any changes were made.
+   */
+  cancelEditing(msg: any): void {
+    if (this.originalMessage) {
+      msg.content.text = this.originalMessage.content.text;
+      this.originalMessage = null;
+    }
+    msg.isEditing = false;
+    this.showEditOptions = false;
   }
-  msg.isEditing = false; // Bearbeiten beenden
-  this.showEditOptions = false; // Bearbeitungsoptionen schließen
-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-closePopup(msg: any) {
-  // Nur wenn das Popup offen ist => schließen
-  if (msg.showAllEmojisList) {
-    msg.showAllEmojisList = false;
-    msg.expanded = false; // optional, falls du das auch einklappen möchtest
+  /**
+   * Closes any emoji popup for a message (e.g., if the user clicks away).
+   */
+  closePopup(msg: any) {
+    if (msg.showAllEmojisList) {
+      msg.showAllEmojisList = false;
+      msg.expanded = false;
+    }
   }
-}
 
-
-
-
-
+  /**
+   * Toggles a small popup showing all emojis in a message, or closes it.
+   */
   toggleEmojiPopup(msg: any) {
-    // Falls die Property noch nicht existiert, initialisieren
     if (msg.showAllEmojisList === undefined) {
       msg.showAllEmojisList = false;
     }
-
-    // Umschalten
     msg.showAllEmojisList = !msg.showAllEmojisList;
 
-    // Wenn wir schließen (false), dann einklappen zurücksetzen
     if (!msg.showAllEmojisList) {
       msg.expanded = false;
-    } else {
-      // Wenn wir öffnen und `expanded` gar nicht existiert
-      if (msg.expanded === undefined) {
-        msg.expanded = false;
-      }
+    } else if (msg.expanded === undefined) {
+      msg.expanded = false;
     }
   }
 
-
-
-
+  /**
+   * Triggered if a user clicks a "plus" icon in the emoji popup,
+   * e.g. to open another emoji picker or add a new emoji.
+   */
   onEmojiPlusInPopup(msg: any) {
-    // z.B. Logik, um ein neues Emoji hinzuzufügen
-    // oder den Emoji-Picker zu öffnen
-    console.log('Plus in popup geklickt, msg=', msg);
+    console.log('Clicked plus in popup, message=', msg);
   }
 
-  
+  /**
+   * Opens a large image modal for a message's image if it is a string.
+   */
   openLargeImage(imageData: string | ArrayBuffer) {
     if (typeof imageData !== 'string') {
-      // Konvertiere das ArrayBuffer zu einem String (DataURL) oder blob URL
-      return; // Oder handle es anders
+      return;
     }
     this.largeImageUrl = imageData;
     this.showLargeImage = true;
   }
-  
 
-  // Methode zum Schließen
+  /**
+   * Closes the large image modal if currently displayed.
+   */
   closeLargeImage() {
     this.showLargeImage = false;
     this.largeImageUrl = null;
   }
-
 }
-

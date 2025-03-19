@@ -1,10 +1,25 @@
-import { Component,OnInit,HostListener, ViewChild,ElementRef, EventEmitter,Output,Input} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ViewChild,
+  ElementRef,
+  EventEmitter,
+  Output,
+  Input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { getAuth, onAuthStateChanged ,signOut,updateEmail,reauthenticateWithCredential,EmailAuthProvider,sendSignInLinkToEmail} from '@angular/fire/auth';
-import { Firestore,doc,updateDoc } from '@angular/fire/firestore';
+import {
+  getAuth,
+  onAuthStateChanged,
+  updateEmail,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from '@angular/fire/auth';
+import { Firestore } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../user.service'; // Pfad ggf. anpassen
+import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
 import { MessageService } from '../message.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,173 +27,335 @@ import { SelectResultDialogComponent } from '../search-result-dialog/search-resu
 import { Message } from '../message.models';
 import { PrivateMessagesComponent } from '../private-messages/private-messages.component';
 
-
+/**
+ * The header component for the chat application. Handles user profile,
+ * status, searching functionality, and high-level navigation events.
+ */
 @Component({
   selector: 'app-chat-header',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chat-header.component.html',
-  styleUrl: './chat-header.component.scss'
+  styleUrls: ['./chat-header.component.scss'],
 })
-export class ChatHeaderComponent  implements OnInit{
+export class ChatHeaderComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  /**
+   * Indicates whether the main menu is open.
+   */
   menuOpen = false;
+
+  /**
+   * Stores the current user's display name.
+   */
   userName: string = '';
-  profileOpen = false; 
-  userStatus: string = 'Aktiv'; // Standardstatus
-  inactivityTimeout: any; // Variable für den Inaktivitäts-Time
+
+  /**
+   * Indicates whether the profile card is open.
+   */
+  profileOpen = false;
+
+  /**
+   * Current user status, e.g. "Aktiv" or "Abwesend".
+   */
+  userStatus: string = 'Aktiv';
+
+  /**
+   * Timeout identifier for inactivity (switches user status).
+   */
+  inactivityTimeout: any;
+
+  /**
+   * Temporary editable field for the user's name in editing mode.
+   */
   editableUserName: string = '';
+
+  /**
+   * Temporary editable field for the user's email in editing mode.
+   */
   editableUserEmail: string = '';
+
+  /**
+   * Stores an error message for display if needed.
+   */
   errorMessage: string = '';
+
+  /**
+   * Stores a success message for display if needed.
+   */
   successMessage: string = '';
+
+  /**
+   * Avatar URL for the current user.
+   */
   userAvatarUrl: string = 'assets/img/avatar.png';
+
+  /**
+   * Email address of the current user.
+   */
   userEmail: string = '';
+
+  /**
+   * Indicates if the profile is in editing mode.
+   */
   isEditingProfile: boolean = false;
-  isDialogOpen = false; // Variable zur Verhinderung doppelter Dialoge
-  searchQuery: string = ''; // Suchanfrage
-  filteredMembers: any[] = []; // Gefundene Benutzer
-  filteredChannels: any[] = []; // ✅ Gefundene Channels
-  noResultsFound: boolean = false; // Falls keine Ergebnisse gefunden wurden
-  recipientId: string = '';
+
+  /**
+   * Prevents opening multiple dialogs at once.
+   */
+  isDialogOpen = false;
+
+  /**
+   * The current search query entered by the user.
+   */
+  searchQuery: string = '';
+
+  /**
+   * Filtered member results from searches.
+   */
+  filteredMembers: any[] = [];
+
+  /**
+   * Filtered channel results from searches.
+   */
+  filteredChannels: any[] = [];
+
+  /**
+   * Indicates whether no results were found in a search.
+   */
+  noResultsFound: boolean = false;
+
+  /**
+   * Stores the currently authenticated user object (if any).
+   */
   currentUser: any = null;
+
+  /**
+   * Holds a reference to the selected thread data if relevant.
+   */
   selectedThread: any = null;
 
+  /**
+   * Holds a reference to the selected member if opening a private chat.
+   */
   selectedMember: any = null;
+
+  /**
+   * Ensures scrolling to a specific searched message only happens once.
+   */
   private hasScrolledToSearchedMessage: boolean = false;
 
+  /**
+   * Holds a reference to the selected thread channel data if relevant.
+   */
+  selectedThreadChannel: any = null;
 
-selectedThreadChannel: any = null;
-
-
-
+  /**
+   * Emits an event when a member is selected (for private chat).
+   */
   @Output() memberSelected = new EventEmitter<any>();
+
+  /**
+   * Emits an event when a channel is selected.
+   */
   @Output() channelSelected = new EventEmitter<any>();
+
+  /**
+   * Emits when the user initiates a private chat.
+   */
   @Output() openPrivateChat = new EventEmitter<void>();
-  @ViewChild(PrivateMessagesComponent) privateMessagesComp!: PrivateMessagesComponent;
-  @Output() openThread = new EventEmitter<any>(); 
-  @Input() isPrivateChat!: boolean;
-  @Input() recipientName: string = '';
-  @Input() recipientAvatarUrl: string = '';
 
-  @Output() threadSelected = new EventEmitter<{ id: string, messageId: string }>();
+  /**
+   * Reference to the PrivateMessagesComponent if needed.
+   */
+  @ViewChild(PrivateMessagesComponent)
+  privateMessagesComp!: PrivateMessagesComponent;
 
+  /**
+   * Emits an event to open a thread with given data.
+   */
+  @Output() openThread = new EventEmitter<any>();
 
- @Output() threadChannelSelected = new EventEmitter<any>();
+  /**
+   * Emits an event when a thread is selected.
+   */
+  @Output() threadSelected = new EventEmitter<{
+    id: string;
+    messageId: string;
+  }>();
 
- @Output() backClicked = new EventEmitter<void>();
+  /**
+   * Emits an event when a thread-channel is selected.
+   */
+  @Output() threadChannelSelected = new EventEmitter<any>();
 
+  /**
+   * Emits an event when the user clicks a back button in the header.
+   */
+  @Output() backClicked = new EventEmitter<void>();
 
+  /**
+   * Indicates if the layout is in desktop mode.
+   */
+  isDesktop = false;
 
- isDesktop = false;
- //showDesktop = false;
+  /**
+   * Parent component can control if a desktop header is shown.
+   */
+  @Input() showDesktop = false;
 
-  
- @Input() showDesktop = false;
-
+  /**
+   * Tracks which inputs (name/email) are focused, for styling purposes.
+   */
   inputStates: { [key: string]: boolean } = {
     name: false,
-    email: false
+    email: false,
   };
 
+  /**
+   * Closes menu and profile card if the user clicks outside of them.
+   * @param event The click event.
+   */
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
-    const clickedInsideMenu = this.elementRef.nativeElement.querySelector('.menu-dropdown')?.contains(event.target);
-    const clickedInsideProfile = this.elementRef.nativeElement.querySelector('.profile-card-container')?.contains(event.target);
+    const clickedInsideMenu = this.elementRef.nativeElement
+      .querySelector('.menu-dropdown')
+      ?.contains(event.target);
+    const clickedInsideProfile = this.elementRef.nativeElement
+      .querySelector('.profile-card-container')
+      ?.contains(event.target);
 
-    // Wenn außerhalb des Menüs und der Profilkarte geklickt wird, schließen
     if (!clickedInsideMenu && !clickedInsideProfile) {
       this.closeMenu();
       this.closeProfileCard();
     }
   }
 
-  @HostListener('document:mousemove') onMouseMove() {
+  /**
+   * Resets the inactivity timer on mouse movement.
+   */
+  @HostListener('document:mousemove')
+  onMouseMove() {
     this.resetInactivityTimer();
   }
 
-  @HostListener('document:keydown') onKeyDown() {
+  /**
+   * Resets the inactivity timer on any key press.
+   */
+  @HostListener('document:keydown')
+  onKeyDown() {
     this.resetInactivityTimer();
   }
-  
 
-
-
-  //@HostListener('window:resize', ['$event'])
-  //onResize() {
-   // if (window.innerWidth >= 1800) {
-      // Sobald Breite >= 1800px => ausblenden
-      //this.showDesktop = false;
-  // }
- // }
-
-
- //@HostListener('window:resize', ['$event'])
- //   this.checkIfDesktop();
-  //}
-
+  /**
+   * Checks window size on resize to determine if layout is desktop.
+   * @param event The resize event.
+   */
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.checkIfDesktop();
   }
 
-
-  constructor(private router: Router,
+  /**
+   * Constructor injecting necessary services and references.
+   */
+  constructor(
+    private router: Router,
     private firestore: Firestore,
     private elementRef: ElementRef,
-    private userService: UserService, 
-    private channelService: ChannelService, 
+    private userService: UserService,
+    private channelService: ChannelService,
     private messageService: MessageService,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog
+  ) {}
 
-
+  /**
+   * Lifecycle hook: initializes the component,
+   * listens for auth changes, resets inactivity, loads user data,
+   * and checks screen size.
+   */
   ngOnInit(): void {
     this.listenForAuthChanges();
     this.resetInactivityTimer();
     this.loadUserData();
     this.checkIfDesktop();
-
-   this.isDesktop = window.innerWidth >= 1278;
+    this.isDesktop = window.innerWidth >= 1278;
   }
 
-
+  /**
+   * Determines if the layout should be desktop by window width.
+   */
   checkIfDesktop() {
     this.isDesktop = window.innerWidth >= 1278;
   }
 
-  
+  /**
+   * Emits a backClicked event (e.g. for mobile navigation).
+   */
   onBackClick(): void {
-   // this.showDesktop = false;
-    // Einfach nur das Event aussenden. 
-    // Den eigentlichen Zustand ändert der Parent.
     this.backClicked.emit();
   }
 
-  onAvatarClick(): void {
-    this.fileInput.nativeElement.click();
-  }
-  // Methode zum Zurücksetzen des Inaktivitäts-Timers
-  resetInactivityTimer() {
-    // Falls bereits ein Timeout läuft, lösche es
-    if (this.inactivityTimeout) {
-      clearTimeout(this.inactivityTimeout);
-    }
-
-    // Setze den Benutzerstatus wieder auf 'Aktiv'
-    this.userStatus = 'Aktiv';
-
-    // Starte einen neuen Timer für 10 Minuten (600000 ms)
-    this.inactivityTimeout = setTimeout(() => {
-      this.userStatus = 'Abwesend'; // Status auf 'Abwesend' setzen nach 10 Minuten
-    },600000); // 10 Minuten (600000 Millisekunden)
+  /**
+   * Toggles the visibility of the main menu.
+   */
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 
+  /**
+   * Closes the main menu if it is open.
+   */
+  closeMenu() {
+    this.menuOpen = false;
+  }
+
+  /**
+   * Opens the profile card in view mode (non-edit).
+   */
+  openProfileCard() {
+    this.profileOpen = true;
+    this.isEditingProfile = false;
+  }
+
+  /**
+   * Closes the profile card if open.
+   */
+  closeProfileCard() {
+    this.profileOpen = false;
+  }
+
+  /**
+   * Opens profile card in editing mode, sets name/email from current user data.
+   */
+  openSettingCard() {
+    this.isEditingProfile = true;
+    this.editableUserName = this.userName;
+    this.editableUserEmail = this.userEmail;
+  }
+
+  /**
+   * Resets input focus states for name/email.
+   */
+  resetInputBorders() {
+    this.inputStates = { name: false, email: false };
+  }
+
+  /**
+   * Marks the specified input as focused.
+   * @param inputId The identifier for the input field (name or email).
+   */
   onInputFocus(inputId: string) {
-    console.log(`Fokus auf Eingabefeld: ${inputId}`);
     this.inputStates[inputId] = true;
   }
-  
+
+  /**
+   * Marks the specified input as blurred. If empty, reset focus style.
+   * @param inputId The identifier for the input field.
+   * @param inputValue The current input value.
+   */
   onInputBlur(inputId: string, inputValue: string) {
-    console.log(`Fokus verlassen von: ${inputId}, Wert: ${inputValue}`);
     if (inputValue.trim() === '') {
       this.inputStates[inputId] = false;
     } else {
@@ -186,114 +363,180 @@ selectedThreadChannel: any = null;
     }
   }
 
-  stopPropagation(event: Event) {
-    event.stopPropagation();
-  }
-  
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  closeMenu() {
-    this.menuOpen = false;
-  }
-
-  logoutAndCloseMenu() {
-    this.closeMenu();
-    this.logout();
+  /**
+   * Resets the inactivity timer, keeping user status as "Aktiv".
+   * After 10 mins with no activity, status changes to "Abwesend".
+   */
+  resetInactivityTimer() {
+    if (this.inactivityTimeout) {
+      clearTimeout(this.inactivityTimeout);
+    }
+    this.userStatus = 'Aktiv';
+    this.inactivityTimeout = setTimeout(() => {
+      this.userStatus = 'Abwesend';
+    }, 600000);
   }
 
-  openProfileCard() {
-   this.profileOpen = true;
-   this.isEditingProfile = false;
+  /**
+   * Saves profile changes (name/email) by orchestrating sub-steps.
+   */
+  async saveProfileChanges(): Promise<void> {
+    try {
+      const user = this.ensureUserIsLoggedIn();
+      await this.checkAndUpdateUserName(user);
+      await this.checkAndUpdateUserEmail(user);
+    } catch (error: any) {
+      this.errorMessage =
+        error.message || 'Fehler beim Speichern der Profiländerungen.';
+    }
   }
 
-  closeProfileCard() {
-    this.profileOpen = false;
+  /**
+   * Ensures that a user is logged in; otherwise throws an error.
+   */
+  private ensureUserIsLoggedIn(): any {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('Kein Benutzer angemeldet.');
+    }
+    return user;
   }
 
-  openSettingCard(){
-    this.isEditingProfile = true;
-
-    this.editableUserName = this.userName;
-    this.editableUserEmail = this.userEmail;
+  /**
+   * Checks if the username changed, and if so, updates it.
+   */
+  private async checkAndUpdateUserName(user: any): Promise<void> {
+    if (this.editableUserName && this.editableUserName !== this.userName) {
+      await this.userService.updateUserName(this.editableUserName);
+      this.userName = this.editableUserName;
+    }
   }
 
+  /**
+   * Checks if the email changed, validates it, prompts for password,
+   * reauthenticates, then updates the email.
+   */
+  private async checkAndUpdateUserEmail(user: any): Promise<void> {
+    if (this.editableUserEmail && this.editableUserEmail !== this.userEmail) {
+      if (!this.isValidEmail(this.editableUserEmail)) {
+        this.errorMessage = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+        return;
+      }
+      const password = prompt(
+        'Bitte geben Sie Ihr Passwort ein, um die E-Mail zu ändern:'
+      );
+      if (password) {
+        try {
+          const credential = EmailAuthProvider.credential(
+            user.email!,
+            password
+          );
+          await reauthenticateWithCredential(user, credential);
+          await updateEmail(user, this.editableUserEmail);
+          await this.userService.updateUserEmail(this.editableUserEmail);
+          localStorage.setItem('newEmail', this.editableUserEmail);
+          this.successMessage =
+            'Ihre E-Mail-Adresse wurde erfolgreich geändert.';
+        } catch (err) {
+          this.errorMessage =
+            'Fehler bei der Änderung der E-Mail. Bitte versuchen Sie es erneut.';
+        }
+      } else {
+        this.errorMessage = 'Passwort erforderlich, um die E-Mail zu ändern.';
+      }
+    }
+  }
+
+  /**
+   * Validates the email format via a simple regex.
+   */
   isValidEmail(email: string): boolean {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   }
 
-  async saveProfileChanges(): Promise<void> {
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-  
-      if (!user) {
-        throw new Error('Kein Benutzer angemeldet.');
-      }
-  
-      // Prüfen, ob der Name geändert wurde
-      if (this.editableUserName && this.editableUserName !== this.userName) {
-        await this.userService.updateUserName(this.editableUserName);
-        this.userName = this.editableUserName;
-      }
-  
-      // Prüfen, ob die E-Mail geändert wurde
-      if (this.editableUserEmail && this.editableUserEmail !== this.userEmail) {
-        if (!this.isValidEmail(this.editableUserEmail)) {
-          this.errorMessage = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-          return;
-        }
-  
-        const password = prompt('Bitte geben Sie Ihr Passwort ein, um die E-Mail zu ändern:');
-        
-        if (password) {
-          try {
-            // Reauthentifizierung mit dem aktuellen Passwort
-            const credential = EmailAuthProvider.credential(user.email!, password);
-            await reauthenticateWithCredential(user, credential);
-  
-            // **Hier die E-Mail in Firebase aktualisieren**
-            await updateEmail(user, this.editableUserEmail);
-            console.log('E-Mail-Adresse erfolgreich geändert');
-  
-            // **Schritt 4: E-Mail in Firestore aktualisieren**
-            await this.userService.updateUserEmail(this.editableUserEmail); // Firestore-E-Mail aktualisieren
-  
-            // Speichere die neue E-Mail im localStorage
-            localStorage.setItem('newEmail', this.editableUserEmail);
-  
-            this.successMessage = 'Ihre E-Mail-Adresse wurde erfolgreich geändert.';
-          } catch (error) {
-            console.error('Fehler bei der Reauthentifizierung oder der E-Mail-Änderung:', error);
-            this.errorMessage = 'Fehler bei der Änderung der E-Mail. Bitte versuchen Sie es erneut.';
-          }
-        } else {
-          this.errorMessage = 'Passwort erforderlich, um die E-Mail zu ändern.';
-        }
-      }
-    } catch (error: any) {
-      console.error('Fehler beim Speichern der Profiländerungen:', error);
-      this.errorMessage = error.message || 'Fehler beim Speichern der Profiländerungen.';
+  /***************************************************************************************
+   * Triggers file selection for updating the user's avatar.
+   **************************************************************************************/
+  onAvatarClick(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  /***************************************************************************************
+   * Called after the user selects a file. Checks file type/size, then calls readAndUploadFile.
+   **************************************************************************************/
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files ? input.files[0] : null;
+    if (!file) {
+      this.errorMessage = 'Keine Datei ausgewählt.';
+      return;
     }
-  }
-  
-  cancelEditing() {
-    this.isEditingProfile = false;
-    this.editableUserName = this.userName;
-    this.editableUserEmail = this.userEmail;
-    this.resetInputBorders();
-    this.closeProfileCard();
+    if (!file.type.startsWith('image/')) {
+      this.errorMessage = 'Bitte wählen Sie eine Bilddatei aus.';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.errorMessage = 'Die Datei ist zu groß. Bitte < 5 MB auswählen.';
+      return;
+    }
+    this.errorMessage = '';
+    this.readAndUploadFile(file);
   }
 
-resetInputBorders() {
-    this.inputStates = {
-      'name': false,
-      'email': false
+  /***************************************************************************************
+   * Reads the file as DataURL, then updates Firestore with the new avatar URL.
+   **************************************************************************************/
+  private readAndUploadFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const imageDataUrl = reader.result as string;
+      try {
+        await this.userService.updateUserAvatar(imageDataUrl);
+        this.userAvatarUrl = imageDataUrl;
+        this.successMessage = 'Profilbild erfolgreich aktualisiert!';
+        setTimeout(() => (this.successMessage = ''), 3000);
+      } catch (err: any) {
+        this.errorMessage =
+          err.message || 'Fehler beim Aktualisieren des Profilbildes.';
+      }
     };
+    reader.readAsDataURL(file);
   }
 
+  /**
+   * Listens for authentication state changes (login/logout) and reloads user data.
+   */
+  listenForAuthChanges() {
+    const auth = getAuth();
+    onAuthStateChanged(
+      auth,
+      (user) => {
+        if (user) {
+          this.loadUserData();
+        } else {
+          this.userName = 'Guest';
+          this.userAvatarUrl = 'assets/img/avatar.png';
+        }
+      },
+      () => {
+        this.errorMessage =
+          'Fehler bei der Überprüfung des Authentifizierungsstatus.';
+      }
+    );
+  }
+
+  /**
+   * Logs out the current user via userService.
+   */
+  logout() {
+    this.userService.logout();
+  }
+
+  /**
+   * Loads user data (name, email, avatar) from Firestore.
+   */
   async loadUserData() {
     try {
       const userData = await this.userService.getCurrentUserData();
@@ -301,576 +544,628 @@ resetInputBorders() {
       this.userEmail = userData.email;
       this.userAvatarUrl = userData.avatarUrl;
     } catch (error: any) {
-      console.error('Fehler beim Laden der Benutzerdaten:', error);
-      this.errorMessage = error.message || 'Fehler beim Laden der Benutzerdaten.';
+      this.errorMessage =
+        error.message || 'Fehler beim Laden der Benutzerdaten.';
     }
   }
 
-  async onFileSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files ? input.files[0] : null;
-  
-    if (!file) {
-      this.errorMessage = 'Keine Datei ausgewählt.';
-      return;
-    }
-  
-    if (!file.type.startsWith('image/')) {
-      this.errorMessage = 'Bitte wählen Sie eine Bilddatei aus.';
-      return;
-    }
-  
-    if (file.size > 5 * 1024 * 1024) {
-      this.errorMessage = 'Die Datei ist zu groß. Bitte wählen Sie eine Datei, die kleiner als 5 MB ist.';
-      return;
-    }
-  
-    this.errorMessage = '';
-  
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const imageDataUrl = reader.result as string;
-      try {
-        // Aktualisiere die Avatar-URL in Firestore
-        await this.userService.updateUserAvatar(imageDataUrl);
-        this.userAvatarUrl = imageDataUrl;
-        this.successMessage = 'Profilbild erfolgreich aktualisiert!';
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
-      } catch (error: any) {
-        console.error('Fehler beim Aktualisieren des Profilbildes:', error);
-        this.errorMessage = error.message || 'Fehler beim Aktualisieren des Profilbildes.';
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-  
-  listenForAuthChanges() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Der Benutzer ist authentifiziert
-        this.loadUserData();
-      } else {
-        // Kein Benutzer authentifiziert
-        this.userName = 'Guest';
-        this.userAvatarUrl = 'assets/img/avatar.png';
-      }
-    }, (error) => {
-      console.error('Fehler bei der Authentifizierung:', error);
-      this.errorMessage = 'Fehler bei der Überprüfung des Authentifizierungsstatus.';
-    });
-  }
-  
-  async logout() {
-    const auth = getAuth();
-    const user = auth.currentUser; // Speichere den Benutzer vor dem Abmelden
-  
-    if (user) {
-      try {
-        const userDocRef = doc(this.firestore, 'users', user.uid);
-  
-        // Setze den Benutzer auf offline, bevor du ihn abmeldest
-        await updateDoc(userDocRef, { isOnline: false });
-  
-        // Benutzer abmelden
-        await signOut(auth);
-        console.log('Benutzer wurde erfolgreich abgemeldet und als offline markiert.');
-  
-        // Weiterleitung zur Login-Seite oder eine andere Seite
-        this.router.navigate(['/login']);
-        
-      } catch (error) {
-        console.error('Fehler beim Abmelden oder beim Setzen des Offline-Status:', error);
-      }
-    } else {
-      console.error('Kein Benutzer angemeldet.');
-    }
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  /**
+   * Triggered when user presses Enter in the search field.
+   * Decides which method to call based on query length or special chars.
+   */
   onSearchEnter(): void {
     const trimmedQuery = this.searchQuery.trim();
-  
-    // 1) Wenn genau "@", lade alle Benutzer
-    if (trimmedQuery === '@') {
-      console.log("👥 Lade alle Benutzer, da nur '@' eingegeben wurde.");
-      this.userService.getAllUsers().then(users => {
-        // Mappe die Users auf das Format, das dein Dialog braucht
-        const allUsersResults = users.map(u => ({
-          id: u.id,
-          name: u.name,
-          avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
-          isOnline: u.isOnline ?? false,
-          type: 'user'
-        }));
-        // Dialog öffnen
-        this.openSearchDialog(allUsersResults, 'user');
-      }).catch(error => {
-        console.error("❌ Fehler beim Laden aller Benutzer:", error);
-      });
-      return; // WICHTIG: Brich hier ab, damit deine "normale" Suche nicht mehr ausgeführt wird.
-    }
-  
-    // 2) Wenn genau "#", lade alle Channels
-    if (trimmedQuery === '#') {
-      console.log("📡 Lade alle Channels, da nur '#' eingegeben wurde.");
-      this.channelService.getAllChannelsOnce().then(channels => {
-        const allChannelResults = channels.map(ch => ({
-          id: ch.id,
-          name: ch.name,
-          type: 'channel'
-        }));
-        this.openSearchDialog(allChannelResults, 'channel');
-      }).catch(error => {
-        console.error("❌ Fehler beim Laden aller Channels:", error);
-      });
+    if (trimmedQuery === '@' || trimmedQuery === '#') {
+      this.handleSingleCharSearch(trimmedQuery);
       return;
     }
-  
-    // 3) Deine bestehende Logik für Eingaben ab 3 Zeichen
     if (trimmedQuery.length < 3) {
       this.filteredChannels = [];
       this.filteredMembers = [];
       this.noResultsFound = false;
       return;
     }
-  
-    // Zurücksetzen alter Suchergebnisse
+    this.runFullTextSearch();
+  }
+
+  /**
+   * Checks for single-char '@' or '#' search,
+   * then delegates to doAtSearch() or doHashSearch().
+   */
+  private handleSingleCharSearch(query: string): void {
+    if (query === '@') {
+      this.doAtSearch();
+    } else if (query === '#') {
+      this.doHashSearch();
+    }
+  }
+
+  /**
+   * Fetches all users, maps them, then opens user search dialog.
+   */
+  private doAtSearch(): void {
+    this.userService.getAllUsers().then((users) => {
+      const mapped = users.map((u) => ({
+        id: u.id,
+        name: u.name,
+        avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
+        isOnline: u.isOnline ?? false,
+        type: 'user',
+      }));
+      this.openSearchDialog(mapped, 'user');
+    });
+  }
+
+  /**
+   * Fetches all channels, maps them, then opens channel search dialog.
+   */
+  private doHashSearch(): void {
+    this.channelService.getAllChannelsOnce().then((chs) => {
+      const mapped = chs.map((ch) => ({
+        id: ch.id,
+        name: ch.name,
+        type: 'channel',
+      }));
+      this.openSearchDialog(mapped, 'channel');
+    });
+  }
+
+  /***************************************************************************************
+   * Initiates a full text search by resetting arrays, then fetching data in parallel.
+   **************************************************************************************/
+  private runFullTextSearch(): void {
     this.filteredChannels = [];
     this.filteredMembers = [];
     this.noResultsFound = false;
-  
-    console.log("🔍 Starte parallele Suche für:", this.searchQuery);
-  
-    // Parallele Abfragen:
-    Promise.all([
-      this.channelService.getChannelsByName(this.searchQuery),   // Kanäle nach Name
-      this.userService.getUsersByFirstLetter(this.searchQuery),  // Benutzer nach Name
-      this.messageService.getMessagesOnce('private'),            // Private Nachrichten
-      this.messageService.getMessagesOnce('thread'),             // Thread-Nachrichten
-      this.messageService.getMessagesOnce('thread-channel'),     // Thread-Channel-Nachrichten
-      this.messageService.getChannelMessagesOnce()               // NEU: Kanalnachrichten (Einmal-Abfrage)
-    ])
-    .then(([channels, users, privateMessages, threadMessages, threadChannelMsgs, channelMsgs]) => {
-  
-      // ---------------------------
-      // 1) Channels
-      // ---------------------------
-      this.filteredChannels = channels.map(channel => ({
-        id: channel.id,
-        name: channel.name,
-        description: channel.description,
-        type: 'channel'
-      }));
-  
-      // ---------------------------
-      // 2) Benutzer (Members)
-      // ---------------------------
-      this.filteredMembers = users.map(user => ({
-        id: user.id || user.uid,
-        name: user.name,
-        avatarUrl: user.avatarUrl || 'assets/default-avatar.png',
-        isOnline: user.isOnline ?? false,
-        type: 'user'
-      }));
-  
-      // ---------------------------
-      // 3) Private Nachrichten
-      // ---------------------------
-      const filteredPrivateMessages = privateMessages
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '⚠️ Kein Text',
-          timestamp: msg.timestamp,
-          type: 'private-message',
-          senderId: msg.senderId,
-          recipientId: msg.recipientId,
-          conversationId: msg.conversationId || null
-        }));
-  
-      // ---------------------------
-      // 4) Thread-Nachrichten
-      // ---------------------------
-      const filteredThreadMessages = threadMessages
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '',
-          timestamp: msg.timestamp,
-          type: 'thread',
-          threadId: msg.threadId || msg.parentId || msg.id,
-          parentId: msg.parentId ?? msg.threadId ?? msg.id,
-          senderId: msg.senderId,
-          senderName: msg.senderName || "❌ Unbekannt"
-        }));
-  
-      // ---------------------------
-      // 5) Thread-Channel-Nachrichten
-      // ---------------------------
-      const filteredThreadChannelMessages = threadChannelMsgs
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '',
-          timestamp: msg.timestamp,
-          type: 'thread-channel',
-          threadChannelId: msg.threadChannelId || msg.threadId || msg.parentId || msg.id,
-          senderId: msg.senderId,
-          senderName: msg.senderName || "❌ Unbekannt"
-        }));
-  
-      // ---------------------------
-      // 6) Kanalnachrichten (NEU)
-      // ---------------------------
-      const filteredChannelMessages = channelMsgs
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '',
-          timestamp: msg.timestamp,
-          type: 'message',
-          channelId: msg.channelId || null,
-          senderId: msg.senderId || null
-        }));
-  
-      // ---------------------------
-      // ALLES ZUSAMMENFÜHREN
-      // ---------------------------
-      const combined = [
-        ...this.filteredChannels,
-        ...this.filteredMembers,
-        ...filteredChannelMessages,
-        ...filteredPrivateMessages,
-        ...filteredThreadMessages,
-        ...filteredThreadChannelMessages
-      ];
-  
-      // ---------------------------
-      // Optionale Duplikat-Entfernung
-      // ---------------------------
-      const deduplicated = Array.from(
-        new Map(combined.map(obj => [obj.id, obj])).values()
-      );
-  
-      // Dialog öffnen
-      this.openSearchDialog(deduplicated, 'mixed');
-    })
-    .catch(error => {
-      console.error("❌ Fehler bei der Suche:", error);
-    });
+    this.fetchSearchData()
+      .then(
+        ([
+          channels,
+          users,
+          privateMsgs,
+          threadMsgs,
+          threadChMsgs,
+          channelMsgs,
+        ]) => {
+          this.handleSearchResults(
+            channels,
+            users,
+            privateMsgs,
+            threadMsgs,
+            threadChMsgs,
+            channelMsgs
+          );
+        }
+      )
+      .catch(() => {
+        // Silently ignore search errors
+      });
   }
-  
 
+  /***************************************************************************************
+   * Fetches data from channels, users, and various message collections in parallel.
+   **************************************************************************************/
+  private fetchSearchData(): Promise<any[]> {
+    return Promise.all([
+      this.channelService.getChannelsByName(this.searchQuery),
+      this.userService.getUsersByFirstLetter(this.searchQuery),
+      this.messageService.getMessagesOnce('private'),
+      this.messageService.getMessagesOnce('thread'),
+      this.messageService.getMessagesOnce('thread-channel'),
+      this.messageService.getChannelMessagesOnce(),
+    ]);
+  }
 
+  /***************************************************************************************
+   * Maps channels/users, filters each message type, merges results, deduplicates, opens dialog.
+   **************************************************************************************/
+  private handleSearchResults(
+    channels: any[],
+    users: any[],
+    privateMsgs: any[],
+    threadMsgs: any[],
+    threadChMsgs: any[],
+    channelMsgs: any[]
+  ): void {
+    this.filteredChannels = this.mapChannels(channels);
+    this.filteredMembers = this.mapUsers(users);
+    const privList = this.filterPrivateMessages(privateMsgs);
+    const thrList = this.filterThreadMessages(threadMsgs);
+    const thrChList = this.filterThreadChannelMessages(threadChMsgs);
+    const chList = this.filterChannelMessages(channelMsgs);
+    this.combineAndOpenResults(chList, privList, thrList, thrChList);
+  }
 
+  /***************************************************************************************
+   * Converts raw channel data into a typed structure.
+   **************************************************************************************/
+  private mapChannels(list: any[]): any[] {
+    return list.map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      type: 'channel',
+    }));
+  }
 
+  /***************************************************************************************
+   * Converts raw user data into a typed structure.
+   **************************************************************************************/
+  private mapUsers(list: any[]): any[] {
+    return list.map((u) => ({
+      id: u.id || u.uid,
+      name: u.name,
+      avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
+      isOnline: u.isOnline ?? false,
+      type: 'user',
+    }));
+  }
 
-  
-  // ----------------------------------------------------------------------------
-  // openMessage(...) => navigiere zu passendem Chat/Thread
-  // ----------------------------------------------------------------------------
-  openMessage(message: any): void {
-    if (!message || !message.id) {
-      console.error("❌ Fehler: Ungültige Nachricht erhalten", message);
+  /***************************************************************************************
+   * Filters and maps private messages that match this.searchQuery.
+   **************************************************************************************/
+  private filterPrivateMessages(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '⚠️ Kein Text',
+        timestamp: m.timestamp,
+        type: 'private-message',
+        senderId: m.senderId,
+        recipientId: m.recipientId,
+        conversationId: m.conversationId || null,
+      }));
+  }
+
+  /***************************************************************************************
+   * Filters and maps 'thread' messages.
+   **************************************************************************************/
+  private filterThreadMessages(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '',
+        timestamp: m.timestamp,
+        type: 'thread',
+        threadId: m.threadId || m.parentId || m.id,
+        parentId: m.parentId ?? m.threadId ?? m.id,
+        senderId: m.senderId,
+        senderName: m.senderName || '❌ Unbekannt',
+      }));
+  }
+
+  /***************************************************************************************
+   * Filters and maps 'thread-channel' messages.
+   **************************************************************************************/
+  private filterThreadChannelMessages(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '',
+        timestamp: m.timestamp,
+        type: 'thread-channel',
+        threadChannelId: m.threadChannelId || m.threadId || m.parentId || m.id,
+        senderId: m.senderId,
+        senderName: m.senderName || '❌ Unbekannt',
+      }));
+  }
+
+  /***************************************************************************************
+   * Filters and maps normal channel messages.
+   **************************************************************************************/
+  private filterChannelMessages(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '',
+        timestamp: m.timestamp,
+        type: 'message',
+        channelId: m.channelId || null,
+        senderId: m.senderId || null,
+      }));
+  }
+
+  /***************************************************************************************
+   * Merges and deduplicates everything, then calls deduplicateAndOpenDialog.
+   **************************************************************************************/
+  private combineAndOpenResults(
+    chList: any[],
+    privList: any[],
+    thrList: any[],
+    thrChList: any[]
+  ): void {
+    const combined = [
+      ...this.filteredChannels,
+      ...this.filteredMembers,
+      ...chList,
+      ...privList,
+      ...thrList,
+      ...thrChList,
+    ];
+    const deduped = Array.from(
+      new Map(combined.map((obj) => [obj.id, obj])).values()
+    );
+    this.deduplicateAndOpenDialog(deduped);
+  }
+
+  /**
+   * Opens the dialog with deduplicated search results if any exist.
+   */
+  private deduplicateAndOpenDialog(results: any[]): void {
+    if (!results || results.length === 0) {
       return;
     }
-  
-    console.log("📩 Navigiere zur Nachricht:", message);
-    this.hasScrolledToSearchedMessage = false; 
-  
-    // (1) Normale Kanalnachricht
-    if (message.channelId) {
-      this.channelService.getChannelById(message.channelId).then(channel => {
-        if (channel) {
-          console.log("📡 Channel gefunden, öffne:", channel);
-          this.selectChannel(channel);
-  
-          setTimeout(() => {
-            this.channelService.getMessages(message.channelId).subscribe((msgs) => {
-              this.scrollToMessageIfExists(msgs, message.id);
-            });
-          }, 800);
-        } else {
-          console.warn("⚠️ Channel existiert nicht oder wurde gelöscht:", message.channelId);
-        }
-      }).catch(error => {
-        console.error("❌ Fehler beim Laden des Channels:", error);
-      });
-  
-    // (2) Private Nachricht
-    } else if (message.conversationId) {
-      console.log("📩 Private Nachricht gefunden:", message);
-      const currentUserId = this.userService.getCurrentUserId();
-      const chatPartnerId = (message.senderId === currentUserId)
-        ? message.recipientId
-        : message.senderId;
-      console.log(`🔄 Öffne privaten Chat mit: ${chatPartnerId}`);
-  
-      this.memberSelected.emit({ 
-        id: chatPartnerId, 
-        name: message.recipientName || "❌ UNBEKANNT IN `openMessage`!"
-      });
-  
-      setTimeout(() => {
-        this.messageService.getPrivateMessagesLive(message.conversationId, (msgs) => {
-          if (!this.hasScrolledToSearchedMessage) {
-            const foundMessage = msgs.find(m => m.id === message.id);
-            if (foundMessage) {
-              console.log("📜 Scrolle zu privater Nachricht:", foundMessage.id);
-              this.scrollToMessage(foundMessage.id);
-              this.hasScrolledToSearchedMessage = true;
-            } else {
-              console.error("❌ Private Nachricht nicht gefunden!");
-            }
-          }
-        });
-      }, 800);
-  
-    // (3) Thread-Channel Nachricht
-    } else if (message.type === "thread-channel") {
-      console.log("📩 Thread-Channel Nachricht gefunden:", message);
-  
-      // Falls "threadChannelId" fehlt, nimm parentId oder message.id
-      if (!message.threadChannelId) {
-        console.warn("⚠️ `threadChannelId` fehlt! Setze `threadChannelId = parentId`:", message.parentId);
-        message.threadChannelId = message.parentId ?? message.id;
-      }
-  
-      console.log("🧵 Öffne Thread-Channel mit `threadChannelId`:", message.threadChannelId);
-  
-      // => `threadChannelSelected` => "openThreadChannelFromSearch()" in ChatComponent?
-      this.threadChannelSelected.emit(message);
-  
-      //  Live-Listening
-      setTimeout(() => {
-        this.messageService.listenForMessages("thread-channel", message.threadChannelId, (msgs) => {
-          if (!this.hasScrolledToSearchedMessage) {
-            const foundMessage = msgs.find(m => m.id === message.id);
-            if (foundMessage) {
-              console.log("📜 Scrolle zu Thread-Channel-Nachricht:", foundMessage.id);
-              this.scrollToMessage(foundMessage.id);
-              this.hasScrolledToSearchedMessage = true;
-            } else {
-              console.error("❌ Thread-Channel-Nachricht nicht gefunden!");
-            }
-          }
-        });
-      }, 800);
-  
-    // (4) Normale Thread-Nachricht
-    } else if (message.threadId || message.parentId) {
-      console.log("📩 Thread-Nachricht gefunden:", message);
-  
-      if (!message.threadId) {
-        console.warn("⚠️ `threadId` fehlt! Setze `threadId = parentId`:", message.parentId);
-        message.threadId = message.parentId ?? message.id;
-      }
-  
-      console.log("🧵 Öffne Thread mit `threadId`:", message.threadId);
-  
-      // => threadSelected => "openThreadFromSearch()" in ChatComponent?
-      const fullThreadData = {
-        ...message,
-        threadId: message.threadId,
-        messageId: message.id,
-        parentId: message.parentId || message.threadId,
-        parentName: message.parentName || "❌ Unbekannt",
-        id: message.threadId,
-      };
-  
-      console.log("📩 DEBUG: `fullThreadData`:", fullThreadData);
-      this.threadSelected.emit(fullThreadData);
-  
-      setTimeout(() => {
-        this.selectedThread = message;
-        console.log("🧵 Thread geöffnet:", message);
-  
-        this.messageService.getThreadMessagesLive(message.threadId, (msgs) => {
-          if (!this.hasScrolledToSearchedMessage) {
-            const foundMessage = msgs.find(m => m.id === message.id);
-            if (foundMessage) {
-              console.log("📜 Scrolle zu Thread-Nachricht:", foundMessage.id);
-              this.scrollToMessage(foundMessage.id);
-              this.hasScrolledToSearchedMessage = true;
-            } else {
-              console.error("❌ Thread-Nachricht nicht gefunden!");
-            }
-          }
-        });
-      }, 800);
-    }
+    this.openSearchDialog(results, 'mixed');
   }
 
-
-
-
-
-
-
-
-
-
-
-
-  
-  openSearchDialog(results: any[], type: 'channel' | 'user' | 'message' | 'private-message' | 'thread' | 'thread-channel' | 'mixed'): void {
+  /**
+   * Opens a search dialog with the provided results and type.
+   * Prevents duplicate dialogs and clears the search query after closing.
+   */
+  openSearchDialog(
+    results: any[],
+    type:
+      | 'channel'
+      | 'user'
+      | 'message'
+      | 'private-message'
+      | 'thread'
+      | 'thread-channel'
+      | 'mixed'
+  ): void {
     if (this.isDialogOpen) {
-      console.warn("⚠️ Ein Such-Dialog ist bereits geöffnet!");
       return;
     }
     if (this.searchQuery.trim() === '') {
-      console.warn("⚠️ Keine gültige Suchanfrage – Dialog wird nicht geöffnet.");
       return;
     }
+    this.openSearchDialogCore(results, type);
+  }
 
-    if (!results || results.length === 0) {
-      // Nichts gefunden => Kein Dialog
-      return;
-    }
-  
-  
-    this.isDialogOpen = true; 
-  
+  /**
+   * Handles the core logic of opening the dialog and subscribing to any events.
+   */
+  private openSearchDialogCore(
+    results: any[],
+    type:
+      | 'channel'
+      | 'user'
+      | 'message'
+      | 'private-message'
+      | 'thread'
+      | 'thread-channel'
+      | 'mixed'
+  ): void {
+    this.isDialogOpen = true;
     const dialogRef = this.dialog.open(SelectResultDialogComponent, {
       width: '400px',
       data: { results, type },
     });
-  
-    // => navigateToMessage => openMessage(...)
-    dialogRef.componentInstance.navigateToMessage?.subscribe((message) => {
-      console.log("📩 Nachricht wurde im Dialog ausgewählt:", message);
-      this.openMessage(message);
-    });
-  
-    dialogRef.afterClosed().subscribe(selectedItem => {
+
+    if (dialogRef.componentInstance.navigateToMessage) {
+      dialogRef.componentInstance.navigateToMessage.subscribe((message) => {
+        this.openMessage(message);
+      });
+    }
+
+    this.subscribeToDialogEvents(dialogRef);
+  }
+
+  /**
+   * Subscribes to the dialog's afterClosed event and delegates
+   * the selectedItem handling to a separate method.
+   */
+  private subscribeToDialogEvents(dialogRef: any): void {
+    dialogRef.afterClosed().subscribe((selectedItem: any) => {
       this.isDialogOpen = false;
       this.searchQuery = '';
-  
       if (selectedItem) {
-        switch (selectedItem.type) {
-          case 'channel':
-            this.selectChannel(selectedItem);
-            break;
-          case 'user':
-            this.selectMember(selectedItem);
-            break;
-          case 'thread':
-            console.log("🧵 Thread-Nachricht gefunden:", selectedItem);
-            this.forwardOpenThread(selectedItem);
-            setTimeout(() => {
-              this.scrollToMessage(selectedItem.id);
-            }, 800);
-            break;
-          case 'thread-channel':
-            console.log("📩 Thread-Channel-Nachricht gefunden:", selectedItem);
-            this.selectThreadChannel(selectedItem);
-            break;
-          default:
-            console.warn("⚠️ Unbekannter Typ im Such-Dialog:", selectedItem);
-        }
+        this.handleDialogItem(selectedItem);
       }
     });
   }
-  
-  // ----------------------------------------------------------------------------
-  // Hilfsmethoden 
-  // ----------------------------------------------------------------------------
-  selectThread(thread: { id: string, messageId: string }): void {
-    console.log("🧵 Thread-Event ausgelöst für:", thread);
+
+  /**
+   * Processes the selectedItem from the dialog, calling the appropriate methods.
+   */
+  private handleDialogItem(selectedItem: any): void {
+    switch (selectedItem.type) {
+      case 'channel':
+        this.selectChannel(selectedItem);
+        break;
+      case 'user':
+        this.selectMember(selectedItem);
+        break;
+      case 'thread':
+        this.forwardOpenThread(selectedItem);
+        setTimeout(() => {
+          this.scrollToMessage(selectedItem.id);
+        }, 800);
+        break;
+      case 'thread-channel':
+        this.selectThreadChannel(selectedItem);
+        break;
+      default:
+        // Unknown type, do nothing
+        break;
+    }
+  }
+
+  /**
+   * Decides how to open a message object based on its type or fields.
+   * @param message The message object to handle.
+   */
+  openMessage(message: any): void {
+    if (!message || !message.id) {
+      return;
+    }
+    this.hasScrolledToSearchedMessage = false;
+
+    if (message.channelId) {
+      this.openChannelMessage(message);
+      return;
+    }
+    if (message.conversationId) {
+      this.openPrivateMessage(message);
+      return;
+    }
+    if (message.type === 'thread-channel') {
+      this.openThreadChannelMessage(message);
+      return;
+    }
+    if (message.threadId || message.parentId) {
+      this.openThreadMessage(message);
+    }
+  }
+
+  /**
+   * Opens a channel message by fetching the channel and scrolling to the message.
+   */
+  private openChannelMessage(message: any): void {
+    this.channelService.getChannelById(message.channelId).then((channel) => {
+      if (channel) {
+        this.selectChannel(channel);
+        setTimeout(() => {
+          this.channelService
+            .getMessages(message.channelId)
+            .subscribe((msgs) => {
+              this.scrollToMessageIfExists(msgs, message.id);
+            });
+        }, 800);
+      }
+    });
+  }
+
+  /***************************************************************************************
+   * Opens a private message by determining the chat partner, then launching a scroll check.
+   **************************************************************************************/
+  private openPrivateMessage(msg: any): void {
+    const partnerId = this.getChatPartnerId(msg);
+    this.memberSelected.emit({ id: partnerId, name: msg.recipientName || '' });
+    this.launchPrivateScroll(msg);
+  }
+
+  /***************************************************************************************
+   * Computes the correct chat partner ID based on the current user vs. sender/recipient.
+   **************************************************************************************/
+  private getChatPartnerId(msg: any): string {
+    const currentUserId = this.userService.getCurrentUserId();
+    return msg.senderId === currentUserId ? msg.recipientId : msg.senderId;
+  }
+
+  /***************************************************************************************
+   * Delays, then fetches private messages. If the target is found, scrolls to it once.
+   **************************************************************************************/
+  private launchPrivateScroll(msg: any): void {
+    setTimeout(() => {
+      this.messageService.getPrivateMessagesLive(msg.conversationId, (msgs) => {
+        if (!this.hasScrolledToSearchedMessage) {
+          const found = msgs.find((m) => m.id === msg.id);
+          if (found) {
+            this.scrollToMessage(found.id);
+            this.hasScrolledToSearchedMessage = true;
+          }
+        }
+      });
+    }, 800);
+  }
+
+  /***************************************************************************************
+   * Opens a thread-channel message by ensuring the channelId is set,
+   * emitting an event, then scrolling to the found message.
+   **************************************************************************************/
+  private openThreadChannelMessage(msg: any): void {
+    this.ensureThreadChannelId(msg);
+    this.threadChannelSelected.emit(msg);
+    this.launchThreadChannelScroll(msg);
+  }
+
+  /***************************************************************************************
+   * Ensures msg.threadChannelId is defined. If not, use parentId or msg.id.
+   **************************************************************************************/
+  private ensureThreadChannelId(msg: any): void {
+    if (!msg.threadChannelId) {
+      msg.threadChannelId = msg.parentId ?? msg.id;
+    }
+  }
+
+  /***************************************************************************************
+   * Delays, then listens for thread-channel messages, scrolls to match if not scrolled yet.
+   **************************************************************************************/
+  private launchThreadChannelScroll(msg: any): void {
+    setTimeout(() => {
+      this.messageService.listenForMessages(
+        'thread-channel',
+        msg.threadChannelId,
+        (msgs) => {
+          if (!this.hasScrolledToSearchedMessage) {
+            const found = msgs.find((m) => m.id === msg.id);
+            if (found) {
+              this.scrollToMessage(found.id);
+              this.hasScrolledToSearchedMessage = true;
+            }
+          }
+        }
+      );
+    }, 800);
+  }
+
+  /***************************************************************************************
+   * Opens a thread message, sets threadId if needed, emits threadSelected,
+   * then initiates a delayed scroll to the message.
+   **************************************************************************************/
+  private openThreadMessage(msg: any): void {
+    this.ensureThreadId(msg);
+    this.emitThreadEvent(msg);
+    this.launchThreadScroll(msg);
+  }
+
+  /***************************************************************************************
+   * Ensures msg.threadId is set; if not, uses parentId or msg.id.
+   **************************************************************************************/
+  private ensureThreadId(msg: any): void {
+    if (!msg.threadId) {
+      msg.threadId = msg.parentId ?? msg.id;
+    }
+  }
+
+  /***************************************************************************************
+   * Emits the threadSelected event with mapped thread data.
+   **************************************************************************************/
+  private emitThreadEvent(msg: any): void {
+    const data = {
+      ...msg,
+      threadId: msg.threadId,
+      messageId: msg.id,
+      parentId: msg.parentId || msg.threadId,
+      parentName: msg.parentName || '',
+      id: msg.threadId,
+    };
+    this.threadSelected.emit(data);
+  }
+
+  /***************************************************************************************
+   * Delays 800ms, then fetches live thread messages, scrolls if the target is found.
+   **************************************************************************************/
+  private launchThreadScroll(msg: any): void {
+    setTimeout(() => {
+      this.selectedThread = msg;
+      this.messageService.getThreadMessagesLive(msg.threadId, (msgs) => {
+        if (!this.hasScrolledToSearchedMessage) {
+          const found = msgs.find((m) => m.id === msg.id);
+          if (found) {
+            this.scrollToMessage(found.id);
+            this.hasScrolledToSearchedMessage = true;
+          }
+        }
+      });
+    }, 800);
+  }
+
+  /**
+   * Emits a thread event with the given data.
+   */
+  selectThread(thread: { id: string; messageId: string }): void {
     this.threadSelected.emit(thread);
   }
-  
+
+  /**
+   * Emits a memberSelected event to open a private chat with this member.
+   */
   selectMember(member: any): void {
-    console.log('👤 Mitglied ausgewählt:', member);
     this.memberSelected.emit(member);
   }
-  
+
+  /**
+   * Emits openThread with the given message data.
+   */
   forwardOpenThread(message: any): void {
-    console.log('📩 Thread-Event weitergeleitet:', message);
     this.openThread.emit(message);
   }
-  
+
+  /**
+   * Selects a channel by emitting channelSelected and changing it in the service.
+   */
   selectChannel(channel: any): void {
-    console.log('📡 Channel ausgewählt:', channel);
     this.channelService.changeChannel(channel);
     this.channelSelected.emit(channel);
   }
-  
+
+  /**
+   * Selects a thread channel and emits threadChannelSelected.
+   */
   selectThreadChannel(threadChannel: any): void {
-    console.log("📩 `threadChannelSelected` wird ausgelöst:", threadChannel);
     this.selectedThreadChannel = threadChannel;
     this.threadChannelSelected.emit(threadChannel);
   }
 
-
-  scrollToMessageIfExists(messages: Message[], messageId: string, retries = 5): void {
-    const foundMessage = messages.find(m => m.id === messageId);
+  /**
+   * Checks if a specific message exists in the given array; if found, scrolls to it.
+   */
+  scrollToMessageIfExists(
+    messages: Message[],
+    messageId: string,
+    retries = 5
+  ): void {
+    const foundMessage = messages.find((m) => m.id === messageId);
     if (!foundMessage) {
-      console.error("❌ Nachricht nicht gefunden:", messageId);
       return;
     }
     setTimeout(() => {
       this.scrollToMessage(messageId, retries);
     }, 500);
   }
-  
+
+  /**
+   * Attempts to scroll to a message in the DOM, retrying if not immediately found.
+   */
   scrollToMessage(messageId: string, retries = 10): void {
     if (this.hasScrolledToSearchedMessage) return;
-  
+
     setTimeout(() => {
       const messageElement = document.getElementById(`message-${messageId}`);
       if (messageElement) {
         messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         messageElement.classList.add('highlight');
-        setTimeout(() => { messageElement.classList.remove('highlight'); }, 2000);
+        setTimeout(() => {
+          messageElement.classList.remove('highlight');
+        }, 2000);
         this.hasScrolledToSearchedMessage = true;
       } else if (retries > 0) {
-        console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig)`);
         this.scrollToMessage(messageId, retries - 1);
       }
     }, 700);
   }
-  
-  highlightMessage(messageId: string, retries = 5): void {
-    setTimeout(() => {
-      const messageElement = document.getElementById(`message-${messageId}`);
-      if (messageElement) {
-        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        messageElement.classList.add('highlight');
-        setTimeout(() => messageElement.classList.remove('highlight'), 2000);
-      } else if (retries > 0) {
-        console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig)`);
-        this.highlightMessage(messageId, retries - 1);
-      }
-    }, 500);
+
+  /**
+   * Prevents the click event from propagating further, e.g., to close menus or dialogs.
+   * @param event The original click event.
+   */
+  stopPropagation(event: Event): void {
+    event.stopPropagation();
   }
-  
+
+  /**
+   * Cancels editing mode for the profile, reverting the name/email
+   * to their previous values and closing the profile card.
+   */
+  cancelEditing(): void {
+    this.isEditingProfile = false;
+    this.editableUserName = this.userName;
+    this.editableUserEmail = this.userEmail;
+    this.resetInputBorders();
+    this.closeProfileCard();
+  }
 }

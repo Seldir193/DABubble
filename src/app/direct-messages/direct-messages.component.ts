@@ -1,166 +1,131 @@
-import { Component, OnInit, HostListener,Output, EventEmitter  } from '@angular/core';
+import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
-import { onSnapshot, doc, updateDoc, Firestore, collection } from '@angular/fire/firestore';
-import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { MessageService } from '../message.service'; // ACHTUNG: anpassen, falls anderer Pfad
+import { getAuth,onAuthStateChanged  } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './direct-messages.component.html',
-  styleUrl: './direct-messages.component.scss'
+  styleUrls: ['./direct-messages.component.scss']
 })
-
 export class DirectMessagesComponent implements OnInit {
   @Output() memberSelected = new EventEmitter<any>();
-
-
- 
   members: any[] = [];
   isChannelsVisible: boolean = false;
+
   inactivityTimeout: any;
   currentUserStatus: string = 'Abwesend';
-
   userIsActive: boolean = true;
 
-  constructor(private userService: UserService, private router: Router,private firestore: Firestore)
- 
-   {}
+  constructor(
+    private userService: UserService,
+    private messageService: MessageService, // neu dazu
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    // 1) Initial einmal die Mitglieder laden (optional, falls du es brauchst)
     this.loadMembers();
-    this.listenForAuthChanges(); // Authentifizierungsänderungen überwachen
-    this.loadMembersInRealtime(); // Lade die Mitgliederliste in Echtzeit
+
+    // 2) Jetzt Realtime-Änderungen über messageService.onAllUsersChanged
+    this.messageService.onAllUsersChanged((allUsers) => {
+      this.members = allUsers.map((m) => ({
+        ...m,
+        userStatus: m.isOnline ? 'Aktiv' : 'Abwesend'
+      }));
+      // Falls du Debug-Logs hattest -> entfernt
+    });
+
+    // 3) Auf Auth-Änderungen reagieren (setUserOnlineStatus, etc.)
+    this.listenForAuthChanges();
+
+    // 4) Inaktivitäts-Timer starten
     this.resetInactivityTimer();
   }
 
-
-
-  loadMembers(): void {
-    // Nehme an, du verwendest Firestore oder eine API, um den Benutzerstatus zu laden
+  // -----------------------------------------------
+  // 1) MEMBER LOADING (einmalig)
+  // -----------------------------------------------
+  private loadMembers(): void {
     this.userService.getAllUsers()
       .then((data) => {
-        // Der Online-Status wird aus der Datenbank geholt (z. B. Firestore)
-        this.members = data.map(member => ({
-          ...member,
-          userStatus: member.isOnline ? 'Aktiv' : 'Abwesend'  // Setze Status basierend auf Daten
+        this.members = data.map((m) => ({
+          ...m,
+          userStatus: m.isOnline ? 'Aktiv' : 'Abwesend'
         }));
-        
-        console.log('Mitglieder geladen:', this.members);
       })
-      .catch((error) => {
-        console.error('Fehler beim Laden der Mitglieder:', error);
+      .catch(() => {
+        // intentionally empty
       });
   }
 
-    // Setzt den Benutzer auf "aktiv" und startet den Inaktivitäts-Timer neu
-    resetInactivityTimer(): void {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-  
-      if (currentUser) {
-        const userDocRef = doc(this.firestore, 'users', currentUser.uid);
-  
-        // Überprüfe, ob der Benutzer aktuell inaktiv ist
-        if (!this.userIsActive) {
-          // Setze den Benutzerstatus nur auf "aktiv", wenn er aktuell als inaktiv gilt
-          this.userIsActive = true;
-          updateDoc(userDocRef, { isOnline: true })
-            .then(() => {
-              console.log('Benutzer ist wieder aktiv.');
-            })
-            .catch((error) => {
-              console.error('Fehler beim Aktualisieren des Aktiv-Status:', error);
-            });
-        }
-      }
-  
-      // Lösche den bestehenden Timer
-      if (this.inactivityTimeout) {
-        clearTimeout(this.inactivityTimeout);
-      }
-  
-      // Starte einen neuen Timer für 5 Minuten (300000 ms)
-      this.inactivityTimeout = setTimeout(() => {
-        this.setUserAsInactive();
-      }, 50000); // 5 Minuten Inaktivität
-    }
-  
-    // Setzt den Benutzer auf "inaktiv"
-    async setUserAsInactive(): Promise<void> {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-  
-      if (currentUser && this.userIsActive) {
-        const userDocRef = doc(this.firestore, 'users', currentUser.uid);
-  
-        // Setze den Benutzer nur auf "inaktiv", wenn er aktuell als aktiv gilt
-        this.userIsActive = false;
-        await updateDoc(userDocRef, { isOnline: false });
-        console.log('Benutzer ist jetzt inaktiv/abwesend.');
-      }
-    }
-
-
-// Überwache Maus- und Tastaturaktivitäten, um den Timer zurückzusetzen
-@HostListener('document:mousemove')
-@HostListener('document:keydown')
-handleUserActivity(): void {
-  this.resetInactivityTimer();  // Setze den Timer bei jeder Aktivität zurück
-}
-
-toggleChannels(): void {
-  this.isChannelsVisible = !this.isChannelsVisible;
-}
-
-
-openDirectMessage(member: any): void {
-  console.log('Öffne Direktnachricht mit:', member);
-  this.memberSelected.emit(member); // Emit the selected member event
-}
-
-  loadMembersInRealtime(): void {
-    const membersCollectionRef = collection(this.firestore, 'users');
-  
-    // Echtzeit-Listener, um Änderungen am Benutzerstatus live zu verfolgen
-    onSnapshot(membersCollectionRef, (snapshot) => {
-      this.members = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,  // Wichtig: ID für jedes Mitglied hinzufügen
-        userStatus: doc.data()['isOnline'] ? 'Aktiv' : 'Abwesend' // Zugriff auf isOnline mit ['isOnline']
-      }));
-  
-      console.log('Echtzeit-Status-Update:', this.members);
-    });
+  // -----------------------------------------------
+  // 2) USER (IN)ACTIVITY
+  // -----------------------------------------------
+  @HostListener('document:mousemove')
+  @HostListener('document:keydown')
+  handleUserActivity(): void {
+    this.resetInactivityTimer();
   }
-  
-  // Überwache den Authentifizierungsstatus
-  listenForAuthChanges(): void {
-    const auth = getAuth();
 
+  private resetInactivityTimer(): void {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser && !this.userIsActive) {
+      this.userIsActive = true;
+      // --> Online-Status in UserService
+      this.messageService.setUserOnlineStatus(currentUser.uid, true);
+    }
+    if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
+
+    this.inactivityTimeout = setTimeout(() => {
+      this.setUserAsInactive();
+    }, 50000);
+  }
+
+  private async setUserAsInactive(): Promise<void> {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser && this.userIsActive) {
+      this.userIsActive = false;
+      // --> Offline-Status in UserService
+      await this.messageService.setUserOnlineStatus(currentUser.uid, false);
+    }
+  }
+
+  // -----------------------------------------------
+  // 3) AUTH CHANGES
+  // -----------------------------------------------
+  private listenForAuthChanges(): void {
+    const auth = getAuth();
+    // Use onAuthStateChanged -> bei login oder logout
     onAuthStateChanged(auth, async (user) => {
       if (user && user.uid) {
-        const userDocRef = doc(this.firestore, 'users', user.uid);
-        
-        // Benutzer ist online, setze isOnline auf true
-        await updateDoc(userDocRef, { isOnline: true });
+        // user eingeloggt -> online setzen
+        await this.messageService.setUserOnlineStatus(user.uid, true);
         this.resetInactivityTimer();
-        console.log('Benutzer ist online:', user.email);
       } else {
-        // Benutzer ist abgemeldet, setze isOnline auf false
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          const userDocRef = doc(this.firestore, 'users', currentUser.uid);
-          await updateDoc(userDocRef, { isOnline: false });
-          console.log('Benutzer ist abgemeldet.');
+        // user ausgeloggt -> offline setzen
+        const current = auth.currentUser;
+        if (current) {
+          await this.messageService.setUserOnlineStatus(current.uid, false);
         }
       }
     });
   }
 
+  // -----------------------------------------------
+  // 4) DIRECT MESSAGES UI
+  // -----------------------------------------------
+  toggleChannels(): void {
+    this.isChannelsVisible = !this.isChannelsVisible;
+  }
 
+  openDirectMessage(member: any): void {
+    this.memberSelected.emit(member);
+  }
 }
-
-

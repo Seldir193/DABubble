@@ -7,6 +7,8 @@
   padding: 160px 0;
   flex-direction: column;
   min-height: 100vh;
+
+  //height: calc(100vh - 20rem);
 }
 
 .login-container {
@@ -46,7 +48,7 @@
     }
 
     .box {
-      @include dFlex(null,null,30px);
+      @include dFlex(null, null, 30px);
       flex-direction: column;
     }
 
@@ -59,7 +61,6 @@
 
     img {
       float: left;
-     // padding-top: 25px;
       cursor: pointer;
     }
 
@@ -152,7 +153,6 @@
       .email-icon,
       .passwort-icon,
       .google-icon {
-       // background-image: url("/assets/img/mail.png");
         background-repeat: no-repeat;
         background-position: 15px center;
         background-size: 24px 24px;
@@ -180,7 +180,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  //margin: 20px 0;
 
   img {
     position: absolute;
@@ -189,16 +188,15 @@
     height: 24px;
   }
 
-  input, button {
-    padding-left: 50px; 
+  input,
+  button {
+    padding-left: 50px;
     height: 50px;
     border-radius: 100px;
     border: 1px solid #ccc;
     width: 100%;
-    // dein restliches Styling ...
   }
 }
-
 
 .error-message {
   color: red;
@@ -240,28 +238,20 @@
 }
 
 .registration-ok {
-  max-width: 273px;
+ max-width: 273px;
 }
-
 
 @media (max-width: 1278px) {
-  
-
-  .registration-ok{
-    max-width:166px !important;
-    width:100%;
+  .registration-ok {
+    max-width: 166px !important;
+    width: 100%;
   }
-
 }
-
-
 
 @media (max-width: 780px) {
   .container {
     padding: 10rem 2rem;
     box-sizing: border-box;
-
-    //padding: 0 0;
   }
 
   .login-container .login p {
@@ -359,8 +349,8 @@
     overflow: hidden;
   }
 
-  .registration-ok{
-    top:60%;
+  .registration-ok {
+    top: 60%;
   }
 
   .login-container .login p {
@@ -414,7 +404,3 @@
     width: 260px;
   }
 }
-
-
-
-

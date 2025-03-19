@@ -18,11 +18,6 @@
   box-shadow: 0px 2px 10px 0px #00000014;
   max-width: 606px;
 
-  .errorMessage {
-    @include dFlex(null, center, 0px);
-    width: 100%;
-  }
-
   .login {
     max-width: 500px;
     width: 100%;
@@ -205,7 +200,7 @@
         width: 100%;
         margin-top: 40px;
       }
-     
+
       .email-icon,
       .name-icon,
       .passwort-icon {
@@ -218,7 +213,6 @@
       }
 
       .filled {
-       
         &.passwort-icon {
           background-image: url("/assets/img/black-passwort.png");
         }
@@ -231,12 +225,10 @@
   }
 }
 
-
 .icon-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  //margin: 20px 0;
 
   img {
     position: absolute;
@@ -245,35 +237,15 @@
     height: 24px;
   }
 
-  input, button {
-    padding-left: 50px; 
+  input,
+  button {
+    padding-left: 50px;
     height: 50px;
     border-radius: 100px;
     border: 1px solid #ccc;
     width: 100%;
-    // dein restliches Styling ...
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .button-anmelden {
   width: 107px;
@@ -281,16 +253,12 @@
 }
 
 @media (max-width: 1278px) {
-  
-
-  .registration-ok{
-    max-width:323px !important;
-    width:100%;
-    gap:10px;
+  .registration-ok {
+    max-width: 323px !important;
+    width: 100%;
+    gap: 10px;
   }
-
 }
-
 
 @media (max-width: 780px) {
   .container {
@@ -348,11 +316,6 @@
     max-width: 320px;
   }
 
-  .checkbox-disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-
   .login-container .login {
     max-width: 320px;
     width: 100%;
@@ -372,8 +335,8 @@
     gap: 10px;
   }
 
-  .registration-ok{
-    padding:unset;
+  .registration-ok {
+    padding: unset;
   }
 
   .login-container {
@@ -419,12 +382,6 @@
 
   .login-container .login form .input-container input {
     height: 40px;
-  }
-
-  .line-container {
-    .lineleft {
-      font-size: 16px;
-    }
   }
 
   .login-container .login .image-container {

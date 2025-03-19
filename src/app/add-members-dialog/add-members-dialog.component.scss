@@ -1,454 +1,291 @@
 @import "./../../styles.scss";
 
+.button-box {
+  display: flex;
+  justify-content: flex-end;
+}
 
-mat-form-field {
-    width: 100%; // Eingabefelder nehmen die volle Breite des Dialogs ein
-  }
-  
- mat-dialog-content {
-   padding-bottom: 20px; // Platz unter dem Inhalt des Dialogs
+.close-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 
-    
-  }
-  
-  mat-dialog-actions {
-    display: flex;
-    justify-content: flex-end; // Der Button wird rechts ausgerichtet
-  }
-  
-  .button-box{
-      display: flex;
-      justify-content: flex-end;
-  }
-  
-  .mat-mdc-form-field-input-control.mdc-text-field__input,
-  .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
-    font-size: 18px;
-    font-weight: 400;
-  }
-  
-  label {
-    font-size: 18px;
-    font-weight: 400;
-    color: black;
-    cursor: pointer;
-  }
-  
-  .optional {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .close-dialog {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-  
-    h1 {
-      margin-right: 20px;
-      font-size: 24px;
-      font-weight: 700;
-      flex-grow: 1;
-      margin:0;
-    }
-  
-    img {
-      cursor: pointer;
-      transition: filter 0.3s ease, background-color 0.3s ease;
-      border-radius: 50%;
-      margin-left: auto;
-      &:hover {
-        background-color: $lightblue;
-    
-        img {
-          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-        }
-      }
-    }
-  }
-  
-  .custom-input {
-    border-radius: 40px;
-    padding-top: 20px;
-  
-    .input-icon {
-      position: absolute;
-      left: 70px;
-      top: 48%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      transition: filter 0.3s ease;
-    }
-  
-    input {
-      background: $lightblue;
-      border-radius: 100px;
-      color: #686868;
-      font-size: 18px;
-      font-weight: 500;
-      height: 60px;
-      width: 100%;
-      border: 1px solid transparent;
-      cursor: pointer;
-      box-sizing: border-box;
-      max-width: 792px;
-      padding: 1.125rem 2rem 1.125rem 5.375rem;
-  
-      &:hover {
-        border-color: #686868;
-        transition: border-color 0.3s;
-      }
-  
-      &:focus,
-      &:focus-within {
-        outline: none;
-        border-color: $button-blue;
-      }
-  
-      &:not(:focus) {
-        &:has(+ input:focus) {
-          border-color: blue;
-        }
-      }
-    }
-  }
-  
-  .description-input {
-    input {
-      background: $lightblue;
-      border-radius: 100px;
-      color: #686868;
-      font-size: 18px;
-      font-weight: 500;
-      height: 60px;
-      width: 100%;
-      border: 1px solid transparent;
-      cursor: pointer;
-      box-sizing: border-box;
-      max-width: 792px;
-      padding-left: 50px;
-  
-      &:hover {
-        border-color: #686868;
-        transition: border-color 0.3s;
-      }
-  
-      &:focus,
-      &:focus-within {
-        outline: none;
-        border-color: $button-blue;
-      }
-  
-      &:not(:focus) {
-        &:has(+ input:focus) {
-          border-color: blue;
-        }
-      }
-    }
-  }
-  
-  .container {
-  
-   // padding: 18px 20px;
-  
-        padding: 40px;
-        
-        border-radius: 30px 0px 30px 30px;
-        border: 1px 0px 0px 0px;
-      
-        display: flex;
-        flex-direction: column;
-        background-color: white;
-        
-       // width:792px;
-  }
-  
-  .primary-button {
-    background: $button-blue;
-    border: none;
-    border-radius: 100px;
-    color: white;
-    font-size: 18px;
+  h1 {
+    font-size: 24px;
     font-weight: 700;
-    padding: 12px 25px;
-    width: 147px;
-    height: 49px;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  img {
     cursor: pointer;
-    transition: background-color 0.3s;
-  
-  
+    transition: filter 0.3s ease, background-color 0.3s ease;
+    border-radius: 50%;
+    margin-left: auto;
+
     &:hover {
-      background: #5b5ffc;
+      background-color: $lightblue;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
     }
-  
-    &:disabled {
-      background-color: gray;  /* Farbe, wenn der Button deaktiviert ist */
-      cursor: not-allowed;
-    }
-  
-    
   }
-  
-  .mat-mdc-dialog-actions {
-    padding: 0 20px 20px 0;
-    justify-content: flex-end;
-  
+}
+
+.container {
+  padding: 40px;
+  border-radius: 30px 0px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.primary-button {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+  width: 147px;
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: #5b5ffc;
   }
-  
-  ::ng-deep .mat-mdc-dialog-container {
-    //transform: translate(140%, -90% ) !important;
-    border-radius: 30px 0px 30px 30px!important;
-    width:unset;
+
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
   }
-  
-  ::ng-deep .mdc-dialog__surface {
-    border-radius: 30px 0px 30px 30px !important;
-    overflow: hidden;
-  }
-  .member-selection{
-      display: flex;
-      flex-direction: column;
-      gap:20px;
-      width:434px;
-  }
-  
-  
-  .specific-members input[type="text"] {
-     
+}
+
+.mat-mdc-dialog-actions {
+  padding: 0 20px 20px 0;
+  justify-content: flex-end;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 30px 0px 30px 30px !important;
+  width: unset;
+}
+
+::ng-deep .mdc-dialog__surface {
+  border-radius: 30px 0px 30px 30px !important;
+  overflow: hidden;
+}
+
+.member-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 434px;
+}
+
+.specific-members {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+
+  input[type="text"] {
     width: 100%;
-    max-width: 630px; /* Breite festlegen */
+    max-width: 630px;
     height: 60px;
     border: 1px solid #ccc;
     border-radius: 30px;
-    padding-left: 20px;  
+    padding-left: 20px;
     padding-right: 20px;
-    box-sizing: border-box; /* Padding wird zur Gesamtbreite hinzugezählt */
+    box-sizing: border-box;
     transition: border-color 0.3s ease;
-  
+
     &:hover {
-      border-color: #686868; /* Farbe beim Hover ändern */
+      border-color: #686868;
     }
-  
+
     &:focus {
       outline: none;
-      border-color: $button-blue; /* Passe $button-blue an */
+      border-color: $button-blue;
     }
-  
-    /* Falls notwendig, Fokus für nachfolgendes Input-Element */
+
     &:not(:focus) {
       &:has(+ input:focus) {
         border-color: blue;
       }
     }
   }
-  
-  .specific-members {
+}
+
+.dropdown-list {
+  list-style-type: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+
+  li {
+    padding: 10px;
     display: flex;
-    align-items: center; /* Zentriere Input vertikal */
-    gap: 15px; /* Abstand zwischen Kindern */
-  }
-  
-    .specific-members {
+    align-items: center;
+    cursor: pointer;
+    max-width: fit-content;
+    border-radius: 2.1875rem;
+    font-size: 18px;
+
+    &:hover {
+      background-color: $lightblue;
+    }
+
+    .avatar {
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-icon {
       position: relative;
-  }
-    
-    .dropdown-list {
-      list-style-type: none; 
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1000;
-     // width:80%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid white;
+      right: 20px;
     }
-    
-    .dropdown-list li {
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      max-width: fit-content;
-  
-      border-radius: 2.1875rem;
-          font-size: 18px;
-          //height: 35px;
-    
-      &:hover {
-        background-color: $lightblue;
-      }
-    
-      .avatar {
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 10px;
-      }
-  
-      .status-icon {
-        position: relative;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2px solid white;
-        right:20px;
-      }
-    }
-    
-      .selected-member {
-        display: flex;
-        align-items: center;
-        background-color: $lightblue;
-        padding: 5px 10px;
-        border-radius: 20px;
-        position: absolute;
-        gap:15px;
-        left:20px;
-        cursor: pointer;
-       
-  
-        .avatar {
-          width: 25px;
-          height: 25px;
-          border-radius: 50%;
-        
-        }
-  
-        .remove-btn {
-          background-color: transparent;
-          border: none;
-          color: gray;
-          cursor: pointer;
-          font-size: 20px;
-          margin-left: 5px;
-  
-          &:hover{
-            color: $hoverColor;
-            scale: 1.1;
-          }
-        }
-      }
-  
-    .scrollable-area {
-      overflow-y: auto;
-      max-height: 200px; /* Maximale Höhe für den sichtbaren Bereich */
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-      gap:10px;
-      max-width:335px;
-    width:100%;
-    box-shadow: 0px 2px 10px 0px #00000014;
-
-
-     /* Ecken: top-left=20px, top-right=20px, bottom-right=20px, bottom-left=0 */
-     border-radius: 0px 20px 20px 20px;
-
-     /* --- SCROLLBAR UNSICHTBAR MACHEN --- */
-     /* (1) Für Firefox */
-     scrollbar-width: none;         /* Versteckt in Firefox */
-     -ms-overflow-style: none;      /* Evtl. Legacy IE/Edge */
- 
-     /* (2) Für Chrome/Safari/Edge (WebKit) */
-     &::-webkit-scrollbar {
-       width: 0;             /* Keine Breite => unsichtbar */
-       height: 0;            /* Falls horizontal */
-       background: transparent !important;
-     }
-     &::-webkit-scrollbar-thumb {
-       background: transparent;     /* Kein Daumen sichtbar */
-       border-radius: 0;
-     }
-     &::-webkit-scrollbar-track {
-       background: transparent;
-     }
-     &::-webkit-scrollbar-button {
-       display: none;
-       height: 0;
-       width: 0;
-     }
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    /* Hover-Effekt für Scrollbar */
-    .scrollable-area:hover {
-      scrollbar-color: blue white; /* Beim Hover: Scrollbar wird blau */
-    }
-  
-
-    .team{
-        display: flex;
-        align-items: center;
-        gap:15px;
-        margin-bottom:20px;
-
-        p{
-            font-size: 18px;
-            font-weight: 400;
-            color:$hoverColor;
-            margin:0;
-        }
-    }
-
-   .input-button-box{
-    gap: 20px;
-    display: flex;
-    flex-direction: column;
-   }
-
-
-
-
-
-
-
-@media(max-width: 768px){
-  .specific-members input[type=text]{
-    max-width:366px;
-  }
-
-  .member-selection{
-    width:100%;
-  }
-
-  .container{
-    padding:30px 16px;
   }
 }
 
-@media(max-width: 390px){
-  
-  .close-dialog h1{
+.selected-member {
+  display: flex;
+  align-items: center;
+  background-color: $lightblue;
+  padding: 5px 10px;
+  border-radius: 20px;
+  position: absolute;
+  gap: 15px;
+  left: 20px;
+  cursor: pointer;
+
+  .avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+  }
+
+  .remove-btn {
+    background-color: transparent;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 5px;
+
+    &:hover {
+      color: $hoverColor;
+      scale: 1.1;
+    }
+  }
+}
+
+.scrollable-area {
+  overflow-y: auto;
+  max-height: 200px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 10px;
+  max-width: 335px;
+  width: 100%;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  border-radius: 0px 20px 20px 20px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background: transparent !important;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+
+  &:hover {
+    scrollbar-color: blue white;
+  }
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+
+  p {
     font-size: 18px;
+    font-weight: 400;
+    color: $hoverColor;
+    margin: 0;
+  }
+}
+
+.input-button-box {
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media(max-width:1278px){
+  .dropdown-list,
+  .scrollable-area {
+    max-width: 200px;
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .specific-members input[type="text"] {
+    max-width: 366px;
   }
 
-  .close-dialog img{
-    width:30px;
+  .member-selection {
+    width: 100%;
   }
 
-  .team p{
+  .container {
+    padding: 30px 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .close-dialog img {
+    width: 30px;
+  }
+
+  .team p {
     font-size: 16px;
   }
 
-  .specific-members input[type=text]{
-    width:unset;
+  .dropdown-list,
+  .scrollable-area {
+    max-width: 180px;
+    width: auto;
   }
 }
-

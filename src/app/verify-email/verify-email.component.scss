@@ -210,7 +210,7 @@
 
 .registration-ok {
   max-width: 441px;
-  gap:28px;
+  gap: 28px;
 }
 
 @media (max-width: 780px) {
@@ -296,9 +296,7 @@
   .login-container .login h2 {
     font-size: 36px;
   }
-}
 
-@media (max-width: 780px) {
   .button-anmelden {
     margin-top: 20px;
   }
@@ -309,8 +307,8 @@
     top: unset;
   }
 
-  .registration-ok{
-    padding:unset;
+  .registration-ok {
+    padding: unset;
   }
 
   .login-container .login h2 {

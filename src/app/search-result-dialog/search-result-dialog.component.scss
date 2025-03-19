@@ -1,75 +1,63 @@
 @import "./../../styles.scss";
 
 ul {
-    list-style-type: none;
-    padding: 0;
-    gap: 13px;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
+  list-style-type: none;
+  padding: 0;
+  gap: 13px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
 }
 
 li {
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    gap: 15px;
-    width:fit-content;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 15px;
+  width: fit-content;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  max-width: 206px;
+  width: min(206px, calc(100vw - 20px));
+  height: 49px;
+
+  &:hover {
+    background-color: $lightblue;
     border-radius: 100px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-
-    max-width:206px;
-    //width:100%;
-   // width:calc(100vw - 20px);
-  
-  
-    width: min(206px, calc(100vw - 20px));
-  
-    height:49px;
-   
-    &:hover {
-        background-color: $lightblue;
-        border-radius: 100px;
-      }
-    }
-  
-    span {
-      font-size: 18px;
-      font-weight: 400;
-      color: black;
-      transition: color 0.3s ease;
-    }
-  
-  .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
   }
-  
-  .container {
-    padding: 40px;
-    gap: 20px;
-    border-radius: 40px 0px 0px 0px;
-    border: 1px 0px 0px 0px;
-    gap: 20px;
-    display: flex;
-    flex-direction: column;
+}
 
-    max-height: 366px;
-    height: 100%;
-    overflow-y: overlay;
-    overflow-x: hidden;
+span {
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  transition: color 0.3s ease;
+}
 
-   }
-  
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 40px;
+  gap: 20px;
+  border-radius: 40px 0px 0px 0px;
+  border: 1px 0px 0px 0px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: 366px;
+  height: 100%;
+  overflow-y: overlay;
+  overflow-x: hidden;
+}
+
 .avatar-container {
-    position: relative;  /* Erlaubt das Status-Icon auf dem Avatar */
-    display: inline-block;
-
-  }
-
-
-
+  position: relative;
+  display: inline-block;
+}
 
 .status-icon {
   position: absolute;
@@ -78,62 +66,45 @@ li {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid white; /* Optional: Für einen Rand um das Icon */
+  border: 2px solid white;
 }
 
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 0px 30px 30px 30px !important;
+  width: unset !important;
+}
 
+::ng-deep .mdc-dialog__surface {
+  border-radius: 0px 30px 30px 30px !important;
+  overflow: hidden;
+}
 
+.message-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+@media (max-width: 1278px) {
   ::ng-deep .mat-mdc-dialog-container {
-   // transform: translate(-60%, 30%);
-    border-radius: 0px 30px 30px 30px  !important;
-
-    width:unset !important;
-  }
-  
-  ::ng-deep .mdc-dialog__surface {
-    border-radius: 0px 30px 30px 30px  !important;
-    
-    overflow: hidden;
+    border-radius: 0px 30px 30px 30px !important;
+    width: 100% !important;
   }
 
-
-  .message-preview {
-    display: -webkit-box;
-    //-webkit-line-clamp: 2;  /* Zeilenzahl einstellen */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    max-width: 300px;       /* oder 100%, je nach Layout */
-    line-height: 1.4;       /* Zeilenhöhe etwas lockerer */
-  }
-  
-
-
-  @media (max-width:1278px){
-    ::ng-deep .mat-mdc-dialog-container {
-      // transform: translate(-60%, 30%);
-       border-radius: 0px 30px 30px 30px  !important;
-   
-       width:100% !important;
-     }
-     ul{
-      gap:unset !important;
-      margin:0;
-     }
-
-     .container{
-      padding:20px;
-     }
-
-
+  ul {
+    gap: unset !important;
+    margin: 0;
   }
 
-// Media Query for responsiveness
+  .container {
+    padding: 20px;
+  }
+}
+
 @media (max-width: 500px) {
- 
-
   ul li {
-    //padding: 8px;
-
     .avatar-container {
       margin-right: 10px;
 

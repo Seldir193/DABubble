@@ -60,12 +60,10 @@ h1 {
   @include dFlex(null, null, 8px);
   flex-direction: column;
 
-  img{
-    width:70px;
+  img {
+    width: 70px;
   }
 }
-
-
 
 @keyframes moveDiagonal {
   from {
@@ -95,18 +93,15 @@ h1 {
     max-width: 0px;
     padding: 4rem 0rem;
     animation: moveVertical 1s ease-in-out forwards;
-
-   
   }
 
   .container .register {
     display: none;
   }
 
-  .container-box{
-    img{
-    width:56px;
+  .container-box {
+    img {
+      width: 56px;
     }
   }
 }
-

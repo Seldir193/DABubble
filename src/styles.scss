@@ -3,16 +3,11 @@ $lightblue: #eceefe;
 $middleblue: #797ef3;
 $hoverColor: #535af1;
 $lightgray: #686868;
-$button-border: #ADB0D9;
+$button-border: #adb0d9;
 
+@import "@ctrl/ngx-emoji-mart/picker";
 
-
-
-
-
-@import '@ctrl/ngx-emoji-mart/picker';
-
-@mixin dFlex($jc: null, $ai: center, $g: 0px) {
+@mixin dFlex($jc: null, $ai: center, $g: 0px, $direction: row) {
   display: flex;
   align-items: $ai;
   gap: $g;
@@ -20,35 +15,36 @@ $button-border: #ADB0D9;
   @if $jc != null {
     justify-content: $jc;
   }
-}
 
+  @if $ai != null {
+    align-items: $ai;
+  }
+
+  @if $direction != null {
+    flex-direction: $direction;
+  }
+}
 
 @media (max-width: 780px) {
   body {
     overflow: auto;
-   
   }
-
 }
 
-html,body
- {
+html,
+body {
   margin: 0;
-
- 
-  
+  padding: 0;
+  //overflow-x: hidden;
+   //overflow-y: auto;
+ // overflow-y: hidden;
 }
 body {
-  font-family: "Nunito",'Noto Color Emoji', 'Segoe UI Emoji', sans-serif;
+  font-family: "Nunito", "Noto Color Emoji", "Segoe UI Emoji", sans-serif;
   height: 100%;
   width: 100%;
   background-color: $lightblue;
-
- 
- 
 }
-
-
 
 .button-anmelden {
   background: $button-blue;
@@ -68,7 +64,7 @@ body {
   }
 
   &:disabled {
-    background-color:#686868;
+    background-color: #686868;
     cursor: not-allowed;
   }
 }
@@ -102,9 +98,14 @@ body {
   }
 }
 
+
+
+
 .registration-ok {
   @include dFlex(center, center, 0px);
-  width: 100%;
+  //width: 100%;
+  
+  width:auto;
   max-width: 531px;
   height: auto;
   padding: 50px;
@@ -122,58 +123,26 @@ body {
 }
 
 
+
 @media (max-width: 1278px) {
   section {
     padding: 0 !important;
     gap: 0 !important;
   }
 
-  .registration-ok{
-    //max-width:323px !important;
-   // width:100%;
-   //height:70px;
-   padding:unset !important;
+  .registration-ok {
+    padding: unset !important;
 
-   img{
-    width:24px;
-   }
+    img {
+      width: 24px;
+    }
 
-
-    p{
+    p {
       font-size: 22px !important;
-      margin:0;
+      margin: 0;
     }
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .my-user-dropdown {
   list-style-type: none;
@@ -185,9 +154,7 @@ body {
   z-index: 1000;
 
   &.pm-scrollable {
-    /* Nativer Scroll, aber unsichtbar machen */
     overflow-y: auto;
-    //max-height: 171px;
     max-height: 467px;
     max-width: 250px;
     display: flex;
@@ -195,17 +162,11 @@ body {
     cursor: pointer;
     gap: 10px;
     padding-top: 20px;
-    width:calc(100vh - 20px);
-
-    /* Ecken: top-left=20px, top-right=20px, bottom-right=20px, bottom-left=0 */
+    width: calc(100vh - 20px);
     border-radius: 20px 20px 20px 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 
-    /* --- SCROLLBAR UNSICHTBAR MACHEN --- */
-    /* (1) Für Firefox */
-    scrollbar-width: none;         /* Versteckt in Firefox */
-    -ms-overflow-style: none;      /* Evtl. Legacy IE/Edge */
-
-    /* (2) Für Chrome/Safari/Edge (WebKit) */
     &::-webkit-scrollbar {
       width: 0;
       height: 0;
@@ -225,7 +186,11 @@ body {
     }
   }
 
-
+  .avatar-container {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+  }
 
   li {
     padding: 10px;
@@ -236,11 +201,11 @@ body {
     border-radius: 2.1875rem;
     font-size: 18px;
     height: 35px;
-    max-width:206px;
-    width:100%;
+    max-width: 206px;
+    width: 100%;
 
     &:hover {
-      background-color: $lightblue; // Deine Hover-Farbe
+      background-color: $lightblue;
     }
 
     .avatar {
@@ -262,58 +227,38 @@ body {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-/* 1) Kleines Bild im Chat */
 .small-image {
   width: 50px;
   height: 50px;
   object-fit: cover;
   cursor: pointer;
-  border-radius: 4px; /* falls du es abgerundet haben willst */
+  border-radius: 4px;
 }
 
-/* 2) Overlay-Hintergrund */
 .image-modal-overlay {
-  position: fixed; /* über dem ganzen Bildschirm */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.5); /* halbtransparent, z.B. */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  cursor: pointer; 
+  cursor: pointer;
 }
 
-/* 3) Inhalt im Overlay (Bild + Close-Button) */
 .image-modal-content {
   position: relative;
-  background: #fff; 
-  padding: 16px; 
+  background: #fff;
+  padding: 16px;
   border-radius: 8px;
-  max-width: 80vw;  /* oder so */
-  max-height: 80vh; /* damit es nicht riesig wird */
-  cursor: auto;     /* beim Inhalt selbst Mauszeiger normal lassen */
+  max-width: 80vw;
+  max-height: 80vh;
+  cursor: auto;
 }
 
-/* Großes Bild */
 .large-image {
   display: block;
   max-width: 100%;
@@ -321,7 +266,6 @@ body {
   object-fit: contain;
 }
 
-/* Schließen-Button */
 .close-button {
   position: absolute;
   top: 8px;
@@ -332,237 +276,149 @@ body {
   cursor: pointer;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Mobile Version 
-
-
 @media (max-width: 1278px) {
-  .entwickler-box{
-    padding:10px 16px;
+  .entwickler-box {
+    padding: 10px 16px;
     border-radius: unset !important;
-  
-    
-  .avatar-list {
-    img.avatar {
-      height: 34px !important;
-      width: 34px !important;
+
+    .avatar-list {
+      img.avatar {
+        height: 34px !important;
+        width: 34px !important;
+      }
     }
 
-    
-   
-    
-  }
-  
-  
-  .channel-container, .static-member{
-   
-    height:34px !important;
-  }
-  
+    .channel-container,
+    .static-member {
+      height: 34px !important;
+    }
+
     .office-box {
-      img{
-        width:16px;
-        height:17px;
+      img {
+        width: 16px;
+        height: 17px;
       }
-  
-      .arrow{
-        width:12px;
-        height:6.19px;
+
+      .arrow {
+        width: 12px;
+        height: 6.19px;
       }
       h1 {
         font-size: 20px !important;
         font-weight: 700;
       }
+    }
   }
-  }
-  
-  .channel-input-box{
+
+  .channel-input-box {
     height: calc(100vh - 10rem);
   }
-  
-  
-  
   .channel-box,
-  
-  .message-content{
-    p{
+  .message-content {
+    p {
       font-size: 17px !important;
     }
   }
-  
 
-  
-  .channel-box{
-    padding:10px;
-  
-    .message-list
-    .sent-message-container
-    .message-container{
-      padding:10px;
+  .channel-box {
+    padding: 10px;
+
+    .message-list .sent-message-container .message-container {
+      padding: 10px;
     }
   }
-  
-  .channel-box{
-    padding:10px;
-  
-    .message-list
-    .received-message-container
-    .message-container{
-      padding:10px;
+
+  .channel-box {
+    padding: 10px;
+
+    .message-list .received-message-container .message-container {
+      padding: 10px;
     }
   }
-  
-  .seperator{
-    padding:0px 10px 0px 10px;
+
+  .seperator {
+    padding: 0px 10px 0px 10px;
   }
-  
-  
+
   .channel-box .message-list .emoji-box {
-    //padding:unset;
     position: absolute;
-    transform: none; 
-  }
-  
-  
-  
-  .channel-box .message-list .emoji-box .image-wrapper{
-    width:30px;
-    height:30px;
+    transform: none;
   }
 
-
-
-
-
-
-
-
-
+  .channel-box .message-list .emoji-box .image-wrapper {
+    width: 30px;
+    height: 30px;
+  }
 
   .channel-box .message-list {
     .received-message-container {
-      position: relative; // Wichtig!
-  
+      position: relative;
+
       &:hover .emoji-box-received {
-        // Falls du kein anderes Verhalten willst, entferne diese Regel oder setze:
         right: 0 !important;
       }
     }
-  
+
     .emoji-box-received {
       position: absolute;
       top: -20px;
       right: 0;
-      // Falls du left nicht mehr brauchst, entferne es:
-      // left: 180px; // weg!
-      // ...
     }
   }
-  
 
-
-
-
-
-
-
-
-
-
-
-  
-  .reply-count{
-    padding:unset !important;
+  .reply-count {
+    padding: unset !important;
   }
-  
-  .channel-box .message-list .emoji-box-received .image-wrapper{
-    width:30px;
-    height:30px;
+
+  .channel-box .message-list .emoji-box-received .image-wrapper {
+    width: 30px;
+    height: 30px;
   }
-  
-  
-  .edit-message-box .edit-buttons{
-    display:unset;
+
+  .edit-message-box .edit-buttons {
+    display: unset;
   }
-  
-  .edit-message-box{
-     position: unset; 
-     width: unset; 
-     max-width: unset; 
+
+  .edit-message-box {
+    position: unset;
+    width: unset;
+    max-width: unset;
     margin-top: unset;
   }
-  
-  .edit-message-box .edit-textarea{
-    padding:unset;
+
+  .edit-message-box .edit-textarea {
+    padding: unset;
   }
-  
-  
-  .edit-options{
-    padding:unset;
-    left:40px;
-    top:30px;
+
+  .edit-options {
+    padding: unset;
+    left: 40px;
+    top: 30px;
   }
-  
-  .edit-options button{
+
+  .edit-options button {
     font-size: 17px !important;
-    height:35px;
-    width:170px;
+    height: 35px;
+    width: 170px;
   }
 
-
-
-
-
-  .private-message-header h1{
+  .private-message-header h1 {
     font-size: 20px;
   }
 
-
-  .private-message-header
-  .status-icon{
-    width:14px;
-    height:14px;
+  .private-message-header .status-icon {
+    width: 14px;
+    height: 14px;
   }
 
-
-.private-message-header{
-  h3{
-  font-size: 20px;
-  }
-  h1{
-   font-size:  14px;
+  .private-message-header {
+    h3 {
+      font-size: 20px;
+    }
+    h1 {
+      font-size: 14px;
+    }
   }
 }
-  }
 
-
-
-
-
-
-
-
-  @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-
-
-
-
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");

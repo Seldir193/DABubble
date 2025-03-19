@@ -12,66 +12,65 @@
       </div>
 
       <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-        <div class="input-container icon-wrapper "   [ngClass]="{ 'filled': filledStates['emailFilled'] }">
-
-          <img 
-          [src]="filledStates['emailFilled'] 
-                 ? 'assets/img/black-mail.png' 
-                 : 'assets/img/mail.png'" 
-          alt="Email Icon"
+        <div
+          class="input-container icon-wrapper"
+          [ngClass]="{ filled: filledStates['emailFilled'] }"
         >
-        
+          <img
+            [src]="
+              filledStates['emailFilled']
+                ? 'assets/img/black-mail.png'
+                : 'assets/img/mail.png'
+            "
+            alt="Email Icon"
+          />
 
-  
-  <input
-  [ngClass]="{
-    'email-icon': true,
-    filled: filledStates['emailFilled']
-  }"
-  type="email"
-  id="email"
-  name="email"
-  placeholder="beispielname@email.com"
- 
- 
-  formControlName="email"
-  (focus)="onFocus('email')"
-  (blur)="onBlur('email')"
-  [(ngModel)]="email"
-  required
-/>
-</div>
-
-
-
+          <input
+            [ngClass]="{
+              'email-icon': true,
+              filled: filledStates['emailFilled']
+            }"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="beispielname@email.com"
+            formControlName="email"
+            (focus)="onFocus('email')"
+            (blur)="onBlur('email')"
+            [(ngModel)]="email"
+            required
+          />
+        </div>
 
         <div class="error-message">
           <ng-container *ngIf="errorMessage">
             {{ errorMessage }}
           </ng-container>
-        
+
           <ng-container *ngIf="!errorMessage">
             <ng-container *ngIf="myForm.get('email')?.touched">
               <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
                 *Bitte füllen Sie das E-Mail-Feld aus.
               </ng-container>
-        
-          <ng-container
-            *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
-          >
-            Diese E-Mail-Adresse ist leider ungültig.
-          </ng-container>
-          </ng-container>
+
+              <ng-container
+                *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
+              >
+                Diese E-Mail-Adresse ist leider ungültig.
+              </ng-container>
+            </ng-container>
           </ng-container>
         </div>
 
-        <div class="input-container icon-wrapper ">
+        <div class="input-container icon-wrapper">
           <img
-      [src]="filledStates['passwordFilled'] 
-             ? 'assets/img/black-passwort.png'
-             : 'assets/img/passwort.png'"
-      alt="Passwort Icon"
-    />
+            [src]="
+              filledStates['passwordFilled']
+                ? 'assets/img/black-passwort.png'
+                : 'assets/img/passwort.png'
+            "
+            alt="Passwort Icon"
+          />
 
           <input
             [ngClass]="{
@@ -94,22 +93,30 @@
           <ng-container *ngIf="errorPassword">
             {{ errorPassword }}
           </ng-container>
-  
-        
+
           <ng-container *ngIf="!errorPassword">
-            <ng-container  *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
-              <ng-container *ngIf="myForm.get('password')?.errors?.['required']">
+            <ng-container
+              *ngIf="
+                myForm.get('password')?.invalid &&
+                myForm.get('password')?.touched
+              "
+            >
+              <ng-container
+                *ngIf="myForm.get('password')?.errors?.['required']"
+              >
                 *Bitte füllen Sie das Passwordfeld aus.
               </ng-container>
-              <ng-container *ngIf="myForm.get('password')?.errors?.['minlength']"
-              >Das Passwort muss mindestens 6 Zeichen lang sein.</ng-container>
-        
-          <ng-container
-            *ngIf="!myForm.get('password')?.errors?.['required'] && myForm.get('password')?.errors?.['invalid-password']"
-          >
-            Passwort ist falsch.
-          </ng-container>
-          </ng-container>
+              <ng-container
+                *ngIf="myForm.get('password')?.errors?.['minlength']"
+                >Das Passwort muss mindestens 6 Zeichen lang sein.</ng-container
+              >
+
+              <ng-container
+                *ngIf="!myForm.get('password')?.errors?.['required'] && myForm.get('password')?.errors?.['invalid-password']"
+              >
+                Passwort ist falsch.
+              </ng-container>
+            </ng-container>
           </ng-container>
         </div>
         <div class="passwort-vergessen-box">
@@ -117,7 +124,7 @@
             >Passwort vergessen?</a
           >
         </div>
- 
+
         <div class="line-container">
           <span class="lineleft">ODER</span>
         </div>

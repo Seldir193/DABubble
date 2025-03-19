@@ -1,713 +1,490 @@
 @import "./../../styles.scss";
 
-mat-form-field {
-    width: 100%; // Eingabefelder nehmen die volle Breite des Dialogs ein
-  }
-  
-  mat-dialog-content {
-    padding-bottom: 20px; // Platz unter dem Inhalt des Dialogs
-  }
-  
-  .mat-dialog-actions {
-    display: flex;
-    justify-content: flex-end; // Der Button wird rechts ausgerichtet
-  }
-  
-  .mat-mdc-form-field-input-control.mdc-text-field__input,
-  .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
-    font-size: 18px;
-    font-weight: 400;
-  }
-  
-  .mat-mdc-dialog-actions {
-    padding: 20px 0;
-    justify-content: flex-end;
-  }
-  
-  ::ng-deep .mat-mdc-dialog-container {
-    border-radius: 30px !important;
-  }
-  
-  ::ng-deep .mdc-dialog__surface {
-    border-radius: 30px !important;
-    overflow: hidden;
-  }
-  
-  ::ng-deep.mat-mdc-dialog-content .mdc-dialog__content {
-    padding: 0; /* Entferne das Padding komplett */
-  }
-  
-  ::ng-deep.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
-    padding: 0; /* Entferne das Padding komplett */
-  }
-  
-  ::ng-deep.mat-mdc-dialog-title,
-  .mdc-dialog__title,
-  .mat-mdc-dialog-container .mat-mdc-dialog-content,
-  .mdc-dialog .mdc-dialog__content {
-    padding: 0; /* Entferne das Padding komplett */
-    margin: 0; /* Entferne auch das Margin */
-  }
-  
-  ::ng-deep.mat-mdc-dialog-title,
-  .mdc-dialog__title {
-    margin: 0 0 20px !important ;
+
+mat-dialog-content {
+  padding-bottom: 20px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 20px 0;
+  justify-content: flex-end;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 30px !important;
+}
+
+::ng-deep .mdc-dialog__surface {
+  border-radius: 30px !important;
+  overflow: hidden;
+}
+
+::ng-deep.mat-mdc-dialog-content .mdc-dialog__content {
+  padding: 0;
+}
+
+::ng-deep.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+  padding: 0;
+}
+
+::ng-deep.mat-mdc-dialog-title,
+.mdc-dialog__title,
+.mat-mdc-dialog-container .mat-mdc-dialog-content,
+.mdc-dialog .mdc-dialog__content {
+  padding: 0;
+  margin: 0;
+}
+
+::ng-deep.mat-mdc-dialog-title,
+.mdc-dialog__title {
+  margin: 0 0 20px !important ;
+}
+
+::ng-deep .mat-bottom-sheet-container-medium {
+  min-width: 100vw;
+}
+
+.container {
+  width: 792px;
+  padding: 40px;
+  gap: 20px;
+  border-radius: 40px 0px 0px 0px;
+  border: 1px 0px 0px 0px;
+  display: flex;
+  flex-direction: column;
+
+  .close-dialog,
+  .edit-box {
+    width: 100%;
   }
 
-  ::ng-deep .mat-bottom-sheet-container-medium{
-    min-width: 100vw;
-  }
-  
-  .container {
-    width:792px;
-    padding: 40px;
-    gap: 20px;
-    border-radius: 40px 0px 0px 0px;
-    border: 1px 0px 0px 0px;
+  .info-box {
     display: flex;
     flex-direction: column;
-  
-    .close-dialog,
-   
-    .edit-box{
-      width: 100%; // Alle Kind-Container übernehmen die Breite von .close-container
+    padding: 20px;
+    gap: 20px;
+    p {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
     }
-    
 
-    .info-box{
-       
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        gap:20px;
-        p{
-            font-size:18px;
-            font-weight: 700;
-            margin:0;
-        }
-
-        strong{
-            font-size:24px;
-            font-weight: 400;
-            color:$hoverColor;
-        }
-      }
+    strong {
+      font-size: 24px;
+      font-weight: 400;
+      color: $hoverColor;
+    }
   }
-  
-  .close-dialog {
+}
+
+.close-dialog {
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  gap: 15px;
+
+  h1 {
+    margin-right: 20px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  img {
+    cursor: pointer;
+    transition: filter 0.3s ease, background-color 0.3s ease;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: $lightblue;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+  }
+
+  .close-pic-box {
+    display: flex;
+    margin-left: auto;
+  }
+}
+
+.edit-box {
+  display: flex;
+  flex-direction: column;
+  border-radius: 40px;
+  padding: 20px 0;
+
+  .input-icon {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: filter 0.3s ease;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  input,
+  textarea {
+    display: none;
+    background: $lightblue;
+    border-radius: 100px;
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    height: 60px;
+    width: 100%;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    padding-left: 60px;
+    align-content: center;
+
+    &.visible {
+      display: block;
+    }
+
+    &:hover {
+      border-color: #686868;
+      transition: border-color 0.3s;
+    }
+
+    &:focus,
+    &:focus-within {
+      outline: none;
+      border-color: $button-blue;
+    }
+  }
+}
+
+.channel-box {
+  gap: 20px;
+  border-radius: 20px;
+  border: 1px solid $button-border;
+
+  &.show-border {
+    border: 1px solid $button-border;
+  }
+
+  &.hide-border {
+    border: none;
+  }
+
+  label {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .channel-name-box {
     display: flex;
     align-items: center;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    gap: 15px;
-  
+    gap: 10px;
+    position: relative;
+
     h1 {
-      margin-right: 20px;
-      font-size: 24px;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: 400;
+      color: black;
+      padding-left: 50px;
+      margin: 0;
     }
-  
+  }
+
+  .edit-button,
+  .save-button {
+    background: $button-blue;
+    border: none;
+    border-radius: 100px;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+
+    &:hover {
+      background-color: #5b5ffc;
+    }
+
+    &.save-button {
+      background: #28a745;
+
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  }
+}
+
+.header-button-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+
+  label {
+    font-size: 18px;
+    font-weight: 700;
+    transition: all 0.5s ease-in-out;
+
+    &.move-left {
+      transform: translate(-20px, -0px);
+    }
+  }
+}
+
+.profil-settings-button {
+  font-size: 18px;
+  font-weight: 600;
+  color: $hoverColor;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.6s ease;
+
+  &:hover {
+    color: $hoverColor;
+    font-weight: 700;
+    transform: scale(1.05);
+  }
+
+  &.move-initial {
+    transform: translate(0, 0);
+    margin-left: auto;
+  }
+
+  &.move-right {
+    transform: translate(20px, -0px);
+    margin-left: auto;
+  }
+}
+
+.box-container {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.primary-button {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: #5b5ffc;
+  }
+
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+}
+
+.seperator {
+  border: 1px solid $button-border;
+  width: 100%;
+  max-width: 739px;
+  margin: 0 auto;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  gap: 13px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 15px;
+  width: fit-content;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: $lightblue;
+    border-radius: 100px;
+  }
+}
+
+span {
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.member-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 29px;
+  width: fit-content;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  .img-container {
+    width: 32px;
+    height: 32px;
+    background-color: $lightblue;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+
     img {
-      cursor: pointer;
-      transition: filter 0.3s ease, background-color 0.3s ease;
+      width: 24px;
+      height: 24px;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 400;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    background-color: $lightblue;
+    border-radius: 100px;
+
+    h2 {
+      color: $hoverColor;
+    }
+
+    .img-container {
+      background-color: transparent;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+  }
+}
+
+.avatar-container {
+  position: relative;
+
+  .status-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+}
+
+@media (max-width: 1278px) {
+  .header-button-box {
+    .img-wrapper {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 50%;
-  
+      overflow: hidden;
+
+      transition: background-color 0.3s ease, transform 0.3s ease,
+        filter 0.3s ease;
+
       &:hover {
         background-color: $lightblue;
-  
+        transform: scale(1.1);
+        cursor: pointer;
+
         img {
           filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
             saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
         }
       }
-    }
-  
-    .close-pic-box {
-      display: flex;
-      margin-left: auto;
-    }
-  }
-  
 
-
-
-  
-
-
-
-
-
-
-  .edit-box {
-    display: flex;
-    flex-direction: column;
-    border-radius: 40px;
-    padding: 20px 0;
-  
-    .input-icon {
-      position: absolute;
-      left: 25px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      transition: filter 0.3s ease;
-      font-size: 25px;
-      font-weight: 700;
-    }
-  
-    /* Hier statt nur "input" => "input, textarea" */
-    input,
-    textarea {
-      display: none; /* Standardmäßig verstecken (weil du es nur im Bearbeitungsmodus zeigst) */
-      background: $lightblue;
-      border-radius: 100px;
-      color: black;
-      font-size: 18px;
-      font-weight: 500;
-      height: 60px;            /* selbe Höhe wie dein Input */
-      width: 100%;
-      border: 1px solid transparent;
-      box-sizing: border-box;
-      padding-left: 60px; 
-      align-content: center;     /* Platz für das Icon links */
-  
-      &.visible {
-        display: block;        /* wird bei Bearbeitung angezeigt */
-      }
-  
-      &:hover {
-        border-color: #686868;
-        transition: border-color 0.3s;
-      }
-  
-      &:focus,
-      &:focus-within {
-        outline: none;
-        border-color: $button-blue;
-      }
-
-     
-    }
-  }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    .channel-box {
-     // padding: 20px;
-      gap: 20px;
-      border-radius: 20px;
-      border: 1px solid $button-border;
-     // width:792px;
-  
-      &.show-border {
-          border: 1px solid $button-border; // Rand wird eingeblendet, wenn die Klasse 'show-border' aktiv ist
-        }
-      
-        &.hide-border {
-          border: none; // Kein Rand während des Bearbeitens
-        }
-    
-      label {
-        font-size: 18px;
-        font-weight: 700;
-  
-       
-      }
-    
-      .channel-name-box {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        position: relative; // Positionieren, um das Bild innerhalb des Inputs zu platzieren
-    
-        h1 {
-          font-size: 18px;
-          font-weight: 400;
-          color: black;
-          padding-left:50px;
-          margin:0;
-        }
-      }
-    
-      .edit-button,
-      .save-button {
-        background: $button-blue;
-        border: none;
-        border-radius: 100px;
-        color: white;
-        padding: 10px 20px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        margin-top: 10px;
-    
-        &:hover {
-          background-color: #5b5ffc;
-        }
-    
-        &.save-button {
-          background: #28a745;
-    
-          &:hover {
-            background-color: #218838;
-          }
-        }
-      }
-    }
-  
-
-
-
-
-
-
-
-    .header-button-box{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding:0 20px;
-
-
-  
-      label {
-          font-size: 18px;
-          font-weight: 700;
-          transition: all 0.5s ease-in-out;
-    
-          &.move-left {
-            transform: translate(-20px, -0px);
-          }
-        }
-  
-      }
-
-
-
-
-  
-
-
-
-  
-   
-  
-    .profil-settings-button {
-      font-size: 18px;
-      font-weight: 600;
-      color: $hoverColor;
-      cursor: pointer;
-      transition: color 0.3s ease, transform 0.6s ease ;
-      
-      &:hover {
-          color: $hoverColor;
-          font-weight: 700;
-          transform: scale(1.05);
-        }
-  
-      &.move-initial {
-          transform: translate(0, 0); // Ausgangsposition (ohne Verschiebung)
-          margin-left:auto;
-          
-        }
-  
-        &.move-right {
-          transform: translate(20px, -0px); // Verschiebung nach rechts oben beim Bearbeiten
-          margin-left:auto;
-        }
-  
-         
-      
-      }
-
-      .box-container{
-        display: flex;
-        flex-direction: column;
-        
-        gap: 20px;
-    }
-      
-
-    .primary-button {
-        background: $button-blue;
-        border: none;
-        border-radius: 100px;
-        color: white;
-        font-size: 18px;
-        font-weight: 700;
-        padding: 12px 25px;
-        
-        height: 49px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      
-      
-        &:hover {
-          background: #5b5ffc;
-        }
-      
-        &:disabled {
-          background-color: gray;  /* Farbe, wenn der Button deaktiviert ist */
-          cursor: not-allowed;
-        }
-      
-        
-      }
-
-      .seperator{
-         border: 1px solid $button-border;
-         width: 100%;        // Die Breite des Separators wird auf 100% des übergeordneten Containers gesetzt
-         max-width: 739px; 
-         margin: 0 auto;
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ul {
-        list-style-type: none;
-        padding: 0;
-        gap: 13px;
-        display: flex;
-        flex-direction: column;
-        cursor: pointer;
-    }
-    
-    li {
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        gap: 15px;
-        width:fit-content;
-        border-radius: 100px;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    
-        &:hover {
-            background-color: $lightblue;
-            border-radius: 100px;
-          }
-        }
-      
-        span {
-          font-size: 18px;
-          font-weight: 400;
-          color: black;
-          transition: color 0.3s ease;
-        }
-      
-      .avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-      }
-      
-     
-      
-    
-      .box{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        img{
-          width: 50px;
-          height: 50px;
-        }
-      }
-    
-    
-   
-
-
-
-
-
-      .member-box {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 0 29px;
-        width: fit-content;
-        border-radius: 100px;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    
-        /* Standardzustand */
-        .img-container {
-            width: 32px;
-            height: 32px;
-            background-color: $lightblue;  // Hintergrund der Box
-            border-radius: 50%;  // Runde Form
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background-color 0.3s ease;  
-    
-            img {
-                width: 24px;  // Inneres Bild
-                height: 24px;
-                transition: filter 0.3s ease, transform 0.3s ease; 
-            }
-        }
-    
-        h2 {
-            font-size: 18px;
-            font-weight: 400;
-            color: #333;  // Standardfarbe für den Text
-            transition: color 0.3s ease;
-        }
-    
-        /* Hover-Effekt für die gesamte Box */
-        &:hover {
-            background-color: $lightblue;  // Die gesamte Box ändert die Farbe
-            border-radius: 100px;
-           
-            /* Textfarbe ändern */
-            h2 {
-                color: $hoverColor;  // Farbe für den Text bei Hover
-            }
-    
-            /* Bild-Box und Bild beim Hover ändern */
-            .img-container {
-                background-color: transparent;  // Hintergrund der Box beim Hover
-    
-                img {
-                    filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-                }
-            }
-        }
-    }
-    
-
-
-
-      .avatar-container {
-        position: relative;  /* Erlaubt das Status-Icon auf dem Avatar */
-      
-        /* Status-Icons (Online/Offline) unten rechts auf dem Avatar-Bild */
-        .status-icon {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          border: 2px solid white;
-        }
-      }
-      
-      
-
-
-      
-      @media(max-width:1278px){
-        .header-button-box {
-    
-          .img-wrapper {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            overflow: hidden; /* Damit das Bild nicht übersteht */
-            
-            /* Weiche Übergänge */
-            transition: 
-              background-color 0.3s ease, 
-              transform 0.3s ease,
-              filter 0.3s ease;
-          
-            /* NUR EIN Hover */
-            &:hover {
-              background-color: $lightblue; /* Der Kreis wird hellblau */
-              transform: scale(1.1);       /* Kreis wird größer */
-              cursor: pointer;
-          
-              /* Bild-Farbfilter => wir greifen direkt auf das <img> im Wrapper zu */
-              img {
-                filter: brightness(0) 
-                        saturate(100%) 
-                        invert(34%) 
-                        sepia(39%) 
-                        saturate(6834%) 
-                        hue-rotate(230deg) 
-                        brightness(100%) 
-                        contrast(90%);
-              }
-            }
-          
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 50%;
-              /* Keine separate Hover-Regel mehr hier! */
-              transition: filter 0.3s ease;
-             
-            }
-          }
-      }
-
-      .container {
-        position: fixed; 
-        top: 0;
-        left: 0;
+      img {
         width: 100%;
         height: 100%;
-        margin: 0;      
-        border-radius: 0; 
-        max-width: 100%; 
-        padding: 20px;  /* oder so, falls du einen Rand willst */
-        overflow-y: auto; /* bei Bedarf scrollbar in der Höhe */
-        box-sizing: border-box; /* wichtig, damit padding + width harmonieren */
-        background-color: white;
-      }
-  
-      .mdc-dialog__content>:first-child{
-        font-size:17px;
-      }
-  
-      .custom-input .input-icon{
-        left:10px;
-      }
-  
-      .custom-input input{
-        padding: 1.125rem 2.30rem;
-      }
+        object-fit: cover;
+        border-radius: 50%;
 
-      .seperator {
-        width: calc(100% - 40px);
-        max-width: none;
-        margin: 0 auto;
-      }
-
-      .desktop-off{
-       padding:20px;
-        border: 1px solid $button-border;
-        border-radius:20px;
-        overflow-y: overlay;
+        transition: filter 0.3s ease;
       }
     }
+  }
 
+  .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    max-width: 100%;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    background-color: white;
+  }
 
+  .mdc-dialog__content > :first-child {
+    font-size: 17px;
+  }
 
-    @media(min-width:1278px){
-      .desktop-off{
-        display: none;
-      
-    
-      }
-    }
-    
+  .seperator {
+    width: calc(100% - 40px);
+    max-width: none;
+    margin: 0 auto;
+  }
 
-      
+  .desktop-off {
+    padding: 20px;
+    border: 1px solid $button-border;
+    border-radius: 20px;
+    overflow-y: overlay;
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@media (min-width: 1278px) {
+  .desktop-off {
+    display: none;
+  }
+}

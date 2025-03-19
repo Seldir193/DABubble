@@ -1,235 +1,320 @@
-import { Component, Inject, OnInit, EventEmitter, Output, HostListener } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import {
+  Component,
+  Inject,
+  OnInit,
+  EventEmitter,
+  Output,
+  HostListener,
+} from '@angular/core';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog,
+} from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChannelService } from '../channel.service';
-import { UserService } from '../user.service'; 
+import { UserService } from '../user.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
+import { AddMembersDialogMobileComponent } from '../add-members-dialog-mobile/add-members-dialog-mobile.component';
 
-
-
-import { AddMembersDialogMobileComponent } from '../add-members-dialog-mobile/add-members-dialog-mobile.component'; 
-
+/**
+ * Dialog component that allows editing channel details (name, description, members).
+ */
 @Component({
   selector: 'app-edit-channel-dialog',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './edit-channel-dialog.component.html',
-  styleUrls: ['./edit-channel-dialog.component.scss']
+  styleUrls: ['./edit-channel-dialog.component.scss'],
 })
-
 export class EditChannelDialogComponent implements OnInit {
-  @Output() channelLeft = new EventEmitter<string>(); // Event für das Verlassen des Channels
+  /**
+   * Emitted when the user leaves the channel (channel ID).
+   */
+  @Output() channelLeft = new EventEmitter<string>();
+
+  /**
+   * Channel name to be displayed/edited.
+   */
   channelName: string = '';
+
+  /**
+   * Channel description to be displayed/edited.
+   */
   description: string = '';
+
+  /**
+   * Indicates the channel creator's display name.
+   */
   createdBy: string = '';
+
+  /**
+   * List of members currently in the channel.
+   */
   members: any[] = [];
+
+  /**
+   * Whether the channel name is being edited.
+   */
   isEditingName: boolean = false;
+
+  /**
+   * Whether the channel description is being edited.
+   */
   isEditingDescription: boolean = false;
+
+  /**
+   * Temporary name while editing the channel name.
+   */
   editedChannelName: string = '';
+
+  /**
+   * Temporary value while editing the channel description.
+   */
   editedDescription: string = '';
 
+  /**
+   * True if the screen is considered desktop-sized (>= 1278px).
+   */
   isDesktop = false;
 
-
+  /**
+   * Emitted if a members overlay is opened externally (optional usage).
+   */
   @Output() openAddMembersOverlay = new EventEmitter<void>();
 
-  //filteredMembers: any[] = [];
-
-
+  /**
+   * Creates the dialog for editing channel data, injecting related services and bottom sheets.
+   * @param dialogRef Reference to this dialog.
+   * @param data Channel data object containing ID, name, members, description, and creator info.
+   * @param channelService Service handling channel data in Firestore.
+   * @param userService Service handling user data in Firestore.
+   * @param dialog Service to open additional dialogs (e.g., for adding members).
+   * @param bottomSheet Service to open mobile-friendly bottom sheets.
+   */
   constructor(
     public dialogRef: MatDialogRef<EditChannelDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id: string; name: string; members: any[]; description: string; createdBy: string },
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      id: string;
+      name: string;
+      members: any[];
+      description: string;
+      createdBy: string;
+    },
     private channelService: ChannelService,
-    private userService: UserService ,
+    private userService: UserService,
     private dialog: MatDialog,
     private bottomSheet: MatBottomSheet
-
   ) {
     this.channelName = data.name;
     this.members = data.members;
     this.description = data.description;
-    this.createdBy = data.createdBy || 'Unbekannt';
+    this.createdBy = data.createdBy || 'Unknown';
   }
 
+  /**
+   * Lifecycle hook: initializes desktop check and subscribes to channel updates.
+   */
   ngOnInit(): void {
     this.checkIfDesktop();
+    this.subscribeToChannelUpdates();
+  }
 
-    // Hole den aktuellen Channel aus dem Service
-    this.channelService.currentChannels.subscribe(channels => {
-      const currentChannel = channels.find(channel => channel.name === this.channelName);
-     //const currentChannel = channels.find(channel => channel.id === this.data.id);
-
-      if (currentChannel) {
-        this.channelName = currentChannel.name;
-        this.description = currentChannel.description || '';
-        this.members = currentChannel.members || [];
-        //this.members = [...(currentChannel.members || [])];
-        this.createdBy = currentChannel.createdBy || ''; 
-
-        this.userService.getCurrentUserData().then(userData => {
-          if (userData && userData.name) {
-            this.createdBy = userData.name; // Setze den Benutzernamen als Ersteller des Channels
-          }
-        }).catch(err => {
-          console.error('Fehler beim Abrufen des Benutzers:', err);
-        });
+  /**
+   * Subscribes to channel updates from the ChannelService and
+   * refreshes local properties if the current channel changes.
+   */
+  private subscribeToChannelUpdates(): void {
+    this.channelService.currentChannels.subscribe((channels) => {
+      const current = channels.find((c) => c.name === this.channelName);
+      if (current) {
+        this.channelName = current.name;
+        this.description = current.description || '';
+        this.members = current.members || [];
+        this.createdBy = current.createdBy || '';
+        this.fillCreatorIfMissing();
       }
     });
   }
 
-  
-  checkIfDesktop() {
+  /**
+   * If the channel has no 'createdBy' name, fills it with the current user's name.
+   */
+  private fillCreatorIfMissing(): void {
+    this.userService.getCurrentUserData().then((userData) => {
+      if (userData && userData.name && !this.createdBy) {
+        this.createdBy = userData.name;
+      }
+    });
+  }
+
+  /**
+   * Checks if window width is >= 1278, setting isDesktop accordingly.
+   */
+  checkIfDesktop(): void {
     this.isDesktop = window.innerWidth >= 1278;
   }
 
+  /**
+   * HostListener for window resize: re-checks if the screen is in desktop mode.
+   */
+  @HostListener('window:resize')
+  onResize(): void {
+    this.checkIfDesktop();
+  }
 
-    @HostListener('window:resize', ['$event'])
-    onResize() {
-      this.checkIfDesktop();
-    }
-
-
-
-
- 
-
-  
-
+  /**
+   * Saves channel edits (name/description), updates Firestore, then closes this dialog.
+   */
   onSave(): void {
-    // Falls der Channel-Name oder die Beschreibung bearbeitet wurde, speichere die Änderungen
     const updatedChannel = {
-      name: this.editedChannelName.trim() ? this.editedChannelName : this.channelName,
-      members: this.members, // Behalte die Mitglieder bei
-      description: this.editedDescription.trim() ? this.editedDescription : this.description,
-      createdBy: this.createdBy
+      name: this.editedChannelName.trim()
+        ? this.editedChannelName
+        : this.channelName,
+      members: this.members,
+      description: this.editedDescription.trim()
+        ? this.editedDescription
+        : this.description,
+      createdBy: this.createdBy,
     };
-  
-    // Rufe den ChannelService auf, um den Channel in Firestore zu aktualisieren
-    this.channelService.updateChannel(this.data.id, updatedChannel.name, updatedChannel.description);
-    // Schließe den Dialog und übergib den aktualisierten Channel
+    this.channelService.updateChannel(
+      this.data.id,
+      updatedChannel.name,
+      updatedChannel.description
+    );
     this.dialogRef.close(updatedChannel);
   }
 
-
+  /**
+   * Persists the new channel name if one was entered, then ends editing mode.
+   */
   saveChannelName(): void {
     if (this.editedChannelName.trim()) {
-      this.channelService.updateChannel(this.data.id, this.editedChannelName, this.description);
-      this.channelName = this.editedChannelName; // Aktualisiere den Channel-Namen
+      this.channelService.updateChannel(
+        this.data.id,
+        this.editedChannelName,
+        this.description
+      );
+      this.channelName = this.editedChannelName;
     }
     this.isEditingName = false;
   }
-  
+
+  /**
+   * Persists the new channel description if one was entered, then ends editing mode.
+   */
   saveDescription(): void {
     if (this.editedDescription.trim()) {
-      this.channelService.updateChannel(this.data.id, this.channelName, this.editedDescription);
-      this.description = this.editedDescription; // Aktualisiere die Beschreibung
+      this.channelService.updateChannel(
+        this.data.id,
+        this.channelName,
+        this.editedDescription
+      );
+      this.description = this.editedDescription;
     }
     this.isEditingDescription = false;
   }
 
+  /**
+   * Toggles editing for the channel name. If turning off, triggers saveChannelName().
+   */
   toggleEditingName(): void {
     this.isEditingName = !this.isEditingName;
     if (!this.isEditingName) {
-      this.saveChannelName(); // Speichere den Namen, wenn die Bearbeitung beendet wird
+      this.saveChannelName();
     }
   }
- 
 
-
+  /**
+   * Toggles editing for the channel description. If turning off, triggers saveDescription().
+   */
   toggleEditingDescription(): void {
     this.isEditingDescription = !this.isEditingDescription;
     if (!this.isEditingDescription) {
-      this.saveDescription(); // Speichere die Beschreibung, wenn die Bearbeitung beendet wird
+      this.saveDescription();
     }
   }
-  
+
+  /**
+   * Closes the dialog, discarding any unsaved edits.
+   */
   onCancel(): void {
     this.dialogRef.close();
   }
+
+  /**
+   * Lets the user leave the channel, removing them from its member list in Firestore.
+   * Closes the dialog afterward and emits channelLeft.
+   */
   onLeaveChannel(): void {
     this.userService.getCurrentUserData().then((userData) => {
       if (userData && userData.uid) {
-        this.channelService.leaveChannel(this.data.id, userData.uid).then(() => {
-          console.log('Channel erfolgreich verlassen');
-          this.channelLeft.emit();  // Event auslösen, um das Verlassen zu signalisieren
-          this.dialogRef.close();   // Dialog schließen
-        }).catch(error => {
-          console.error('Fehler beim Verlassen des Channels:', error);
-        });
+        this.channelService
+          .leaveChannel(this.data.id, userData.uid)
+          .then(() => {
+            this.channelLeft.emit();
+            this.dialogRef.close();
+          });
       }
     });
   }
 
-
-
-
-
-
-
-  async openAddMembersMobile() {
-    console.log('VOR BottomSheet: Aktuelle Mitglieder:', this.members);
-  
+  /**
+   * Opens a bottom sheet for adding members on mobile. Once dismissed,
+   * merges the newly selected members and updates Firestore.
+   */
+  async openAddMembersMobile(): Promise<void> {
     try {
-      // 🔥 Alle Benutzer laden
-      const allUsers = await this.userService.getAllUsers();
-      console.log('🔍 Alle Benutzer aus Firestore:', allUsers);
-  
-      // 🔥 Bereits vorhandene Mitglieder aus der Auswahl entfernen
-      const filteredUsers = allUsers.filter(user => 
-        !this.members.some(member => member.uid === user.uid)
-      );
-  
-      console.log('✅ Gefilterte Mitgliederliste für Auswahl:', filteredUsers);
-  
-      if (!this.data || !this.data.id) {
-        console.error('❌ FEHLER: `this.data.id` ist undefined oder null!', this.data);
-        return;
-      }
-  
-      const bottomSheetData = {
-        channelId: this.data.id,
-        members: [...this.members],  // Kopie übergeben
-        filteredMembers: filteredUsers // ✅ Gefilterte Mitglieder übergeben
-      };
-  
-      console.log('✅ Übergabe an BottomSheet:', bottomSheetData);
-  
-      const sheetRef = this.bottomSheet.open(AddMembersDialogMobileComponent, {
-        panelClass: 'my-custom-panel',
-        data: bottomSheetData
-
-      });
-  
-      sheetRef.afterDismissed().subscribe((result) => {
-        console.log('AddMembersDialog (mobile) closed =>', result);
-  
-        if (Array.isArray(result)) {
-          console.log('NACH BottomSheet: Zurückgegebene Mitglieder:', result);
-  
-          // 🔥 Alte + neue Mitglieder zusammenführen
-          this.members = [...this.members, ...result.filter(m => 
-            !this.members.some(existing => existing.uid === m.uid)
-          )];
-  
-          console.log('🔥 NEUE Mitgliederliste nach Merge:', this.members);
-  
-          // 🔥 Speichere die aktualisierte Mitgliederliste in Firestore
-          this.channelService.setMembers(this.data.id, this.members)
-            .then(() => console.log('🔥 Mitglieder erfolgreich in Firestore gespeichert:', this.members))
-            .catch(err => console.error('❌ Fehler beim Speichern in Firestore:', err));
-        }
-      });
-    } catch (error) {
-      console.error('❌ Fehler beim Laden der Benutzer:', error);
-    }
+      const filtered = await this.fetchAndFilterUsers();
+      if (!this.data || !this.data.id || !filtered) return;
+      this.openMembersSheet(filtered);
+    } catch {}
   }
-  
 
+  /**
+   * Fetches all users from Firestore and filters out those already in this.members.
+   * @returns The filtered user array or null if fetching fails.
+   */
+  private async fetchAndFilterUsers(): Promise<any[] | null> {
+    const allUsers = await this.userService.getAllUsers();
+    return allUsers.filter(
+      (u: any) => !this.members.some((m: any) => m.uid === u.uid)
+    );
+  }
 
+  /**
+   * Opens the mobile bottom sheet with the filtered user list, then handles the result.
+   * @param filteredUsers The array of users not in this.members.
+   */
+  private openMembersSheet(filteredUsers: any[]): void {
+    const bottomSheetData = {
+      channelId: this.data.id,
+      members: [...this.members],
+      filteredMembers: filteredUsers,
+    };
+    const sheetRef = this.bottomSheet.open(AddMembersDialogMobileComponent, {
+      panelClass: 'my-custom-panel',
+      data: bottomSheetData,
+    });
+    sheetRef
+      .afterDismissed()
+      .subscribe((result) => this.handleSheetResult(result));
+  }
 
-
-
-
+  /**
+   * Merges newly selected members into the existing list and updates Firestore.
+   * @param result The array of newly added members (if any).
+   */
+  private handleSheetResult(result: any): void {
+    if (!Array.isArray(result)) return;
+    this.members = [
+      ...this.members,
+      ...result.filter(
+        (m: any) => !this.members.some((ex: any) => ex.uid === m.uid)
+      ),
+    ];
+    this.channelService.setMembers(this.data.id, this.members);
+  }
 }

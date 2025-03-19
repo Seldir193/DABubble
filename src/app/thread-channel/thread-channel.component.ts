@@ -1,16 +1,38 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef ,SimpleChanges,OnChanges, HostListener,
-  OnDestroy,    } from '@angular/core';
+/**
+ * The ThreadChannelComponent manages a thread of messages belonging to a parent message in a channel.
+ * Users can reply with text or images, view real-time updates to messages and the reply count,
+ * edit messages, and add emojis. It also includes an inline mention feature and the ability
+ * to display attached images in larger size modals. No logic or styling has been changed –
+ * only these English JSDoc comments have been added.
+ */
+
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+  SimpleChanges,
+  OnChanges,
+  HostListener,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
 import { MessageService } from '../message.service';
-import { ChangeDetectorRef } from '@angular/core'; 
+import { ChangeDetectorRef } from '@angular/core';
 
-import { Message} from '../message.models';
+import { Message } from '../message.models';
 import { OverlayModule } from '@angular/cdk/overlay';
 
+/**
+ * Manages a thread channel within a specific parent message and channel ID.
+ */
 @Component({
   selector: 'app-thread-channel',
   standalone: true,
@@ -18,141 +40,253 @@ import { OverlayModule } from '@angular/cdk/overlay';
   templateUrl: './thread-channel.component.html',
   styleUrls: ['./thread-channel.component.scss'],
 })
-export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
-  //@Input() parentMessage: any = null;
+export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
+  /**
+   * The parent message used to identify the thread.
+   */
   @Input() parentMessage: Message | null = null;
 
-
+  /**
+   * The recipient's name for display (optional).
+   */
   @Input() recipientName: string = '';
+
+  /**
+   * Emits an event to close the thread view.
+   */
   @Output() closeThread = new EventEmitter<void>();
+
+  /**
+   * Emits an event when a thread is opened from within this thread (rare usage).
+   */
   @Output() openThread = new EventEmitter<any>();
+
+  /**
+   * A reference to the DOM element for the message list, used for scrolling.
+   */
   @ViewChild('messageList') messageList!: ElementRef;
+
+  /**
+   * The channel's display name, if needed for references.
+   */
   @Input() channelName: string = '';
+
+  /**
+   * The ID of the channel this thread is associated with.
+   */
   @Input() channelId!: string;
 
+  /**
+   * A flag indicating whether the textarea for message input has been expanded.
+   */
   isTextareaExpanded: boolean = false;
-  selectedChannel: { id: string; name: string; members: any[]; description?: string; createdBy?: string } | null = null;
- // threadMessages: any[] = [];
-  privateMessage: string = '';
+
+  /**
+   * Optionally stores details about the current channel (id, name, members).
+   */
+  selectedChannel: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  } | null = null;
+
+  /**
+   * The text typed by the user when composing a reply in this thread channel.
+   */
+  channelMessage: string = '';
+
+  /**
+   * The current user object, containing user data loaded from Firestore/Auth.
+   */
   currentUser: any;
+
+  /**
+   * Holds a base64 or data URL image selected by the user for attaching to a new message.
+   */
   imageUrl: string | null = null;
+
+  /**
+   * Indicates if the global emoji picker is open for new message composition.
+   */
   isEmojiPickerVisible: boolean = false;
+
+  /**
+   * Indicates if an image modal is open to display a larger preview.
+   */
   isImageModalOpen: boolean = false;
+
+  /**
+   * Whether an emoji hover tooltip is visible.
+   */
   tooltipVisible: boolean = false;
+
+  /**
+   * The (x, y) position for the emoji hover tooltip.
+   */
   tooltipPosition = { x: 0, y: 0 };
+
+  /**
+   * Stores the hovered emoji's actual character for display in the tooltip.
+   */
   tooltipEmoji: string = '';
+
+  /**
+   * Stores the name of the user who sent the hovered emoji, for the tooltip.
+   */
   tooltipSenderName: string = '';
+
+  /**
+   * Manages the arrays of last-used emojis for "sent" vs. "received" messages.
+   */
   lastUsedEmojisSent: string[] = [];
   lastUsedEmojisReceived: string[] = [];
+
+  /**
+   * Toggles visibility of the edit options (like edit/delete) for a selected message.
+   */
   showEditOptions: boolean = false;
+
+  /**
+   * The ID of the currently selected message for which edit options are shown.
+   */
   currentMessageId: string | null = null;
+
+  /**
+   * Backs up the original message before editing, allowing revert on cancel.
+   */
   originalMessage: any = null;
+
+  /**
+   * The local array for message list. This component manages these messages (the child replies).
+   */
   messages: any[] = [];
-  channelMessage: string = '';
+
+  /**
+   * The local reference for the current date/time, used to compare "today."
+   */
   currentDate: Date = new Date();
+
+  /**
+   * The local reference for "yesterday's" date, used to label "Gestern."
+   */
   yesterdayDate: Date = this.getYesterdayDate();
-  originalParentMessage: any = null; 
-  
 
+  /**
+   * Possibly stores details about the original parent message for reference if needed.
+   */
+  originalParentMessage: any = null;
+
+  /**
+   * The array of child messages (replies) in this thread.
+   */
   threadMessages: Message[] = [];
-  
-  
 
+  /**
+   * If an attached image is to be displayed in a larger overlay, track that here.
+   */
   showLargeImage = false;
+
+  /**
+   * Stores the data URL for the large image display.
+   */
   largeImageUrl: string | null = null;
 
+  /**
+   * Tracks if the user is on a "desktop" layout (width >= 1278).
+   */
   isDesktop = false;
 
-  
+  /**
+   * A list of all users, used if mention or user dropdown features are used.
+   */
   allUsers: any[] = [];
 
-  // Steuert Overlay
+  /**
+   * If a user mention dropdown is open or not.
+   */
   showUserDropdown: boolean = false;
 
- @Input() selectedThreadChannel: any; // 🔥 Jetzt existiert es als Input
+  /**
+   * Optionally receives an entire selected thread channel object, if needed from external contexts.
+   */
+  @Input() selectedThreadChannel: any;
 
- // Unsubscribe-Funktionen / -Referenzen
- private unsubscribeFromThreadMessages?: () => void;
- private unsubscribeFromReplyCount?: () => void;
+  /**
+   * A function reference to unsubscribe from real-time message updates.
+   */
+  private unsubscribeFromThreadMessages?: () => void;
 
+  /**
+   * A function reference to unsubscribe from real-time reply count updates.
+   */
+  private unsubscribeFromReplyCount?: () => void;
 
-  constructor( 
-    
+  /**
+   * Constructs the component, injecting services and change detector.
+   */
+  constructor(
     private userService: UserService,
     private channelService: ChannelService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef,
-    
+    private cdr: ChangeDetectorRef
   ) {}
 
-
+  /**
+   * OnInit checks for minimal requirements (channelId, parentMessage), loads the user,
+   * initializes the thread, loads reply counts, and starts live subscriptions.
+   */
   async ngOnInit(): Promise<void> {
     this.checkDesktopWidth();
-    console.log("🧑‍💻 [ngOnInit] Initialisiere Thread (channel-based):", this.parentMessage?.id);
-  
-    // 1) Mindestanforderungen prüfen
+    // 1) Check minimal requirements
     if (!this.channelId || !this.parentMessage?.id) {
-      console.warn("⚠️ `channelId` oder `parentMessage.id` fehlt. Abbruch.");
       return;
     }
-  
     const parentId = this.parentMessage.id;
-
-    // 2) Benutzer laden
+    // 2) Load user
     await this.loadCurrentUser();
-  
-    // 3) Thread initialisieren (Nachrichten-Abo + Emojis)
-   // await this.initializeThread(this.parentMessage.id);
-
-   await this.initializeThread(parentId);
-  
-    // 4) Einmalig ReplyCounts laden
+    // 3) Initialize the thread subscription + emojis
+    await this.initializeThread(parentId);
+    // 4) Load reply counts once
     this.loadReplyCounts();
-  
-    // 5) Live-Abo für ReplyCounts
+
+    // 5) Start live subscription for reply counts
     this.unsubscribeFromReplyCount = this.messageService.loadReplyCountsLive(
       [this.parentMessage.id],
-      "thread-channel",
+      'thread-channel',
       (replyCounts) => {
-       // const data = replyCounts[this.parentMessage.id];
         const data = replyCounts[parentId];
         if (!data) return;
-  
-        console.log(
-          `📊 Live-Update: ${data.count} Antworten für ThreadChannel ${this.parentMessage!.id}`
-        );
         this.parentMessage!.replyCount = data.count;
-        this.parentMessage!.lastReplyTime = data.lastResponseTime || this.parentMessage!.lastReplyTime;
+        this.parentMessage!.lastReplyTime =
+          data.lastResponseTime || this.parentMessage!.lastReplyTime;
         this.cdr.detectChanges();
       }
     );
   }
 
-
-
-
-  
-
+  /**
+   * HostListener that updates `isDesktop` if window width >= 1278.
+   */
   @HostListener('window:resize')
-   onResize() {
-     this.checkDesktopWidth();
-   }
- 
-   checkDesktopWidth() {
-     this.isDesktop = window.innerWidth >= 1278;
-   }
- 
+  onResize() {
+    this.checkDesktopWidth();
+  }
 
+  /**
+   * Sets isDesktop to true if the window's width is >= 1278, false otherwise.
+   */
+  checkDesktopWidth() {
+    this.isDesktop = window.innerWidth >= 1278;
+  }
 
-  
-
-
-
-  
+  /**
+   * Loads emojis and sets up a real-time subscription for thread-channel messages.
+   *
+   * @param {string} threadChannelId - The ID for this thread in Firestore.
+   */
   private async initializeThread(threadChannelId: string): Promise<void> {
-    console.log(`[initializeThread] Starte für Thread-ChannelID: ${threadChannelId}`);
-
-    // Emojis laden
     try {
       const [emojisSent, emojisReceived] = await Promise.all([
         this.messageService.getLastUsedEmojis(threadChannelId, 'sent'),
@@ -160,181 +294,195 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
       ]);
       this.lastUsedEmojisSent = emojisSent || [];
       this.lastUsedEmojisReceived = emojisReceived || [];
-    } catch (error) {
-      console.error('Fehler beim Laden der Emojis:', error);
-    }
+    } catch (error) {}
 
-    // Realtime-Subscription für Nachrichten starten
     this.setupThreadSubscription(threadChannelId);
   }
 
-
+  /**
+   * Sets up a live subscription for messages in the "thread-channel" for this thread ID,
+   * filtering out the parent message if present and storing all child replies in threadMessages.
+   */
   private async setupThreadSubscription(threadId: string): Promise<void> {
-    console.log(`📩 Starte Live-Subscription für Thread-Channel: ${threadId}`);
-  
-    // 1) Alte Subscription beenden (falls vorhanden)
+    // Clean up any old subscription
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
       this.unsubscribeFromThreadMessages = undefined;
     }
-  
-    // 2) Neue Subscription starten
+
+    // Listen for new messages in 'thread-channel'
     this.unsubscribeFromThreadMessages = this.messageService.listenForMessages(
-      "thread-channel",
+      'thread-channel',
       threadId,
       async (messages: any[]) => {
-        console.log("📥 Firestore liefert diese Nachrichten:", messages);
-  
-        if (!messages?.length) {
-          console.log("⚠️ Keine Nachrichten im Thread gefunden.");
-          this.threadMessages = [];
-          return;
-        }
-  
-        // 3) Falls `parentMessage` nicht gesetzt oder nicht passend → Nachladen
-        if (!this.parentMessage || this.parentMessage.id !== threadId) {
-          console.warn("⚠️ `parentMessage` nicht korrekt, versuche nachzuladen...");
-  
-          const parentInMessages = messages.find(msg => msg.id === threadId);
-          if (parentInMessages) {
-            this.parentMessage = this.formatMessage({
-              ...parentInMessages,
-              content: parentInMessages.content ?? { text: "🔍 Kein Text gefunden", emojis: [] }
-            });
-          } else {
-            // Falls keine passende Nachricht in `messages`: 
-            const parentDoc = await this.messageService.getMessage("thread-channel", threadId);
-            if (parentDoc) {
-              this.parentMessage = this.formatMessage({
-                id: threadId,
-                text: parentDoc.content?.text ?? "🔍 Kein Text gefunden",
-                senderName: parentDoc.senderName || "Unbekannt",
-                senderAvatar: parentDoc.senderAvatar || "assets/img/default-avatar.png",
-                timestamp: parentDoc.timestamp ?? new Date(),
-                replyCount: parentDoc.replyCount || 0,
-                channelName: parentDoc.channelName || "Unbekannt",
-                channelId: parentDoc.channelId || null
-              });
-              console.log("✅ `parentMessage` erfolgreich nachgeladen:", this.parentMessage);
-            } else {
-              console.error("❌ Parent-Nachricht konnte nicht geladen werden.");
-            }
-          }
-        }
-  
-        // 4) threadMessages befüllen (alle außer `parentMessage`)
-        this.threadMessages = messages
-          .filter(msg => msg.id !== this.parentMessage?.id)
-          .map(msg => this.formatMessage({
-            ...msg,
-            content: msg.content ?? { text: "🔍 Kein Text gefunden", emojis: [] }
-          }));
-  
-        console.log("📥 Neue Thread-Nachrichten geladen:", this.threadMessages);
-        this.cdr.detectChanges();
-  
-        // 5) Nach kleinem Delay nach unten scrollen
-        setTimeout(() => this.scrollToBottom(), 300);
+        // Da die Callback-Logik asynchron ist, callen wir eine Hilfsfunktion:
+        await this.handleIncomingMessages(messages, threadId);
       }
     );
   }
-  
 
+  /**
+   * Handles the incoming messages for a specific thread channel.
+   * If the parentMessage is mismatched or missing, tries to reload it.
+   * Then populates 'threadMessages' (excluding the parent).
+   */
+  private async handleIncomingMessages(
+    messages: any[],
+    threadId: string
+  ): Promise<void> {
+    if (!messages?.length) {
+      this.threadMessages = [];
+      return;
+    }
 
+    await this.reloadParentIfMismatch(messages, threadId);
+    this.setThreadMessagesExcludingParent(messages);
 
+    this.cdr.detectChanges();
+    setTimeout(() => this.scrollToBottom(), 300);
+  }
 
+  /**
+   * If parentMessage is null or a different ID than threadId, tries to find or fetch
+   * the parent message from the given messages or Firestore.
+   */
+  private async reloadParentIfMismatch(
+    messages: any[],
+    threadId: string
+  ): Promise<void> {
+    if (!this.parentMessage || this.parentMessage.id !== threadId) {
+      const parentInMessages = messages.find((msg) => msg.id === threadId);
 
-
-
-
-
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    // 1) Prüfe, ob `parentMessage` geändert wurde
-    if (changes['parentMessage'] && changes['parentMessage'].currentValue) {
-      const newMessage = changes['parentMessage'].currentValue;
-      console.log('📩 [ngOnChanges] `parentMessage` gewechselt:', newMessage);
-  
-      // 2) Vorherige Subscriptions beenden
-      if (this.unsubscribeFromThreadMessages) {
-        this.unsubscribeFromThreadMessages();
-        this.unsubscribeFromThreadMessages = undefined;
-      }
-      if (this.unsubscribeFromReplyCount) {
-        this.unsubscribeFromReplyCount();
-        this.unsubscribeFromReplyCount = undefined;
-      }
-  
-      // 3) Mergen vs. Neue Nachricht
-      if (newMessage.id === this.parentMessage?.id) {
-        // -> Es ist dieselbe Parent-Nachricht, evtl. nur aktualisierte Felder
-        console.log('🔄 Update `parentMessage`.');
-        this.parentMessage = {
-          ...this.parentMessage,
-          ...newMessage
-        };
+      if (parentInMessages) {
+        this.parentMessage = this.formatMessage({
+          ...parentInMessages,
+          content: parentInMessages.content ?? {
+            text: '🔍 No text found',
+            emojis: [],
+          },
+        });
       } else {
-        // -> Eine andere Nachricht => Gehört zu threadMessages
-        console.log('📌 Nachricht gehört zu `threadMessages`.');
-        this.threadMessages.push(newMessage);
+        // If not in local messages, fetch from Firestore
+        const parentDoc = await this.messageService.getMessage(
+          'thread-channel',
+          threadId
+        );
+        if (parentDoc) {
+          this.parentMessage = this.formatMessage({
+            id: threadId,
+            text: parentDoc.content?.text ?? '🔍 No text found',
+            senderName: parentDoc.senderName || 'Unknown',
+            senderAvatar:
+              parentDoc.senderAvatar || 'assets/img/default-avatar.png',
+            timestamp: parentDoc.timestamp ?? new Date(),
+            replyCount: parentDoc.replyCount || 0,
+            channelName: parentDoc.channelName || 'Unknown',
+            channelId: parentDoc.channelId || null,
+          });
+        }
+        // leerer else-Block wurde entfernt
       }
-  
-      // 4) Nur fortfahren, wenn wir tatsächlich eine gültige parentMessage haben
+    }
+  }
+
+  /**
+   * Filters out the parent message from 'messages' and updates 'threadMessages'
+   * with the remaining child messages, each formatted as needed.
+   */
+  private setThreadMessagesExcludingParent(messages: any[]): void {
+    this.threadMessages = messages
+      .filter((msg) => msg.id !== this.parentMessage?.id)
+      .map((msg) =>
+        this.formatMessage({
+          ...msg,
+          content: msg.content ?? { text: '🔍 No text found', emojis: [] },
+        })
+      );
+  }
+
+  /**
+   * Reacts to changes in parentMessage, re-initializes if needed, unsubscribes from old listeners,
+   * and listens for replyCount updates.
+   */
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+    if (this.parentMessageChangeDetected(changes)) {
+      this.cleanUpOldListeners();
+      this.mergeOrPushNewMessage(changes['parentMessage'].currentValue);
+
       const pMsg = this.parentMessage;
-      if (!pMsg || !pMsg.id || !this.channelId) {
-        console.warn('⚠️ Fehlende Daten: parentMessage oder channelId ist leer. Abbruch.');
+      if (!this.isParentValid(pMsg)) {
         this.cdr.detectChanges();
         return;
       }
-  
-      // Benutzer laden
-      await this.loadCurrentUser();
-  
-      // Thread initialisieren (Nachrichten-Abo + Emojis)
-      await this.initializeThread(pMsg.id);
-  
-      // Einmalige ReplyCounts laden
-      this.loadReplyCounts();
-  
-      // 5) Live-ReplyCount-Updates
-      this.unsubscribeFromReplyCount = this.messageService.loadReplyCountsLive(
-        [pMsg.id],
-        'thread-channel',
-        (replyCounts) => {
-          const data = replyCounts[pMsg.id || ''];
-          if (!data) return;
-  
-          console.log(`📊 Live-Update: ${data.count} Antworten für ThreadChannel ${pMsg.id}`);
-          // In-Place Update an `pMsg`
-          pMsg.replyCount = data.count;
-          pMsg.lastReplyTime = data.lastResponseTime || pMsg.lastReplyTime;
-  
-          this.cdr.detectChanges();
-        }
-      );
-  
-      // 6) Abschließendes detectChanges
+
+      await this.onValidParentChange(pMsg);
       this.cdr.detectChanges();
     }
   }
-  
 
+  /** ---------------  Hilfsfunktionen  --------------- **/
 
+  private parentMessageChangeDetected(changes: SimpleChanges): boolean {
+    return !!(
+      changes['parentMessage'] && changes['parentMessage'].currentValue
+    );
+  }
 
+  /** Ends old subscriptions for thread messages and reply counts. */
+  private cleanUpOldListeners(): void {
+    if (this.unsubscribeFromThreadMessages) {
+      this.unsubscribeFromThreadMessages();
+      this.unsubscribeFromThreadMessages = undefined;
+    }
+    if (this.unsubscribeFromReplyCount) {
+      this.unsubscribeFromReplyCount();
+      this.unsubscribeFromReplyCount = undefined;
+    }
+  }
 
+  /** Either merges the updated parentMessage or pushes it onto threadMessages. */
+  private mergeOrPushNewMessage(newMessage: any): void {
+    if (newMessage.id === this.parentMessage?.id) {
+      this.parentMessage = { ...this.parentMessage, ...newMessage };
+    } else {
+      this.threadMessages.push(newMessage);
+    }
+  }
 
+  /**
+   * Type Guard: liefert true, wenn pMsg garantiert vom Typ Message ist;
+   * sonst false, wenn pMsg null oder unbrauchbar wäre.
+   */
+  private isParentValid(pMsg: Message | null): pMsg is Message {
+    return !!(pMsg && pMsg.id && this.channelId);
+  }
 
+  /** Called when the new parent is valid. Loads user, re-initializes thread, loads reply counts, and sets up replyCount listener. */
+  private async onValidParentChange(pMsg: Message): Promise<void> {
+    await this.loadCurrentUser();
+    if (!pMsg.id) {
+      return;
+    }
+    await this.initializeThread(pMsg.id);
+    this.loadReplyCounts();
 
+    this.unsubscribeFromReplyCount = this.messageService.loadReplyCountsLive(
+      [pMsg.id],
+      'thread-channel',
+      (replyCounts) => {
+        const data = replyCounts[pMsg.id || ''];
+        if (!data) return;
+        pMsg.replyCount = data.count;
+        pMsg.lastReplyTime = data.lastResponseTime || pMsg.lastReplyTime;
+        this.cdr.detectChanges();
+      }
+    );
+  }
 
-
-
-
-
-
-
-
-  
+  /**
+   * OnDestroy unsubscribes from live Firestore listeners if present.
+   */
   ngOnDestroy(): void {
-    // Listener beenden
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
     }
@@ -343,689 +491,572 @@ export class ThreadChannelComponent implements OnInit ,OnChanges, OnDestroy {
     }
   }
 
+  /** Retrieves the reply counts once for the parentMessage ID and updates parentMessage.replyCount. */
   loadReplyCounts(): void {
-    // 1) Lokale Variable anlegen
     const pMsg = this.parentMessage;
-  
-    // 2) Null / Undefined Check
-    //    => TypeScript erkennt dann, dass pMsg NICHT null ist
-    if (!pMsg || !pMsg.id) {
-      console.warn('⚠️ Kein Thread ausgewählt oder ID fehlt. Reply-Counts können nicht geladen werden.');
-      return;
-    }
-  
-    console.log('🔄 Lade Reply-Counts für ThreadChannel:', pMsg.id);
-  
-    // 3) Firestore/Service-Aufruf
+    if (!pMsg || !pMsg.id) return;
+
     this.messageService
       .getReplyCountsForMessages([pMsg.id], 'thread-channel')
-      .then((replyCounts) => {
-        // 4) Index-Access nur mit pMsg.id, das nicht null ist
-        const replyCountData = replyCounts[pMsg.id!];
-        if (!replyCountData) return;
-  
-        // 5) In-place Update
-        pMsg.replyCount = replyCountData.count;
-        pMsg.lastReplyTime = replyCountData.lastResponseTime || pMsg.lastReplyTime;
-  
-        console.log(`✅ Reply-Count aktualisiert: ${pMsg.replyCount}`);
-        this.cdr.detectChanges();
-      })
-      .catch((error) => {
-        console.error('❌ Fehler beim Laden der Reply-Counts:', error);
-      });
+      .then((replyCounts) => this.updateReplyCounts(replyCounts, pMsg))
+      .catch(() => {});
   }
-  
- // -----------------------------------
-  // 5) HILFSFUNKTIONEN
-  // -----------------------------------
+
+  private updateReplyCounts(replyCounts: any, pMsg: Message): void {
+    const replyCountData = replyCounts[pMsg.id!];
+    if (!replyCountData) return;
+    pMsg.replyCount = replyCountData.count;
+    pMsg.lastReplyTime = replyCountData.lastResponseTime || pMsg.lastReplyTime;
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Safely formats a message, converting timestamps to Date objects if needed.
+   */
   private formatMessage(msg: any): any {
     const formattedMsg = { ...msg };
     if (formattedMsg.timestamp) {
-      formattedMsg.timestamp = this.messageService.convertToDate(formattedMsg.timestamp);
+      formattedMsg.timestamp = this.messageService.convertToDate(
+        formattedMsg.timestamp
+      );
     } else {
       formattedMsg.timestamp = new Date();
     }
     return formattedMsg;
   }
 
+  /**
+   * Loads the current user data if not already done, storing it in currentUser.
+   */
   private async loadCurrentUser(): Promise<void> {
-    console.log("🚀 Lade aktuellen Benutzer...");
     try {
       this.currentUser = await this.userService.getCurrentUserData();
       if (!this.currentUser) {
-        throw new Error("Benutzer konnte nicht aus Firestore geladen werden.");
+        throw new Error('Could not load user from Firestore.');
       }
-      console.log("✅ Benutzer erfolgreich geladen:", this.currentUser);
     } catch (error) {
-      console.error("❌ Fehler beim Laden des Benutzers:", error);
       this.currentUser = null;
     }
   }
 
-
-
+  /**
+   * Sends a new reply message in this thread channel if there's text or an attached image.
+   * Resets the input afterward and scrolls the list to bottom.
+   */
   async sendThreadMessage(textArea: HTMLTextAreaElement): Promise<void> {
-    // 1) Wenn weder Text noch Bild:
-    if (!this.channelMessage.trim() && !this.imageUrl) {
-      console.warn('⚠️ Nachricht ist leer (kein Text und kein Bild).');
-      return;
-    }
-  
-    // 2) User laden (falls nötig)
+    if (!this.isReadyToSend()) return; // 1
+    await this.ensureCurrentUser(); // 2
+    if (!this.currentUser || !this.hasValidParent()) return; // 3
+
+    const message = this.buildThreadChannelMessage(); // 4
+    try {
+      // 5
+      await this.messageService.sendMessage(message); // 6
+      this.channelMessage = ''; // 7
+      this.imageUrl = null; // 8
+      if (textArea) this.resetTextareaHeight(textArea); // 9
+      this.scrollToBottom(); // 10
+    } catch {} // 11
+  }
+
+  /** 1) Prüft, ob ein Text oder Bild vorhanden ist */
+  private isReadyToSend(): boolean {
+    return Boolean(this.channelMessage.trim() || this.imageUrl);
+  }
+
+  /** 2) Lädt den Current User, falls nicht geladen */
+  private async ensureCurrentUser(): Promise<void> {
     if (!this.currentUser) {
       await this.loadCurrentUser();
-      if (!this.currentUser) {
-        console.error('❌ Benutzer konnte nicht geladen werden!');
-        return;
-      }
     }
-  
-    // 3) parentMessage.id prüfen
-    if (!this.parentMessage?.id) {
-      console.error('❌ Kein parentMessage.id vorhanden!');
+  }
+
+  /** 3) Prüft, ob eine gültige parentMessage (mit ID) existiert */
+  private hasValidParent(): boolean {
+    return Boolean(this.parentMessage?.id);
+  }
+
+  /** 4) Erzeugt das 'thread-channel'-Message-Objekt */
+  private buildThreadChannelMessage() {
+    return {
+      type: 'thread-channel' as const,
+      content: {
+        text: this.channelMessage,
+        image: this.imageUrl || null,
+        emojis: [],
+      },
+      senderId: this.currentUser!.id,
+      senderName: this.currentUser!.name,
+      senderAvatar: this.currentUser!.avatarUrl,
+      threadChannelId: this.parentMessage!.id,
+      parentId: this.parentMessage!.id,
+    };
+  }
+
+  /**
+   * Helper function to wait for a message ID to be rendered, then scroll to it and highlight it.
+   * Retries a finite number of times if the message is not found yet.
+   */
+  private waitForMessageToRender(messageId: string, retries = 5): void {
+    if (retries === 0) {
       return;
     }
-  
-    console.log('📩 Sende Thread-Nachricht an:', this.parentMessage.id);
-  
-    // 4) content-Objekt bilden
-    const content = {
-      text: this.channelMessage,      // oder this.channelMessage.trim()
-      image: this.imageUrl || null,   // Bild aus Preview (DataURL oder ArrayBuffer)
-      emojis: []                      // Falls du Emojis rein willst
-    };
-  
-    // 5) message-Objekt für Firestore
-    const message = {
-      type: 'thread-channel' as const,
-      content, 
-      senderId: this.currentUser.id,
-      senderName: this.currentUser.name,
-      senderAvatar: this.currentUser.avatarUrl,
-      threadChannelId: this.parentMessage.id,
-      parentId: this.parentMessage.id
-      // ... falls du weitere Felder brauchst
-    };
-  
-    try {
-      // 6) Abschicken (z. B. via messageService)
-      const newMessageId = await this.messageService.sendMessage(message);
-      console.log(`✅ Nachricht gesendet, ID: ${newMessageId}`);
-  
-      // Optional: Manuell replyCount anheben
-      // this.parentMessage.replyCount = (this.parentMessage.replyCount || 0) + 1;
-  
-      // 7) Eingabe zurücksetzen
-      this.channelMessage = '';
-      this.imageUrl = null;
-  
-      // 8) TextArea-Größe zurücksetzen + Scroll
-      if (textArea) {
-        this.resetTextareaHeight(textArea);
+
+    setTimeout(() => {
+      const messageElement = document.getElementById(`message-${messageId}`);
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.classList.add('highlight');
+        setTimeout(() => messageElement.classList.remove('highlight'), 2000);
+      } else {
+        this.waitForMessageToRender(messageId, retries - 1);
       }
-      this.scrollToBottom();
-  
-    } catch (error) {
-      console.error('❌ Fehler beim Senden der Thread-Nachricht:', error);
-    }
-  }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-  
-private waitForMessageToRender(messageId: string, retries = 5): void {
-  if (retries === 0) {
-    console.warn(`⚠️ Nachricht nicht gefunden nach mehreren Versuchen: ${messageId}`);
-    return;
+    }, 300);
   }
 
-  setTimeout(() => {
-    const messageElement = document.getElementById(`message-${messageId}`);
-
-    if (messageElement) {
-      console.log(`📜 Scrolle zur Nachricht: ${messageId}`);
-      messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      messageElement.classList.add('highlight');
-      setTimeout(() => messageElement.classList.remove('highlight'), 2000);
-    } else {
-      console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig), erneuter Versuch...`);
-      this.waitForMessageToRender(messageId, retries - 1);
-    }
-  }, 300);
-}
-
-private async loadLastUsedEmojis(threadId: string): Promise<void> {
-  try {
-    this.lastUsedEmojisSent = await this.messageService.getLastUsedEmojis(threadId, 'sent');
-    this.lastUsedEmojisReceived = await this.messageService.getLastUsedEmojis(threadId, 'received');
-  } catch (error) {
-    console.error('Fehler beim Laden der letzten Emojis:', error);
-  }
-}
-
-highlightMessage(messageId: string, retries = 5): void {
-  setTimeout(() => {
-    const messageElement = document.getElementById(`message-${messageId}`);
-  
-    if (messageElement) {
-      messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      messageElement.classList.add('highlight');
-  
-      setTimeout(() => messageElement.classList.remove('highlight'), 2000);
-    } else if (retries > 0) {
-      console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig), erneuter Versuch...`);
-      this.highlightMessage(messageId, retries - 1);
-    }
-  }, 500);
-}
-
-toggleEmojiPickerForMessage(msg: any): void {
-  const isCurrentlyVisible = msg.isEmojiPickerVisible;
-  this.threadMessages.forEach((m) => (m.isEmojiPickerVisible = false));
-  msg.isEmojiPickerVisible = !isCurrentlyVisible;
-}
-
-convertTimestamp(timestamp: any): Date {
-  if (!timestamp) return new Date(); // Falls kein Timestamp existiert, gib aktuelles Datum zurück
-  if (timestamp.toDate) return timestamp.toDate(); // Firestore-Timestamp -> Date
-  if (timestamp instanceof Date) return timestamp; // Falls es bereits ein Date ist, gib es zurück
-  return new Date(timestamp); // Falls es eine Zahl ist (Millisekunden seit 1970), umwandeln
-}
-
-
-
-
-
-
-addEmojiToMessage(event: any, msg: any): void {
-  // A) Stelle sicher, dass msg.content.emojis existiert
-  if (!msg.content.emojis) {
-    msg.content.emojis = [];
+  /**
+   * Highlights a given message by ID, scrolling to it. Retries if not found immediately.
+   */
+  highlightMessage(messageId: string, retries = 5): void {
+    setTimeout(() => {
+      const messageElement = document.getElementById(`message-${messageId}`);
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.classList.add('highlight');
+        setTimeout(() => messageElement.classList.remove('highlight'), 2000);
+      } else if (retries > 0) {
+        this.highlightMessage(messageId, retries - 1);
+      }
+    }, 500);
   }
 
-  // B) Prüfe, ob wir ein valides Emoji-Event haben
-  if (event?.emoji?.native) {
+  /**
+   * Toggles an inline emoji picker for a specific message, ensuring only one is open at a time.
+   */
+  toggleEmojiPickerForMessage(msg: any): void {
+    const isCurrentlyVisible = msg.isEmojiPickerVisible;
+    this.threadMessages.forEach((m) => (m.isEmojiPickerVisible = false));
+    msg.isEmojiPickerVisible = !isCurrentlyVisible;
+  }
+
+  /**
+   * Converts various timestamp formats to a JavaScript Date (supports Firestore Timestamps).
+   */
+  convertTimestamp(timestamp: any): Date {
+    if (!timestamp) return new Date();
+    if (timestamp.toDate) return timestamp.toDate();
+    if (timestamp instanceof Date) return timestamp;
+    return new Date(timestamp);
+  }
+
+  /**
+   * Adds or increments an emoji in a message's content.emojis array,
+   * then updates Firestore and local lastUsedEmojis accordingly.
+   */
+  addEmojiToMessage(event: any, msg: any): void {
+    this.ensureEmojiArray(msg);
+    if (!event?.emoji?.native) return;
+
     const newEmoji = event.emoji.native;
+    this.addOrIncrementEmoji(msg, newEmoji);
+    this.updateLocalEmojiCache(msg, newEmoji);
+    msg.isEmojiPickerVisible = false;
+    this.updateMessageInFirestore(msg);
+  }
 
-    // 1) Zuerst aktualisieren wir die Emojis im Nachricht-Objekt
-    const existingEmoji = msg.content.emojis.find(
-      (e: any) => e.emoji === newEmoji
-    );
+  /* ---------- Hilfsfunktionen ---------- */
 
-    if (existingEmoji) {
-      // Erhöhe count, wenn Emoji schon vorhanden
-      existingEmoji.count += 1;
-    } else {
-      // Falls schon 2 Emojis existieren, lösche das älteste
-    
-      if (msg.content.emojis.length < 13) {
-        msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+  /** Falls msg.content.emojis nicht existiert, lege ein Array an. */
+  private ensureEmojiArray(msg: any) {
+    if (!msg.content.emojis) msg.content.emojis = [];
+  }
 
-      }
-      // Neues Emoji hinzufügen
-     // msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+  /** Finde oder incrementiere das Emoji, max 13. */
+  private addOrIncrementEmoji(msg: any, newEmoji: string): void {
+    const existing = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
+    if (existing) {
+      existing.count += 1;
+    } else if (msg.content.emojis.length < 13) {
+      msg.content.emojis.push({ emoji: newEmoji, count: 1 });
     }
+  }
 
-    // 2) lastUsedEmojis je nach gesendeter oder empfangener Nachricht
-    if (msg.senderName === this.currentUser?.name) {
-      // -> "sent"
-      this.lastUsedEmojisSent = this.updateLastUsedEmojis(
-        this.lastUsedEmojisSent,
-        newEmoji
-      );
+  /** Aktualisiert lastUsedEmojis bei sent/received und speichert sie im channelService. */
+  private updateLocalEmojiCache(msg: any, newEmoji: string): void {
+    const isSent = msg.senderName === this.currentUser?.name;
+    const localArray = isSent
+      ? this.lastUsedEmojisSent
+      : this.lastUsedEmojisReceived;
+    const updated = this.updateLastUsedEmojis(localArray, newEmoji);
 
+    if (isSent) {
+      this.lastUsedEmojisSent = updated;
       if (this.selectedChannel?.id) {
         this.channelService.saveLastUsedEmojis(
           this.selectedChannel.id,
-          this.lastUsedEmojisSent,
+          updated,
           'sent'
         );
       }
     } else {
-      // -> "received"
-      this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
-        this.lastUsedEmojisReceived,
-        newEmoji
-      );
-
+      this.lastUsedEmojisReceived = updated;
       if (this.selectedChannel?.id) {
         this.channelService.saveLastUsedEmojis(
           this.selectedChannel.id,
-          this.lastUsedEmojisReceived,
+          updated,
           'received'
         );
       }
     }
   }
 
-  // C) Emoji-Picker schließen
-  msg.isEmojiPickerVisible = false;
+  /** Schickt das Update an Firestore. */
+  private updateMessageInFirestore(msg: any): void {
+    this.messageService
+      .updateMessage(msg.id, { content: { ...msg.content } })
+      .then(() => {})
+      .catch(() => {});
+  }
 
-  this.messageService.updateMessage(msg.id, {
-    // wir übergeben nur das, was Firestore updaten soll
-    content: {
-      ...msg.content,  // ggf. emojis oder text
+  /**
+   * Maintains a small array of last-used emojis, removing duplicates and limiting to 2.
+   */
+  private updateLastUsedEmojis(
+    emojiArray: string[],
+    newEmoji: string
+  ): string[] {
+    emojiArray = emojiArray.filter((e) => e !== newEmoji);
+    return emojiArray.slice(0, 2);
+  }
+
+  /**
+   * Toggles the main emoji picker for the new message input field.
+   */
+  toggleEmojiPicker(): void {
+    this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
+  }
+
+  /**
+   * Adds the selected emoji to the `channelMessage` string.
+   */
+  addEmoji(event: any): void {
+    if (event?.emoji?.native) {
+      this.channelMessage += event.emoji.native;
     }
-  }).then(() => {
-    console.log('Nachricht erfolgreich aktualisiert (Thread).');
-  }).catch((error) => {
-    console.error('Fehler beim Aktualisieren der Nachricht:', error);
-  });
-}
-
-// ---------------------------------------------------------
-// Hilfsfunktion, um ein Emoji immer an die erste Stelle 
-// zu setzen und max. 2 zu speichern
-// ---------------------------------------------------------
-private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
-  // Falls das Emoji schon existiert, vorher entfernen
-  emojiArray = emojiArray.filter(e => e !== newEmoji);
-
-  // Als erstes Element einfügen
- // emojiArray.unshift(newEmoji);
-
-  // Array auf max. 2 Einträge begrenzen
-  return emojiArray.slice(0, 2);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-toggleEmojiPicker(): void {
-  this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
-}
-
-addEmoji(event: any): void {
-  if (event?.emoji?.native) {
-    this.channelMessage += event.emoji.native; // Emoji zur Nachricht hinzufügen
-  }
-  this.isEmojiPickerVisible = false; // Emoji-Picker schließen
-}
-
-scrollToBottom(): void {
-  try {
-    setTimeout(() => {
-      if (this.messageList?.nativeElement) {
-        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-      }
-    }, 500); // 🔥 Verzögerung von 500ms, damit alle Nachrichten geladen sind
-  } catch (err) {
-    console.error('❌ Fehler beim Scrollen:', err);
-  }
-}
-
-onClose(): void {
-  this.closeThread.emit();
-}
-
-getFormattedTime(timestamp: any): string {
-  let date: Date = this.convertTimestamp(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // ⏳ Nur Stunden & Minuten
-}
-
-getFormattedDate(timestamp: any): string {
-  if (!timestamp) {
-    console.warn('⚠️ Kein Timestamp vorhanden für getFormattedDate:', timestamp);
-    return 'Kein Datum';
+    this.isEmojiPickerVisible = false;
   }
 
-  let date: Date;
-
-  // ✅ Prüfen, ob es sich um einen Firestore-Timestamp handelt
-  if (typeof timestamp === 'object' && 'seconds' in timestamp) {
-    date = new Date(timestamp.seconds * 1000);
-  } else if (timestamp instanceof Date) {
-    date = timestamp;
-  } else {
-    date = new Date(timestamp);
+  /**
+   * Scrolls the thread's message list to the bottom. Called after sending/receiving messages.
+   */
+  scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        if (this.messageList?.nativeElement) {
+          this.messageList.nativeElement.scrollTop =
+            this.messageList.nativeElement.scrollHeight;
+        }
+      }, 500);
+    } catch (err) {}
   }
 
-  if (isNaN(date.getTime())) {
-    console.error('❌ Ungültiges Datum erkannt:', timestamp);
-    return 'Ungültiges Datum';
+  /**
+   * Emitted when the user wants to close the thread (e.g., back button).
+   */
+  onClose(): void {
+    this.closeThread.emit();
   }
 
-  // ✅ Falls das Datum von heute ist → "Heute"
-  if (this.isSameDay(date, new Date())) {
-    return 'Heute';
+  /**
+   * Formats a given timestamp to only show hours and minutes (HH:mm).
+   */
+  getFormattedTime(timestamp: any): string {
+    let date: Date = this.convertTimestamp(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  // ✅ Falls das Datum von gestern ist → "Gestern"
-  if (this.isSameDay(date, this.getYesterdayDate())) {
-    return 'Gestern';
-  }
-
-  // ✅ Falls älter → normales Datum in Format "4. Februar 2025"
-  return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
-}
-
-public isSameDay(date1: Date, date2: Date): boolean {
-  return (
-    date1.getDate() === date2.getDate() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getFullYear() === date2.getFullYear()
-  );
-}
-
-// ✅ Funktion zum Abrufen des gestrigen Datums
-private getYesterdayDate(): Date {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  return yesterday;
-}
-
-handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-
-    // Prüfe, ob eine Nachricht oder ein Bild vorhanden ist
-    if (this.channelMessage.trim() || this.imageUrl) {
-      this.sendThreadMessage(textArea); // Sende die Nachricht im Thread
-    } else {
-      console.warn('Keine Nachricht oder Bild vorhanden, nichts zu senden.');
-    }
-
-    // Setze die Textarea-Höhe zurück
-    if (textArea) {
-      this.resetTextareaHeight(textArea);
-    }
-  }
-}
-
-closeProfileCard(textArea: HTMLTextAreaElement): void {
-  this.imageUrl = null;
-  this.resetTextareaHeight(textArea);
-}
-
-
-adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
-  if (this.imageUrl) {
-    textArea.style.paddingBottom = '160px';
-  }
-}
-
-resetTextareaHeight(textArea: HTMLTextAreaElement): void {
-  textArea.style.paddingBottom = '20px';
-}
-
-closeThreadEvent(): void {
-  this.closeThread.emit();
-}
-
-onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.imageUrl = e.target?.result as string;
-      if (textArea) {
-        this.adjustTextareaHeight(textArea); // Textarea vergrößern
-      }
-      this.isTextareaExpanded = true;
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-sendMessage(): void {
-  console.log('Nachricht gesendet:', this.channelMessage);
-  this.channelMessage = ''; // Zurücksetzen des Eingabefelds
-}
-
-
-
-async saveMessage(msg: any): Promise<void> {
-  // Überprüfen, ob die Thread-ID und die Nachricht-ID vorhanden sind
-  if (!this.parentMessage?.id || !msg.id) {
-    console.error('❌ Thread ID oder Nachricht ID fehlt.');
-    return;
-  }
-
-  try {
-    // Nachricht in Firestore aktualisieren
-    await this.messageService.updateMessage(msg.id, {
-      content: {
-        text: msg.content.text,
-        // Behalte vorhandene Felder wie `image` und `emojis` bei
-        ...(msg.content.image && { image: msg.content.image }),
-        ...(msg.content.emojis && { emojis: msg.content.emojis }),
-      },
+  /**
+   * Formats a given timestamp to display either "Heute," "Gestern," or a date like "4. Februar 2025."
+   */
+  getFormattedDate(timestamp: any): string {
+    if (!timestamp) return 'Kein Datum';
+    const date = this.toDate(timestamp);
+    if (isNaN(date.getTime())) return 'Ungültiges Datum';
+    if (this.isSameDay(date, new Date())) return 'Heute';
+    if (this.isSameDay(date, this.getYesterdayDate())) return 'Gestern';
+    return date.toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
     });
+  }
 
-    console.log('✅ Nachricht erfolgreich gespeichert.');
+  /** ---------- Hilfsfunktionen ---------- */
 
-    // Bearbeitungsmodus deaktivieren
+  private toDate(timestamp: any): Date {
+    if (typeof timestamp === 'object' && 'seconds' in timestamp) {
+      return new Date(timestamp.seconds * 1000);
+    }
+    if (timestamp instanceof Date) {
+      return timestamp;
+    }
+    return new Date(timestamp);
+  }
+
+  /**
+   * Checks if two Date objects (or date-like) refer to the same calendar day.
+   */
+  public isSameDay(date1: Date, date2: Date): boolean {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  }
+
+  /**
+   * Retrieves yesterday's date, used in getFormattedDate comparisons.
+   */
+  private getYesterdayDate(): Date {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday;
+  }
+
+  /**
+   * Keydown handler for sending a message on Enter (without shift).
+   * Resets text area height after sending if no shift key was pressed.
+   */
+  handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      if (this.channelMessage.trim() || this.imageUrl) {
+        this.sendThreadMessage(textArea);
+      } else {
+      }
+      if (textArea) {
+        this.resetTextareaHeight(textArea);
+      }
+    }
+  }
+
+  /**
+   * Closes an attached image or expansion in the text area.
+   */
+  closeProfileCard(textArea: HTMLTextAreaElement): void {
+    this.imageUrl = null;
+    this.resetTextareaHeight(textArea);
+  }
+
+  /**
+   * If an image is attached, sets the bottom padding so the preview doesn't overlap the text area.
+   */
+  adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
+    if (this.imageUrl) {
+      textArea.style.paddingBottom = '160px';
+    }
+  }
+
+  /**
+   * Resets the text area bottom padding to default.
+   */
+  resetTextareaHeight(textArea: HTMLTextAreaElement): void {
+    textArea.style.paddingBottom = '20px';
+  }
+
+  /**
+   * Triggered when the user selects an image file to attach to a message.
+   * Loads it as a data URL and expands the text area for preview.
+   */
+  onImageSelected(event: Event, textArea: HTMLTextAreaElement): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imageUrl = e.target?.result as string;
+        if (textArea) {
+          this.adjustTextareaHeight(textArea);
+        }
+        this.isTextareaExpanded = true;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  /**
+   * Placeholder if you want to log a normal channel message send (not used here).
+   */
+  sendMessage(): void {
+    this.channelMessage = '';
+  }
+
+  /**
+   * Saves the edits to a message. Commits changes (text/image/emojis) to Firestore, then ends editing mode.
+   */
+  async saveMessage(msg: any): Promise<void> {
+    if (!this.parentMessage?.id || !msg.id) {
+      return;
+    }
+
+    try {
+      await this.messageService.updateMessage(msg.id, {
+        content: {
+          text: msg.content.text,
+          ...(msg.content.image && { image: msg.content.image }),
+          ...(msg.content.emojis && { emojis: msg.content.emojis }),
+        },
+      });
+      msg.isEditing = false;
+    } catch (error) {}
+  }
+
+  /**
+   * Cancels editing, reverting the message content to what it was before editing started.
+   */
+  cancelEditing(msg: any): void {
     msg.isEditing = false;
-  } catch (error) {
-    console.error('❌ Fehler beim Speichern der Nachricht:', error);
+    if (this.originalMessage) {
+      msg.content = { ...this.originalMessage.content };
+      this.originalMessage = null;
+    }
+    this.showEditOptions = false;
   }
-}
-cancelEditing(msg: any): void {
-  msg.isEditing = false; // Setze den Bearbeitungsmodus auf `false`
-  if (this.originalMessage) {
-    msg.content = { ...this.originalMessage.content }; // Stelle die ursprüngliche Nachricht wieder her
-    this.originalMessage = null; // Lösche die gespeicherte Originalnachricht
+
+  /**
+   * Shows a tooltip for an emoji on hover, containing the sender's name.
+   */
+  showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+    this.tooltipVisible = true;
+    this.tooltipEmoji = emoji;
+    this.tooltipSenderName = senderName;
+    this.tooltipPosition = { x: event.clientX, y: event.clientY - 40 };
   }
-  this.showEditOptions = false; // Schließe Bearbeitungsoptionen
-}
 
-showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
-  this.tooltipVisible = true;
-  this.tooltipEmoji = emoji;
-  this.tooltipSenderName = senderName;
-  this.tooltipPosition = { x: event.clientX, y: event.clientY - 40 };
-}
-
-hideTooltip(): void {
-  this.tooltipVisible = false;
-}
-
-toggleEditOptions(msgId: string): void {
-if (this.currentMessageId === msgId && this.showEditOptions) {
-  this.showEditOptions = false;
-  this.currentMessageId = null;
-} else {
-  this.showEditOptions = true;
-  this.currentMessageId = msgId;
-}
-}
-
-startEditing(msg: any): void {
-msg.isEditing = true; // Aktiviere den Bearbeitungsmodus
-//this.originalMessage = { ...msg }; // Speichere die ursprüngliche Nachricht
-
-this.originalMessage = JSON.parse(JSON.stringify(msg)); // Tiefkopie der Originalnachricht speichern
-}
-
-openImageModal(): void {
-this.isImageModalOpen = true;
-}
-
-closeImageModal(): void {
-this.isImageModalOpen = false;
-}
-
-
-
-
-
-
-
-
-
-toggleUserDropdown(): void {
-  // Wenn wir das erste Mal öffnen, Nutzer laden
-  if (!this.showUserDropdown) {
-    this.loadAllUsers();
+  /**
+   * Hides the tooltip for emojis.
+   */
+  hideTooltip(): void {
+    this.tooltipVisible = false;
   }
-  this.showUserDropdown = !this.showUserDropdown;
-}
 
- // Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
- loadAllUsers(): void {
-  this.userService.getAllUsers()
-    .then(users => {
-      this.allUsers = users.map(u => ({
-        id: u.id,
-        //email: u.email,
-        name: u.name,
-        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
-      }));
-    })
-    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
-}
+  /**
+   * Toggles the edit options (like a small menu) for a message with a given msgId.
+   */
+  toggleEditOptions(msgId: string): void {
+    if (this.currentMessageId === msgId && this.showEditOptions) {
+      this.showEditOptions = false;
+      this.currentMessageId = null;
+    } else {
+      this.showEditOptions = true;
+      this.currentMessageId = msgId;
+    }
+  }
 
+  /**
+   * Activates editing mode for a given message, storing its original content to revert if canceled.
+   */
+  startEditing(msg: any): void {
+    msg.isEditing = true;
+    this.originalMessage = JSON.parse(JSON.stringify(msg));
+  }
 
+  /**
+   * Opens a modal or overlay to display an attached image at full size.
+   */
+  openImageModal(): void {
+    this.isImageModalOpen = true;
+  }
 
-  // Beim Klick auf einen Nutzer im Dropdown
+  /**
+   * Closes the currently open image modal or overlay.
+   */
+  closeImageModal(): void {
+    this.isImageModalOpen = false;
+  }
+
+  /**
+   * Toggles a user dropdown (for mentions). Loads all users if needed.
+   */
+  toggleUserDropdown(): void {
+    if (!this.showUserDropdown) {
+      this.loadAllUsers();
+    }
+    this.showUserDropdown = !this.showUserDropdown;
+  }
+
+  /**
+   * Loads all users, typically for mention or user selection in the thread.
+   */
+  loadAllUsers(): void {
+    this.userService
+      .getAllUsers()
+      .then((users) => {
+        this.allUsers = users.map((u) => ({
+          id: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
+          isOnline: u.isOnline ?? false,
+        }));
+      })
+      .catch((err) => console.error('Error loading users:', err));
+  }
+
+  /**
+   * Adds an '@username' reference into the channelMessage text input, then hides the dropdown.
+   */
   addUserSymbol(member: any) {
-    // Füge in privateMessage ein @Name ein
-    // => Oder user.email, je nachdem was du brauchst
-    //this.privateMessage += ` @${member.name} `;
-
-    this.channelMessage  += ` @${member.name} `; 
-    // Overlay schließen
+    this.channelMessage += ` @${member.name} `;
     this.showUserDropdown = false;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-closePopup(msg: any) {
-  // Nur wenn das Popup offen ist => schließen
-  if (msg.showAllEmojisList) {
-    msg.showAllEmojisList = false;
-    msg.expanded = false; // optional, falls du das auch einklappen möchtest
+  /**
+   * Closes an open emoji popup for a specific message, toggled above.
+   */
+  closePopup(msg: any) {
+    if (msg.showAllEmojisList) {
+      msg.showAllEmojisList = false;
+      msg.expanded = false;
+    }
   }
-}
 
-
-
-
-
+  /**
+   * Toggles a small popup listing all emojis for a message, or closes if already open.
+   */
   toggleEmojiPopup(msg: any) {
-    // Falls die Property noch nicht existiert, initialisieren
     if (msg.showAllEmojisList === undefined) {
       msg.showAllEmojisList = false;
     }
-
-    // Umschalten
     msg.showAllEmojisList = !msg.showAllEmojisList;
 
-    // Wenn wir schließen (false), dann einklappen zurücksetzen
     if (!msg.showAllEmojisList) {
       msg.expanded = false;
-    } else {
-      // Wenn wir öffnen und `expanded` gar nicht existiert
-      if (msg.expanded === undefined) {
-        msg.expanded = false;
-      }
+    } else if (msg.expanded === undefined) {
+      msg.expanded = false;
     }
   }
 
-
-
-
+  /**
+   * Called when clicking a "plus" icon in an emoji popup, e.g., to open a further emoji picker.
+   */
   onEmojiPlusInPopup(msg: any) {
-    // z.B. Logik, um ein neues Emoji hinzuzufügen
-    // oder den Emoji-Picker zu öffnen
-    console.log('Plus in popup geklickt, msg=', msg);
+    console.log('Plus icon clicked in emoji popup, msg =', msg);
   }
 
-
-
+  /**
+   * Opens a large overlay to show a specific image attached to a message.
+   */
   openLargeImage(imageData: string | ArrayBuffer) {
     if (typeof imageData !== 'string') {
-      // Konvertiere das ArrayBuffer zu einem String (DataURL) oder blob URL
-      return; // Oder handle es anders
+      return;
     }
     this.largeImageUrl = imageData;
     this.showLargeImage = true;
   }
-  
 
-  // Methode zum Schließen
+  /**
+   * Closes the overlay displaying a large attached image.
+   */
   closeLargeImage() {
     this.showLargeImage = false;
     this.largeImageUrl = null;

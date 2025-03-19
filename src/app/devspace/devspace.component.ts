@@ -1,668 +1,874 @@
-
-//import { Component } from '@angular/core';
-
-
-import { Component, EventEmitter, Output, ElementRef,HostListener } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  Input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Firestore } from '@angular/fire/firestore';
+import { Router } from '@angular/router';
 
 import { MessageService } from '../message.service';
 import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
 import { SelectResultDialogComponent } from '../search-result-dialog/search-result-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-
-import { Firestore } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
 import { Message } from '../message.models';
-
-
-
-
-
-import { ViewChild,Input} from '@angular/core';
-
 import { PrivateMessagesComponent } from '../private-messages/private-messages.component';
+
 @Component({
   selector: 'app-devspace',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './devspace.component.html',
-  styleUrls: ['./devspace.component.scss']  // korrigiere "styleUrl" zu "styleUrls"
+  styleUrls: ['./devspace.component.scss'],
 })
-export class DevspaceComponent  {
+export class DevspaceComponent {
+  /**
+   * Indicates whether the screen is considered desktop size (e.g., width >= 1278).
+   */
   isDesktop = false;
+
+  /**
+   * The user's current search query string.
+   */
   searchQuery = '';
+
+  /**
+   * Stores the filtered channel search results.
+   */
   filteredChannels: any[] = [];
+
+  /**
+   * Stores the filtered member/user search results.
+   */
   filteredMembers: any[] = [];
+
+  /**
+   * Flag indicating that no results were found for the current query.
+   */
   noResultsFound = false;
 
-
+  /**
+   * Emits when a search is triggered by the devspace component (optional usage).
+   */
   @Output() searchTriggered = new EventEmitter<string>();
 
+  /**
+   * Indicates whether the menu dropdown is open or closed.
+   */
+  menuOpen = false;
 
+  /**
+   * Stores the current user's display name.
+   */
+  userName: string = '';
 
+  /**
+   * Indicates whether the profile card is open or closed.
+   */
+  profileOpen = false;
 
+  /**
+   * Tracks the current user status, e.g., 'Aktiv' or 'Abwesend'.
+   */
+  userStatus: string = 'Aktiv';
 
+  /**
+   * Holds the inactivity timeout identifier for status resets.
+   */
+  inactivityTimeout: any;
 
-    
-    menuOpen = false;
-    userName: string = '';
-    profileOpen = false; 
-    userStatus: string = 'Aktiv'; // Standardstatus
-    inactivityTimeout: any; // Variable für den Inaktivitäts-Time
-    editableUserName: string = '';
-    editableUserEmail: string = '';
-    errorMessage: string = '';
-    successMessage: string = '';
-    userAvatarUrl: string = 'assets/img/avatar.png';
-    userEmail: string = '';
-    isEditingProfile: boolean = false;
-    isDialogOpen = false; // Variable zur Verhinderung doppelter Dialoge
-  
-    recipientId: string = '';
-    currentUser: any = null;
-    selectedThread: any = null;
-  
-    selectedMember: any = null;
-    private hasScrolledToSearchedMessage: boolean = false;
-  
-  
+  /**
+   * Used for editing the user's display name.
+   */
+  editableUserName: string = '';
+
+  /**
+   * Used for editing the user's email address.
+   */
+  editableUserEmail: string = '';
+
+  /**
+   * Holds an error message if any operation fails.
+   */
+  errorMessage: string = '';
+
+  /**
+   * Displays a success message after completing an operation.
+   */
+  successMessage: string = '';
+
+  /**
+   * Stores the current user's avatar URL.
+   */
+  userAvatarUrl: string = 'assets/img/avatar.png';
+
+  /**
+   * Stores the current user's email address.
+   */
+  userEmail: string = '';
+
+  /**
+   * Flag indicating if the profile is in edit mode.
+   */
+  isEditingProfile: boolean = false;
+
+  /**
+   * Prevents opening multiple search dialogs at once.
+   */
+  isDialogOpen = false;
+
+  /**
+   * Holds a recipient ID if needed for private messaging contexts.
+   */
+  recipientId: string = '';
+
+  /**
+   * Tracks the current authenticated user object (if any).
+   */
+  currentUser: any = null;
+
+  /**
+   * Stores data for a selected thread (if any).
+   */
+  selectedThread: any = null;
+
+  /**
+   * Tracks the selected member for private messages.
+   */
+  selectedMember: any = null;
+
+  /**
+   * Ensures scrolling to a searched message happens only once.
+   */
+  private hasScrolledToSearchedMessage: boolean = false;
+
+  /**
+   * Stores data for a selected thread channel (if any).
+   */
   selectedThreadChannel: any = null;
-  
-    @Output() memberSelected = new EventEmitter<any>();
-    @Output() channelSelected = new EventEmitter<any>();
-    @Output() openPrivateChat = new EventEmitter<void>();
-  
-    @Output() openThread = new EventEmitter<any>(); 
- 
-  
-    @Output() threadSelected = new EventEmitter<{ id: string, messageId: string }>();
-  
-  
-   @Output() threadChannelSelected = new EventEmitter<any>();
-  
-  
-  
-    
 
+  /**
+   * Emits an event when a user member is selected (e.g., to open private chat).
+   */
+  @Output() memberSelected = new EventEmitter<any>();
 
+  /**
+   * Emits an event when a channel is selected.
+   */
+  @Output() channelSelected = new EventEmitter<any>();
 
+  /**
+   * Emits an event to open a private chat context.
+   */
+  @Output() openPrivateChat = new EventEmitter<void>();
 
+  /**
+   * Emits an event to open a thread view.
+   */
+  @Output() openThread = new EventEmitter<any>();
 
+  /**
+   * Emits an event with thread info (ID, message ID) when a thread is selected.
+   */
+  @Output() threadSelected = new EventEmitter<{
+    id: string;
+    messageId: string;
+  }>();
 
+  /**
+   * Emits an event with thread-channel data when a thread channel is selected.
+   */
+  @Output() threadChannelSelected = new EventEmitter<any>();
 
+  /**
+   * Reference to the hidden file input for avatar uploads.
+   */
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  /**
+   * Reference to a PrivateMessagesComponent if needed for controlling child operations.
+   */
+  @ViewChild(PrivateMessagesComponent)
+  privateMessagesComp!: PrivateMessagesComponent;
 
-   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  
-
-
-  @ViewChild(PrivateMessagesComponent) privateMessagesComp!: PrivateMessagesComponent;
-
+  /**
+   * Indicates whether the current view is a private chat.
+   */
   @Input() isPrivateChat!: boolean;
+
+  /**
+   * The display name of the recipient in a private chat context.
+   */
   @Input() recipientName: string = '';
+
+  /**
+   * The avatar URL of the recipient in a private chat context.
+   */
   @Input() recipientAvatarUrl: string = '';
 
-
-  
-
-
+  /**
+   * Tracks the focus state of specific input fields, e.g., name or email.
+   */
   inputStates: { [key: string]: boolean } = {
     name: false,
-    email: false
+    email: false,
   };
 
+  /**
+   * Constructor that injects essential services for user, channel, message handling,
+   * as well as routing, firestore, and dialog control.
+   *
+   * @param {Router} router - Manages navigation through the app.
+   * @param {Firestore} firestore - Firestore instance for database operations.
+   * @param {ElementRef} elementRef - Reference to this component's DOM element.
+   * @param {UserService} userService - Custom user-related functionality.
+   * @param {ChannelService} channelService - Custom channel-related functionality.
+   * @param {MessageService} messageService - Custom message-related functionality.
+   * @param {MatDialog} dialog - Angular Material Dialog for opening modals.
+   */
+  constructor(
+    private router: Router,
+    private firestore: Firestore,
+    private elementRef: ElementRef,
+    private userService: UserService,
+    private channelService: ChannelService,
+    private messageService: MessageService,
+    private dialog: MatDialog
+  ) {}
 
-
-
-
-
-
-
-
-    constructor(private router: Router,
-      private firestore: Firestore,
-      private elementRef: ElementRef,
-      private userService: UserService, 
-      private channelService: ChannelService, 
-      private messageService: MessageService,
-      private dialog: MatDialog) {}
-
-
-
-
-
-
-
-ngOnInit() {
+  /**
+   * Lifecycle hook that runs once this component is initialized.
+   * Calls `checkScreenSize` to set up responsive logic.
+   */
+  ngOnInit() {
     this.checkScreenSize();
   }
 
+  /**
+   * HostListener to detect window resize events and recheck if we are in desktop mode.
+   *
+   * @param {UIEvent} event - The resize event object.
+   */
   @HostListener('window:resize', ['$event'])
   onResize(event: UIEvent) {
     this.checkScreenSize();
   }
 
+  /**
+   * Determines if the view should be considered desktop by checking the window width.
+   */
   private checkScreenSize(): void {
     const width = window.innerWidth;
-    // Ab 1080px => Desktop
     this.isDesktop = width >= 1278;
   }
 
-
-
-
+  /**
+   * HostListener to detect clicks outside certain elements (menu or profile card)
+   * and close them if the user clicks elsewhere in the document.
+   *
+   * @param {Event} event - The global click event.
+   */
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
-    const clickedInsideMenu = this.elementRef.nativeElement.querySelector('.menu-dropdown')?.contains(event.target);
-    const clickedInsideProfile = this.elementRef.nativeElement.querySelector('.profile-card-container')?.contains(event.target);
+    const clickedInsideMenu = this.elementRef.nativeElement
+      .querySelector('.menu-dropdown')
+      ?.contains(event.target);
+    const clickedInsideProfile = this.elementRef.nativeElement
+      .querySelector('.profile-card-container')
+      ?.contains(event.target);
 
-    // Wenn außerhalb des Menüs und der Profilkarte geklickt wird, schließen
-  
+    // If needed, close menus/profile if clicks are outside them.
   }
-     
-        
 
-
-
-
-
-
-
-
-
+  /**
+   * Fired when the user clicks the "Edit Square" icon. Triggers a search event
+   * with an optional query.
+   */
   onEditSquareClick(): void {
-    const searchQuery = ''; // Optional: Initialisiere mit einem leeren Wert oder einem Beispielwert wie 'J'
-    this.searchTriggered.emit(searchQuery); // Löst das Event aus und übergibt den Suchwert
-    console.log('Edit square clicked, search triggered with query:', searchQuery);
+    const searchQuery = '';
+    this.searchTriggered.emit(searchQuery);
   }
- 
-  
 
-
-
-
-
-
-
-
-  
-
-
-
-
+  /***************************************************************************************
+   * Triggered when the user presses Enter or initiates a search in devspace.
+   * Handles special single-char searches or runs a full text search.
+   **************************************************************************************/
   onSearchEnter(): void {
-    const trimmedQuery = this.searchQuery.trim();
-  
-    // 1) Wenn genau "@", lade alle Benutzer
-    if (trimmedQuery === '@') {
-      console.log("👥 Lade alle Benutzer, da nur '@' eingegeben wurde.");
-      this.userService.getAllUsers().then(users => {
-        // Mappe die Users auf das Format, das dein Dialog braucht
-        const allUsersResults = users.map(u => ({
-          id: u.id,
-          name: u.name,
-          avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
-          isOnline: u.isOnline ?? false,
-          type: 'user'
-        }));
-        // Dialog öffnen
-        this.openSearchDialog(allUsersResults, 'user');
-      }).catch(error => {
-        console.error("❌ Fehler beim Laden aller Benutzer:", error);
-      });
-      return; // WICHTIG: Brich hier ab, damit deine "normale" Suche nicht mehr ausgeführt wird.
-    }
-  
-    // 2) Wenn genau "#", lade alle Channels
-    if (trimmedQuery === '#') {
-      console.log("📡 Lade alle Channels, da nur '#' eingegeben wurde.");
-      this.channelService.getAllChannelsOnce().then(channels => {
-        const allChannelResults = channels.map(ch => ({
-          id: ch.id,
-          name: ch.name,
-          type: 'channel'
-        }));
-        this.openSearchDialog(allChannelResults, 'channel');
-      }).catch(error => {
-        console.error("❌ Fehler beim Laden aller Channels:", error);
-      });
+    const tq = this.searchQuery.trim();
+    if (this.handleSingleCharSearch(tq)) return;
+    if (tq.length < 3) {
+      this.resetSearchLists();
       return;
     }
-  
-    // 3) Deine bestehende Logik für Eingaben ab 3 Zeichen
-    if (trimmedQuery.length < 3) {
-      this.filteredChannels = [];
-      this.filteredMembers = [];
-      this.noResultsFound = false;
-      return;
+    this.resetSearchLists();
+    this.runFullTextSearch(tq);
+  }
+
+  /***************************************************************************************
+   * Checks for single-char queries '@' (all users) or '#' (all channels),
+   * returns true if handled, false otherwise.
+   **************************************************************************************/
+  private handleSingleCharSearch(q: string): boolean {
+    if (q === '@') {
+      this.doAtSearch();
+      return true;
     }
-  
-    // Zurücksetzen alter Suchergebnisse
+    if (q === '#') {
+      this.doHashSearch();
+      return true;
+    }
+    return false;
+  }
+
+  /***************************************************************************************
+   * Fetches all users, maps them, then opens user search dialog.
+   **************************************************************************************/
+  private doAtSearch(): void {
+    this.userService.getAllUsers().then((users) => {
+      const results = users.map((u) => ({
+        id: u.id,
+        name: u.name,
+        avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
+        isOnline: u.isOnline ?? false,
+        type: 'user',
+      }));
+      this.openSearchDialog(results, 'user');
+    });
+  }
+
+  /***************************************************************************************
+   * Fetches all channels, maps them, then opens channel search dialog.
+   **************************************************************************************/
+  private doHashSearch(): void {
+    this.channelService.getAllChannelsOnce().then((channels) => {
+      const results = channels.map((ch) => ({
+        id: ch.id,
+        name: ch.name,
+        type: 'channel',
+      }));
+      this.openSearchDialog(results, 'channel');
+    });
+  }
+
+  /***************************************************************************************
+   * Clears/initializes the search results arrays and noResultsFound.
+   **************************************************************************************/
+  private resetSearchLists(): void {
     this.filteredChannels = [];
     this.filteredMembers = [];
     this.noResultsFound = false;
-  
-    console.log("🔍 Starte parallele Suche für:", this.searchQuery);
-  
-    // Parallele Abfragen:
+  }
+
+  /***************************************************************************************
+   * Runs a full text search by calling multiple async fetches in parallel,
+   * then delegates results to handleSearchResults().
+   **************************************************************************************/
+  private runFullTextSearch(query: string): void {
     Promise.all([
-      this.channelService.getChannelsByName(this.searchQuery),   // Kanäle nach Name
-      this.userService.getUsersByFirstLetter(this.searchQuery),  // Benutzer nach Name
-      this.messageService.getMessagesOnce('private'),            // Private Nachrichten
-      this.messageService.getMessagesOnce('thread'),             // Thread-Nachrichten
-      this.messageService.getMessagesOnce('thread-channel'),     // Thread-Channel-Nachrichten
-      this.messageService.getChannelMessagesOnce()               // NEU: Kanalnachrichten (Einmal-Abfrage)
+      this.channelService.getChannelsByName(query),
+      this.userService.getUsersByFirstLetter(query),
+      this.messageService.getMessagesOnce('private'),
+      this.messageService.getMessagesOnce('thread'),
+      this.messageService.getMessagesOnce('thread-channel'),
+      this.messageService.getChannelMessagesOnce(),
     ])
-    .then(([channels, users, privateMessages, threadMessages, threadChannelMsgs, channelMsgs]) => {
-  
-      // ---------------------------
-      // 1) Channels
-      // ---------------------------
-      this.filteredChannels = channels.map(channel => ({
-        id: channel.id,
-        name: channel.name,
-        description: channel.description,
-        type: 'channel'
+      .then(([ch, us, pm, tm, tcm, cm]) =>
+        this.handleSearchResults(ch, us, pm, tm, tcm, cm)
+      )
+      .catch(() => {
+        // handle error if needed
+      });
+  }
+
+  /***************************************************************************************
+   * Receives raw fetched data, maps channels/users, filters message lists, then merges.
+   **************************************************************************************/
+  private handleSearchResults(
+    channels: any[],
+    users: any[],
+    priv: any[],
+    thr: any[],
+    thrCh: any[],
+    chMsgs: any[]
+  ): void {
+    this.mapChannelsAndUsers(channels, users);
+    const privList = this.filterPrivateMsgs(priv);
+    const thrList = this.filterThreadMsgs(thr);
+    const thrChList = this.filterThreadChannelMsgs(thrCh);
+    const chList = this.filterChannelMsgs(chMsgs);
+    this.combineSearchResults(chList, privList, thrList, thrChList);
+  }
+
+  /***************************************************************************************
+   * Maps channel and user data into this.filteredChannels / this.filteredMembers arrays.
+   **************************************************************************************/
+  private mapChannelsAndUsers(channels: any[], users: any[]): void {
+    this.filteredChannels = channels.map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      type: 'channel',
+    }));
+    this.filteredMembers = users.map((u) => ({
+      id: u.id || u.uid,
+      name: u.name,
+      avatarUrl: u.avatarUrl || 'assets/default-avatar.png',
+      isOnline: u.isOnline ?? false,
+      type: 'user',
+    }));
+  }
+
+  /***************************************************************************************
+   * Filters private messages by content, returning mapped objects.
+   **************************************************************************************/
+  private filterPrivateMsgs(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '⚠️ Kein Text',
+        timestamp: m.timestamp,
+        type: 'private-message',
+        senderId: m.senderId,
+        recipientId: m.recipientId,
+        conversationId: m.conversationId || null,
       }));
-  
-      // ---------------------------
-      // 2) Benutzer (Members)
-      // ---------------------------
-      this.filteredMembers = users.map(user => ({
-        id: user.id || user.uid,
-        name: user.name,
-        avatarUrl: user.avatarUrl || 'assets/default-avatar.png',
-        isOnline: user.isOnline ?? false,
-        type: 'user'
+  }
+
+  /***************************************************************************************
+   * Filters thread messages by content, returning mapped objects.
+   **************************************************************************************/
+  private filterThreadMsgs(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '',
+        timestamp: m.timestamp,
+        type: 'thread',
+        threadId: m.threadId || m.parentId || m.id,
+        parentId: m.parentId ?? m.threadId ?? m.id,
+        senderId: m.senderId,
+        senderName: m.senderName || '❌ Unbekannt',
       }));
-  
-      // ---------------------------
-      // 3) Private Nachrichten
-      // ---------------------------
-      const filteredPrivateMessages = privateMessages
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '⚠️ Kein Text',
-          timestamp: msg.timestamp,
-          type: 'private-message',
-          senderId: msg.senderId,
-          recipientId: msg.recipientId,
-          conversationId: msg.conversationId || null
-        }));
-  
-      // ---------------------------
-      // 4) Thread-Nachrichten
-      // ---------------------------
-      const filteredThreadMessages = threadMessages
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '',
-          timestamp: msg.timestamp,
-          type: 'thread',
-          threadId: msg.threadId || msg.parentId || msg.id,
-          parentId: msg.parentId ?? msg.threadId ?? msg.id,
-          senderId: msg.senderId,
-          senderName: msg.senderName || "❌ Unbekannt"
-        }));
-  
-      // ---------------------------
-      // 5) Thread-Channel-Nachrichten
-      // ---------------------------
-      const filteredThreadChannelMessages = threadChannelMsgs
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '',
-          timestamp: msg.timestamp,
-          type: 'thread-channel',
-          threadChannelId: msg.threadChannelId || msg.threadId || msg.parentId || msg.id,
-          senderId: msg.senderId,
-          senderName: msg.senderName || "❌ Unbekannt"
-        }));
-  
-      // ---------------------------
-      // 6) Kanalnachrichten (NEU)
-      // ---------------------------
-      const filteredChannelMessages = channelMsgs
-        .filter(msg =>
-          msg.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .map(msg => ({
-          id: msg.id,
-          text: msg.content?.text || '',
-          timestamp: msg.timestamp,
-          type: 'message',
-          channelId: msg.channelId || null,
-          senderId: msg.senderId || null
-        }));
-  
-      // ---------------------------
-      // ALLES ZUSAMMENFÜHREN
-      // ---------------------------
-      const combined = [
-        ...this.filteredChannels,
-        ...this.filteredMembers,
-        ...filteredChannelMessages,
-        ...filteredPrivateMessages,
-        ...filteredThreadMessages,
-        ...filteredThreadChannelMessages
-      ];
-  
-      // ---------------------------
-      // Optionale Duplikat-Entfernung
-      // ---------------------------
-      const deduplicated = Array.from(
-        new Map(combined.map(obj => [obj.id, obj])).values()
-      );
-  
-      // Dialog öffnen
-      this.openSearchDialog(deduplicated, 'mixed');
-    })
-    .catch(error => {
-      console.error("❌ Fehler bei der Suche:", error);
+  }
+
+  /***************************************************************************************
+   * Filters thread-channel messages, returning mapped objects.
+   **************************************************************************************/
+  private filterThreadChannelMsgs(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '',
+        timestamp: m.timestamp,
+        type: 'thread-channel',
+        threadChannelId: m.threadChannelId || m.threadId || m.parentId || m.id,
+        senderId: m.senderId,
+        senderName: m.senderName || '❌ Unbekannt',
+      }));
+  }
+
+  /***************************************************************************************
+   * Filters normal channel messages, returning mapped objects.
+   **************************************************************************************/
+  private filterChannelMsgs(list: any[]): any[] {
+    return list
+      .filter((m) =>
+        m.content?.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+      .map((m) => ({
+        id: m.id,
+        text: m.content?.text || '',
+        timestamp: m.timestamp,
+        type: 'message',
+        channelId: m.channelId || null,
+        senderId: m.senderId || null,
+      }));
+  }
+
+  /***************************************************************************************
+   * Combines all partial results, deduplicates, and opens the final search dialog.
+   **************************************************************************************/
+  private combineSearchResults(
+    cList: any[],
+    pList: any[],
+    tList: any[],
+    tChList: any[]
+  ): void {
+    const combined = [
+      ...this.filteredChannels,
+      ...this.filteredMembers,
+      ...cList,
+      ...pList,
+      ...tList,
+      ...tChList,
+    ];
+    const deduplicated = Array.from(
+      new Map(combined.map((obj) => [obj.id, obj])).values()
+    );
+    this.openSearchDialog(deduplicated, 'mixed');
+  }
+
+  /**
+   * Determines where to navigate when the user selects or opens a specific message
+   * from search results. It handles channel, private, thread-channel, or thread messages.
+   */
+  openMessage(message: any): void {
+    if (!message || !message.id) return;
+    this.hasScrolledToSearchedMessage = false;
+
+    if (message.channelId) {
+      this.openChannelMessage(message);
+    } else if (message.conversationId) {
+      this.openPrivateMessage(message);
+    } else if (message.type === 'thread-channel') {
+      this.openThreadChannelMessage(message);
+    } else if (message.threadId || message.parentId) {
+      this.openThreadMessage(message);
+    }
+  }
+
+  /** Handles opening a channel message by fetching the channel and scrolling to it. */
+  private openChannelMessage(msg: any): void {
+    this.channelService.getChannelById(msg.channelId).then((channel) => {
+      if (!channel) return;
+      this.selectChannel(channel);
+      setTimeout(() => {
+        this.channelService.getMessages(msg.channelId).subscribe((msgs) => {
+          this.scrollToMessageIfExists(msgs, msg.id);
+        });
+      }, 800);
     });
   }
-  
 
+  /** Opens a private message by determining the chat partner, then launching a scroll check. */
+  private openPrivateMessage(msg: any): void {
+    const partnerId = this.getChatPartnerId(msg);
+    this.memberSelected.emit({ id: partnerId, name: msg.recipientName || '' });
+    this.launchPrivateScroll(msg);
+  }
 
+  /** Computes the correct chat partner ID based on currentUserId vs. sender/recipient. */
+  private getChatPartnerId(msg: any): string {
+    const curUser = this.userService.getCurrentUserId();
+    return msg.senderId === curUser ? msg.recipientId : msg.senderId;
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-    // ----------------------------------------------------------------------------
-  // openMessage(...) => navigiere zu passendem Chat/Thread
-  // ----------------------------------------------------------------------------
-  openMessage(message: any): void {
-    if (!message || !message.id) {
-      console.error("❌ Fehler: Ungültige Nachricht erhalten", message);
-      return;
-    }
-  
-    console.log("📩 Navigiere zur Nachricht:", message);
-    this.hasScrolledToSearchedMessage = false; 
-  
-    // (1) Normale Kanalnachricht
-    if (message.channelId) {
-      this.channelService.getChannelById(message.channelId).then(channel => {
-        if (channel) {
-          console.log("📡 Channel gefunden, öffne:", channel);
-          this.selectChannel(channel);
-  
-          setTimeout(() => {
-            this.channelService.getMessages(message.channelId).subscribe((msgs) => {
-              this.scrollToMessageIfExists(msgs, message.id);
-            });
-          }, 800);
-        } else {
-          console.warn("⚠️ Channel existiert nicht oder wurde gelöscht:", message.channelId);
+  /** Delays, then fetches private messages. If the target is found, scrolls to it once. */
+  private launchPrivateScroll(msg: any): void {
+    setTimeout(() => {
+      this.messageService.getPrivateMessagesLive(msg.conversationId, (msgs) => {
+        if (!this.hasScrolledToSearchedMessage) {
+          const found = msgs.find((m) => m.id === msg.id);
+          if (found) {
+            this.scrollToMessage(found.id);
+            this.hasScrolledToSearchedMessage = true;
+          }
         }
-      }).catch(error => {
-        console.error("❌ Fehler beim Laden des Channels:", error);
       });
-  
-    // (2) Private Nachricht
-    } else if (message.conversationId) {
-      console.log("📩 Private Nachricht gefunden:", message);
-      const currentUserId = this.userService.getCurrentUserId();
-      const chatPartnerId = (message.senderId === currentUserId)
-        ? message.recipientId
-        : message.senderId;
-      console.log(`🔄 Öffne privaten Chat mit: ${chatPartnerId}`);
-  
-      this.memberSelected.emit({ 
-        id: chatPartnerId, 
-        name: message.recipientName || "❌ UNBEKANNT IN `openMessage`!"
-      });
-  
-      setTimeout(() => {
-        this.messageService.getPrivateMessagesLive(message.conversationId, (msgs) => {
+    }, 800);
+  }
+
+  /** Opens a thread-channel message by emitting and listening for updates. */
+  private openThreadChannelMessage(msg: any): void {
+    if (!msg.threadChannelId) {
+      msg.threadChannelId = msg.parentId ?? msg.id;
+    }
+    this.threadChannelSelected.emit(msg);
+
+    setTimeout(() => {
+      this.messageService.listenForMessages(
+        'thread-channel',
+        msg.threadChannelId,
+        (msgs) => {
           if (!this.hasScrolledToSearchedMessage) {
-            const foundMessage = msgs.find(m => m.id === message.id);
-            if (foundMessage) {
-              console.log("📜 Scrolle zu privater Nachricht:", foundMessage.id);
-              this.scrollToMessage(foundMessage.id);
+            const found = msgs.find((m) => m.id === msg.id);
+            if (found) {
+              this.scrollToMessage(found.id);
               this.hasScrolledToSearchedMessage = true;
-            } else {
-              console.error("❌ Private Nachricht nicht gefunden!");
             }
           }
-        });
-      }, 800);
-  
-    // (3) Thread-Channel Nachricht
-    } else if (message.type === "thread-channel") {
-      console.log("📩 Thread-Channel Nachricht gefunden:", message);
-  
-      // Falls "threadChannelId" fehlt, nimm parentId oder message.id
-      if (!message.threadChannelId) {
-        console.warn("⚠️ `threadChannelId` fehlt! Setze `threadChannelId = parentId`:", message.parentId);
-        message.threadChannelId = message.parentId ?? message.id;
-      }
-  
-      console.log("🧵 Öffne Thread-Channel mit `threadChannelId`:", message.threadChannelId);
-  
-      // => `threadChannelSelected` => "openThreadChannelFromSearch()" in ChatComponent?
-      this.threadChannelSelected.emit(message);
-  
-      //  Live-Listening
-      setTimeout(() => {
-        this.messageService.listenForMessages("thread-channel", message.threadChannelId, (msgs) => {
-          if (!this.hasScrolledToSearchedMessage) {
-            const foundMessage = msgs.find(m => m.id === message.id);
-            if (foundMessage) {
-              console.log("📜 Scrolle zu Thread-Channel-Nachricht:", foundMessage.id);
-              this.scrollToMessage(foundMessage.id);
-              this.hasScrolledToSearchedMessage = true;
-            } else {
-              console.error("❌ Thread-Channel-Nachricht nicht gefunden!");
-            }
-          }
-        });
-      }, 800);
-  
-    // (4) Normale Thread-Nachricht
-    } else if (message.threadId || message.parentId) {
-      console.log("📩 Thread-Nachricht gefunden:", message);
-  
-      if (!message.threadId) {
-        console.warn("⚠️ `threadId` fehlt! Setze `threadId = parentId`:", message.parentId);
-        message.threadId = message.parentId ?? message.id;
-      }
-  
-      console.log("🧵 Öffne Thread mit `threadId`:", message.threadId);
-  
-      // => threadSelected => "openThreadFromSearch()" in ChatComponent?
-      const fullThreadData = {
-        ...message,
-        threadId: message.threadId,
-        messageId: message.id,
-        parentId: message.parentId || message.threadId,
-        parentName: message.parentName || "❌ Unbekannt",
-        id: message.threadId,
-      };
-  
-      console.log("📩 DEBUG: `fullThreadData`:", fullThreadData);
-      this.threadSelected.emit(fullThreadData);
-  
-      setTimeout(() => {
-        this.selectedThread = message;
-        console.log("🧵 Thread geöffnet:", message);
-  
-        this.messageService.getThreadMessagesLive(message.threadId, (msgs) => {
-          if (!this.hasScrolledToSearchedMessage) {
-            const foundMessage = msgs.find(m => m.id === message.id);
-            if (foundMessage) {
-              console.log("📜 Scrolle zu Thread-Nachricht:", foundMessage.id);
-              this.scrollToMessage(foundMessage.id);
-              this.hasScrolledToSearchedMessage = true;
-            } else {
-              console.error("❌ Thread-Nachricht nicht gefunden!");
-            }
-          }
-        });
-      }, 800);
+        }
+      );
+    }, 800);
+  }
+
+  /***************************************************************************************
+   * Opens a normal thread message by ensuring threadId, emitting threadSelected,
+   * then initiating a delayed scroll to it.
+   **************************************************************************************/
+  private openThreadMessage(msg: any): void {
+    this.ensureThreadId(msg);
+    this.emitThreadData(msg);
+    this.launchThreadScroll(msg);
+  }
+
+  /***************************************************************************************
+   * Ensures msg.threadId is set; uses msg.parentId or msg.id if missing.
+   **************************************************************************************/
+  private ensureThreadId(msg: any): void {
+    if (!msg.threadId) {
+      msg.threadId = msg.parentId ?? msg.id;
     }
   }
 
+  /***************************************************************************************
+   * Builds the thread data object and emits the threadSelected event.
+   **************************************************************************************/
+  private emitThreadData(msg: any): void {
+    const data = {
+      ...msg,
+      threadId: msg.threadId,
+      messageId: msg.id,
+      parentId: msg.parentId || msg.threadId,
+      parentName: msg.parentName || '',
+      id: msg.threadId,
+    };
+    this.threadSelected.emit(data);
+  }
 
-
-    
-    openSearchDialog(results: any[], type: 'channel' | 'user' | 'message' | 'private-message' | 'thread' | 'thread-channel' | 'mixed'): void {
-      if (this.isDialogOpen) {
-        console.warn("⚠️ Ein Such-Dialog ist bereits geöffnet!");
-        return;
-      }
-      if (this.searchQuery.trim() === '') {
-        console.warn("⚠️ Keine gültige Suchanfrage – Dialog wird nicht geöffnet.");
-        return;
-      }
-
-      if (!results || results.length === 0) {
-        // Nichts gefunden => Kein Dialog
-        return;
-      }
-    
-      this.isDialogOpen = true; 
-    
-      const dialogRef = this.dialog.open(SelectResultDialogComponent, {
-        width: '400px',
-        data: { results, type },
-      });
-    
-      // => navigateToMessage => openMessage(...)
-      dialogRef.componentInstance.navigateToMessage?.subscribe((message) => {
-        console.log("📩 Nachricht wurde im Dialog ausgewählt:", message);
-        this.openMessage(message);
-      });
-    
-      dialogRef.afterClosed().subscribe(selectedItem => {
-        this.isDialogOpen = false;
-        this.searchQuery = '';
-    
-        if (selectedItem) {
-          switch (selectedItem.type) {
-            case 'channel':
-              this.selectChannel(selectedItem);
-              break;
-            case 'user':
-              this.selectMember(selectedItem);
-              break;
-            case 'thread':
-              console.log("🧵 Thread-Nachricht gefunden:", selectedItem);
-              this.forwardOpenThread(selectedItem);
-              setTimeout(() => {
-                this.scrollToMessage(selectedItem.id);
-              }, 800);
-              break;
-            case 'thread-channel':
-              console.log("📩 Thread-Channel-Nachricht gefunden:", selectedItem);
-              this.selectThreadChannel(selectedItem);
-              break;
-            default:
-              console.warn("⚠️ Unbekannter Typ im Such-Dialog:", selectedItem);
-          }
-        }
-      });
-    }
-
-
-      // ----------------------------------------------------------------------------
-      // Hilfsmethoden 
-      // ----------------------------------------------------------------------------
-      selectThread(thread: { id: string, messageId: string }): void {
-        console.log("🧵 Thread-Event ausgelöst für:", thread);
-        this.threadSelected.emit(thread);
-      }
-      
-      selectMember(member: any): void {
-        console.log('👤 Mitglied ausgewählt:', member);
-        this.memberSelected.emit(member);
-      }
-      
-      forwardOpenThread(message: any): void {
-        console.log('📩 Thread-Event weitergeleitet:', message);
-        this.openThread.emit(message);
-      }
-      
-      selectChannel(channel: any): void {
-        console.log('📡 Channel ausgewählt:', channel);
-        this.channelService.changeChannel(channel);
-        this.channelSelected.emit(channel);
-      }
-      
-      selectThreadChannel(threadChannel: any): void {
-        console.log("📩 `threadChannelSelected` wird ausgelöst:", threadChannel);
-        this.selectedThreadChannel = threadChannel;
-        this.threadChannelSelected.emit(threadChannel);
-      }
-    
-    
-      scrollToMessageIfExists(messages: Message[], messageId: string, retries = 5): void {
-        const foundMessage = messages.find(m => m.id === messageId);
-        if (!foundMessage) {
-          console.error("❌ Nachricht nicht gefunden:", messageId);
-          return;
-        }
-        setTimeout(() => {
-          this.scrollToMessage(messageId, retries);
-        }, 500);
-      }
-      
-      scrollToMessage(messageId: string, retries = 10): void {
-        if (this.hasScrolledToSearchedMessage) return;
-      
-        setTimeout(() => {
-          const messageElement = document.getElementById(`message-${messageId}`);
-          if (messageElement) {
-            messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            messageElement.classList.add('highlight');
-            setTimeout(() => { messageElement.classList.remove('highlight'); }, 2000);
+  /***************************************************************************************
+   * Delays 800ms, fetches live thread messages, and scrolls if the target is found.
+   **************************************************************************************/
+  private launchThreadScroll(msg: any): void {
+    setTimeout(() => {
+      this.messageService.getThreadMessagesLive(msg.threadId, (msgs) => {
+        if (!this.hasScrolledToSearchedMessage) {
+          const found = msgs.find((m) => m.id === msg.id);
+          if (found) {
+            this.scrollToMessage(found.id);
             this.hasScrolledToSearchedMessage = true;
-          } else if (retries > 0) {
-            console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig)`);
-            this.scrollToMessage(messageId, retries - 1);
           }
-        }, 700);
-      }
-      
-      highlightMessage(messageId: string, retries = 5): void {
+        }
+      });
+    }, 800);
+  }
+
+  /***************************************************************************************
+   * Triggers opening a Material Dialog with the given results. Prevents double-open,
+   * checks if results are valid, then delegates to openSearchDialogCore().
+   **************************************************************************************/
+  openSearchDialog(
+    results: any[],
+    type:
+      | 'channel'
+      | 'user'
+      | 'message'
+      | 'private-message'
+      | 'thread'
+      | 'thread-channel'
+      | 'mixed'
+  ): void {
+    if (this.isDialogOpen) return;
+    if (this.searchQuery.trim() === '') return;
+    if (!results || results.length === 0) return;
+
+    this.isDialogOpen = true;
+    this.openSearchDialogCore(results, type);
+  }
+
+  /***************************************************************************************
+   * Actually opens the dialog by creating the dialogRef, then subscribing to events.
+   **************************************************************************************/
+  private openSearchDialogCore(
+    results: any[],
+    type:
+      | 'channel'
+      | 'user'
+      | 'message'
+      | 'private-message'
+      | 'thread'
+      | 'thread-channel'
+      | 'mixed'
+  ): void {
+    const dialogRef = this.createSearchDialog(results, type);
+    this.subscribeToNavigateMsg(dialogRef);
+    this.subscribeToDialogClose(dialogRef);
+  }
+
+  /***************************************************************************************
+   * Creates and returns a dialogRef for SelectResultDialogComponent with given results/type.
+   **************************************************************************************/
+  private createSearchDialog(
+    results: any[],
+    type:
+      | 'channel'
+      | 'user'
+      | 'message'
+      | 'private-message'
+      | 'thread'
+      | 'thread-channel'
+      | 'mixed'
+  ) {
+    return this.dialog.open(SelectResultDialogComponent, {
+      width: '400px',
+      data: { results, type },
+    });
+  }
+
+  /***************************************************************************************
+   * Subscribes to afterClosed to handle the selectedItem.
+   **************************************************************************************/
+  private subscribeToDialogClose(dialogRef: any): void {
+    dialogRef.afterClosed().subscribe((selectedItem: any) => {
+      this.handleDialogClose(selectedItem);
+    });
+  }
+
+  /***************************************************************************************
+   * Subscribes to the navigateToMessage emitter in the dialogRef (if present).
+   **************************************************************************************/
+  private subscribeToNavigateMsg(dialogRef: any): void {
+    if (!dialogRef.componentInstance.navigateToMessage) return;
+
+    dialogRef.componentInstance.navigateToMessage.subscribe((message: any) => {
+      this.openMessage(message);
+    });
+  }
+
+  /***************************************************************************************
+   * Called after the dialog closes. Resets flags, then delegates to handleDialogSelection.
+   **************************************************************************************/
+  private handleDialogClose(selectedItem: any): void {
+    this.isDialogOpen = false;
+    this.searchQuery = '';
+    if (!selectedItem) return;
+    this.handleDialogSelection(selectedItem);
+  }
+
+  /***************************************************************************************
+   * Processes the selectedItem via switch-case, calling the correct methods for each type.
+   **************************************************************************************/
+  private handleDialogSelection(selectedItem: any): void {
+    switch (selectedItem.type) {
+      case 'channel':
+        this.selectChannel(selectedItem);
+        break;
+      case 'user':
+        this.selectMember(selectedItem);
+        break;
+      case 'thread':
+        this.forwardOpenThread(selectedItem);
         setTimeout(() => {
-          const messageElement = document.getElementById(`message-${messageId}`);
-          if (messageElement) {
-            messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            messageElement.classList.add('highlight');
-            setTimeout(() => messageElement.classList.remove('highlight'), 2000);
-          } else if (retries > 0) {
-            console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig)`);
-            this.highlightMessage(messageId, retries - 1);
-          }
-        }, 500);
+          this.scrollToMessage(selectedItem.id);
+        }, 800);
+        break;
+      case 'thread-channel':
+        this.selectThreadChannel(selectedItem);
+        break;
+      default:
+        // unknown type -> do nothing
+        break;
+    }
+  }
+
+  /**
+   * Emits a `threadSelected` event with thread data (ID, messageId).
+   */
+  selectThread(thread: { id: string; messageId: string }): void {
+    this.threadSelected.emit(thread);
+  }
+
+  /**
+   * Emits a `memberSelected` event when a user or member is chosen,
+   * typically to open a private chat.
+   */
+  selectMember(member: any): void {
+    this.memberSelected.emit(member);
+  }
+
+  /**
+   * Forwards a thread-opening request by emitting `openThread`.
+   */
+  forwardOpenThread(message: any): void {
+    this.openThread.emit(message);
+  }
+
+  /**
+   * Changes the current channel by invoking the channel service
+   * and emits a `channelSelected` event.
+   */
+  selectChannel(channel: any): void {
+    this.channelService.changeChannel(channel);
+    this.channelSelected.emit(channel);
+  }
+
+  /**
+   * Emits a `threadChannelSelected` event for opening a thread channel view.
+   */
+  selectThreadChannel(threadChannel: any): void {
+    this.selectedThreadChannel = threadChannel;
+    this.threadChannelSelected.emit(threadChannel);
+  }
+
+  /**
+   * Checks if a particular message (by ID) exists in an array of messages. If found,
+   * calls `scrollToMessage` after a brief delay.
+   */
+  scrollToMessageIfExists(
+    messages: Message[],
+    messageId: string,
+    retries = 5
+  ): void {
+    const foundMessage = messages.find((m) => m.id === messageId);
+    if (!foundMessage) {
+      return;
+    }
+    setTimeout(() => {
+      this.scrollToMessage(messageId, retries);
+    }, 500);
+  }
+
+  /**
+   * Attempts to scroll to a message element in the DOM by its ID. Retries a certain number
+   * of times in case the element isn't immediately available or rendered.
+   */
+  scrollToMessage(messageId: string, retries = 10): void {
+    if (this.hasScrolledToSearchedMessage) return;
+
+    setTimeout(() => {
+      const messageElement = document.getElementById(`message-${messageId}`);
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.classList.add('highlight');
+        setTimeout(() => {
+          messageElement.classList.remove('highlight');
+        }, 2000);
+        this.hasScrolledToSearchedMessage = true;
+      } else if (retries > 0) {
+        this.scrollToMessage(messageId, retries - 1);
       }
- 
+    }, 700);
+  }
+
+  /**
+   * Highlights a specific message by scrolling it into view and temporarily adding
+   * a CSS class.
+   */
+  highlightMessage(messageId: string, retries = 5): void {
+    setTimeout(() => {
+      const messageElement = document.getElementById(`message-${messageId}`);
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.classList.add('highlight');
+        setTimeout(() => messageElement.classList.remove('highlight'), 2000);
+      } else if (retries > 0) {
+        this.highlightMessage(messageId, retries - 1);
+      }
+    }, 500);
+  }
 }

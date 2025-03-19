@@ -1,5 +1,16 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { Firestore, updateDoc } from '@angular/fire/firestore';
+import {
+  Component,
+  OnInit,
+  HostListener
+} from '@angular/core';
+import {
+  Firestore,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs
+} from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
@@ -7,8 +18,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-
-import { query, where, getDocs, collection } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-avatar',
@@ -18,30 +27,31 @@ import { query, where, getDocs, collection } from '@angular/fire/firestore';
     FooterComponent,
     CommonModule,
     FormsModule,
-    
-    RouterLink,
+    RouterLink
   ],
   templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.scss'],
+  styleUrls: ['./avatar.component.scss']
 })
 export class AvatarComponent implements OnInit {
-  avatars: string[] = [
+  avatars = [
     'assets/img/elise.png',
     'assets/img/elias.png',
     'assets/img/frederik.png',
     'assets/img/steffen.png',
     'assets/img/sofia.png',
-    'assets/img/noah.png',
+    'assets/img/noah.png'
   ];
-
   selectedAvatar: string | null = null;
-  errorMessage: string = '';
-  userName: string = 'User';
-  userAvatarUrl: string = 'assets/img/avatar.png';
-  successMessage: string = '';
-  isSmallScreen: boolean = window.innerWidth < 780;
+  errorMessage = '';
+  userName = 'User';
+  userAvatarUrl = 'assets/img/avatar.png';
+  successMessage = '';
+  isSmallScreen = window.innerWidth < 780;
 
-  constructor(private firestore: Firestore, private router: Router) {}
+  constructor(
+    private firestore: Firestore,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadUserData();
@@ -49,37 +59,37 @@ export class AvatarComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize() {
+  onResize(): void {
     this.updateScreenSize();
   }
 
-  updateScreenSize() {
+  updateScreenSize(): void {
     this.isSmallScreen = window.innerWidth < 780;
   }
 
-  async loadUserData() {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (user && user.email) {
-      const usersCollection = collection(this.firestore, 'users');
-      const q = query(usersCollection, where('email', '==', user.email));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0].data();
-        console.log('Geladenes Benutzer-Dokument:', userDoc);
-        this.userName = userDoc['name'] || 'User';
-        this.userAvatarUrl = userDoc['avatarUrl'] || 'assets/img/avatar.png';
-        this.selectedAvatar = this.userAvatarUrl;
-      } else {
-        console.log('Benutzer nicht gefunden.');
-        this.router.navigate(['/login']);
-      }
-    } else {
-      console.log('Kein Benutzer angemeldet.');
+  /**
+   * Loads user data from Firestore and sets local state.
+   * If the user or email is missing, or Firestore has no result,
+   * navigates to /login.
+   */
+  async loadUserData(): Promise<void> {
+    const user = getAuth().currentUser;
+    if (!user || !user.email) {
+      this.errorMessage = 'No user logged in.';
       this.router.navigate(['/login']);
+      return;
     }
+    const ref = collection(this.firestore, 'users');
+    const snap = await getDocs(query(ref, where('email', '==', user.email)));
+    if (snap.empty) {
+      this.errorMessage = 'User not found.';
+      this.router.navigate(['/login']);
+      return;
+    }
+    const data = snap.docs[0].data();
+    this.userName = data['name'] || 'User';
+    this.userAvatarUrl = data['avatarUrl'] || 'assets/img/avatar.png';
+    this.selectedAvatar = this.userAvatarUrl;
   }
 
   selectAvatar(avatar: string): void {
@@ -87,28 +97,22 @@ export class AvatarComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  validateAndUploadProfilePicture(event: Event): void {
-    const input = event.target as HTMLInputElement;
+  validateAndUploadProfilePicture(e: Event): void {
+    const input = e.target as HTMLInputElement;
     const file = input.files ? input.files[0] : null;
-
     if (!file) {
-      this.errorMessage = 'Keine Datei ausgewählt.';
+      this.errorMessage = 'No file selected.';
       return;
     }
-
     if (!file.type.startsWith('image/')) {
-      this.errorMessage = 'Bitte wählen Sie eine Bilddatei aus.';
+      this.errorMessage = 'Please select an image file.';
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
-      this.errorMessage =
-        'Die Datei ist zu groß. Bitte wählen Sie eine Datei, die kleiner als 5 MB ist.';
+      this.errorMessage = 'File is too large. Please choose a file under 5 MB.';
       return;
     }
-
     this.errorMessage = '';
-
     const reader = new FileReader();
     reader.onload = () => {
       this.selectedAvatar = reader.result as string;
@@ -118,42 +122,30 @@ export class AvatarComponent implements OnInit {
 
   async confirmSelection(): Promise<void> {
     if (!this.selectedAvatar) {
-      this.errorMessage = 'Bitte wählen Sie ein Avatar-Bild aus.';
+      this.errorMessage = 'Please select an avatar.';
       return;
     }
-
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user && user.email) {
-        const usersCollection = collection(this.firestore, 'users');
-        const q = query(usersCollection, where('email', '==', user.email));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          const userDoc = querySnapshot.docs[0].ref;
-          await updateDoc(userDoc, {
+      const current = getAuth().currentUser;
+      if (current && current.email) {
+        const ref = collection(this.firestore, 'users');
+        const snap = await getDocs(query(ref, where('email', '==', current.email)));
+        if (!snap.empty) {
+          await updateDoc(snap.docs[0].ref, {
             avatarUrl: this.selectedAvatar,
-            name: this.userName,
+            name: this.userName
           });
-          console.log('Benutzer-Avatar und Name erfolgreich aktualisiert.');
-
-          const updatedDoc = await getDocs(q);
-          console.log('Aktualisiertes Dokument:', updatedDoc.docs[0].data());
-
-          this.successMessage = 'Konto erfolgreich erstellt!';
+          this.successMessage = 'Account successfully updated!';
           setTimeout(() => {
             this.successMessage = '';
             this.router.navigate(['/login']);
           }, 3000);
         } else {
-          this.errorMessage = 'Benutzer nicht gefunden.';
+          this.errorMessage = 'User not found.';
         }
       }
-    } catch (error) {
-      console.error('Fehler beim Bestätigen der Auswahl:', error);
-      this.errorMessage = 'Fehler beim Bestätigen der Auswahl.';
+    } catch {
+      this.errorMessage = 'Error confirming selection.';
     }
   }
 }

@@ -12,15 +12,12 @@ import { Location } from '@angular/common';
 })
 export class ImprintComponent implements OnInit {
 
-
   constructor(private location: Location){}
 
   ngOnInit(): void {
-    
   }
 
   goBack(){
     this.location.back();
   }
-
 }

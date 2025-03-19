@@ -22,6 +22,4 @@ export class HeaderComponent implements OnInit {
   navigateToSignup() {
     this.router.navigate(['/signup']);
   }
-
-  
 }

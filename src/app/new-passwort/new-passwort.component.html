@@ -34,12 +34,10 @@
           />
         </div>
 
-        <!-- Fehlermeldung für nicht übereinstimmende Passwörter -->
         <div class="error-message" *ngIf="submitted && errorMessage">
           {{ errorMessage }}
         </div>
 
-        <!-- Fehlermeldungen für allgemeine Fehler -->
         <div class="error-message" *ngIf="errorMessage && !submitted">
           {{ errorMessage }}
         </div>

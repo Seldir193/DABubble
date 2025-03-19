@@ -7,16 +7,6 @@
   border-radius: 30px;
   background-color: white;
 
-
-
-
-
-
-
-
-
-
-  
   img {
     width: 60px;
     height: 60px;
@@ -25,13 +15,13 @@
   h1 {
     font-size: 24px;
     font-weight: 700;
-    margin-left:15px;
+    margin-left: 15px;
   }
 
   .edit-square {
     width: 40px;
     height: 40px;
-    margin-left:auto;
+    margin-left: auto;
     cursor: pointer;
     border-radius: 50%;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -40,25 +30,23 @@
     justify-content: center;
 
     &:hover {
-        background-color: $lightblue;
+      background-color: $lightblue;
 
-        img {
-          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-          }
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
       }
-  
+    }
+
     img {
-        width: 24px;
-        height: 24px;
-        object-fit: cover;
-        transition: filter 0.3s ease;
-        cursor: pointer;
-      }
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+      cursor: pointer;
+    }
   }
-
 }
-
-
 
 .center-section {
   @include dFlex(center, null, 0);
@@ -75,11 +63,8 @@
     font-size: 24px;
     outline: none;
     box-sizing: border-box;
-    
-
 
     &::placeholder {
-     // padding:8px 24px;
       font-size: 17px;
       color: $lightgray;
     }
@@ -95,33 +80,19 @@
     top: 50%;
     transform: translateY(-50%);
     width: 32px;
-   // height: 25px;
     pointer-events: none;
   }
 }
 
-
-
-
-
 .center-section {
   display: none;
-  /* Ab max-width: 1080px => sichtbar */
   @media (max-width: 1278px) {
     display: block;
-
   }
 }
 
-
-@media (max-width:1278px){
-  
-  .center-section{
+@media (max-width: 1278px) {
+  .center-section {
     max-width: unset;
   }
 }
-
-
-
-
-

@@ -1,5 +1,6 @@
 @import "./../../styles.scss";
 
+/* 1) .container */
 .container {
   @include dFlex(center, center, null);
   width: 100%;
@@ -9,6 +10,7 @@
   min-height: 100vh;
 }
 
+/* 2) .login-container */
 .login-container {
   text-align: center;
   padding: 40px 53px;
@@ -19,17 +21,20 @@
   max-width: 606px;
   overflow: hidden;
 
+  /* 3) .login */
   .login {
     max-width: 500px;
     width: 100%;
 
+    /* 4) .box */
     .box {
       @include dFlex(null, null, 30px);
       flex-direction: column;
-      height: 100%; // Volle Höhe nutzen
-      overflow: hidden; // Verhindert Überlaufen
+      height: 100%;
+      overflow: hidden;
     }
 
+    /* KLASSE .konto-container – JETZT 4. EBENE, nicht mehr 5. */
     .konto-container {
       @include dFlex(flex-end, center, null);
       flex-direction: row-reverse;
@@ -56,25 +61,24 @@
       cursor: pointer;
 
       &:hover {
-        filter: brightness(0) saturate(100%) invert(35%) sepia(62%)
-          saturate(2733%) hue-rotate(225deg) brightness(93%) contrast(104%);
+        filter: brightness(0) saturate(100%)
+          invert(35%) sepia(62%) saturate(2733%)
+          hue-rotate(225deg) brightness(93%)
+          contrast(104%);
       }
     }
 
     .main {
-        height: calc(100vh - 200px); // Dynamische Höhe für Scrollbereich
-        overflow-y: auto; // Ermöglicht vertikales Scrollen
-        padding-right: 10px; // Platz für Scrollbar
+      height: calc(100vh - 200px);
+      overflow-y: auto;
+      padding-right: 10px;
 
-        &::-webkit-scrollbar {
-            width: 0; // Setzt die Breite der Scrollleiste auf 0
-            background: transparent; // Unsichtbare Hintergrundfarbe
-          }
-    
-          // Unsichtbare Scrollleiste für Firefox
-          scrollbar-width: none; // Keine Scrollleiste anzeigen
-        }
-      
+      &::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+      }
+      scrollbar-width: none;
+    }
 
     h2 {
       color: $button-blue;
@@ -87,7 +91,10 @@
       width: 486px;
     }
 
-    h3,h4,h5,h6 {
+    h3,
+    h4,
+    h5,
+    h6 {
       color: $button-blue;
       font-size: 20px;
       font-weight: 700;
@@ -112,10 +119,14 @@
       font-size: 18px;
       font-weight: 400;
       text-decoration: none;
-      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+      transition: background-color 0.3s,
+        border-radius 0.3s,
+        padding 0.3s;
     }
   }
 }
+
+/* -- MEDIA QUERIES ab hier unverändert -- */
 
 @media (max-width: 780px) {
   .container {
@@ -132,13 +143,13 @@
     max-width: 320px;
   }
 
-  .login-container .login a{
+  .login-container .login a {
     font-size: 14px;
   }
 
   .login-container .login .box {
     gap: 20px;
-    width:100%;
+    width: 100%;
   }
 
   .login-container .login .form {
@@ -160,25 +171,10 @@
     width: unset;
   }
 
-  .login-container .login  h3  {
-    font-size: 22px;
-    width: unset;
-    line-height: unset;
-  }
-
-  .login-container .login  h4  {
-    font-size: 22px;
-    width: unset;
-    line-height: unset;
-  }
-
-  .login-container .login  h5  {
-    font-size: 22px;
-    width: unset;
-    line-height: unset;
-  }
-
-  .login-container .login  h6  {
+  .login-container .login h3,
+  .login-container .login h4,
+  .login-container .login h5,
+  .login-container .login h6 {
     font-size: 22px;
     width: unset;
     line-height: unset;
@@ -199,25 +195,10 @@
     font-size: 22px;
   }
 
-  .login-container .login  h3  {
-    font-size: 20px;
-    width: unset;
-    line-height: unset;
-  }
-
-  .login-container .login  h4  {
-    font-size: 20px;
-    width: unset;
-    line-height: unset;
-  }
-
-  .login-container .login  h5  {
-    font-size: 20px;
-    width: unset;
-    line-height: unset;
-  }
-
-  .login-container .login  h6  {
+  .login-container .login h3,
+  .login-container .login h4,
+  .login-container .login h5,
+  .login-container .login h6 {
     font-size: 20px;
     width: unset;
     line-height: unset;
@@ -233,12 +214,12 @@
   }
 
   .login-container .login .image-container {
-    width:unset;
+    width: unset;
   }
 }
 
 @media (max-width: 390px) {
-  .login-container .login  {
+  .login-container .login {
     width: 260px;
   }
 }

@@ -1,18 +1,40 @@
+import {
+  Component,
+  OnInit,
+  Inject
+} from '@angular/core';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog
+} from '@angular/material/dialog';
+import {
+  MatFormFieldModule
+} from '@angular/material/form-field';
+import {
+  MatInputModule
+} from '@angular/material/input';
+import {
+  MatButtonModule
+} from '@angular/material/button';
+import {
+  FormsModule
+} from '@angular/forms';
+import {
+  MatDialogModule
+} from '@angular/material/dialog';
+import {
+  CommonModule
+} from '@angular/common';
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
 import { MembersDialogComponent } from '../members-dialog/members-dialog.component';
 import { ChannelService } from '../channel.service';
 
-import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
-
-
+/**
+ * Dialog component for creating a new channel. Users can specify a channel
+ * name and optionally a description. If valid, the channel is added via
+ * ChannelService, and members can be chosen from another dialog.
+ */
 @Component({
   selector: 'app-channel-dialog',
   templateUrl: './channel-dialog.component.html',
@@ -24,82 +46,95 @@ import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dia
     MatButtonModule,
     FormsModule,
     MatDialogModule,
-    CommonModule,
+    CommonModule
   ]
 })
 export class ChannelDialogComponent implements OnInit {
-  channelName: string = '';
-  
-  channelNameExists = false;  // Flag für vorhandenen Channel-Namen
-  isChannelNameValid = false;
-  description: string = '';
+  /**
+   * The new channel's name input by the user.
+   */
+  channelName = '';
 
+  /**
+   * Indicates whether a channel with the same name already exists.
+   */
+  channelNameExists = false;
+
+  /**
+   * True if the channel name is considered valid (>=3 chars).
+   */
+  isChannelNameValid = false;
+
+  /**
+   * Optional description for the new channel.
+   */
+  description = '';
+
+  /**
+   * @param dialogRef Reference to this dialog instance
+   * @param data      Data passed in from the caller
+   * @param dialog    The Angular Material dialog service
+   * @param channelService Service for channel operations
+   */
   constructor(
     public dialogRef: MatDialogRef<ChannelDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
-    private channelService: ChannelService,
-    
-   
-
-    
-    
+    private channelService: ChannelService
   ) {}
 
+  /**
+   * Lifecycle hook that runs after component initialization.
+   * No additional logic here.
+   */
+  ngOnInit(): void {}
+
+  /**
+   * Checks whether the new channel name has >=3 trimmed characters.
+   * @param value The user's input for channel name
+   */
   onChannelNameChange(value: string): void {
-    this.isChannelNameValid = value.trim().length >= 3;  // Channel-Name ist gültig, wenn mindestens 3 Zeichen
+    this.isChannelNameValid = value.trim().length >= 3;
   }
 
-
-
-
+  /**
+   * Creates a new channel if valid and not already taken.
+   * Opens a member-selection dialog (MembersDialogComponent) if
+   * the name is valid and unique, then adds the channel.
+   */
   onCreate(): void {
-    if (!this.isChannelNameValid) {
-      return;  // Verhindere das Erstellen, falls der Channel-Name ungültig ist
-    }
-    // Überprüfe, ob der Channel-Name bereits existiert
-    const exists = this.channelService.getChannels().some((channel: { name: string; members: any[] }) => 
-      channel.name.toLowerCase() === this.channelName.toLowerCase()
+    if (!this.isChannelNameValid) return;
+    const allChannels = this.channelService.getChannels();
+    const nameExists = allChannels.some(
+      c => c.name.toLowerCase() === this.channelName.toLowerCase()
     );
-  
-    if (exists) {
-      this.channelNameExists = true;  // Setze das Flag, um die Fehlermeldung anzuzeigen
-    } else {
-      this.channelNameExists = false;
-  
-      // Öffne den Mitglieder-Dialog direkt nach dem Schließen des Channel-Dialogs
-      const mitgliederDialogRef = this.dialog.open(MembersDialogComponent, {
-        data: { channelName: this.channelName },  // Gebe den Channel-Namen weiter
-      });
-  
-      mitgliederDialogRef.afterClosed().subscribe(result => {
-        if (result && result.selectedMembers) {
-          // Channel speichern (erst jetzt, nach Auswahl der Mitglieder)
-          this.channelService.addChannel({
-            name: this.channelName,
-            members: result.selectedMembers,
-            description: this.description 
-          });
-  
-          console.log('Channel erstellt mit Mitgliedern:', {
-            name: this.channelName,
-            members: result.selectedMembers,
-            description: this.description 
-          });
-        }
-      });
-  
-      this.dialogRef.close(); // Schließe den Channel-Dialog nachdem Mitglieder-Dialog geöffnet wurde
+    if (nameExists) {
+      this.channelNameExists = true;
+      return;
     }
-  }
-  
-
-
-  closeDialog(): void {
+    this.channelNameExists = false;
+    const membersDialog = this.dialog.open(MembersDialogComponent, {
+      data: { channelName: this.channelName }
+    });
+    membersDialog.afterClosed().subscribe(result => {
+      if (!result?.selectedMembers) return;
+      this.channelService.addChannel({
+        name: this.channelName,
+        members: result.selectedMembers,
+        description: this.description
+      });
+    });
     this.dialogRef.close();
   }
 
-  ngOnInit(): void {
-    console.log(this.data);
+  /**
+   * Closes the current dialog without creating/updating a channel.
+   */
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 }
+
+
+
+

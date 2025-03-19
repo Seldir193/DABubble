@@ -9,22 +9,16 @@ import { routes } from './app.routes';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field'; // Wichtiger Import für mat-form-field
+import { MatFormFieldModule } from '@angular/material/form-field'; 
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
-
-
-
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import { LOCALE_ID } from '@angular/core';
-
 registerLocaleData(localeDe);
 
 export const appConfig: ApplicationConfig = {
-  
-
   providers: [
     provideRouter(routes),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
@@ -34,10 +28,7 @@ export const appConfig: ApplicationConfig = {
     ReactiveFormsModule, provideAnimationsAsync(),
     MatInputModule, MatFormFieldModule, MatDialogModule,BrowserAnimationsModule,
     MatButtonModule,
-
     { provide: LOCALE_ID, useValue: 'de-DE' }
-    
   ]
-
 };
 

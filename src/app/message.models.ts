@@ -1,38 +1,21 @@
-
 export interface Message {
   id?: string;
   content: MessageContent;
-  timestamp: any; // Verwende `any` oder `Date`, je nachdem, ob es ein Firestore-Zeitstempel ist
+  timestamp: any;
   senderId: string;
   senderName: string;
   senderAvatar: string;
   time: string;
-  date?: string | { seconds: number; nanoseconds: number }; // ✅ Fix: `date` hinzufügen
-  recipientId?: string;  // ✅ Falls es sich um eine private Nachricht handelt
-  channelId?: string;    // ✅ Falls es sich um eine Channel-Nachricht handelt
-  conversationId?: string; // ✅ Wird für private Nachrichten gespeichert
-  formattedDate?: string;  // Optional für Datum
-  replyCount?: number; // ✅ 
+  date?: string | { seconds: number; nanoseconds: number };
+  recipientId?: string;
+  channelId?: string;
+  conversationId?: string;
+  formattedDate?: string;
+  replyCount?: number;
   lastResponseTime?: any;
-  channelName?: string; 
+  channelName?: string;
   threadChannelId?: string;
   parentId?: string;
-
-
-
-
-
-
-  
-
- 
-  
-
-
- 
-   
- 
-
   isHighlighted?: boolean;
   isEditing?: boolean;
   isEmojiPickerVisible?: boolean;
@@ -40,42 +23,26 @@ export interface Message {
   expanded?: boolean;
   type?: string;
   threadId?: string;
-
-
-
-
-
-
-
-
-
-
-
   lastReplyTime?: any;
+  recipientName?: string;
+}
 
+export interface MessageContent {
+  text?: string;
+  image?: string | ArrayBuffer | null;
+  emojis?: Array<{ emoji: string; count: number }>;
+}
 
-  recipientName?: string; 
-  
-} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  export interface MessageContent {
-    text?: string;
-    image?: string | ArrayBuffer | null;
-    emojis?: Array<{ emoji: string; count: number }>; // Emojis als Array von Objekten
-
-  }
-
-
-  
+/**
+ * FirestoreMessageData defines the structure of a message document in Firestore.
+ * Add more properties as needed to reflect your Firestore schema.
+ */
+export interface FirestoreMessageData {
+  content?: {
+    emojis?: Array<{
+      emoji: string;
+      count: number;
+    }>;
+  };
+  // additional fields go here, e.g. senderId, timestamp, etc.
+}

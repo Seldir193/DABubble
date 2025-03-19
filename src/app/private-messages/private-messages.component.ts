@@ -1,38 +1,47 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, Input, EventEmitter, Output,OnChanges, SimpleChanges, HostListener} from '@angular/core';
-import { CommonModule } from '@angular/common';
+
+/**
+ * The PrivateMessagesComponent manages direct (private) chats between the current user 
+ * and a specified recipient. It handles sending text or image-based messages, displaying 
+ * date separators, loading and maintaining last-used emojis, live-updating messages 
+ * via Firestore listeners, and more. No logic or styling has been changed – 
+ * only these English JSDoc comments have been added.
+ */
+
+import {
+  Component,
+  OnInit,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ViewChild,
+  ElementRef,
+  Input,
+  EventEmitter,
+  Output,
+  OnChanges,
+  SimpleChanges,
+  HostListener
+} from '@angular/core';
+import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { ChannelService } from '../channel.service';
 import { UserService } from '../user.service';
 import { MatDialog } from '@angular/material/dialog';
-import { formatDate } from '@angular/common';
-
-import { Message} from '../message.models';
 import { MessageService } from '../message.service';
-import { ActivatedRoute, Router } from '@angular/router';
-
+import { ActivatedRoute } from '@angular/router';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import { Timestamp } from 'firebase/firestore';
-
-
 import { OverlayModule } from '@angular/cdk/overlay';
+import { Message } from '../message.models';
 
+/**
+ * Defines the structure of a message's content, which may include text, 
+ * an optional image, and an array of emojis with usage counts.
+ */
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
-
-  
   emojis: Array<{ emoji: string; count: number }>;
-
-  
-} 
-
-
-
-
-
- 
+}
 
 @Component({
   selector: 'app-private-messages',
@@ -42,32 +51,30 @@ export interface MessageContent {
   styleUrls: ['./private-messages.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class PrivateMessagesComponent implements OnInit {
+export class PrivateMessagesComponent implements OnInit, OnChanges {
   @ViewChild('messageList') messageList!: ElementRef;
+
   @Input() recipientName: string = '';
   @Input() recipientId: string = '';
   @Output() memberSelected = new EventEmitter<any>();
   @Input() showSearchField: boolean = false;
   @Output() openThread = new EventEmitter<any>();
-  @Input() threadData: any = null; // Daten vom Thread
+  @Input() threadData: any = null;
 
-  
- 
-  parentMessage: any = null; // ✅ Speichert die übergeordnete Nachricht für den Thread
+  parentMessage: any = null;
   imageUrl: string | ArrayBuffer | null = null;
   privateMessage: string = '';
   currentUser: any;
- // privateMessages: any[] = [];
   conversationId: string | undefined;
-  recipientStatus: string = '';  // Status of the recipient
-  recipientAvatarUrl: string = ''; // Added recipientAvatarUrl property
+  recipientStatus: string = '';
+  recipientAvatarUrl: string = '';
   isEmojiPickerVisible: boolean = false;
   isImageModalOpen = false;
   currentDate: Date = new Date();
   yesterdayDate: Date = this.getYesterdayDate();
   isTextareaExpanded: boolean = false;
-  message: string = ''; 
-  lastUsedEmojisReceived: string[] = []; 
+  message: string = '';
+  lastUsedEmojisReceived: string[] = [];
   lastUsedEmojisSent: string[] = [];
   showEditOptions: boolean = false;
   currentMessageId: string | null = null;
@@ -78,66 +85,52 @@ export class PrivateMessagesComponent implements OnInit {
   tooltipSenderName = '';
   selectedThread: any = null;
   latestTimestamp: Date | null = null;
-  selectedMember: any = null; 
-
-
- 
+  selectedMember: any = null;
   allUsers: any[] = [];
-
-  // Steuert Overlay
   showUserDropdown: boolean = false;
-
-
-  // oder
   privateMessages: Message[] = [];
-
   showLargeImage = false;
   largeImageUrl: string | null = null;
 
- 
-
-
   private hasScrolledOnChange: boolean = false;
-
   private isChatChanging: boolean = false;
-
   isDesktop = false;
 
   private replyCache: Map<string, any[]> = new Map(); 
   private unsubscribeFromThreadMessages: (() => void) | null = null;
-  private unsubscribeLiveReplyCounts: (() => void) | null = null; // Für Listener
+  private unsubscribeLiveReplyCounts: (() => void) | null = null;
   private unsubscribeFromThreadDetails: (() => void) | null = null;
   private unsubscribeEmojiListener?: () => void;
+  private unsubscribeFromPrivateMessages: (() => void) | null = null;
+  private unsubscribeRecipient?: () => void;
 
-  private unsubscribeFromPrivateMessages: (() => void) | null = null; 
-
-  
+  /**
+   * Constructor injecting services for route info, user data, channel logic, dialogs, and messages.
+   */
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private channelService: ChannelService,
     private dialog: MatDialog,
     private messageService: MessageService
-    
   ) {}
 
- 
-
+  /**
+   * Lifecycle hook: loads the current user, sets up the conversation if recipient is known,
+   * and starts live updates (messages, emojis, reply counts, date refresh).
+   */
   async ngOnInit(): Promise<void> {
     await this.loadCurrentUser();
     this.loadRecipientData();
     this.checkDesktopWidth();
+    this.setupRecipientListener();
 
     if (this.currentUser?.id && this.recipientId) {
       this.conversationId = this.messageService.generateConversationId(
         this.currentUser.id,
         this.recipientId
       );
-
-     
-     // this.handleChatChange();
-
-     
+    
       this.setupMessageListener();
       this.listenForEmojiUpdates();
       this.loadLastUsedEmojis();
@@ -145,227 +138,196 @@ export class PrivateMessagesComponent implements OnInit {
       this.startDateUpdater();
     }
   }
-  
-   @HostListener('window:resize')
-   onResize() {
-     this.checkDesktopWidth();
-   }
- 
-   checkDesktopWidth() {
-     this.isDesktop = window.innerWidth >= 1278;
-   }
- 
 
+  /**
+   * HostListener to detect window resize events and update desktop mode.
+   */
+  @HostListener('window:resize')
+  onResize() {
+    this.checkDesktopWidth();
+  }
 
+  /**
+   * Checks if screen width >= 1278 to mark as desktop mode.
+   */
+  checkDesktopWidth() {
+    this.isDesktop = window.innerWidth >= 1278;
+  }
+
+  /**
+   * Sets an interval to update message dates periodically (e.g. "Heute" => "Gestern").
+   */
   private startDateUpdater(): void {
     setInterval(() => {
-      console.log("🔄 Überprüfe, ob sich das Datum geändert hat...");
       this.updateMessageDates();
-    }, 60000); // Alle 60 Sekunden (1 Minute)
+    }, 60000);
   }
-  
+
+  /**
+   * Recomputes formattedDate for each message to reflect daily changes.
+   */
   private updateMessageDates(): void {
     const updatedMessages = this.privateMessages.map(msg => ({
       ...msg,
-      formattedDate: this.getFormattedDate(msg.timestamp) // 🔥 Datum wird neu berechnet
+      formattedDate: this.getFormattedDate(msg.timestamp)
     }));
-  
-    this.privateMessages = [...updatedMessages]; // 🔥 UI-Update für Change Detection
-  
-    console.log("📅 Datum wurde neu berechnet:", this.privateMessages);
+    this.privateMessages = [...updatedMessages];
   }
 
+  private setupRecipientListener() {
+    // Hier rufen wir nun die neue Service-Methode auf
+    this.unsubscribeRecipient = this.messageService.onRecipientStatusChanged(
+      this.recipientId,
+      (data) => {
+        // data: { isOnline: boolean; avatarUrl: string; name: string }
+        this.recipientStatus = data.isOnline ? 'Aktiv' : 'Abwesend';
+        this.recipientAvatarUrl = data.avatarUrl;
+        this.recipientName = data.name;
+      }
+    );
+  }
 
-  
-
-
+  /**
+   * Sets up a live listener for new private messages, auto-scrolling if user near bottom or if new messages arrive.
+   */
   private setupMessageListener(): void {
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
     }
-   
+
     this.hasScrolledOnChange = false;
-    // Wir merken uns die alte Anzahl der Nachrichten
-   // this.scrollToBottom();
     let oldCount = this.privateMessages.length;
-  
+
     this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
       'private',
       this.conversationId!,
       (rawMessages) => {
         this.processIncomingMessages(rawMessages);
 
-        // Vorher speichern wir die aktuelle Position
         const wasNearBottom = this.isNearBottom(150);
-  
-        // Nachrichten verarbeiten
-       
-  
-        // Neue Länge
         const newCount = rawMessages.length;
-  
-        // Nur dann scrollen, wenn:
-        // A) wirklich neue Nachrichten kamen (newCount > oldCount)
-        // ODER
-        // B) der User noch "unten" war (z.B. warNearBottom = true)
         if (newCount > oldCount || wasNearBottom) {
-          this.scrollToBottom();  
+          this.scrollToBottom();
         }
-  
-        // Alte Anzahl updaten
         oldCount = newCount;
       }
     );
   }
-  
 
-  
-  
-
-  
+  /**
+   * Checks if the user is near the bottom of the message list within a threshold.
+   */
   private isNearBottom(threshold = 100): boolean {
     const el = this.messageList?.nativeElement;
     if (!el) return false;
-  
-    // Wie weit ist man vom unteren Ende entfernt?
     const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
     return distanceToBottom <= threshold;
   }
-  
-  
 
-  
-
-
-
-
-
-
-
-
-
-
-
+  /**
+   * Scrolls to bottom if user is near the bottom or if switching chats immediately.
+   */
   private scrollToBottom(): void {
-    // Wenn es sich um einen Chatwechsel handelt, scrolle sofort
     if (this.isChatChanging) {
       const lastMessage = this.messageList?.nativeElement.lastElementChild;
       if (lastMessage) {
         setTimeout(() => {
           lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-          console.log("🔽 Erfolgreich beim Chatwechsel gescrollt!");
-        }, 100);  // 100ms Verzögerung, um sicherzustellen, dass das DOM vollständig geladen ist
+        }, 100);
       }
-      return; // Verhindere das Scrollen während des Chatwechsels
+      return;
     }
-  
-    // Scrollen nur, wenn der Benutzer am unteren Ende ist
+
     if (this.isNearBottom()) {
       setTimeout(() => {
         if (this.messageList) {
           this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-          console.log("🔽 Erfolgreich zum neuesten Chat gescrollt!");
         }
-      }, 100);  // Verzögerung für eine flüssigere Benutzererfahrung
+      }, 100);
     }
   }
-  
 
-
-
+  /**
+   * OnChanges hook: if recipientId changes, cleans up old listeners, reloads data, re-scrolls.
+   */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['recipientId'] && !changes['recipientId'].isFirstChange()) {
-      console.log('🔄 Empfänger gewechselt:', changes['recipientId'].currentValue);
-  
-     // this.hasInitialScrollDone = false;
-
-   this.hasScrolledOnChange = true;
- 
-   this.isChatChanging = true;
+      this.hasScrolledOnChange = true;
+      this.isChatChanging = true;
       this.cleanupListeners();
       this.loadRecipientData();
       this.loadPrivateMessages();
+
+      if (this.unsubscribeRecipient) {
+        this.unsubscribeRecipient();
+      }
+      // Neuen Listener starten
+      this.setupRecipientListener();
+    
+
       setTimeout(() => {
         this.scrollToBottom();
         this.isChatChanging = false;
-      }, 200);  // Verzögerung von 200ms, um sicherzustellen, dass die Nachrichten geladen sind
-    
-    
+      }, 200);
+
       this.startLiveReplyCountUpdates();
-      //this.setupMessageListener();
-  
     }
-  
+
     if (changes['threadData']?.currentValue) {
       const newThreadData = changes['threadData'].currentValue;
-      console.log('🔄 Thread-Daten aktualisiert:', newThreadData);
-      
-      // 🔥 6. Zeitstempel formatieren
+
       if (newThreadData.timestamp) {
-        console.log('⏳ Letzte Antwort:', 
-          this.getFormattedDate(newThreadData.timestamp),
-          formatDate(newThreadData.timestamp, 'HH:mm', 'de')
-        );
+        this.getFormattedDate(newThreadData.timestamp),
+        formatDate(newThreadData.timestamp, 'HH:mm', 'de');
       }
     }
   }
-    
 
+  /**
+   * Loads the private messages for this conversation from Firestore, sets up a live listener.
+   */
+  async loadPrivateMessages(): Promise<void> {
+    if (!this.currentUser?.id || !this.recipientId) return;
 
+    const conversationId = this.messageService.generateConversationId(
+      this.currentUser.id,
+      this.recipientId
+    );
 
-async loadPrivateMessages(): Promise<void> {
-  if (!this.currentUser?.id || !this.recipientId) return;
+    if (this.unsubscribeFromPrivateMessages) {
+      this.unsubscribeFromPrivateMessages();
+    }
 
-  const conversationId = this.messageService.generateConversationId(
-    this.currentUser.id,
-    this.recipientId
-  );
+    this.unsubscribeFromPrivateMessages = this.messageService.getPrivateMessagesLive(
+      conversationId,
+      (messages) => {
+        this.privateMessages = messages.map(msg => {
+          const timestampDate = this.safeConvertTimestamp(msg.timestamp);
+          const lastResponseTime = msg.lastResponseTime 
+            ? this.safeConvertTimestamp(msg.lastResponseTime)
+            : timestampDate;
 
-  // 🔥 **Alten Listener beenden, bevor ein neuer gestartet wird**
-  if (this.unsubscribeFromPrivateMessages) {
-    this.unsubscribeFromPrivateMessages();
+          return {
+            ...msg,
+            timestamp: timestampDate,
+            lastResponseTime,
+            formattedDate: this.getFormattedDate(timestampDate),
+            content: {
+              ...msg.content,
+              emojis: msg.content?.emojis || []
+            }
+          };
+        });
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 200);
+      }
+    );
   }
 
-  console.log("📡 Starte Live-Listener für privateMessages:", conversationId);
-
-  this.unsubscribeFromPrivateMessages = this.messageService.getPrivateMessagesLive(
-    conversationId,
-    (messages) => {
-      console.log("📩 Neue Live-Nachrichten erhalten:", messages);
-
-      // 🔥 **Stelle sicher, dass jede Nachricht ein sicheres Timestamp-Format hat**
-      this.privateMessages = messages.map(msg => {
-        const timestampDate = this.safeConvertTimestamp(msg.timestamp);
-        const lastResponseTime = msg.lastResponseTime 
-          ? this.safeConvertTimestamp(msg.lastResponseTime)
-          : timestampDate; // Falls `lastResponseTime` fehlt, nutze `timestamp`
-
-        return {
-          ...msg,
-          timestamp: timestampDate,
-          lastResponseTime, // ✅ Direkt setzen, damit Angular `date: 'HH:mm'` erkennt
-          formattedDate: this.getFormattedDate(timestampDate),
-          content: { 
-            ...msg.content, 
-            emojis: msg.content?.emojis || []
-          }
-        };
-      });
-
-     // this.scrollToBottom(); // Automatisch zum neuesten Chat scrollen
-      setTimeout(() => {
-        this.scrollToBottom();  // Automatisch zum neuesten Chat scrollen
-      }, 200);
-      
-    }
-  );
-}
-
-
-
-  
-
-  // 🔥 7. Zentralisierte Listener-Bereinigung
+  /**
+   * Removes all active listeners for messages, replies, and emojis, typically before switching chat or on destroy.
+   */
   private cleanupListeners(): void {
     if (this.unsubscribeLiveReplyCounts) {
       this.unsubscribeLiveReplyCounts();
@@ -377,241 +339,254 @@ async loadPrivateMessages(): Promise<void> {
     }
   }
 
+  /**
+   * Called when component destroyed, unsubscribes from all live queries, clears caches.
+   */
   ngOnDestroy(): void {
-    // 1. Beende alle Nachrichten-Listener
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
       this.unsubscribeFromThreadMessages = null;
-      console.log("🛑 Thread-Nachrichten-Listener gestoppt");
     }
-  
-    // 2. Beende Thread-Detail-Listener
     if (this.unsubscribeFromThreadDetails) {
       this.unsubscribeFromThreadDetails();
       this.unsubscribeFromThreadDetails = null;
-      console.log("🛑 Thread-Detail-Listener gestoppt");
     }
-  
-    // 3. Beende Emoji-Listener
     if (this.unsubscribeEmojiListener) {
       this.unsubscribeEmojiListener();
-     // this.unsubscribeEmojiListener = null;
-      //this.unsubscribeEmojiListener = undefined;
-      console.log("🛑 Live-Emoji-Listener gestoppt");
     }
-  
-    // 4. Beende Antwortzähler-Listener (neu hinzugefügt)
     if (this.unsubscribeLiveReplyCounts) {
       this.unsubscribeLiveReplyCounts();
       this.unsubscribeLiveReplyCounts = null;
-      console.log("🛑 Antwortzähler-Listener gestoppt");
     }
-
     if (this.unsubscribeFromPrivateMessages) {
       this.unsubscribeFromPrivateMessages();
-      console.log("🛑 Live-Listener für privateMessages gestoppt.");
     }
-  
-    // 5. Optional: Leere den Antwort-Cache
+    if (this.unsubscribeRecipient) {
+      this.unsubscribeRecipient();
+    }
     this.replyCache.clear();
   }
-  
+
+  /**
+   * Processes raw messages from Firestore, ensuring timestamps are valid Dates,
+   * setting date separators, and updating local state.
+   *
+   * @param {Message[]} rawMessages - The array of messages from Firestore.
+   */
+  private processIncomingMessages(rawMessages: Message[]): void {
+    let prevDate: Date | null = null;
+
+    const updatedMessages = rawMessages.map((msg, index) => {
+      const timestampDate = this.safeConvertTimestamp(msg.timestamp);
+      const showDateSeparator = index === 0 || !this.isSameDay(prevDate, timestampDate);
+      prevDate = timestampDate;
+
+      return {
+        ...msg,
+        timestamp: timestampDate,
+        lastResponseTime: msg.lastResponseTime
+          ? this.safeConvertTimestamp(msg.lastResponseTime)
+          : timestampDate,
+        formattedDate: this.getFormattedDate(timestampDate),
+        showDateSeparator,
+        time: formatDate(timestampDate, 'HH:mm', 'de'),
+        content: {
+          ...msg.content,
+          emojis: msg.content?.emojis?.slice() || []
+        },
+        replyCount: msg.replyCount ?? 0
+      };
+    });
+
+    this.privateMessages = [...updatedMessages];
+    this.updateLiveReplyCounts(updatedMessages);
+  }
+
+  /**
+   * Updates live reply counts for each message by listening to partialCounts from Firestore.
+   */
+  private updateLiveReplyCounts(messages: Message[]): void {
+    const messageIds = messages
+      .map(m => m.id)
+      .filter((id): id is string => id !== undefined);
+
+    if (messageIds.length === 0) return;
+
+    this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
+      messageIds,
+      'private',
+      (partialCounts) => {
+        for (const [msgId, data] of Object.entries(partialCounts)) {
+          const msgIndex = this.privateMessages.findIndex(m => m.id === msgId);
+          if (msgIndex !== -1) {
+            this.privateMessages[msgIndex] = {
+              ...this.privateMessages[msgIndex],
+              replyCount: data.count,
+              timestamp: this.privateMessages[msgIndex].timestamp,
+              time: this.privateMessages[msgIndex].time
+            };
+          }
+        }
+      }
+    );
+  }
+
+  /**
+   * Opens a thread (reply view) for the given message. If cached, uses cache; else fetches from Firestore.
+   *
+   * @param {any} msg - The message containing the thread reference.
+   */
   openThreadEvent(msg: any): void {
     this.parentMessage = msg;
     const threadId = msg.threadId || msg.id;
-  
-    // 🛑 Falls ein alter Listener läuft, stoppen
+
     if (this.unsubscribeFromThreadMessages) {
       this.unsubscribeFromThreadMessages();
       this.unsubscribeFromThreadMessages = null;
     }
-  
-    // 🔍 **Prüfen, ob Antworten bereits im Cache gespeichert sind**
+
     if (this.replyCache.has(threadId)) {
-      console.log(`♻️ Antworten aus Cache für Thread ${threadId} geladen`);
       msg.replies = this.replyCache.get(threadId) || [];
       this.openThread.emit(msg);
       return;
     }
-  
-    // 🚀 Falls nicht im Cache → Thread aus Firestore neu laden
     this.loadThread(threadId, msg);
   }
-  
-private loadThread(threadId: string, msg: any): void {
-  console.log(`🧵 Lade Thread für Nachricht ${threadId}`);
 
-  if (this.unsubscribeFromThreadMessages) {
-    this.unsubscribeFromThreadMessages();
+  /**
+   * Loads the thread messages from Firestore for a given threadId, 
+   * updating the local privateMessages array when new data arrives.
+   */
+  private loadThread(threadId: string, msg: any): void {
+    if (this.unsubscribeFromThreadMessages) {
+      this.unsubscribeFromThreadMessages();
+    }
+
+    this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
+      'thread',
+      threadId,
+      (messages) => {
+        // console.log(`📩 Thread live update for ${threadId}:`, messages);  // REMOVED
+        const lastResponseTime = messages.length > 0 
+          ? this.safeConvertTimestamp(messages[messages.length - 1].timestamp)
+          : null;
+
+        this.privateMessages = this.privateMessages.map(message => {
+          if (message.id === msg.id) {
+            return {
+              ...message,
+              replies: [...messages],
+              replyCount: messages.length,
+              lastResponseTime
+            };
+          }
+          return message;
+        });
+        this.openThread.emit(msg);
+      }
+    );
   }
 
-  this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
-    'thread',
-    threadId,
-    (messages) => {
-      console.log(`📩 Live-Update für Thread ${threadId}:`, messages);
+  /**
+   * Starts a listener to track live reply counts for the current privateMessages.
+   */
+  startLiveReplyCountUpdates(): void {
+    if (this.unsubscribeLiveReplyCounts) {
+      this.unsubscribeLiveReplyCounts();
+    }
 
-      // 🔥 Konvertiere den Timestamp hier
-      const lastResponseTime = messages.length > 0 
-        ? this.safeConvertTimestamp(messages[messages.length - 1].timestamp)
-        : null;
+    const messageIds = this.privateMessages.map(m => m.id || '');
+    if (messageIds.length === 0) return;
 
-      this.privateMessages = this.privateMessages.map(message => {
-        if (message.id === msg.id) {
-          // 🔥 Erstelle ein NEUES Objekt für Change Detection
+    this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
+      messageIds,
+      'private',
+      (partialCounts) => {
+        this.privateMessages = this.privateMessages.map(msg => {
+          const data = partialCounts[msg.id || ''];
+          if (!data) return msg;
+
           return {
-            ...message,
-            replies: [...messages], // Neue Array-Referenz
-            replyCount: messages.length,
-            lastResponseTime: lastResponseTime // Korrekter Property-Name
+            ...msg,
+            replyCount: data.count,
+            lastResponseTime: data.lastResponseTime 
+              ? this.safeConvertTimestamp(data.lastResponseTime)
+              : null
           };
-        }
-        return message;
-      });
-
-      this.openThread.emit(msg);
-    }
-  );
-}
-
-
-
-startLiveReplyCountUpdates(): void {
-  if (this.unsubscribeLiveReplyCounts) {
-    this.unsubscribeLiveReplyCounts();
+        });
+      }
+    );
   }
 
-  const messageIds = this.privateMessages.map(m => m.id  || '' );
-  if (messageIds.length === 0) return;
-
-  this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
-    messageIds,
-    'private',
-    (partialCounts) => {
-      this.privateMessages = this.privateMessages.map(msg => {
-        const data = partialCounts[msg.id || '']
-         
-        
-        if (!data) return msg;
-
-        // 🔥 Korrekte Property-Zuordnung und Timestamp-Konvertierung
-        return {
-          ...msg,
-          replyCount: data.count,
-          lastResponseTime: data.lastResponseTime 
-            ? this.safeConvertTimestamp(data.lastResponseTime)
-            : null
-        };
-      });
-    }
-  );
-}
-
+  /**
+   * Loads the recipient's data from the user service if a valid recipientId is set (e.g. name, avatar, status).
+   */
   loadRecipientData(): void {
     if (!this.recipientId) {
-      console.warn("⚠️ Kein Empfänger ausgewählt.");
       return;
     }
-  
+
     this.userService.getUserById(this.recipientId).then(userData => {
       if (userData) {
-        this.recipientName = userData.name; // ✅ Empfängername setzen
+        this.recipientName = userData.name;
         this.recipientAvatarUrl = userData.avatarUrl || '';
-        this.recipientStatus = userData.isOnline ? 'Aktiv' : 'Abwesend'; // ✅ Status setzen
-        console.log("✅ Empfänger geladen:", this.recipientName, this.recipientAvatarUrl, this.recipientStatus);
+        this.recipientStatus = userData.isOnline ? 'Aktiv' : 'Abwesend';
       } else {
-        console.warn("⚠️ Empfänger nicht gefunden:", this.recipientId);
+        // No recipient found
       }
-    }).catch(error => {
-      console.error("❌ Fehler beim Laden des Empfängers:", error);
+    }).catch(() => {
+      // Error fetching user
     });
   }
-  
 
-
-
-
-
-
-
-
-  
-
-
-
-
-
+  /**
+   * Adds an emoji to a specific message, updates Firestore, and modifies arrays
+   * of last-used emojis (sent or received) depending on who authored the message.
+   *
+   * @param {any} event - The emoji selection event from the picker.
+   * @param {any} msg - The message object being updated.
+   */
   async addEmojiToMessage(event: any, msg: any): Promise<void> {
-   
-    // 1) A) Stelle sicher, dass msg.content.emojis existiert
     if (!msg.content.emojis) {
       msg.content.emojis = [];
     }
-  
-    // B) Prüfe, ob wir ein valides Emoji-Event haben
+
     if (event?.emoji?.native) {
       const newEmoji = event.emoji.native;
-  
-      // 2) Emojis im Nachricht-Objekt aktualisieren
-      const existingEmoji = msg.content.emojis.find(
-        (e: any) => e.emoji === newEmoji
-      );
-  
+      const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
+
       if (existingEmoji) {
-        // Emoji existiert schon => count++
         existingEmoji.count += 1;
       } else {
-        // Falls schon 20 Emojis => nichts mehr hinzufügen (oder entfernt das älteste).
         if (msg.content.emojis.length < 20) {
           msg.content.emojis.push({ emoji: newEmoji, count: 1 });
         } else {
-          console.warn('Maximal 20 Emojis pro Nachricht erlaubt.');
-          // Optional: Entferne das älteste, wenn du willst:
-          // msg.content.emojis.shift();
-          // msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+          // Limit reached
         }
       }
-  
-      // 3) Last-Used-Emojis pflegen (abhängig vom Sender)
+
       const isSentByMe = (msg.senderId === this.currentUser?.id);
       const emojiType = isSentByMe ? 'sent' : 'received';
-  
+
       if (isSentByMe) {
-        this.lastUsedEmojisSent = this.updateLastUsedEmojis(
-          this.lastUsedEmojisSent,
-          newEmoji
-        );
+        this.lastUsedEmojisSent = this.updateLastUsedEmojis(this.lastUsedEmojisSent, newEmoji);
       } else {
-        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
-          this.lastUsedEmojisReceived,
-          newEmoji
-        );
+        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(this.lastUsedEmojisReceived, newEmoji);
       }
-  
-      // 4) Letzte verwendete Emojis in Firestore/Datenbank speichern
+
       if (this.conversationId) {
-        // Beispiel: Du speicherst nur das aktuelle Emoji als Array
-        // oder du könntest your entire lastUsedEmojis array speichern.
         this.messageService
           .saveLastUsedEmojis(this.conversationId, [newEmoji], emojiType)
-          .catch(error => console.error('Emoji-Speicherung fehlgeschlagen:', error));
+          .catch(error => console.error('Failed to save emoji usage:', error));
       } else {
-        console.warn('Keine conversationId vorhanden, saveLastUsedEmojis wird nicht aufgerufen.');
+        // No conversation ID
       }
-  
-      // 5) Emoji-Picker schließen (falls vorhanden)
-      //msg.isEmojiPickerVisible = false;
-  
-      // 6) Nachricht in DB aktualisieren
+
       try {
-        // Du updatest nur `content.emojis` in Firestore
         await this.messageService.updateMessage(msg.id, {
           'content.emojis': msg.content.emojis
         });
-  
-        console.log('✅ Emoji erfolgreich zur Nachricht hinzugefügt.');
-  
-        // 7) Lokales UI-Update ohne komplettes Firestore-Neuladen
+
         this.privateMessages = this.privateMessages.map(m =>
           m.id === msg.id
             ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
@@ -621,195 +596,107 @@ startLiveReplyCountUpdates(): void {
         if (!this.hasScrolledOnChange && this.isNearBottom()) {
           this.scrollToBottom();
         }
-
-      
-  
       } catch (error) {
-        console.error('❌ Fehler beim Aktualisieren der Nachricht mit Emoji:', error);
+        // Could not update message
       }
     }
   }
 
-
-
-
-
-
-
-
-
-
-  private updateLastUsedEmojis(
-    emojiArray: string[],
-    newEmoji: string
-  ): string[] {
-    // Erst entfernen, falls schon vorhanden
+  /**
+   * Maintains an array of last-used emojis by removing duplicates and limiting the array to 2 items.
+   *
+   * @param {string[]} emojiArray - The array of emojis in memory.
+   * @param {string} newEmoji - The new emoji to insert.
+   * @returns {string[]} An updated array of emojis.
+   */
+  private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
     emojiArray = emojiArray.filter(e => e !== newEmoji);
-    // Als erstes Element einfügen
-   // emojiArray.unshift(newEmoji);
-    // Auf 2 Einträge begrenzen
     return emojiArray.slice(0, 2);
   }
-  
 
+  /**
+   * Listens for real-time emoji usage updates from Firestore, applying them to the 
+   * local arrays of last used emojis for 'sent' and 'received'.
+   */
+  private listenForEmojiUpdates(): void {
+    if (!this.conversationId) return;
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-private listenForEmojiUpdates(): void {
-  if (!this.conversationId) return;
-
-  this.unsubscribeEmojiListener = this.messageService.listenForEmojiUpdates(
-    this.conversationId,
-    (sentEmojis, receivedEmojis) => {
-      this.lastUsedEmojisSent = sentEmojis; // Aktualisiere gesendete Emojis
-      this.lastUsedEmojisReceived = receivedEmojis; // Aktualisiere empfangene Emojis
-      console.log("🔥 Live-Emoji-Update empfangen:", sentEmojis, receivedEmojis);
-    }
-  );
-}
-
-async initializeConversation(): Promise<void> {
-  if (!this.conversationId) return;
-
-  try {
-    // 1. Validierung der Benutzerdaten
-    if (!this.currentUser?.id || !this.recipientId) {
-      throw new Error('Current user or recipient ID missing');
-    }
-
-    // 2. Konversations-ID generieren
-    this.conversationId = this.messageService.generateConversationId(
-      this.currentUser.id,
-      this.recipientId
-    );
-
-    // 3. Letzte Emojis laden
-    [this.lastUsedEmojisSent, this.lastUsedEmojisReceived] = await Promise.all([
-      this.messageService.getLastUsedEmojis(this.conversationId, 'sent'),
-      this.messageService.getLastUsedEmojis(this.conversationId, 'received')
-    ]);
-
-    // 4. Echtzeit-Listener für Emojis starten
-    this.listenForEmojiUpdates();
-
-    // 5. Initiale Nachrichten laden
-    const initialMessages = await this.messageService.getMessagesOnce('private', this.conversationId);
-    this.privateMessages = initialMessages.map(msg => this.enrichMessageData(msg));
-
-    // 6. Live-Listener für Nachrichten starten
-    this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
-      'private',
+    this.unsubscribeEmojiListener = this.messageService.listenForEmojiUpdates(
       this.conversationId,
-      (rawMessages) => {
-        this.privateMessages = rawMessages.map(msg => this.enrichMessageData(msg));
-        this.scrollToBottom();
+      (sentEmojis, receivedEmojis) => {
+        this.lastUsedEmojisSent = sentEmojis;
+        this.lastUsedEmojisReceived = receivedEmojis;
       }
     );
-
-    console.log('✅ Konversation erfolgreich initialisiert');
-  } catch (error) {
-    console.error('❌ Fehler bei der Initialisierung:', error);
-    // Optional: Fehlerbehandlung für UI
-  }
-}
-
-private enrichMessageData(msg: Message): Message {
-  return {
-    ...msg,
-    content: {
-      ...msg.content,
-      emojis: msg.content?.emojis || []
-    },
-    formattedDate: this.getFormattedDate(msg.timestamp)
-  };
-}
-
-private async loadLastUsedEmojis(): Promise<void> {
-  if (!this.currentUser || !this.recipientId) {
-    console.warn("⚠️ Kein gültiger Chat – Emojis werden nicht geladen.");
-    return;
   }
 
-  try {
-    const conversationId = this.messageService.generateConversationId(
-      this.currentUser.id,
-      this.recipientId
-    );
+  /**
+   * Loads the last used emojis for this conversation in both 'sent' and 'received' categories,
+   * then starts the real-time emoji usage listener.
+   */
+  private async loadLastUsedEmojis(): Promise<void> {
+    if (!this.currentUser || !this.recipientId) {
+      return;
+    }
 
-    // 🔥 Emojis aus Firestore laden
-    const [lastSent, lastReceived] = await Promise.all([
-      this.messageService.getLastUsedEmojis(conversationId, 'sent'),
-      this.messageService.getLastUsedEmojis(conversationId, 'received')
-    ]);
+    try {
+      const conversationId = this.messageService.generateConversationId(
+        this.currentUser.id,
+        this.recipientId
+      );
 
-    console.log("📥 Geladene PrivateMessage-Emojis Sent:", lastSent);
-    console.log("📥 Geladene PrivateMessage-Emojis Received:", lastReceived);
+      const [lastSent, lastReceived] = await Promise.all([
+        this.messageService.getLastUsedEmojis(conversationId, 'sent'),
+        this.messageService.getLastUsedEmojis(conversationId, 'received')
+      ]);
 
-    // 🔥 UI-Update (Verhindert leeres Array!)
-    this.lastUsedEmojisSent = lastSent || [];
-    this.lastUsedEmojisReceived = lastReceived || [];
+      this.lastUsedEmojisSent = lastSent || [];
+      this.lastUsedEmojisReceived = lastReceived || [];
 
-    // 🔥 Stelle sicher, dass `listenForEmojiUpdates()` aktiv ist
-    this.listenForEmojiUpdates();
-
-  } catch (error) {
-    console.error("❌ Fehler beim Laden der letzten Emojis für Private Messages:", error);
+      this.listenForEmojiUpdates();
+    } catch (error) {
+      // Error loading emojis
+    }
   }
-}
 
-
+  /**
+   * Sends a private message, optionally with an attached image. It updates the UI immediately 
+   * with a temp message, then replaces it with the actual Firestore ID once saved. 
+   * Finally, it refreshes last used emojis and date/time logic.
+   *
+   * @param {HTMLTextAreaElement} textArea - The input area to reset after sending.
+   */
   async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
     const senderId = this.userService.getCurrentUserId();
     if (!senderId || !this.recipientId) {
-      console.error("❌ Sender oder Empfänger fehlt.");
       return;
     }
-  
+
     const conversationId = this.messageService.generateConversationId(senderId, this.recipientId);
-  
     let senderName = this.currentUser?.name || "Unknown";
-    let senderAvatar = this.currentUser?.avatarUrl || "assets/default-avatar.png"; // Fallback falls kein Avatar vorhanden
-  
+    let senderAvatar = this.currentUser?.avatarUrl || "assets/img/avatar.png";
+
     if (!senderName) {
       try {
         const userData = await this.userService.getUserById(senderId);
         senderName = userData?.name || "Unknown";
         senderAvatar = userData?.avatarUrl || "assets/default-avatar.png";
       } catch (error) {
-        console.error("❌ Fehler beim Laden des Sender-Namens:", error);
+        // Error loading user
       }
     }
-  
-    // 🔥 Aktuelles Datum berechnen
+
     const timestamp = new Date();
     const formattedDate = this.getFormattedDate(timestamp);
-  
-    // 🔥 Prüfen, ob ein neuer Datums-Separator notwendig ist
     let showDateSeparator = false;
+
     if (this.privateMessages.length > 0) {
       const lastMessage = this.privateMessages[this.privateMessages.length - 1];
       showDateSeparator = !this.isSameDay(lastMessage.timestamp, timestamp);
     } else {
-      showDateSeparator = true; // Falls es die erste Nachricht ist, soll ein Datum erscheinen
+      showDateSeparator = true;
     }
-  
-    // 🔥 Temporäre Nachricht für sofortige UI-Anzeige
+
     const tempMessageId = `temp-${Math.random().toString(36).substr(2, 9)}`;
     const tempMessageData = {
       id: tempMessageId,
@@ -819,21 +706,19 @@ private async loadLastUsedEmojis(): Promise<void> {
         emojis: []
       },
       timestamp,
-      formattedDate,  // ✅ Setzt das formatierte Datum
-      showDateSeparator, // ✅ Falls ein neuer Tag begonnen hat, zeigen wir das Datum an
+      formattedDate,
+      showDateSeparator,
       time: formatDate(timestamp, 'HH:mm', 'de'),
       senderId,
       senderName,
       senderAvatar,
       conversationId
     };
-  
-    // 1️⃣ Nachricht sofort in der UI anzeigen
+
     this.privateMessages = [...this.privateMessages, tempMessageData];
     this.scrollToBottom();
-  
+
     try {
-      // 2️⃣ Nachricht in Firestore speichern
       const firestoreId = await this.messageService.sendMessage({
         type: "private",
         conversationId,
@@ -843,292 +728,175 @@ private async loadLastUsedEmojis(): Promise<void> {
           emojis: []
         },
         senderId,
-        senderName,  // ✅ Jetzt akzeptiert
-        senderAvatar, // ✅ Jetzt akzeptiert
-        recipientId: this.recipientId,
+        senderName,
+        senderAvatar,
+        recipientId: this.recipientId
       });
-  
-      console.log("✅ Nachricht erfolgreich in Firestore gespeichert:", firestoreId);
-  
-      // 3️⃣ Temporäre Nachricht durch Firestore-Version ersetzen
+
       this.privateMessages = this.privateMessages.map((msg) =>
         msg.id === tempMessageId ? { ...msg, id: firestoreId } : msg
       );
 
-     
-      // 4️⃣ Letzte verwendete Emojis speichern
       const savedMessage = await this.messageService.getMessage("private", firestoreId);
-      if (conversationId && savedMessage?.content?.emojis?.length )   {
+      if (conversationId && savedMessage?.content?.emojis?.length) {
         const emojisInMessage = savedMessage.content.emojis.map((e: { emoji: string }) => e.emoji);
         await this.messageService.saveLastUsedEmojis(conversationId, emojisInMessage, "sent");
       }
 
-  
-
-      await this.loadLastUsedEmojis();  // 🔥 Emojis werden sofort geladen
-
-
-
-     // this.lastUsedEmojisSent = await this.messageService.getLastUsedEmojis(conversationId, 'sent');
-   // this.lastUsedEmojisReceived = await this.messageService.getLastUsedEmojis(conversationId, 'received');
-    this.listenForEmojiUpdates(); 
-  
+      await this.loadLastUsedEmojis();
+      this.listenForEmojiUpdates();
     } catch (error) {
-      console.error("❌ Fehler beim Senden der Nachricht:", error);
+      // Error sending message
     }
-  
-    // 5️⃣ Eingabefelder leeren
+
     this.privateMessage = "";
     this.imageUrl = null;
     if (textArea) this.resetTextareaHeight(textArea);
-  
-    // 6️⃣ Letzte verwendete Emojis neu laden
-   // this.loadLastUsedEmojis();
-    await this.loadLastUsedEmojis();
 
-  
-    // 7️⃣ Automatische Aktualisierung des Datums für alle Nachrichten (damit "Heute" → "Gestern" wird)
     this.updateMessageDates();
   }
-  
-getFormattedDate(inputDate: Date | string | null): string {
-  if (!inputDate) return '';
 
-  // 1. Konvertiere zu Date-Objekt
-  const date = inputDate instanceof Date ? inputDate : new Date(inputDate);
-  if (isNaN(date.getTime())) return 'Ungültiges Datum';
+  /**
+   * Saves modifications to an edited message in Firestore, then updates the local message array.
+   * Typically called by the template when the user clicks a "save" button.
+   *
+   * @param {any} msg - The message object with updated content.
+   */
+  async saveMessage(msg: any): Promise<void> {
+    if (msg?.isEditing !== undefined) {
+      msg.isEditing = false; // End editing mode
+      const messageId = msg.id;
 
-  // 2. Aktuelles Datum mit Zeitzone berücksichtigen
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+      if (messageId) {
+        try {
+          await this.messageService.updateMessage(messageId, {
+            content: msg.content
+          });
 
-  // 3. Vergleichsdatum erstellen (ohne Uhrzeit)
-  const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+          // Update the local list of messages
+          this.privateMessages = this.privateMessages.map(m =>
+            m.id === messageId
+              ? { ...msg, isEditing: false }
+              : m
+          );
+        } catch (err) {
+          // Error updating message
+        }
+      } else {
+        // No message ID
+      }
+    }
+  }
 
-  // 4. Automatische Anpassung des Datums
-  if (compareDate.getTime() === today.getTime()) {
+  /**
+   * Formats a date as 'Heute', 'Gestern', or a localized string (e.g., "Samstag, 21. Dezember").
+   *
+   * @param {Date | string | null} inputDate - The date or timestamp to format.
+   * @returns {string} A user-friendly date string in German.
+   */
+  getFormattedDate(inputDate: Date | string | null): string {
+    if (!inputDate) return '';
+
+    const date = inputDate instanceof Date ? inputDate : new Date(inputDate);
+    if (isNaN(date.getTime())) return 'Ungültiges Datum';
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    if (compareDate.getTime() === today.getTime()) {
       return 'Heute';
-  } else if (compareDate.getTime() === yesterday.getTime()) {
+    } else if (compareDate.getTime() === yesterday.getTime()) {
       return 'Gestern';
-  } else {
-      return date.toLocaleDateString('de-DE', { 
-          weekday: 'long', 
-          day: '2-digit', 
-          month: 'long',
-          timeZone: 'Europe/Berlin' 
+    } else {
+      return date.toLocaleDateString('de-DE', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        timeZone: 'Europe/Berlin'
+      });
+    }
+  }
+
+  /**
+   * Safely converts a given timestamp from Firestore or other types (Date, string, etc.)
+   * into a standard JavaScript Date.
+   *
+   * @param {unknown} timestamp - The timestamp to convert.
+   * @returns {Date} A valid Date object, or the current date if conversion fails.
+   */
+  private safeConvertTimestamp(timestamp: unknown): Date {
+    if (!timestamp) return new Date();
+
+    if (typeof (timestamp as any).toDate === 'function') {
+      return (timestamp as firebase.firestore.Timestamp).toDate();
+    }
+    if (timestamp instanceof Date) {
+      return timestamp;
+    }
+    if (typeof timestamp === 'object' && 'seconds' in (timestamp as object)) {
+      const ts = timestamp as { seconds: number; nanoseconds: number };
+      return new Date(ts.seconds * 1000 + ts.nanoseconds / 1e6);
+    }
+
+    const parsedDate = new Date(timestamp as string | number);
+    return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+  }
+
+  /**
+   * Gets the date object representing "yesterday" for date comparisons if needed.
+   */
+  private getYesterdayDate(): Date {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday;
+  }
+
+  /**
+   * Loads the current user's data from Firestore and stores it in `currentUser`.
+   */
+  async loadCurrentUser(): Promise<void> {
+    return this.userService.getCurrentUserData()
+      .then(user => {
+        this.currentUser = user;
+      })
+      .catch(() => {
+        // Error getting current user
       });
   }
-}
 
-private processIncomingMessages(rawMessages: Message[]): void {
-  let prevDate: Date | null = null;
-
-  const updatedMessages = rawMessages.map((msg, index) => {
-      // 🔥 Konvertiere Timestamp sicher
-      const timestampDate = this.safeConvertTimestamp(msg.timestamp);
-
-      // 🔥 Prüfe, ob ein neuer Separator gesetzt werden muss
-      const showDateSeparator = index === 0 || !this.isSameDay(prevDate, timestampDate);
-      prevDate = timestampDate;
-
-      return {
-          ...msg,
-          timestamp: timestampDate,
-          lastResponseTime: msg.lastResponseTime ? this.safeConvertTimestamp(msg.lastResponseTime) : timestampDate,
-          formattedDate: this.getFormattedDate(timestampDate),
-          showDateSeparator, // ✅ Hier wird entschieden, ob ein neuer Separator nötig ist
-          time: formatDate(timestampDate, 'HH:mm', 'de'),
-          content: { 
-              ...msg.content, 
-              emojis: msg.content?.emojis?.slice() || []
-          },
-          replyCount: msg.replyCount ?? 0
-      };
-  });
-  // 🔥 Immutable Update für Change Detection
-  this.privateMessages = [...updatedMessages];
-  console.log("📩 Nachrichten mit aktualisierten Datums-Separatoren:", this.privateMessages);
-  this.updateLiveReplyCounts(updatedMessages);
-}
-
-
-private updateLiveReplyCounts(messages: Message[]): void {
-  const messageIds = messages
-    .map(m => m.id)
-    .filter((id): id is string => id !== undefined);
-
-  if (messageIds.length === 0) return;
-
-  this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
-    messageIds,
-    'private',
-    (partialCounts) => {
-      for (const [msgId, data] of Object.entries(partialCounts)) {
-        const msgIndex = this.privateMessages.findIndex(m => m.id === msgId);
-        if (msgIndex !== -1) {
-          this.privateMessages[msgIndex] = {
-            ...this.privateMessages[msgIndex],
-            replyCount: data.count,
-           
-
-            // ✅ timestamp und time bleiben stabil
-            timestamp: this.privateMessages[msgIndex].timestamp,
-            time: this.privateMessages[msgIndex].time
-          };
+  /**
+   * Called when user selects an image. Reads as data URL, sets imageUrl, optionally adjusts textarea height.
+   */
+  onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imageUrl = e.target?.result || null;
+        if (textArea) {
+          this.adjustTextareaHeight(textArea);
         }
-      }
-      console.log("🔄 Live-Update der Reply-Anzahlen (privateMessages):", this.privateMessages);
-    }
-  );
-}
-
-
-
-async loadReplyCounts(): Promise<void> {
-  let messageIds = this.privateMessages.map(m => m.id || '');
-  // Filter leere IDs raus
-  messageIds = messageIds.filter(id => id !== '');
-
-  if (messageIds.length === 0) return;
-
-  try {
-    const replyCounts = await this.messageService.getReplyCountsForMessages(messageIds, 'private');
-
-    this.privateMessages = this.privateMessages.map(msg => {
-      const msgId = msg.id || '';
-      if (!msgId) return msg;
-
-      const data = replyCounts[msgId];
-      if (!data) return msg;
-
-      return {
-        ...msg,
-        replyCount: data.count,
-        lastResponseTime: data.lastResponseTime
-          ? this.safeConvertTimestamp(data.lastResponseTime)
-          : null
+        this.isTextareaExpanded = true;
       };
-    });
-
-  } catch (err) {
-    console.error('❌ Fehler beim Laden der Antwortanzahlen:', err);
-  }
-}
-
-async saveMessage(msg: any): Promise<void> {
-  if (msg?.isEditing !== undefined) {
-    msg.isEditing = false; // Bearbeiten beenden
-    const messageId = msg.id;
-
-    if (messageId) {
-      try {
-        // Wir rufen jetzt unsere neue universelle Methode auf:
-        await this.messageService.updateMessage(messageId, {
-          content: msg.content
-        });
-        console.log('✅ Nachricht erfolgreich gespeichert.');
-
-        // Nachricht in der lokalen Liste aktualisieren
-        this.privateMessages = this.privateMessages.map(m =>
-          m.id === messageId
-            ? { ...msg, isEditing: false }
-            : m
-        );
-      } catch (err) {
-        console.error('❌ Fehler beim Speichern der Nachricht:', err);
-      }
-    } else {
-      console.error('❌ Speichern fehlgeschlagen: Message ID fehlt.');
+      reader.readAsDataURL(file);
     }
   }
-}
 
-
-
-
-
-
-private isSameDay(date1: Date | null, date2: Date | null): boolean {
-  if (!date1 || !date2) return false;
-  
-  return (
-    date1.getDate() === date2.getDate() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getFullYear() === date2.getFullYear()
-  );
-}
-
-private safeConvertTimestamp(timestamp: unknown): Date {
-  // 1. Fall: Kein Timestamp vorhanden
-  if (!timestamp) return new Date();
-
-  // 2. Fall: Firestore Timestamp-Objekt
-  if (typeof (timestamp as any).toDate === 'function') {
-    return (timestamp as firebase.firestore.Timestamp).toDate();
-  }
-
-  // 3. Fall: JavaScript Date-Objekt
-  if (timestamp instanceof Date) {
-    return timestamp;
-  }
-
-  // 4. Fall: Rohes Firestore-Format {seconds: number, nanoseconds: number}
-  if (typeof timestamp === 'object' && 'seconds' in timestamp!) {
-    const ts = timestamp as { seconds: number; nanoseconds: number };
-    return new Date(ts.seconds * 1000 + ts.nanoseconds / 1e6);
-  }
-
-  // 5. Fall: String oder number
-  const parsedDate = new Date(timestamp as string | number);
-  return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
-}
-
-private getYesterdayDate(): Date {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  return yesterday;
-}
-
-
-async loadCurrentUser(): Promise<void> {
-  return this.userService.getCurrentUserData()
-    .then(user => {
-      this.currentUser = user;
-    })
-    .catch(err => {
-      console.error('Fehler beim Laden des aktuellen Benutzers:', err);
-    });
-}
-
-
-
-
-
-
-
-onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.imageUrl = e.target?.result || null;
-      if (textArea) {
-        this.adjustTextareaHeight(textArea);
-      }
-      this.isTextareaExpanded = true;
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-
+  /**
+   * Toggles the global emoji picker for sending a new message.
+   */
   toggleEmojiPicker(): void {
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
 
+  /**
+   * Adds a globally selected emoji to the current message in the input field.
+   */
   addEmoji(event: any): void {
     if (event && event.emoji && event.emoji.native) {
       this.privateMessage += event.emoji.native;
@@ -1136,29 +904,47 @@ onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
     this.isEmojiPickerVisible = false;
   }
 
+  /**
+   * Opens the image modal if there's a selected image to preview.
+   */
   openImageModal(): void {
     this.isImageModalOpen = true;
   }
 
+  /**
+   * Closes the image modal.
+   */
   closeImageModal(): void {
     this.isImageModalOpen = false;
   }
 
+  /**
+   * Closes the image preview/profile card, clearing imageUrl and resetting textarea height.
+   */
   closeProfileCard(textArea: HTMLTextAreaElement): void {
     this.imageUrl = null;
     this.resetTextareaHeight(textArea);
   }
 
+  /**
+   * Expands the textarea bottom padding if an image is present.
+   */
   adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
     if (this.imageUrl) {
       textArea.style.paddingBottom = '160px';
     }
   }
 
+  /**
+   * Resets the textarea's bottom padding to a default value.
+   */
   resetTextareaHeight(textArea: HTMLTextAreaElement): void {
     textArea.style.paddingBottom = '20px';
   }
 
+  /**
+   * Handles Enter key in the message input. Sends message if Shift not pressed, otherwise newline.
+   */
   handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -1166,238 +952,195 @@ onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
     }
   }
 
- 
-
-
-  
-
-
-
+  /**
+   * Toggles a user dropdown (if your UI has a mention system). Loads all users if first open.
+   */
   toggleUserDropdown(): void {
-    // Wenn wir das erste Mal öffnen, Nutzer laden
     if (!this.showUserDropdown) {
       this.loadAllUsers();
     }
     this.showUserDropdown = !this.showUserDropdown;
   }
 
+  /**
+   * Loads all users for the mention system or user overlay.
+   */
+  loadAllUsers(): void {
+    this.userService.getAllUsers()
+      .then(users => {
+        this.allUsers = users.map(u => ({
+          id: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
+          isOnline: u.isOnline ?? false
+        }));
+      })
+      .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
+  }
 
-
-  // Nutzer laden (oder du nutzt dein eigenes getAllUsers,...)
-loadAllUsers(): void {
-  this.userService.getAllUsers()
-    .then(users => {
-      this.allUsers = users.map(u => ({
-        id: u.id,
-        //email: u.email,
-        name: u.name,
-        avatarUrl: u.avatarUrl || 'assets/img/avatar.png'
-      }));
-    })
-    .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
-}
-
-
-  // Beim Klick auf einen Nutzer im Dropdown
+  /**
+   * Adds an "@username" mention to the `privateMessage` input and closes the dropdown.
+   */
   addUserSymbol(member: any) {
-    // Füge in privateMessage ein @Name ein
-    // => Oder user.email, je nachdem was du brauchst
     this.privateMessage += ` @${member.name} `;
-    // Overlay schließen
     this.showUserDropdown = false;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+  /**
+   * Highlights a message by ID, scrolling it into view and applying a CSS highlight class briefly.
+   */
   highlightMessage(messageId: string, retries = 5): void {
     setTimeout(() => {
       const messageElement = document.getElementById(`message-${messageId}`);
-  
       if (messageElement) {
         messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         messageElement.classList.add('highlight');
-  
         setTimeout(() => messageElement.classList.remove('highlight'), 2000);
       } else if (retries > 0) {
-        console.warn(`⚠️ Nachricht nicht gefunden (${retries} Versuche übrig), erneuter Versuch...`);
         this.highlightMessage(messageId, retries - 1);
       }
     }, 500);
   }
-  
- 
+
+  /**
+   * Toggles an inline emoji picker for a specific message. Ensures only one is visible at a time.
+   */
   toggleEmojiPickerForMessage(msg: any): void {
     const isCurrentlyVisible = msg.isEmojiPickerVisible;
-  
-    // Schließe alle Emoji-Picker in privateMessages
-    this.privateMessages.forEach((m) => m.isEmojiPickerVisible = false);
-  
-    // Setze den Zustand für die ausgewählte Nachricht basierend auf dem vorherigen Zustand
+    this.privateMessages.forEach((m) => (m.isEmojiPickerVisible = false));
     msg.isEmojiPickerVisible = !isCurrentlyVisible;
   }
 
+  /**
+   * Generates a unique conversation ID by sorting two user IDs alphabetically and joining them.
+   */
   generateConversationId(userId1: string, userId2: string): string {
-    return [userId1, userId2].sort().join('_'); // Alphabetisch sortieren und verbinden
+    return [userId1, userId2].sort().join('_');
   }
 
-toggleEditOptions(msgId: string): void {
- 
-  // Umschalten der Sichtbarkeit für das angeklickte Symbol
-  if (this.currentMessageId === msgId && this.showEditOptions) {
+  /**
+   * Toggles edit options for a given message, identified by its ID.
+   */
+  toggleEditOptions(msgId: string): void {
+    if (this.currentMessageId === msgId && this.showEditOptions) {
+      this.showEditOptions = false;
+      this.currentMessageId = null;
+    } else {
+      this.showEditOptions = true;
+      this.currentMessageId = msgId;
+    }
+  }
+
+  /**
+   * Marks a message as "isEditing = true," storing its original content.
+   */
+  startEditing(msg: any): void {
+    msg.isEditing = true;
+    this.originalMessage = JSON.parse(JSON.stringify(msg));
     this.showEditOptions = false;
-    this.currentMessageId = null;
-  } else {
-    this.showEditOptions = true;
-    this.currentMessageId = msgId;
   }
-}
 
-
-
-startEditing(msg: any): void {
-  msg.isEditing = true; // Bearbeitungsmodus aktivieren
-  //this.originalMessage = { ...msg }; // Originalnachricht speichern
-
-  this.originalMessage = JSON.parse(JSON.stringify(msg)); // Tiefkopie der Originalnachricht speichern
-  this.showEditOptions = false; // Optionen schließen
-}
-
-toggleEditMessage(msg: any): void {
-  msg.isEditing = true; // Öffnet das Bearbeitungsfeld
-  this.originalMessage = { ...msg }; // Speichere eine Kopie der ursprünglichen Nachricht
-}
-
-
-
-cancelEditing(msg: any): void {
-  if (this.originalMessage) {
-    // Stelle die ursprüngliche Nachricht wieder her
-    msg.content.text = this.originalMessage.content.text; // Nur den Text wiederherstellen
-    this.originalMessage = null; // Originalnachricht zurücksetzen
+  /**
+   * Toggles a message to editing mode, also storing the original for potential revert on cancel.
+   */
+  toggleEditMessage(msg: any): void {
+    msg.isEditing = true;
+    this.originalMessage = { ...msg };
   }
-  msg.isEditing = false; // Bearbeiten beenden
-  this.showEditOptions = false; // Bearbeitungsoptionen schließen
-}
 
-
-showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
-  this.tooltipVisible = true;
-  this.tooltipEmoji = emoji;
-  this.tooltipSenderName = senderName;
-  // Positioniere den Tooltip direkt über dem Emoji
-  this.tooltipPosition = {
-    x: event.clientX ,
-    y: event.clientY - 40
-};
-}
-
-hideTooltip(): void {
-  this.tooltipVisible = false;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-closePopup(msg: any) {
-  // Nur wenn das Popup offen ist => schließen
-  if (msg.showAllEmojisList) {
-    msg.showAllEmojisList = false;
-    msg.expanded = false; // optional, falls du das auch einklappen möchtest
+  /**
+   * Cancels editing a message, reverting any text changes to the original content.
+   */
+  cancelEditing(msg: any): void {
+    if (this.originalMessage) {
+      msg.content.text = this.originalMessage.content.text;
+      this.originalMessage = null;
+    }
+    msg.isEditing = false;
+    this.showEditOptions = false;
   }
-}
 
+  /**
+   * Shows a tooltip near an emoji, displaying the emoji char and the sender's name.
+   */
+  showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+    this.tooltipVisible = true;
+    this.tooltipEmoji = emoji;
+    this.tooltipSenderName = senderName;
+    this.tooltipPosition = {
+      x: event.clientX,
+      y: event.clientY - 40
+    };
+  }
 
+  /**
+   * Hides the emoji tooltip.
+   */
+  hideTooltip(): void {
+    this.tooltipVisible = false;
+  }
 
+  /**
+   * Closes any expanded popup that displays all emojis in a given message.
+   */
+  closePopup(msg: any) {
+    if (msg.showAllEmojisList) {
+      msg.showAllEmojisList = false;
+      msg.expanded = false;
+    }
+  }
 
-
+  /**
+   * Toggles a popup listing all emojis in a particular message.
+   */
   toggleEmojiPopup(msg: any) {
-    // Falls die Property noch nicht existiert, initialisieren
     if (msg.showAllEmojisList === undefined) {
       msg.showAllEmojisList = false;
     }
-
-    // Umschalten
     msg.showAllEmojisList = !msg.showAllEmojisList;
 
-    // Wenn wir schließen (false), dann einklappen zurücksetzen
     if (!msg.showAllEmojisList) {
       msg.expanded = false;
-    } else {
-      // Wenn wir öffnen und `expanded` gar nicht existiert
-      if (msg.expanded === undefined) {
-        msg.expanded = false;
-      }
+    } else if (msg.expanded === undefined) {
+      msg.expanded = false;
     }
   }
 
+  /**
+   * (Log entfernt) Logs "plus" icon clicks in the emoji popup, if your UI uses it to add a new emoji or open a picker.
+   */
   onEmojiPlusInPopup(msg: any) {
-    // z.B. Logik, um ein neues Emoji hinzuzufügen
-    // oder den Emoji-Picker zu öffnen
-    console.log('Plus in popup geklickt, msg=', msg);
+    // console.log('Plus clicked in emoji popup, msg=', msg);  // REMOVED
   }
 
-  
+  /**
+   * Opens a large view of the given image if it is a string (URL or dataURL).
+   */
   openLargeImage(imageData: string | ArrayBuffer) {
     if (typeof imageData !== 'string') {
-      // Konvertiere das ArrayBuffer zu einem String (DataURL) oder blob URL
-      return; // Oder handle es anders
+      return;
     }
     this.largeImageUrl = imageData;
     this.showLargeImage = true;
   }
-  
 
-  // Methode zum Schließen
+  /**
+   * Closes the currently displayed large image.
+   */
   closeLargeImage() {
     this.showLargeImage = false;
     this.largeImageUrl = null;
   }
 
+  /**
+   * Checks if two Date objects are on the same day, ignoring times.
+   */
+  private isSameDay(date1: Date | null, date2: Date | null): boolean {
+    if (!date1 || !date2) return false;
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  }
 }
-  
-

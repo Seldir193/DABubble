@@ -19,14 +19,19 @@
       </div>
 
       <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-        <div class="input-container icon-wrapper " [ngClass]="{ 'filled': filledStates['nameFilled'] }" >
-          <img 
-          [src]="filledStates['nameFilled'] 
-                 ? 'assets/img/person-black.png' 
-                 : 'assets/img/person.png'" 
-          alt="Name Icon"
+        <div
+          class="input-container icon-wrapper"
+          [ngClass]="{ filled: filledStates['nameFilled'] }"
         >
-        
+          <img
+            [src]="
+              filledStates['nameFilled']
+                ? 'assets/img/person-black.png'
+                : 'assets/img/person.png'
+            "
+            alt="Name Icon"
+          />
+
           <input
             [ngClass]="{
               'name-icon': true,
@@ -47,14 +52,18 @@
           Bitte fülle das Feld aus.
         </div>
 
-        <div class="input-container icon-wrapper "   [ngClass]="{ 'filled': filledStates['emailFilled'] }">
-          <img 
-          [src]="filledStates['emailFilled'] 
-                 ? 'assets/img/black-mail.png' 
-                 : 'assets/img/mail.png'" 
-          alt="Email Icon"
+        <div
+          class="input-container icon-wrapper"
+          [ngClass]="{ filled: filledStates['emailFilled'] }"
         >
-
+          <img
+            [src]="
+              filledStates['emailFilled']
+                ? 'assets/img/black-mail.png'
+                : 'assets/img/mail.png'
+            "
+            alt="Email Icon"
+          />
 
           <input
             [ngClass]="{
@@ -73,22 +82,22 @@
           <ng-container *ngIf="errorMessage">
             {{ errorMessage }}
           </ng-container>
-        
+
           <ng-container *ngIf="!errorMessage">
             <ng-container *ngIf="myForm.get('email')?.touched">
               <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
                 *Bitte füllen Sie das E-Mail-Feld aus.
               </ng-container>
-        
-          <ng-container
-            *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
-          >
-            Diese E-Mail-Adresse ist leider ungültig.
-          </ng-container>
-          </ng-container>
+
+              <ng-container
+                *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
+              >
+                Diese E-Mail-Adresse ist leider ungültig.
+              </ng-container>
+            </ng-container>
           </ng-container>
         </div>
-      
+
         <div class="input-container">
           <input
             [ngClass]="{

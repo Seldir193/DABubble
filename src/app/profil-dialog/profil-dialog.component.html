@@ -1,22 +1,19 @@
-
-<!-- Option A: Mit mat-dialog-content -->
-
-
-<div class="profile-card-container" >  
+<div class="profile-card-container">
   <div class="profile-card">
     <div class="profil-container">
       <h2>Profil</h2>
-  
-      <!-- Schließen-Icon -->
+
       <div class="img-wrapper">
-        <img (click)="closeDialog()" src="assets/img/close.png" alt="Schließen">
+        <img
+          (click)="closeDialog()"
+          src="assets/img/close.png"
+          alt="Schließen"
+        />
       </div>
     </div>
-  
-    <!-- Hauptinhalt: Avatar, Name, E-Mail, Status -->
+
     <div class="profile-avatar">
-      <!-- Profilansicht: Nur Bild anzeigen -->
-      <img 
+      <img
         [src]="data.userAvatarUrl || 'assets/img/avatar.png'"
         alt="User Avatar"
       />
@@ -25,49 +22,50 @@
     <div class="profile-info">
       <div class="profil-box">
         <div class="profil-settings">
-          <p><strong>{{ data.userName }}</strong></p>
-          
-        </div>
-  
-        <div class="online-aktiv-passiv">
-          <img 
-            *ngIf="data.userStatus === 'Aktiv'"
-            src="assets/img/online.png"
-            alt="Online"
-          />
-          <img 
-            *ngIf="data.userStatus === 'Abwesend'"
-            src="assets/img/offline.png"
-            alt="Offline"
-          />
-          <p [ngStyle]="{ color: data.userStatus === 'Abwesend' ? 'gray' : '#92C83E' }">
-            {{ data.userStatus }}
+          <p>
+            <strong>{{ data.userName }}</strong>
           </p>
         </div>
+
+        <div class="online-aktiv-passiv">
+          <img
+            *ngIf="userStatus === 'Aktiv'"
+            src="assets/img/online.png"
+            
+            alt="Online"
+          />
+          <img
+            *ngIf="userStatus === 'Abwesend'"
+            src="assets/img/offline.png"
+            
+            alt="Offline"
+          />
+          <p
+          [ngStyle]="{
+            color: userStatus === 'Abwesend' ? 'gray' : '#92C83E'
+          }"
+        >
+          {{ userStatus }}
+        </p>
+        
+        </div>
       </div>
-      
-  
+
       <div class="profil-email-box">
         <div class="email-container">
-          <img src="assets/img/pmail.png">
+          <img src="assets/img/pmail.png" />
           <p>E-Mail-Adresse</p>
         </div>
         <p class="secondary-text">{{ data.userEmail }}</p>
       </div>
     </div>
-    
-  
-    <!-- Beispiel-Button unten -->
-    <div class="button-anmelden ">
-      <img src="assets/img/nachricht.png">
+
+    <div class="button-anmelden">
+      <img src="assets/img/nachricht.png" />
       <div (click)="sendMessage()">Nachricht</div>
     </div>
-
-     
-
-    </div>
-  
   </div>
+</div>
 
 
 

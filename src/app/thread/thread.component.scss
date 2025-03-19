@@ -1,672 +1,465 @@
 @import "./../../styles.scss";
 
 .entwickler-box {
-    cursor: pointer;
-    height: auto;
-    box-shadow: 0px 2px 10px 0px #00000014;
-    //padding: 25px 45px;
-    padding: 32px 45px 20px;
-    background-color: white;
-    border-radius: 30px 30px 0 0;
-  
-    .channel-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-  
-   .static-member {
-    background-color: $lightblue;
-    height: 40px;
-    width: 40px;
-    display: flex;
-    align-items: center;
-    border-radius: 50%;
-    justify-content: center;
-  
-    img {
-      border-radius: 50%;
-      transition: filter 0.3s ease; /* Übergang für den Filter-Effekt */
-     
-      &:hover {
-        filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-       scale:1.1;
-      }
+  cursor: pointer;
+  height: auto;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  padding: 32px 45px 20px;
+  background-color: white;
+  border-radius: 30px 30px 0 0;
+}
+
+.channel-input-box {
+  height: calc(100vh - 19.3rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.channel-box {
+  padding: 45px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow-x: hidden;
+  flex-grow: 1;
+
+  .message-list {
+    overflow-x: hidden;
+    flex-grow: 1;
+
+    .message-time {
+      font-size: 14px;
+      font-weight: 400;
+      color: $lightgray;
     }
-  }
-  }
-  
-    .office-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      border-radius: 30px;
-      height: 45px;
-  
+
+    .sender-name {
+      font-size: 18px;
+      font-weight: 700;
+
       &:hover {
-        background-color: $lightblue;
-        border-radius: 100px;
-  
-        img {
-          filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-        }
-  
-        h1 {
-          color: $hoverColor;
-          font-size: 24px;
-          font-weight: 700;
-          transition: color 0.3s ease, font-size 0.3s ease;
-        }
-      }
-  
-      h1 {
-        font-size: 24px;
-        font-weight: 700;
-      }
-    }
-  
-    .avatar-list {
-      display: flex;
-      padding-right:10px;
-      margin-left: auto;
-      transition: background-color 0.3s ease,width 0.3s ease, border-radius 0.3s ease;
-  
-      &:hover {
-        background-color: $lightblue;
-        border-radius: 100px;
-      }
-  
-      li {
-        list-style: none;
-        display: flex;
-        align-items: center;
-  
-        img.avatar {
-          height: 40px;
-          width: 40px;
-          border-radius: 50%;
-          position: relative;
-          margin-left: -15px;  /* Negative margin für die Überlappung der Avatare */
-          z-index: 1;  /* Überlappungssteuerung */
-          border: 2px solid white; /* Optional: Umrandung */
-        }
-        /* Zähler für zusätzliche Mitglieder */
-        .member-counter {
-          margin-left: 10px;  /* Abstand zum letzten Avatar */
-          margin-right: 10px; /* Abstand zum `member.png` */
-          font-size: 14px;
-          color: #666;
-          display: flex;
-          align-items: center;
-        }
-      }
-    }
-  }
-  
-  .channel-input-box {
-    height: calc(100vh - 19.3rem);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .channel-box {
-    padding: 45px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    overflow-x:hidden;
-    flex-grow: 1; 
-  
-    .message-list {
-      overflow-x: hidden;
-      flex-grow: 1;
-  
-      
-      .message-time {
-        font-size: 14px;
-        font-weight:400;
-        color: $lightgray;
-      }
-      
-    .sender-name{
-      font-size:18px;
-      font-weight:700;
-  
-      &:hover{
         color: $middleblue;
         cursor: pointer;
       }
     }
-      .sent-message-container {
-        position: relative;
-
-
-        display: flex;
-        justify-content: flex-end; // Gesendete Nachrichten rechts positionieren
-        //padding:25px;
-        transition: background-color 0.3s ease, transform 0.3s ease ;
-  
-        .sent-image,.avatar{
-          width:50px;
-          height:50px;
-         }
-       
-        &:hover {
-          background-color: $lightblue;
-      
-          .emoji-box {
-            display: flex;
-            align-items: center;
-  
-            
-      position: absolute;
-      top: -20px; 
-          }
-      }
-  
-        .message-container {
-          display: flex;
-          align-items: flex-start;
-          gap: 15px;
-          flex-direction: row-reverse; // Avatar rechts, Nachricht links
-   //   margin-bottom: 15px;
-      padding: 25px;
+    .sent-message-container {
       position: relative;
-      background-color: transparent;
-      width:100%;
-  
-  
+      display: flex;
+      justify-content: flex-end;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+
+      .sent-image,
+      .avatar {
+        width: 50px;
+        height: 50px;
+      }
+
       &:hover {
         background-color: $lightblue;
-    
+
         .emoji-box {
           display: flex;
           align-items: center;
+          position: absolute;
+          top: -20px;
         }
       }
-       
+
+      .message-container {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: row-reverse;
+        padding: 25px;
+        position: relative;
+        background-color: transparent;
+        width: 100%;
+
+        &:hover {
+          background-color: $lightblue;
+
+          .emoji-box {
+            display: flex;
+            align-items: center;
+          }
+        }
+
         .message-box {
           display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: flex-end;
-        gap:8px;
-  
-        
-  
-      
-        .message-info {
-          display: flex;
-          justify-content: space-between;
-          flex-direction: row-reverse;
-          gap: 20px;
-          align-items: center;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: flex-end;
+          gap: 8px;
+
+          .message-info {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row-reverse;
+            gap: 20px;
+            align-items: center;
+          }
         }
-        }
-      
       }
-  
-    
     }
-  
-    .emoji-container{
-      margin-right:auto;
-      margin-top:-55px;
-  
-      
-      
+
+    .emoji-container {
+      margin-right: auto;
+      margin-top: -55px;
     }
-  
-    .emoji-container-received{
-      margin-left:auto;
-      margin-top:-55px;
+
+    .emoji-container-received {
+      margin-left: auto;
+      margin-top: -55px;
     }
-  
+
     .emoji-box-received {
-      //position: absolute;
-      //height: 46px;
       padding: 3px 15px 3px 20px;
       gap: 5px;
       border-radius: 25px 25px 0;
-      border: 1px solid #ADB0D9;
+      border: 1px solid #adb0d9;
       background: #fff;
-      //left: 0;
       top: 0;
       z-index: 3;
       display: none;
-  
+
       .image-wrapper {
-        //width: 40px; /* Feste Größe für den Wrapper */
         height: 40px;
         display: flex;
         justify-content: center;
         align-items: center;
         background-color: transparent;
         border-radius: 50%;
-      
+
         &:hover {
-          background-color: $lightblue; /* Hintergrundfarbe beim Hover */
+          background-color: $lightblue;
           cursor: pointer;
 
           img {
-            filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-            }
+            filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+              saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+          }
         }
-  
+
         img {
-          width: 40px; /* Bild bleibt konstant */
+          width: 40px;
           height: 40px;
           object-fit: cover;
           border-radius: 50%;
         }
       }
     }
-  
-      
-    
-  
-    
-  
-  
+
     .received-message-container {
       position: relative;
-
-
       display: flex;
-      justify-content: flex-start; // Empfangene Nachrichten links positionieren
-      //margin-bottom: 15px;
+      justify-content: flex-start;
       transition: background-color 0.3s ease, transform 0.3s ease;
-  
-      .received-image,.avatar{
-        width:50px;
-        height:50px;
-       }
-  
+
+      .received-image,
+      .avatar {
+        width: 50px;
+        height: 50px;
+      }
+
       &:hover {
         background-color: $lightblue;
-    
+
         .emoji-box-received {
           display: flex;
           align-items: center;
-
           position: absolute;
-      top: -20px;
-      right: 0;
+          top: -20px;
+          right: 0;
         }
-  
-        p{
-          color:white;
+
+        p {
+          color: white;
         }
-  
-      
       }
-  
-      .message-container  {
+
+      .message-container {
         display: flex;
         align-items: flex-start;
         gap: 15px;
-  
-       // margin-bottom: 15px;
-    
         padding: 25px;
         position: relative;
         background-color: transparent;
-        width:100%;
+        width: 100%;
 
-         /* Nachrichteninhalt: Bild oder Text */
-      .message-content {
-        background-color: $middleblue;
-        padding: 15px;
-        border-radius: 0px 30px 30px 30px;
-        word-break: break-all;
-  
-  
-       
-      }
-    
-    
-  
+        .message-content {
+          background-color: $middleblue;
+          padding: 15px;
+          border-radius: 0px 30px 30px 30px;
+          word-break: break-all;
+        }
+
         &:hover {
           background-color: $lightblue;
-      
+
           .emoji-box {
             display: flex;
             align-items: center;
           }
-  
+
           .message-content {
             background-color: white;
-  
-            p{
+
+            p {
               color: black;
             }
           }
-      }
-  
-      .message-box {
-        display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap:8px;
-  
-      
-      .message-info {
-        display: flex;
-        justify-content: space-between;
-       // flex-direction: row-reverse;
-        gap: 20px;
-        align-items: center;
-      }
-    
-  
-  
-      
-    
+        }
+
+        .message-box {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          gap: 8px;
+
+          .message-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: center;
+          }
+        }
       }
     }
-    }
-  
-  
-    
+
     .emoji-box {
-      //position: absolute;
-      //height: 46px;
       padding: 3px 13px 3px 13px;
       gap: 5px;
       border-radius: 25px 25px 0;
-      border: 1px solid #ADB0D9;
+      border: 1px solid #adb0d9;
       background: #fff;
       left: 0;
       top: 0;
       z-index: 3;
       display: none;
-  
+
       .image-wrapper {
-        //width: 40px; /* Feste Größe für den Wrapper */
         height: 40px;
         display: flex;
         justify-content: center;
         align-items: center;
         background-color: transparent;
         border-radius: 50%;
-      
+
         &:hover {
-          background-color: $lightblue; /* Hintergrundfarbe beim Hover */
+          background-color: $lightblue;
           cursor: pointer;
 
           img {
-            filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-            }
+            filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+              saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+          }
         }
-  
+
         img {
-          width: 40px; /* Bild bleibt konstant */
-         // height: 40px;
+          width: 40px;
           object-fit: cover;
           border-radius: 50%;
         }
       }
     }
-  
-  
-  
-  
-  
-    
-  
-      /* Nachrichten-Header für Avatar und Name des Senders */
-      .message-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-  
-        .avatar {
-          width: 70px;
-          height: 70px;
-          border-radius: 35%;
-        }
-  
-        .sender-name {
-          font-weight: bold;
-          font-size: 16px;
-          color: #333;
-        }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+
+      .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 35%;
       }
-  
-      /* Nachrichteninhalt: Bild oder Text */
-      .message-content {
-        background-color: $middleblue;
-        padding: 15px;
-      
-        border-radius: 30px 0px 30px 30px;
-        word-break: break-all;
-  
-  
-        .sent-message{
-          color:white;
-        }
-  
-        p{
-          font-size:18px;
-          font-weight:400;
-          margin:0;
-          color:white;
-        }
-  
-        &.text-message {
-          color: white;
-          
-        }
-  
-        &.image-message {
-          background-color: transparent;
-          
-          img {
-            max-width: 200px;
-            border-radius: 10px;
-            object-fit: cover;
-          }
+
+      .sender-name {
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+      }
+    }
+
+    .message-content {
+      background-color: $middleblue;
+      padding: 15px;
+      border-radius: 30px 0px 30px 30px;
+      word-break: break-all;
+
+      .sent-message {
+        color: white;
+      }
+
+      p {
+        font-size: 18px;
+        font-weight: 400;
+        margin: 0;
+        color: white;
+      }
+
+      &.text-message {
+        color: white;
+      }
+
+      &.image-message {
+        background-color: transparent;
+
+        img {
+          max-width: 200px;
+          border-radius: 10px;
+          object-fit: cover;
         }
       }
     }
   }
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  .chat-input-container {
-    .emoji-picker {
-      position: absolute;
-      bottom: 280px;
-      //left: 500px;
-      z-index: 10000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-      background-color: white;
-      width: 300px;
-      height: 300px;
+}
+
+.chat-input-container {
+  .emoji-picker {
+    position: absolute;
+    bottom: 280px;
+    z-index: 10000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    width: 300px;
+    height: 300px;
+  }
+
+  .chat-input {
+    display: flex;
+    align-items: center;
+    padding: 0px 20px;
+
+    .textarea-wrapper {
+      position: relative;
+      width: 100%;
     }
-  
-  
-  
-     
-    
-      
-  
-  
-      
-     
-    .chat-input {
+
+    textarea {
+      flex-grow: 1;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      resize: none;
+      width: 100%;
+      min-height: 145px;
+      font-size: 18px;
+      font-weight: 400;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      font-family: "Segoe UI Emoji", sans-serif;
+
+      &:hover {
+        border-color: $button-blue;
+        transition: border-color 0.3s;
+      }
+
+      &:focus,
+      &:focus-within {
+        outline: none;
+        border-color: $button-blue;
+      }
+
+      &:not(:focus) {
+        &:has(+ input:focus) {
+          border-color: blue;
+        }
+      }
+    }
+
+    .image-preview {
+      position: absolute;
+      bottom: 75px;
+      left: 25px;
       display: flex;
-      align-items: center;
-      padding:0px 20px;
-  
-      .textarea-wrapper {
-        position: relative;  
-        width: 100%;
+      align-items: flex-end;
+      cursor: pointer;
+      transition: background-color 0.3s ease, filter 0.3s ease;
+      gap: 10px;
+
+      &:hover {
+        background-color: white;
+
+        img {
+          filter: brightness(0.8);
+        }
       }
-  
-      textarea {
-        flex-grow: 1;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        resize: none;
-        width:100%;
-        min-height: 145px; 
-        font-size: 18px;
-        font-weight: 400;
-        cursor: pointer;
-        box-sizing: border-box;
-        transition: all 0.3s ease;
-        font-family: 'Segoe UI Emoji', sans-serif;
-    
+
+      .image-border {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 1.25rem;
+        object-fit: cover;
+        transition: filter 0.3s ease;
+        border: 1px solid $button-blue;
+      }
+
+      .img-wrapper {
         &:hover {
-          border-color: $button-blue;
-          transition: border-color 0.3s;
-        }
-  
-        &:focus,
-        &:focus-within {
-          outline: none;
-          border-color: $button-blue;
-        }
-  
-        &:not(:focus) {
-          &:has(+ input:focus) {
-            border-color: blue;
-          }
-        }
-        }
-  
-        .image-preview {
-          position: absolute;
-          bottom: 75px; 
-          left: 25px;
-          
-          display: flex;
-          align-items: flex-end;
-          cursor: pointer;
-          transition: background-color 0.3s ease, filter 0.3s ease;
-          gap:10px;
-        
-          &:hover {
-            background-color: white;
-            
-            img {
-              filter: brightness(0.8); 
-            }
-  
-          }
-  
-          .image-border {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 1.25rem;
-            object-fit: cover;
-            transition: filter 0.3s ease;
-            border:1px solid $button-blue;
-          }
-  
-          .img-wrapper{
-            &:hover{
-            img {
-              filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
-                hue-rotate(230deg) brightness(100%) contrast(90%);
-            }
-          }
-        }
-        }
-        
-      .input-buttons {
-        position: absolute;
-        bottom: 10px;  
-        padding:20px;
-        display: flex;
-        gap: 10px;
-  
-        .input-image {
-          transition: filter 0.3s ease; // Für sanfte Übergänge
-        }
-      
-        // Wenn über eine der .input-image-Elemente gehovert wird
-        &:hover .input-image {
-          filter: brightness(0); // Alle Bilder werden schwarz
-        }
-      
-        // Das Bild, über das tatsächlich gehovert wird
-        .input-image:hover {
-          filter: brightness(1); // Heller oder ursprüngliche Farbe
-        }
-  
-        label, button {
-          background-color: white;
-          border: none;
-          border-radius: 50%;
-          width: 35px;
-          height: 35px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          
-          &:hover {
-            background-color: $lightblue;
-            
-    
-            img {
-              filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-              }
+          img {
+            filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+              saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
           }
         }
       }
-    
-      .send-button {
-        position: absolute;
-        bottom: 10px;
-        right: 0;  
-        padding:20px;
+    }
+
+    .input-buttons {
+      position: absolute;
+      bottom: 10px;
+      padding: 20px;
+      display: flex;
+      gap: 10px;
+
+      .input-image {
+        transition: filter 0.3s ease;
+      }
+
+      &:hover .input-image {
+        filter: brightness(0);
+      }
+
+      .input-image:hover {
+        filter: brightness(1);
+      }
+
+      label,
+      button {
+        background-color: white;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
         display: flex;
         align-items: center;
         justify-content: center;
-  
+        cursor: pointer;
+
+        &:hover {
+          background-color: $lightblue;
+
+          img {
+            filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+              saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+          }
+        }
+      }
+    }
+
+    .send-button {
+      position: absolute;
+      bottom: 10px;
+      right: 0;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
       button {
         background-color: transparent;
         border: none;
@@ -677,22 +470,22 @@
         align-items: center;
         justify-content: center;
         transition: background-color 0.3s ease, filter 0.3s ease;
-  
+
         &:hover {
-          background-color: #ffffff;  
-          
+          background-color: #ffffff;
+
           img {
-            filter: brightness(1.8); 
+            filter: brightness(1.8);
           }
         }
-  
+
         img {
           transition: filter 0.3s ease;
         }
       }
     }
   }
-  
+
   .img-wrapper {
     width: 30px;
     height: 30px;
@@ -705,12 +498,12 @@
     top: 0;
     right: 0;
     background-color: #ddd;
-  
+
     &:hover {
       background-color: $lightblue;
       transform: scale(1.1);
     }
-  
+
     img {
       width: 40px;
       height: 40px;
@@ -720,422 +513,360 @@
       cursor: pointer;
     }
   }
+}
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+
+  img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
   }
-  
-  .image-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); // Dunkler, halbtransparenter Hintergrund
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000; // Über anderen Elementen anzeigen
-    cursor: pointer;
-  
-    img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 10px;
-    }
-  
-    .close-modal {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 40px;
-      color: white;
-      cursor: pointer;
-    }
-  }
-  
-  .seperator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    margin: 20px auto;
-   // margin-bottom:15px;
-    padding: 0px 25px 0px 25px;
-  
-    &::before,
-    &::after {
-      content: '';
-      flex: 1;  // Linie nimmt den verbleibenden Platz ein
-      height: 1px;
-      background-color: $button-border;// Farbe der Linie
-    }
-  
-    .date-separator {
-      font-size: 14px;
-      font-weight:400;
-      color: black;  // Datum Farbe
-      padding: 5px 15px;  // Abstand links und rechts vom Text (optional)
-      background-color: #fff;  // Hintergrundfarbe, um den Text von den Linien zu trennen
-      z-index: 1;  // Damit der Text über den Linien liegt, wenn nötig
-      border-radius:30px;
-      border: 1px solid $button-border;
-      white-space: nowrap;
-    }
-  
-    .edit-dialog {
-      position: absolute;
-      top: 10px;
-      left: 50px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    
-      button {
-        display: block;
-        background: none;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        &:hover {
-          background-color: #f0f0f0;
-        }
-      }
-    }
-    
-    .edit-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    
-      button {
-        background-color: $button-blue;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        border-radius: 5px;
-        color: #fff;
-    
-        &:hover {
-          background-color: darken($button-blue, 10%);
-        }
-      }
-    
-      button:last-child {
-        background-color: #e74c3c;
-    
-        &:hover {
-          background-color: darken(#e74c3c, 10%);
-        }
-      }
-    }
-  }
-  
-  
-  
-  .edit-message-box {
-    position: relative;
-    width: 100%;
-    max-width: 698px;
-    margin-top: 10px;
-  
-    .edit-textarea {
-      width: 100%;
-      padding: 20px;
-      font-size: 18px;
-      border: 1px solid $lightblue;
-      border-radius: 20px;
-      resize: none;
-      color:$lightgray;
-  
-      box-sizing: border-box;
-        transition: all 0.3s ease;
-        font-family: 'Segoe UI Emoji', sans-serif;
-    
-        &:hover {
-          border-color: $button-blue;
-          transition: border-color 0.3s;
-        }
-  
-        &:focus,
-        &:focus-within {
-          outline: none;
-          border-color: $button-blue;
-        }
-  
-        &:not(:focus) {
-          &:has(+ input:focus) {
-            border-color: blue;
-          }
-        }
-    }
-  
-    .edit-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 5px;
-  
-      .save-button, .cancel-button {
-        //font-size: 18px;
-  
-        padding: 5px 10px;
-        cursor: pointer;
-      }
-    }
-  }
-  
-  
-  
-  
-  
-  
-  .edit-options {
+
+  .close-modal {
     position: absolute;
-    background-color: white;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+  }
+}
+
+.seperator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 20px auto;
+  padding: 0px 25px 0px 25px;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: $button-border;
+  }
+
+  .date-separator {
+    font-size: 14px;
+    font-weight: 400;
+    color: black;
+    padding: 5px 15px;
+    background-color: #fff;
+    z-index: 1;
+    border-radius: 30px;
+    border: 1px solid $button-border;
+    white-space: nowrap;
+  }
+
+  .edit-dialog {
+    position: absolute;
+    top: 10px;
+    left: 50px;
+    background-color: #fff;
     border: 1px solid #ddd;
-    padding: 10px 20px;
-    border-radius: 0px 30px 30px 30px;
+    padding: 10px;
+    border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    margin-top: 5px;
-    left:10px;
-    top:50px;
-    //width:308px;
-    //text-align: center;
-   
-  
+
     button {
-      background-color: transparent;
-      border:none;
+      display: block;
+      background: none;
+      border: none;
+      padding: 5px 10px;
       cursor: pointer;
-      color: black;
-      font-size: 20px;
-      font-weight: 500;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      border-radius: 30px;
-      height: 45px;
-      width:268px;
-      
-  
       &:hover {
-        background-color: $lightblue;
-        border-radius: 100px;
-        color:$hoverColor;
-        
+        background-color: #f0f0f0;
       }
-  
-      
     }
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  .new-message-container{
-  
-    h1{
-      font-size: 24px;
-      font-weight: 700;
-      color:black;
-    }
-    
-    input {
-      flex-grow: 1;
-      padding: 15px 20px;
-      border: 1px solid #ddd;
-      border-radius: 30px;
-      resize: none;
-      width:100%;
-      min-height: 55px; 
-      font-size: 18px;
-      font-weight: 400;
-      cursor: pointer;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
-      font-family: 'Segoe UI Emoji', sans-serif;
-  
-      &:hover {
-        border-color: $button-blue;
-        transition: border-color 0.3s;
-      }
-  
-      &:focus,
-      &:focus-within {
-        outline: none;
-        border-color: $button-blue;
-      }
-  
-      &:not(:focus) {
-        &:has(+ input:focus) {
-          border-color: blue;
-        }
-      }
-      }
-  }
-  
-  
-  
-  
-  
-  
-  
-  .emoji-box {
-    position: relative; /* Elterncontainer relativ positionieren */
-  }
-  
-  .emoji-pickere {
-    position: absolute;
-    top: 100%; /* Positioniere es direkt unter dem Bild */
-    left: 0;
-    z-index: 100; /* Sicherstellen, dass der Picker über anderen Elementen liegt */
-    background-color: white; /* Hintergrundfarbe für Picker */
-    border: 1px solid #ccc; /* Leichter Rahmen um den Picker */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Schatten für eine bessere Sichtbarkeit */
-  }
-  
-  .emoji-picker-received{
-    position: absolute;
-      top: 10%;
-      z-index: 100;
-      background-color: white;
-      border: 1px solid #ccc;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      right: 25px;
-  }
-  
-  
-  
- 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  .private-message-header {
+
+  .edit-buttons {
     display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    border-radius: 50px;
-    transition: background-color 0.3s ease;
-   
-    height: 58px;
+    justify-content: space-between;
+    margin-top: 10px;
 
-  
-      h3 {
-        font-size: 24px;
-        font-weight: 700;
-        display: inline-flex; 
-        transition: background-color 0.3s ease;
-        border-radius: 50px; 
-      }
-
-      h1 {
-        font-size: 14px;
-        font-weight: 400;
-        color: $middleblue;
-      }
-    
-    }
-  
-   
-    .edit-square {
-        width: 40px;
-        height: 40px;
-        margin-left:auto;
-        cursor: pointer;
-        border-radius: 50%;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    
-        &:hover {
-            background-color: $lightblue;
-    
-            img {
-              filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-              }
-          }
-      
-        img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            transition: filter 0.3s ease;
-            cursor: pointer;
-          }
-      }
-
-  
-    
-   
-  
-    .tooltip {
-      position: fixed; /* Positioniert das Element relativ zum Viewport */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    button {
       background-color: $button-blue;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
       color: #fff;
-      font-size: 16px;
-      font-weight: 400;
-      z-index: 1000;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-      transform: translate(-50%, -100%); /* Zentriert den Tooltip horizontal über dem Emoji */
-      padding: 15px 10px;
-      border-radius: 30px 30px 30px 0px;
-      width: 180px;
-      text-align: center;
-      
+
+      &:hover {
+        background-color: darken($button-blue, 10%);
+      }
+    }
+
+    button:last-child {
+      background-color: #e74c3c;
+
+      &:hover {
+        background-color: darken(#e74c3c, 10%);
+      }
+    }
   }
-  
-  
-  
-  .emoji-icon {
-    font-size: 30px;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
+}
+
+.edit-message-box {
+  position: relative;
+  width: 100%;
+  max-width: 698px;
+  margin-top: 10px;
+
+  .edit-textarea {
+    width: 100%;
+    padding: 20px;
+    font-size: 18px;
+    border: 1px solid $lightblue;
+    border-radius: 20px;
+    resize: none;
+    color: $lightgray;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: "Segoe UI Emoji", sans-serif;
+
+    &:hover {
+      border-color: $button-blue;
+      transition: border-color 0.3s;
+    }
+
+    &:focus,
+    &:focus-within {
+      outline: none;
+      border-color: $button-blue;
+    }
+
+    &:not(:focus) {
+      &:has(+ input:focus) {
+        border-color: blue;
+      }
+    }
   }
-  
-  .tooltip-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+
+  .edit-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 5px;
+
+    .save-button,
+    .cancel-button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
   }
-  
-  .sender-name {
-      font-size: 18px;
-      font-weight: 700;
-      margin-top: 8px; /* Abstand zwischen Emoji und Sendername */
+}
+
+.edit-options {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 0px 30px 30px 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  margin-top: 5px;
+  left: 10px;
+  top: 50px;
+
+  button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border-radius: 30px;
+    height: 45px;
+    width: 268px;
+
+    &:hover {
+      background-color: $lightblue;
+      border-radius: 100px;
+      color: $hoverColor;
+    }
   }
-  
-  .reaction-text {
-      font-size: 16px;
-      margin-top: 5px; /* Abstand zwischen Sendername und Reaktionstext */
+}
+
+.new-message-container {
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: black;
   }
-  
-  
-  
+
+  input {
+    flex-grow: 1;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    resize: none;
+    width: 100%;
+    min-height: 55px;
+    font-size: 18px;
+    font-weight: 400;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: "Segoe UI Emoji", sans-serif;
+
+    &:hover {
+      border-color: $button-blue;
+      transition: border-color 0.3s;
+    }
+
+    &:focus,
+    &:focus-within {
+      outline: none;
+      border-color: $button-blue;
+    }
+
+    &:not(:focus) {
+      &:has(+ input:focus) {
+        border-color: blue;
+      }
+    }
+  }
+}
+
+.emoji-box {
+  position: relative;
+}
+
+.emoji-pickere {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.emoji-picker-received {
+  position: absolute;
+  top: 10%;
+  z-index: 100;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  right: 25px;
+}
+
+.private-message-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: background-color 0.3s ease;
+  height: 58px;
+
+  h3 {
+    font-size: 24px;
+    font-weight: 700;
+    display: inline-flex;
+    transition: background-color 0.3s ease;
+    border-radius: 50px;
+  }
+
+  h1 {
+    font-size: 14px;
+    font-weight: 400;
+    color: $middleblue;
+  }
+}
+
+.edit-square {
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $lightblue;
+
+    img {
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+        saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+    }
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+    cursor: pointer;
+  }
+}
+
+.tooltip {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $button-blue;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  z-index: 1000;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -100%);
+  padding: 15px 10px;
+  border-radius: 30px 30px 30px 0px;
+  width: 180px;
+  text-align: center;
+}
+
+.emoji-icon {
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sender-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.reaction-text {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
 .reply-count {
   color: $button-border;
   font-family: 400;
@@ -1151,116 +882,41 @@
     background-color: #f0f0f0;
   }
 }
-  
-  
-  
-    
-.user-load{
+
+.user-load {
   display: flex;
   align-items: center;
   justify-content: center;
 
-
-  p{
+  p {
     margin: 0;
     font-size: 30px;
-    color:$hoverColor;
+    color: $hoverColor;
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .reply-wrapper {
   display: flex;
-  align-items: center; /* Zentriere die Linie und den Text vertikal */
-  justify-content: center; /* Zentriere die Inhalte horizontal */
-  margin: 10px 0; /* Abstand zwischen den Nachrichten */
-  gap: 20px; /* Abstand zwischen Text und Linie */
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  gap: 20px;
 }
-
-
 
 .line {
-  flex-grow: 1; /* Linie dehnt sich aus */
-  height: 1px; /* Höhe der Linie */
-  background-color: $button-border; 
-  border-radius: 5px; /* Runde Kanten */
+  flex-grow: 1;
+  height: 1px;
+  background-color: $button-border;
+  border-radius: 5px;
 }
 
-
-
-
-
-
-/* ✅ Nachricht hervorheben */
 .message-item.highlight {
   background-color: yellow;
   transition: background-color 1s ease-in-out;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ---------------------------------------------
-   1) Gemeinsamer Style für alle Emojis 
-      (sowohl in Hauptansicht als auch Popup)
---------------------------------------------- */
 .emoji-item {
-  border: 1px solid $hoverColor; /* Dein Rahmen-Farb-Variable */
+  border: 1px solid $hoverColor;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -1276,21 +932,18 @@
   }
 }
 
-
 nav {
   color: black;
   font-size: 16px;
   font-weight: 400;
 }
 
-
 .emoji-message-container {
-  position: relative;  /* Damit .emoji-popup absolute positioniert werden kann */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  
-  
+
   img {
     object-fit: cover;
     border-radius: 50%;
@@ -1301,18 +954,11 @@ nav {
     cursor: pointer;
 
     img {
-      filter: brightness(0) 
-              saturate(100%) 
-              invert(34%) 
-              sepia(39%) 
-              saturate(6834%) 
-              hue-rotate(230deg) 
-              brightness(100%) 
-              contrast(90%);
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+        saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
     }
   }
 
-  /* Das Icon neben den ersten 2 Emojis in der Hauptansicht */
   .emoji-plus-icon {
     width: 40px;
     height: 40px;
@@ -1321,42 +967,33 @@ nav {
 }
 
 .emoji-popup {
-  top: 0;           
+  top: 0;
   left: 0;
   z-index: 9999;
   width: 368px;
   padding: 12px;
   gap: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   border: 1px solid #ddd;
   background: #fff;
   height: auto;
   max-height: 290px;
-  overflow: auto; /* Oder hidden, je nach Bedarf */
+  overflow: auto;
 
-  /* Die Emoji-Liste im Popup */
   .emoji-list {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     flex: 1;
 
-    /* 
-       .emoji-item haben wir oben global definiert. 
-       Hier kannst du optional 
-       weitere Feinheiten fürs Popup ergänzen.
-    */
-
-    /* Zweites Plus-Icon (im Popup) */
     .emoji-plus-icon-in-list {
       width: 40px;
       height: 40px;
       cursor: pointer;
-      /* Optional: Hover-Effekt etc. */
     }
   }
   .toggle-box {
-    display: inline-flex;   /* Bleibt in derselben "Zeile" */
+    display: inline-flex;
     align-items: center;
     gap: 8px;
 
@@ -1374,61 +1011,17 @@ nav {
       cursor: pointer;
     }
   }
-
- 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media(max-width: 1278px){
-  .channel-input-box{
-    height:calc(100vh - 11.5rem ) !important;
+@media (max-width: 1278px) {
+  .channel-input-box {
+    height: calc(100vh - 11.5rem) !important;
   }
 
-   
   .channel-box .message-list .emoji-box-received {
     padding: 3px 15px 3px 20px !important;
     position: absolute;
-    transform: none; 
-  
-   // left: 270px !important;
+    transform: none;
     top: -20px;
   }
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@import "./../../styles.scss";
-

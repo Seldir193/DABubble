@@ -18,11 +18,6 @@
   width: 100%;
   position: relative;
 
-  .errorMessage {
-    width: 100%;
-    display: flex;
-    align-items: center;
-  }
 
   .login {
     display: flex;
@@ -178,16 +173,7 @@
   margin-top: 40px;
 }
 
-@keyframes slideInFromRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
+
 
 .registration-ok {
   gap: 28px;
@@ -280,12 +266,12 @@
     top: unset;
   }
 
-  .registration-ok{
-    padding:unset;
-    gap:unset;
-     img {
-      padding:10px;
-     }
+  .registration-ok {
+    padding: unset;
+    gap: unset;
+    img {
+      padding: 10px;
+    }
   }
 
   .login-container .login h2 {

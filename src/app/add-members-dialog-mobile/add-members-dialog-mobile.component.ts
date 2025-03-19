@@ -1,24 +1,24 @@
 import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-// Angular Material BottomSheet
 import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
-
-// Eventuell brauchst du deine Services, etc.
 import { UserService } from '../user.service';
 import { ChannelService } from '../channel.service';
-
 import { OverlayModule } from '@angular/cdk/overlay';
+import { MatDialog } from '@angular/material/dialog';
 
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
+/**
+ * Optional data interface if used with MatBottomSheet.
+ */
 export interface AddMembersMobileData {
   channelId: string;
   members: any[];
   filteredMembers: any[];
 }
 
+/**
+ * A bottom sheet dialog for adding members in a mobile-friendly layout.
+ */
 @Component({
   selector: 'app-add-members-dialog-mobile',
   standalone: true,
@@ -28,136 +28,136 @@ export interface AddMembersMobileData {
 })
 export class AddMembersDialogMobileComponent implements OnInit {
 
-  channelId: string = '';
+  /** The channel ID required to update members. */
+  channelId = '';
+  /** The existing members of the channel. */
   members: any[] = [];
+  /** An optional pre-filtered set of members. */
   filteredMembers: any[] = [];
 
-  // Lokale Variablen für deine Logik
-  specificMemberName: string = '';
+  /** User's search input. */
+  specificMemberName = '';
+  /** Newly selected members for adding. */
   selectedMembers: any[] = [];
+  /** A local copy of all known users. */
   allUsers: any[] = [];
+  /** Controls the visibility of the members list overlay. */
   isMembersListVisible = false;
 
+  /**
+   * Constructor for the bottom sheet usage, optionally receiving data.
+   */
   constructor(
     private userService: UserService,
     private channelService: ChannelService,
     private dialog: MatDialog,
-   
-
     @Optional() public bottomSheetRef?: MatBottomSheetRef<AddMembersDialogMobileComponent>,
     @Optional() @Inject(MAT_BOTTOM_SHEET_DATA) public data?: AddMembersMobileData
   ) {}
 
+  /**
+   * Reads optional input data and loads all users if no filtered list was provided.
+   */
   ngOnInit(): void {
-    console.log('[AddMembersDialogMobile] ngOnInit => data:', this.data);
     if (this.data) {
-      // Übernehme die übergebenen Werte
       this.channelId = this.data.channelId;
       this.members = [...(this.data.members || [])];
       this.filteredMembers = [...(this.data.filteredMembers || [])];
     }
-
-    // Falls du nochmal wirklich Users laden willst:
     if (this.filteredMembers.length === 0) {
       this.loadAllUsers();
     }
   }
 
+  /**
+   * Loads all users, excluding those already in 'members' if needed.
+   */
   loadAllUsers(): void {
     this.userService.getAllUsers()
       .then(users => {
         this.allUsers = users;
-        // Falls keine gefilterten Member vorhanden, Filter anlegen
         if (this.filteredMembers.length === 0) {
           this.filteredMembers = this.allUsers.filter(
-            user => !this.members.some(m => m.uid === user.uid)
+            u => !this.members.some(m => m.uid === u.uid)
           );
         }
       })
-      .catch(err => console.error('Fehler beim Laden', err));
+      .catch(() => {});
   }
 
+  /**
+   * Filters the user list by the current search term, excluding existing or selected members.
+   */
   onSearchMembers(): void {
     const term = this.specificMemberName.toLowerCase();
-    this.filteredMembers = this.allUsers
-      .filter(user =>
-        user.name.toLowerCase().includes(term) &&
-        !this.members.some(m => m.uid === user.uid) &&
-        !this.selectedMembers.some(sel => sel.uid === user.uid)
-      );
+    this.filteredMembers = this.allUsers.filter(u =>
+      u.name.toLowerCase().includes(term) &&
+      !this.members.some(m => m.uid === u.uid) &&
+      !this.selectedMembers.some(sel => sel.uid === u.uid)
+    );
   }
 
-
-
-
+  /**
+   * Shows the members list overlay, excluding those already in 'members' or 'selectedMembers'.
+   */
   showAllMembers(): void {
-  console.log('showAllMembers() => vorher:', this.filteredMembers);
-
- console.log('showAllMembers => filteredMembers:', this.filteredMembers);
-  this.isMembersListVisible = true;
-  
-  // Falls allUsers noch leer => brich ab oder lade allUsers
-  if (!this.allUsers || this.allUsers.length === 0) {
-    console.warn('⚠️ allUsers ist leer, rufe loadAllUsers() auf oder beende');
-    return;
+    this.isMembersListVisible = true;
+    if (!this.allUsers || this.allUsers.length === 0) return;
+    this.filteredMembers = this.allUsers.filter(u =>
+      !this.members.some(m => m.uid === u.uid) &&
+      !this.selectedMembers.some(s => s.uid === u.uid)
+    );
   }
 
-  // Filter:
-  this.filteredMembers = this.allUsers.filter(user =>
-    !this.members.some(m => m.uid === user.uid) &&
-    !this.selectedMembers.some(s => s.uid === user.uid)
-  );
-
-  console.log('showAllMembers() => nachher:', this.filteredMembers);
-}
-
-
+  /**
+   * Hides the members list with a brief delay to allow UI interactions.
+   */
   hideMembersList(): void {
-    console.log('hideMembersList => set isMembersListVisible = false');
     setTimeout(() => {
       this.isMembersListVisible = false;
     }, 200);
   }
 
+  /**
+   * Selects a member, removing them from 'filteredMembers' and resetting input state.
+   */
   selectMember(user: any): void {
     if (!this.selectedMembers.some(m => m.uid === user.uid)) {
       this.selectedMembers.push(user);
     }
-    // Overlay schließen und Input zurücksetzen
     this.specificMemberName = '';
     this.isMembersListVisible = false;
-    // Nochmal filtern
     this.filteredMembers = this.filteredMembers.filter(u => u.uid !== user.uid);
   }
 
+  /**
+   * Removes a previously selected member.
+   */
   removeMember(user: any): void {
     this.selectedMembers = this.selectedMembers.filter(m => m.uid !== user.uid);
   }
 
+  /**
+   * Merges new members into the channel, saves, then closes the bottom sheet.
+   */
   onCreate(): void {
-    // Füge die neuen selectedMembers zur alten members-Liste hinzu:
-    const uniqueMembers = this.selectedMembers.filter(
+    const unique = this.selectedMembers.filter(
       sel => !this.members.some(m => m.uid === sel.uid)
     );
-    if (uniqueMembers.length > 0) {
-      const updated = [...this.members, ...uniqueMembers];
-      console.log('[AddMembersDialogMobile] Neue Mitglieder:', updated);
-      // In Firestore speichern:
-      this.channelService.setMembers(this.channelId, updated)
-        .then(() => {
-          console.log('Erfolgreich gespeichert:', updated);
-          // BottomSheet schließen, Rückgabe an Parent
-          this.bottomSheetRef?.dismiss(updated);
-        })
-        .catch(err => console.error('Speichern fehlgeschlagen:', err));
-    } else {
-      // Keine neuen => einfach schließen
-      this.bottomSheetRef?.dismiss();
-    }
+    if (unique.length < 1) return this.bottomSheetRef?.dismiss();
+
+    const updated = [...this.members, ...unique];
+    this.channelService.setMembers(this.channelId, updated)
+      .then(() => {
+        this.bottomSheetRef?.dismiss(updated);
+      })
+      .catch(() => {});
   }
 
+  /**
+   * Cancels the dialog without adding members.
+   */
   onCancel(): void {
-    // Nix speichern => nur schließen
     this.bottomSheetRef?.dismiss();
   }
 }

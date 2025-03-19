@@ -174,14 +174,11 @@
       flex-grow: 1;
       text-align: center;
       line-height: 55.2px;
-      width:486px;
+      width: 486px;
     }
 
     p {
-      //color: black;
-      //font-size: 20px;
       font-weight: 400;
-      //width: 486px;
       margin: 0px;
       margin-top: 16px;
     }
@@ -264,31 +261,25 @@
 }
 
 @media (max-width: 1278px) {
-  
+  .registration-ok {
+    max-width: 323px !important;
+    width: 100%;
+    gap: 10px;
 
-  .registration-ok{
-    max-width:323px !important;
-    width:100%;
-    gap:10px;
-
-    p{
-      margin:0 !important;
+    p {
+      margin: 0 !important;
     }
   }
-
- 
-
 }
-
 
 @media (max-width: 780px) {
   .profile-avatar {
     &:hover::after {
-      width: 128px;  
+      width: 128px;
       height: 128px;
-      top: 48%; 
-      left: 50%; 
-      transform: translate(-50%, -50%); 
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 
@@ -298,12 +289,12 @@
 
   .avatar {
     &:hover::after {
-      width: 42px;  
-      height: 42px; 
-      top: 45%; 
-      left: 50%; 
-      transform: translate(-50%, -50%); 
-      z-index:1;
+      width: 42px;
+      height: 42px;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
     }
   }
 
@@ -339,7 +330,6 @@
 
   .login-container .login p {
     padding: unset;
-    //font-size: 20px;
     display: flex;
     align-items: center;
     max-width: 300px;
@@ -348,7 +338,7 @@
   .login-container .login h2 {
     font-size: 36px;
     line-height: 35.2px;
-    width:unset;
+    width: unset;
   }
 
   .login-container .login .button-container {
@@ -400,20 +390,20 @@
     overflow: hidden;
   }
 
-  .registration-ok{
-    padding:unset;
+  .registration-ok {
+    padding: unset;
   }
 
   .avatar {
     &:hover::after {
-      width: 32px;  
-      height: 32px; 
+      width: 32px;
+      height: 32px;
     }
   }
 
   .login-container .login {
     overflow: hidden;
-    max-width:300px;
+    max-width: 300px;
 
     form {
       gap: 20px;
@@ -435,12 +425,8 @@
     h2 {
       font-size: 30px;
       line-height: 35.2px;
-      width:unset;      
+      width: unset;
     }
-
-    //p {
-      //width: 300px;
-    //}
 
     .button-container {
       gap: 10px;
@@ -473,17 +459,13 @@
 
   .avatar {
     &:hover::after {
-      width: 25px;  
+      width: 25px;
       height: 25px;
-      top:43%; 
+      top: 43%;
     }
   }
 
   .login-container .login {
     width: 260px;
-
-    //p {
-      //width: 260px;
-    //}
   }
 }

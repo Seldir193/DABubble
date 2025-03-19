@@ -8,88 +8,71 @@ section {
   height: calc(100vh - 10.35rem);
   position: relative;
 
-
   .work-space {
-    position: fixed; /* Fixiert am linken Rand */
-    left: 0; /* Direkt am linken Rand */
-    top: 50%; /* In der Mitte des Bildschirms */
-    width: 60px; /* Schmale Breite */
-    height: 347px; /* Höhe */
-    border-radius: 0px 30px 30px 0px; /* Nur oben rechts und unten rechts abgerundet */
-    background-color: white; /* Hintergrund bleibt weiß */
+    position: fixed; 
+    left: 0; 
+    top: 50%; 
+    width: 60px; 
+    height: 347px; 
+    border-radius: 0px 30px 30px 0px; 
+    background-color: white; 
     cursor: pointer;
     display: flex;
-    flex-direction: column; /* Bild oben, Text unten */
-    align-items: center; /* Zentriert */
-    justify-content: center; /* Zentriert */
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
     transition: background-color 0.3s ease-in-out;
     padding: 23px 14px;
     box-shadow: 4px 4px 7px 0px #00000033;
-    gap: 10px; /* Abstand zwischen Bild & Text */
+    gap: 10px; 
     text-align: center;
     z-index: 9999;
   }
-  
-  /* Bild bleibt oben */
+
   .work-space img {
     width: 32px;
     height: 32px;
-    transition: transform 0.3s ease-in-out; /* Sanfte Skalierung */
+    transition: transform 0.3s ease-in-out; 
   }
   
-  /* Text bleibt UNTEN & ist um 90° gedreht */
   .work-space span {
     color: black;
     font-size: 20px;
     font-weight: 500;
-    transform: rotate(-90deg); /* Ständig um 90° nach links gedreht */
+    transform: rotate(-90deg); 
     transform-origin: center;
-    white-space: nowrap; /* Kein Umbruch */
+    white-space: nowrap; 
     position: relative;
-    z-index: 2; /* Sicherstellen, dass der Text über dem Bild bleibt */
+    z-index: 2; 
     display: flex;
     gap: 10px;
-    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; /* Sanfte Skalierung */
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; 
   }
   
-  /* Beim Hover wird NUR der Text & das Bild größer, aber NICHT gedreht */
   .work-space:hover img {
-    transform: scale(1.1); /* Vergrößerung ohne Rotation */
+    transform: scale(1.1); 
     filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
   }
   
-  /* Fix für den Text: Behalte Rotation & füge Skalierung hinzu */
   .work-space:hover span {
     transform: rotate(-90deg) scale(1.1);
     color: $hoverColor;
   }
   
-
-  /* Allgemeiner Container für Devspace */
   .container {
     width: 100%;
     max-width: 366px;
-    //min-height: 100vh;
     border-radius: 30px;
     background-color: white;
     padding: 32px 30px;
-   
     opacity: 1;
     gap: 25px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
     position: relative;
-
   }
     
-    
-
-
-  
-
-  /* Spezifischer Stil für den Team-Container */
   .team-container {
     width: 100%;
     border-radius: 30px;
@@ -98,8 +81,6 @@ section {
     height: calc(100vh - 10.35rem);
     overflow: hidden;
     min-width:450px;
-
-  
   }
 
   .welcome-container{
@@ -109,7 +90,6 @@ section {
     opacity: 1;
     height: calc(100vh - 10.35rem);
     overflow: hidden;
-   //display: none;
   }
 
   .privat-chat-container{
@@ -120,8 +100,6 @@ section {
     height: calc(100vh - 10.35rem);
     overflow: hidden;
     min-width:450px;
-
-    //display: none;
   }
 
   .search-container{
@@ -131,7 +109,6 @@ section {
     opacity: 1;
     height: calc(100vh - 10.35rem);
     overflow: hidden;
-
   }
 
   .scrollable-area {
@@ -142,39 +119,32 @@ section {
     flex-direction: column;
     cursor: pointer;
     overflow-x: hidden;
-  
-   
     scrollbar-width: thin ; 
-    scrollbar-color: black white; /* Farbe des Scrollbar-Griffs und -Hintergrunds */
+    scrollbar-color: black white; 
   }
   
-  /* Hover-Effekt für Firefox */
   .scrollable-area:hover {
-    scrollbar-color: $hoverColor white; /* Farbe des Scrollbar-Griffs und -Hintergrunds beim Hover */
+    scrollbar-color: $hoverColor white; 
   }
-
 
   app-inner-channel,
   app-direct-messages {
-    flex: none; /* Komponenten sollen nicht den gesamten Platz füllen */
+    flex: none; 
     padding: 15px;
   }
 
   .thread-area {
-    width: 100%;           /* Feste Breite */
-    
-   max-width:525px;
-
+    width: 100%;        
+    max-width:525px;
     border-radius: 30px;
     background-color: white;
     opacity: 1;
-    height: calc(100vh - 10.35rem); /* Gleiche Höhe wie andere Container */
+    height: calc(100vh - 10.35rem); 
     overflow: hidden;
 
     &.thread-activ {
-      max-width: none; // Keine Begrenzung
+      max-width: none; 
     }
-   
   }
 
   .thread-activ{
@@ -184,7 +154,6 @@ section {
     opacity: 1;
     height: calc(100vh - 10.35rem);
     overflow: hidden;
-
   }
 
   .property-box{
@@ -192,7 +161,6 @@ section {
    }
 
   @media (max-width: 1278px) {
-    /* standardmäßig ALLES unsichtbar */
     .container,
     .work-space,
     .team-container,
@@ -202,11 +170,10 @@ section {
       display: none;
       width: 100%;
       max-width: 100%;
-      
     }
 
     .show-mobile {
-      display: block !important; /* oder flex, je nach Bedarf */
+      display: block !important; 
     }
 
      .container {
@@ -253,21 +220,7 @@ section {
           height:60px;
         }
       }
-   
   }
-
-  
-
-
-
-
-
-
-
-
-
-
-
 }
 
 

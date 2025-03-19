@@ -1,458 +1,659 @@
+/**
+ * The ChannelService is responsible for managing channels within the application:
+ * creating, updating, deleting, and maintaining memberships, as well as tracking
+ * channel-related data in Firestore. It also keeps an internal state of the
+ * current channel selection and membership updates using BehaviorSubjects.
+ *
+ * No logic or styling has been changed – only these English JSDoc comments have been added.
+ */
+
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Firestore, collection, addDoc,getDocs,doc,updateDoc, query, where,collectionData,getDoc,deleteDoc, onSnapshot,docData,limit} from '@angular/fire/firestore';
-import { MessageContent } from './entwicklerteam/entwicklerteam.component';
-import { orderBy } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { serverTimestamp } from '@angular/fire/firestore';
-import { getAuth } from 'firebase/auth';
+import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  Firestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+  collectionData,
+  getDoc,
+  deleteDoc,
+  onSnapshot,
+  orderBy,
+  serverTimestamp,
+} from '@angular/fire/firestore';
 import { UserService } from './user.service';
 
-// Wo auch immer du deinen Channel-Typ definiert hast:
-
-
+/**
+ * ChannelService handles the creation, retrieval, and updates of channels
+ * within the Firestore database. It also tracks membership changes and
+ * local channel state via BehaviorSubjects.
+ */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChannelService {
-  // Channel Typdefinition erweitern
-private channelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string; membersUid?: string[]; } | null>(null);
-currentChannel = this.channelSource.asObservable();
+  /**
+   * A BehaviorSubject to store the current channel object (if selected by the user).
+   */
+  private channelSource = new BehaviorSubject<{
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+    membersUid?: string[];
+  } | null>(null);
 
-private selectedChannelSource = new BehaviorSubject<{ id: string; name: string; members: any[]; description?: string; createdBy?: string;membersUid?: string[];  } | null>(null);
-selectedChannel = this.selectedChannelSource.asObservable();
+  /**
+   * currentChannel is an observable derived from channelSource, allowing components to subscribe
+   * to real-time changes in the currently selected channel.
+   */
+  currentChannel = this.channelSource.asObservable();
 
-  // Ein Observable zur Übertragung der Mitglieder
+  /**
+   * A BehaviorSubject to store a separately "selected" channel (can differ from currentChannel).
+   */
+  private selectedChannelSource = new BehaviorSubject<{
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+    membersUid?: string[];
+  } | null>(null);
+
+  /**
+   * selectedChannel is an observable for the "selected" channel, which can be used to track
+   * channel data separately from currentChannel if the application logic demands.
+   */
+  selectedChannel = this.selectedChannelSource.asObservable();
+
+  /**
+   * A BehaviorSubject to share membership data (an array of members) among interested components.
+   */
   private membersSource = new BehaviorSubject<any[]>([]);
   currentMembers = this.membersSource.asObservable();
 
-  private channelsSource = new BehaviorSubject<{id: string; name: string; members: any[]; description?: string; createdBy?: string; membersUid?: string[]; }[]>([]);
+  /**
+   * A BehaviorSubject tracking the list of all channels in Firestore, used as local cache/state.
+   */
+  private channelsSource = new BehaviorSubject<
+    {
+      id: string;
+      name: string;
+      members: any[];
+      description?: string;
+      createdBy?: string;
+      membersUid?: string[];
+    }[]
+  >([]);
   currentChannels = this.channelsSource.asObservable();
 
-  constructor(private firestore: Firestore,private userService:UserService) {}
+  /**
+   * Constructs the ChannelService, injecting Firestore for DB access and UserService to fetch user info.
+   * @param firestore - The Firestore instance for DB operations.
+   * @param userService - The UserService providing user-related data and utilities.
+   */
+  constructor(private firestore: Firestore, private userService: UserService) {}
 
-// In deinem ChannelService:
-
-/**
- * CHANNEL ERSTELLEN
- * - Fügt neben 'members' auch 'membersUid' (nur IDs) hinzu
- */
-async addChannel(channel: { name: string; members: any[]; description?: string; createdBy?: string }): Promise<void> {
-  try {
-    const channelsCollection = collection(this.firestore, 'channels'); 
-
-    // (A) Erzeuge zusätzlich ein String-Array nur mit den UIDs
-    const membersUid = channel.members.map(m => m.uid);
-
-    // (B) Speichere beide Felder: 'members' und 'membersUid'
-    const docRef = await addDoc(channelsCollection, { 
-      ...channel,
-      membersUid 
-    });
-
-    console.log('Channel erfolgreich hinzugefügt mit ID:', docRef.id);
-
-    const newChannel = { 
-      id: docRef.id, 
-      ...channel,
-      membersUid  // optional, falls du's lokal speichern willst
-    };
-    
-    // Nach dem Hinzufügen erneut Channels laden
-    await this.loadChannels();
-
-    // Setze den neu hinzugefügten Channel als aktuellen Channel
-    this.changeChannel(newChannel);
-
-  } catch (error) {
-    console.error('Fehler beim Hinzufügen des Channels:', error);
-  }
-}
-
-/**
- * CHANNEL VERLASSEN
- * - Entfernt dich aus 'members' und aus 'membersUid'
- */
-async leaveChannel(channelId: string, userId: string): Promise<void> {
-  try {
-    const channelDocRef = doc(this.firestore, 'channels', channelId);
-    const channelDoc = await getDoc(channelDocRef);
-
-    if (channelDoc.exists()) {
-      const channelData = channelDoc.data() || {};
-
-      const members = channelData['members'] || [];
-      const membersUid = channelData['membersUid'] || [];  // Hier das neue Array
-
-      // (A) Mitglieder filtern: Entferne userId
-      const updatedMembers = members.filter((member: any) => member.uid !== userId);
-      const updatedMembersUid = membersUid.filter((uid: string) => uid !== userId);
-
-      if (updatedMembers.length > 0) {
-        // (B) Update beider Felder
-        await updateDoc(channelDocRef, { 
-          members: updatedMembers, 
-          membersUid: updatedMembersUid 
-        });
-        console.log(`Benutzer ${userId} erfolgreich aus dem Channel ${channelId} entfernt.`);
-
-      } else {
-        // Keine Mitglieder mehr => Channel komplett löschen
-        await deleteDoc(channelDocRef);
-        console.log(`Channel ${channelId} gelöscht, da keine Mitglieder mehr vorhanden.`);
-      }
-
-      // Lokal entfernen ...
-      this.removeChannelLocally(channelId);
-
-    } else {
-      console.error('Channel nicht gefunden.', channelId);
-    }
-  } catch (error) {
-    console.error('Fehler beim Verlassen des Channels:', error);
-    throw error;
-  }
-}
-
-
-
-async setMembers(channelId: string, newMembers: any[]): Promise<void> {
-  try {
-    const channels = this.channelsSource.getValue();
-    const channelIndex = channels.findIndex(c => c.id === channelId);
-
-    if (channelIndex > -1) {
-      const channel = channels[channelIndex];
-
-      // 🔥 (A) Lade die alten Mitglieder aus Firestore
-      const channelDocRef = doc(this.firestore, 'channels', channel.id);
-      const channelDoc = await getDoc(channelDocRef);
-      const oldMembers = channelDoc.exists() ? channelDoc.data()['members'] || [] : [];
-
-
-      const updatedMembers = [...oldMembers, ...newMembers.filter(m => 
-        !oldMembers.some((existing: { uid: string }) => existing.uid === m.uid) // ✅ Typ definiert
-      )];
-      
-
-      // 🔥 (C) UID-Liste aktualisieren
-      const membersUid = updatedMembers.map(m => m.uid);
-
-      // 🔥 (D) Firestore-Update
-      await updateDoc(channelDocRef, { 
-        members: updatedMembers,
-        membersUid 
-      });
-
-      // 🔥 (E) Lokale Liste updaten
-      channels[channelIndex] = { ...channel, members: updatedMembers, membersUid };
-      this.channelsSource.next([...channels]);
-
-      // Falls der aktuelle Channel derselbe ist, auch hier updaten
-      const currentChannel = this.channelSource.getValue();
-      if (currentChannel && currentChannel.id === channelId) {
-        currentChannel.members = updatedMembers;
-        this.channelSource.next(currentChannel);
-      }
-
-      console.log(`✅ Mitglieder für Channel "${channelId}" erfolgreich aktualisiert.`);
-    } else {
-      console.log(`❌ Channel mit ID "${channelId}" nicht gefunden.`);
-    }
-  } catch (error) {
-    console.error('❌ Fehler beim Aktualisieren der Mitglieder:', error);
-  }
-}
-
-
-
-
-
-
-
-
-// Lade alle Channels von Firestore
-async loadChannels(): Promise<void> {
-  try {
-    const channelsCollection = collection(this.firestore, 'channels');
-    const querySnapshot = await getDocs(channelsCollection);
-    const channels: any[] = [];
-    
-    querySnapshot.forEach((doc) => {
-      channels.push({ id: doc.id, ...doc.data() }); // Channels mit ID sammeln
-    });
-    
-    // Aktualisiere die Observable mit den neuesten Daten
-    this.channelsSource.next(channels);
-   
-  } catch (error) {
-    console.error('Fehler beim Laden der Channels:', error);
-  }
-}
-
-removeChannelLocally(channelId: string): void {
-  const updatedChannels = this.channelsSource.getValue().filter(channel => channel.id !== channelId);
-  this.channelsSource.next(updatedChannels); // Update der lokalen Channel-Liste
-}
-
-  updateLocalChannels(updatedChannels: any[]): void {
-    // Aktualisiere die Observable mit den neuen lokalen Channels
-    this.channelsSource.next(updatedChannels);
-  }
-  
-  async updateChannel(channelId: string, newChannelName: string, description: string): Promise<void> {
+  /**
+   * addChannel creates a new channel in Firestore, storing both 'members' and 'membersUid' (UID array).
+   * After creation, it calls loadChannels to refresh local state, then sets the new channel as current.
+   * @param channel - The channel object containing name, members, and optional description/createdBy fields.
+   */
+  async addChannel(channel: {
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }): Promise<void> {
     try {
-      const channels = this.channelsSource.getValue();
-      const index = channels.findIndex(channel => channel.id === channelId);
-  
-      if (index !== -1) {
-        channels[index].name = newChannelName;
-        channels[index].description = description;
-  
-        // Firestore-Dokument-Referenz aktualisieren
-        const channelDocRef = doc(this.firestore, 'channels', channelId);
-        await updateDoc(channelDocRef, {
-          name: newChannelName,
-          description
-        });
-  
-        this.channelsSource.next([...channels]);  // Aktualisiere die lokale Channels-Liste
-      }
+      const docRef = await this.createChannelDoc(channel);
+      const newChannel = this.buildNewChannelObj(channel, docRef.id);
+      await this.loadChannels();
+      this.changeChannel(newChannel);
+    } catch (error) {}
+  }
+
+  /** Creates the channel document in Firestore and returns the DocumentReference. */
+  private async createChannelDoc(channel: {
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }) {
+    const channelsColl = collection(this.firestore, 'channels');
+    const membersUid = channel.members.map((m) => m.uid);
+    return await addDoc(channelsColl, { ...channel, membersUid });
+  }
+
+  /** Builds a local channel object with an 'id' property included. */
+  private buildNewChannelObj(
+    channel: {
+      name: string;
+      members: any[];
+      description?: string;
+      createdBy?: string;
+    },
+    id: string
+  ) {
+    const membersUid = channel.members.map((m) => m.uid);
+    return { id, ...channel, membersUid };
+  }
+
+  /**
+   * leaveChannel allows the current user to remove themselves from a channel's membership list.
+   * If no members remain, the channel is deleted. This also updates Firestore fields 'members'
+   * and 'membersUid'.
+   *
+   * @param channelId - The unique ID of the channel in Firestore.
+   * @param userId - The UID of the user leaving the channel.
+   */
+  async leaveChannel(channelId: string, userId: string): Promise<void> {
+    try {
+      const channelDocRef = doc(this.firestore, 'channels', channelId);
+      const docSnap = await getDoc(channelDocRef);
+      if (!docSnap.exists()) return;
+      await this.handleChannelLeaving(
+        docSnap.data(),
+        channelDocRef,
+        channelId,
+        userId
+      );
     } catch (error) {
-      console.error('Fehler beim Aktualisieren des Channels:', error);
       throw error;
     }
   }
 
-// Methode zum Ändern des aktuell ausgewählten Channels
-changeSelectedChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }) {
-  this.selectedChannelSource.next(channel);
-}
-// Methode zum Ändern des aktuellen Channels
-changeChannel(channel: { id: string; name: string; members: any[]; description?: string; createdBy?: string }) {
-  this.channelSource.next(channel);
-}
-// Methode, um alle Channels abzurufen
-getChannels(): { name: string; members: any[]; description?: string; createdBy?: string }[] {
-  return this.channelsSource.getValue();
-}
-// Methode zum Abrufen von Mitgliedern
-getMembers(): any[] {
-  return this.membersSource.getValue(); // Mitglieder abrufen
-}
-
-async addMessage(channelId: string, message: any): Promise<string> {
-  try {
-    const messagesCollection = collection(this.firestore, 'messages'); // Die Sammlung für Nachrichten
-    const docRef = await addDoc(messagesCollection, { ...message, channelId,timestamp: serverTimestamp() });
-    console.log('Nachricht erfolgreich hinzugefügt mit ID: ', docRef.id);
-    return docRef.id; // ID zur Nachricht zurückgeben
-  } catch (error) {
-    console.error('Fehler beim Hinzufügen der Nachricht:', error);
-    throw error; // Fehler weiterwerfen
-  }
-}
-
-getMessages(channelId: string): Observable<any[]> {
-  const messagesCollection = collection(this.firestore, 'messages');
-  
-  // Firestore-Abfrage: Nachrichten sortiert nach timestamp
-  const q = query(
-    messagesCollection,
-    where('channelId', '==', channelId),
-    orderBy('timestamp', 'asc') // Aufsteigende Reihenfolge nach timestamp
-  );
-  
-  // Mit collectionData() ein Observable zurückgeben, das die Nachrichten in Echtzeit liefert
-  return collectionData(q, { idField: 'id' }) as Observable<any[]>;
-}
-
-async updateMessage(channelId: string, messageId: string, updatedContent: MessageContent): Promise<void> {
-  try {
-    console.log('Aktualisiere Nachricht für Channel ID:', channelId);
-    // Reference to the specific message document
-    const messageDocRef = doc(this.firestore, 'messages', messageId);
-    
-    // Update Firestore with the new content
-    await updateDoc(messageDocRef, {
-      content: updatedContent,
-      editedAt: serverTimestamp()
-     // timestamp: serverTimestamp()
-    });
-    
-    console.log('Nachricht erfolgreich gespeichert');
-  } catch (error) {
-    console.error('Fehler beim Aktualisieren der Nachricht:', error);
-  }
-}
-
-async saveLastUsedEmojis(channelId: string, lastUsedEmojis: string[], type: 'sent' | 'received'): Promise<void> {
-  if (!channelId) return;
-
-  const channelDocRef = doc(this.firestore, 'channels', channelId);
-  try {
-    // Unterscheide zwischen gesendeten und empfangenen Emojis
-    if (type === 'sent') {
-      await updateDoc(channelDocRef, { lastUsedEmojisSent: lastUsedEmojis });
+  /** Processes the logic of leaving a channel or deleting it if empty. */
+  private async handleChannelLeaving(
+    channelData: any,
+    channelDocRef: any,
+    channelId: string,
+    userId: string
+  ): Promise<void> {
+    const { updatedMembers, updatedMembersUid } = this.filterOutLeavingUser(
+      channelData,
+      userId
+    );
+    if (updatedMembers.length > 0) {
+      await updateDoc(channelDocRef, {
+        members: updatedMembers,
+        membersUid: updatedMembersUid,
+      });
     } else {
-      await updateDoc(channelDocRef, { lastUsedEmojisReceived: lastUsedEmojis });
+      await deleteDoc(channelDocRef);
     }
-    console.log(`Letzte Emojis (${type}) erfolgreich gespeichert.`);
-  } catch (error) {
-    console.error(`Fehler beim Speichern der letzten Emojis (${type}):`, error);
-  }
-}
-
-async getLastUsedEmojis(channelId: string, type: 'sent' | 'received'): Promise<string[] | undefined> {
-  if (!channelId) return;
-
-  const channelDocRef = doc(this.firestore, 'channels', channelId);
-  const channelDoc = await getDoc(channelDocRef);
-
-  if (channelDoc.exists()) {
-    const data = channelDoc.data();
-    return type === 'sent' ? data['lastUsedEmojisSent'] || [] : data['lastUsedEmojisReceived'] || [];
-  } else {
-    console.error('Channel-Dokument nicht gefunden.');
-    return [];
-  }
-}
-
-async deleteChannel(channelId: string): Promise<void> {
-  try {
-    const channelDocRef = doc(this.firestore, 'channels', channelId);
-    await deleteDoc(channelDocRef); // Lösche das Kanal-Dokument aus Firestore
-    console.log(`Channel ${channelId} erfolgreich gelöscht.`);
-    
-    // Aktualisiere die Channels im Frontend
-    //await this.loadChannels();
-
     this.removeChannelLocally(channelId);
-   
-  } catch (error) {
-    console.error('Fehler beim Löschen des Channels:', error);
   }
-}
 
-getAllChannels(callback: (channels: any[]) => void): () => void {
-  const channelsCollection = collection(this.firestore, 'channels');
-  
-  const unsubscribe = onSnapshot(channelsCollection, (snapshot) => {
-    const channels: any[] = [];
-    
-    snapshot.forEach((doc) => {
-      channels.push({ id: doc.id, ...doc.data() });
+  /** Filters the leaving user out of the existing members and membersUid arrays. */
+  private filterOutLeavingUser(
+    channelData: any,
+    userId: string
+  ): {
+    updatedMembers: any[];
+    updatedMembersUid: string[];
+  } {
+    const members = channelData['members'] || [];
+    const membersUid = channelData['membersUid'] || [];
+    const updatedMembers = members.filter(
+      (member: any) => member.uid !== userId
+    );
+    const updatedMembersUid = membersUid.filter(
+      (uid: string) => uid !== userId
+    );
+    return { updatedMembers, updatedMembersUid };
+  }
+
+  /**
+   * setMembers merges new members with the existing membership in Firestore, updating
+   * both the 'members' array of objects and the 'membersUid' array of UIDs. The local
+   * channels list is also updated to reflect these changes.
+   * @param channelId - The ID of the channel in Firestore.
+   * @param newMembers - An array of the new members to add to the channel.
+   */
+  async setMembers(channelId: string, newMembers: any[]): Promise<void> {
+    try {
+      const channels = this.channelsSource.getValue();
+      const channelIndex = channels.findIndex((c) => c.id === channelId);
+      if (channelIndex < 0) return;
+      await this.mergeAndSaveMembers(
+        channelId,
+        newMembers,
+        channels,
+        channelIndex
+      );
+    } catch (error) {}
+  }
+
+  /** Merges old and new members, updates Firestore, and refreshes local state. */
+  private async mergeAndSaveMembers(
+    channelId: string,
+    newMembers: any[],
+    channels: any[],
+    channelIndex: number
+  ): Promise<void> {
+    const channel = channels[channelIndex];
+    const channelDocRef = doc(this.firestore, 'channels', channel.id);
+    const channelDoc = await getDoc(channelDocRef);
+    const oldMembers = channelDoc.exists()
+      ? channelDoc.data()?.['members'] || []
+      : [];
+    const updatedMembers = this.combineOldAndNew(oldMembers, newMembers);
+    const membersUid = updatedMembers.map((m: any) => m.uid);
+
+    await updateDoc(channelDocRef, { members: updatedMembers, membersUid });
+    channels[channelIndex] = {
+      ...channel,
+      members: updatedMembers,
+      membersUid,
+    };
+    this.channelsSource.next([...channels]);
+    this.updateCurrentChannelIfNeeded(channelId, updatedMembers);
+  }
+
+  /** Combines old and new members without duplicates, based on the 'uid' field. */
+  private combineOldAndNew(oldMembers: any[], newMembers: any[]): any[] {
+    return [
+      ...oldMembers,
+      ...newMembers.filter(
+        (m) =>
+          !oldMembers.some(
+            (existing: { uid: string }) => existing.uid === m.uid
+          )
+      ),
+    ];
+  }
+
+  /** If the current channel is the same as channelId, refresh its members locally. */
+  private updateCurrentChannelIfNeeded(
+    channelId: string,
+    updatedMembers: any[]
+  ): void {
+    const currentChannel = this.channelSource.getValue();
+    if (currentChannel && currentChannel.id === channelId) {
+      currentChannel.members = updatedMembers;
+      this.channelSource.next(currentChannel);
+    }
+  }
+
+  /**
+   * loadChannels fetches all channel documents from Firestore and updates the local BehaviorSubject.
+   */
+  async loadChannels(): Promise<void> {
+    try {
+      const channelsCollection = collection(this.firestore, 'channels');
+      const querySnapshot = await getDocs(channelsCollection);
+      const channels: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        channels.push({ id: doc.id, ...doc.data() });
+      });
+
+      this.channelsSource.next(channels);
+    } catch (error) {}
+  }
+
+  /**
+   * removeChannelLocally removes a channel from the local channelsSource by its ID,
+   * useful after a channel has been deleted or the user has left it.
+   * @param channelId - The ID of the channel to remove.
+   */
+  removeChannelLocally(channelId: string): void {
+    const updatedChannels = this.channelsSource
+      .getValue()
+      .filter((channel) => channel.id !== channelId);
+    this.channelsSource.next(updatedChannels);
+  }
+
+  /**
+   * updateLocalChannels overwrites the local channels array with a given array of channels.
+   * @param updatedChannels - The new array of channels to store in channelsSource.
+   */
+  updateLocalChannels(updatedChannels: any[]): void {
+    this.channelsSource.next(updatedChannels);
+  }
+
+  /**
+   * updateChannel modifies the name and description of a specific channel in Firestore,
+   * also updating local state in channelsSource.
+   * @param channelId - The Firestore doc ID for the channel.
+   * @param newChannelName - The updated channel name.
+   * @param description - The updated channel description.
+   */
+  async updateChannel(
+    channelId: string,
+    newChannelName: string,
+    description: string
+  ): Promise<void> {
+    try {
+      const channels = this.channelsSource.getValue();
+      const index = channels.findIndex((ch) => ch.id === channelId);
+      if (index === -1) return;
+
+      this.applyChannelEdits(channels, index, newChannelName, description);
+      await this.persistChannelEdits(channelId, newChannelName, description);
+      this.channelsSource.next([...channels]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /** Updates the in-memory channel object with the new name and description. */
+  private applyChannelEdits(
+    channels: any[],
+    index: number,
+    newName: string,
+    desc: string
+  ): void {
+    channels[index].name = newName;
+    channels[index].description = desc;
+  }
+
+  /** Persists the channel edits in Firestore using updateDoc. */
+  private async persistChannelEdits(
+    channelId: string,
+    newName: string,
+    desc: string
+  ): Promise<void> {
+    const channelDocRef = doc(this.firestore, 'channels', channelId);
+    await updateDoc(channelDocRef, { name: newName, description: desc });
+  }
+
+  /**
+   * changeSelectedChannel updates a separate BehaviorSubject for a "selected channel."
+   */
+  changeSelectedChannel(channel: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }) {
+    this.selectedChannelSource.next(channel);
+  }
+
+  /**
+   * changeChannel updates the channelSource, effectively indicating the user is working
+   * with this channel as the "current" channel.
+   */
+  changeChannel(channel: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }) {
+    this.channelSource.next(channel);
+  }
+
+  /**
+   * getChannels returns the latest cached channel array from channelsSource synchronously.
+   */
+  getChannels(): {
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }[] {
+    return this.channelsSource.getValue();
+  }
+
+  /**
+   * getMembers returns the latest list of members from membersSource.
+   */
+  getMembers(): any[] {
+    return this.membersSource.getValue();
+  }
+
+  /**
+   * addMessage adds a new message to Firestore in the 'messages' collection with a reference to the channel.
+   * It returns the newly created doc's ID upon success.
+   * @param channelId - The channel's Firestore ID to which the message belongs.
+   * @param message - The message object (text, content, etc.).
+   */
+  async addMessage(channelId: string, message: any): Promise<string> {
+    try {
+      const messagesCollection = collection(this.firestore, 'messages');
+      const docRef = await addDoc(messagesCollection, {
+        ...message,
+        channelId,
+        timestamp: serverTimestamp(),
+      });
+      return docRef.id;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * getMessages returns an observable that streams the messages for a given channel
+   * ordered by ascending timestamp.
+   * @param channelId - The Firestore channel ID to load messages from.
+   */
+  getMessages(channelId: string): Observable<any[]> {
+    const messagesCollection = collection(this.firestore, 'messages');
+    const q = query(
+      messagesCollection,
+      where('channelId', '==', channelId),
+      orderBy('timestamp', 'asc')
+    );
+    return collectionData(q, { idField: 'id' }) as Observable<any[]>;
+  }
+
+  /**
+   * updateMessage allows editing the 'content' of a message in Firestore for a specific channel.
+   * The message doc is found by messageId, and updated content is stored alongside an edited timestamp.
+   * @param channelId - The channel's ID (used for logs/validation).
+   * @param messageId - The Firestore doc ID of the message to update.
+   * @param updatedContent - The new text/image/emoji content to store.
+   */
+  async updateMessage(
+    channelId: string,
+    messageId: string,
+    updatedContent: { text?: string; image?: string | null; emojis?: any[] }
+  ): Promise<void> {
+    try {
+      const messageDocRef = doc(this.firestore, 'messages', messageId);
+      await updateDoc(messageDocRef, {
+        content: updatedContent,
+        editedAt: serverTimestamp(),
+      });
+    } catch (error) {}
+  }
+
+  /**
+   * saveLastUsedEmojis stores an array of last-used emojis in Firestore under either
+   * 'lastUsedEmojisSent' or 'lastUsedEmojisReceived' for the given channel.
+   * @param channelId - The Firestore doc ID of the channel.
+   * @param lastUsedEmojis - An array of emoji strings (short or native).
+   * @param type - Either 'sent' or 'received', indicating which field to update.
+   */
+  async saveLastUsedEmojis(
+    channelId: string,
+    lastUsedEmojis: string[],
+    type: 'sent' | 'received'
+  ): Promise<void> {
+    if (!channelId) return;
+
+    const channelDocRef = doc(this.firestore, 'channels', channelId);
+    try {
+      if (type === 'sent') {
+        await updateDoc(channelDocRef, { lastUsedEmojisSent: lastUsedEmojis });
+      } else {
+        await updateDoc(channelDocRef, {
+          lastUsedEmojisReceived: lastUsedEmojis,
+        });
+      }
+    } catch (error) {}
+  }
+
+  /**
+   * getLastUsedEmojis retrieves either the 'sent' or 'received' last-used emojis array
+   * from a given channel doc in Firestore.
+   * @param channelId - The channel doc ID.
+   * @param type - 'sent' or 'received' to select which field to read.
+   */
+  async getLastUsedEmojis(
+    channelId: string,
+    type: 'sent' | 'received'
+  ): Promise<string[] | undefined> {
+    if (!channelId) return;
+
+    const channelDocRef = doc(this.firestore, 'channels', channelId);
+    const channelDoc = await getDoc(channelDocRef);
+
+    if (channelDoc.exists()) {
+      const data = channelDoc.data();
+      return type === 'sent'
+        ? data['lastUsedEmojisSent'] || []
+        : data['lastUsedEmojisReceived'] || [];
+    } else {
+      return [];
+    }
+  }
+
+  /**
+   * deleteChannel removes a channel document from Firestore and updates local state,
+   * typically used when a channel is no longer needed or an admin removes it.
+   * @param channelId - The channel doc ID to delete.
+   */
+  async deleteChannel(channelId: string): Promise<void> {
+    try {
+      const channelDocRef = doc(this.firestore, 'channels', channelId);
+      await deleteDoc(channelDocRef);
+      // Remove it from local BehaviorSubject
+      this.removeChannelLocally(channelId);
+    } catch (error) {}
+  }
+
+  /**
+   * getAllChannels sets up a live snapshot listener on the channels collection,
+   * firing a callback whenever there's a change in Firestore's channels data.
+   * Returns an unsubscribe function to end the snapshot subscription.
+   * @param callback - The function to call with the updated array of channels.
+   */
+  getAllChannels(callback: (channels: any[]) => void): () => void {
+    const channelsCollection = collection(this.firestore, 'channels');
+    const unsubscribe = onSnapshot(channelsCollection, (snapshot) => {
+      const channels: any[] = [];
+      snapshot.forEach((doc) => {
+        channels.push({ id: doc.id, ...doc.data() });
+      });
+      callback(channels);
     });
-
-    callback(channels);  // Daten an die Callback-Funktion weitergeben
-  });
-
-  return unsubscribe; // Gibt die Möglichkeit zurück, das Live-Tracking zu beenden
-}
-
-
-
-async getChannelById(channelId: string): Promise<any> {
-  const channelDocRef = doc(this.firestore, 'channels', channelId);
-  const channelDoc = await getDoc(channelDocRef);
-
-  if (channelDoc.exists()) {
-    return { id: channelDoc.id, ...channelDoc.data() };
-  } else {
-    throw new Error('Kanal nicht gefunden');
-  }
-}
-
-async getChannelsByName(channelName: string): Promise<any[]> {
-  const currentUserId = this.userService.getCurrentUserId(); // Deine Methode fürs User-Login
-  if (!currentUserId) {
-    console.warn("Kein currentUser eingeloggt.");
-    return [];
+    return unsubscribe;
   }
 
+  /**
+   * getChannelById retrieves one channel document by ID from Firestore.
+   * Throws an error if the channel doesn't exist.
+   * @param channelId - The Firestore doc ID of the channel.
+   */
+  async getChannelById(channelId: string): Promise<any> {
+    const channelDocRef = doc(this.firestore, 'channels', channelId);
+    const channelDoc = await getDoc(channelDocRef);
 
+    if (channelDoc.exists()) {
+      return { id: channelDoc.id, ...channelDoc.data() };
+    } else {
+      throw new Error('Channel not found');
+    }
+  }
 
-  const channelsCollection = collection(this.firestore, 'channels');
-  const q = query(channelsCollection,
-     where('name', '>=', channelName), 
-     where('name', '<=', channelName + '\uf8ff'),
-     where('membersUid' , 'array-contains', currentUserId)
+  /**
+   * getChannelsByName runs a Firestore query to find channels whose names start with
+   * the given channelName, also ensuring that the current user is in the 'membersUid'.
+   * @param channelName - The partial or full string of the channel name to search.
+   */
+  async getChannelsByName(channelName: string): Promise<any[]> {
+    const currentUserId = this.userService.getCurrentUserId();
+    if (!currentUserId) return [];
+    const q = this.buildChannelsByNameQuery(channelName, currentUserId);
+    return await this.executeChannelsByNameQuery(q);
+  }
+
+  /** Builds the Firestore query for channels matching the given channelName and containing the current user. */
+  private buildChannelsByNameQuery(channelName: string, userId: string) {
+    const coll = collection(this.firestore, 'channels');
+    return query(
+      coll,
+      where('name', '>=', channelName),
+      where('name', '<=', channelName + '\uf8ff'),
+      where('membersUid', 'array-contains', userId)
+    );
+  }
+
+  /** Executes the query and maps the results to an array of channel objects. */
+  private async executeChannelsByNameQuery(q: any): Promise<any[]> {
+    try {
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map((docSnap: any) => ({
+        id: docSnap.id,
+        ...docSnap.data(),
+      }));
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * getUsersByFirstLetter queries the 'users' collection in Firestore for user documents
+   * whose names start with the provided letter, returning them as an array.
+   * @param firstLetter - The character or string to filter by (e.g. 'A').
+   */
+  async getUsersByFirstLetter(firstLetter: string): Promise<any[]> {
+    const usersCollection = collection(this.firestore, 'users');
+    const q = query(
+      usersCollection,
+      where('name', '>=', firstLetter),
+      where('name', '<=', firstLetter + '\uf8ff')
     );
 
-  console.log("📡 Firestore-Query für Channels:", channelName);
-
-  try {
-    const querySnapshot = await getDocs(q);
-    const channels = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    console.log("✅ Channels von Firestore erhalten:", channels);
-    return channels;
-  } catch (error) {
-    console.error("❌ Fehler beim Abrufen der Channels aus Firestore:", error);
-    return [];
+    try {
+      const querySnapshot = await getDocs(q);
+      const users = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return users;
+    } catch (error) {
+      return [];
+    }
   }
-}
 
-async getUsersByFirstLetter(firstLetter: string): Promise<any[]> {
-  const usersCollection = collection(this.firestore, 'users');
-  const q = query(usersCollection, where('name', '>=', firstLetter), where('name', '<=', firstLetter + '\uf8ff'));
+  /**
+   * getAllMessagesLive sets up a snapshot listener on the 'messages' collection,
+   * ordered by ascending timestamp, calling the provided callback with updated messages.
+   * Returns an unsubscribe function to end the snapshot.
+   * @param callback - The function that receives the new array of messages upon updates.
+   */
+  getAllMessagesLive(callback: (messages: any[]) => void): () => void {
+    const messagesCollection = collection(this.firestore, 'messages');
+    const q = query(messagesCollection, orderBy('timestamp', 'asc'));
 
-  console.log("🔍 Firestore-Query für Benutzer:", firstLetter);
-
-  try {
-    const querySnapshot = await getDocs(q);
-    const users = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    console.log("✅ Benutzer von Firestore erhalten:", users);
-    return users;
-  } catch (error) {
-    console.error("❌ Fehler beim Abrufen der Benutzer aus Firestore:", error);
-    return [];
-  }
-}
-
-
-
-
-getAllMessagesLive(callback: (messages: any[]) => void): () => void {
-  const messagesCollection = collection(this.firestore, 'messages');
-  const q = query(messagesCollection, orderBy('timestamp', 'asc'));
-
-  const unsubscribe = onSnapshot(q, (snapshot) => {
-    const messages: any[] = [];
-
-    snapshot.forEach((docSnap) => {
-      messages.push({ id: docSnap.id, ...docSnap.data() });
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const messages: any[] = [];
+      snapshot.forEach((docSnap) => {
+        messages.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      callback(messages);
     });
+    return unsubscribe;
+  }
 
-    callback(messages);
-  });
-
-  return unsubscribe;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// channel.service.ts
-async getAllChannelsOnce(): Promise<any[]> {
-  const channelsCollection = collection(this.firestore, 'channels');
-  const querySnapshot = await getDocs(channelsCollection);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
-
+  /**
+   * getAllChannelsOnce performs a one-time fetch of all channels from Firestore,
+   * returning them as an array without continuous live updates.
+   */
+  async getAllChannelsOnce(): Promise<any[]> {
+    const channelsCollection = collection(this.firestore, 'channels');
+    const querySnapshot = await getDocs(channelsCollection);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  }
 }

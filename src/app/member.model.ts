@@ -1,8 +1,6 @@
-
 export interface Member {
-    id: string;       // Firestore Dokument-ID
+    id: string;      
     name: string;
     image: string;
-    email?: string;   // Optional, falls benötigt
-    // Weitere Eigenschaften nach Bedarf hinzufügen
+    email?: string;   
   }

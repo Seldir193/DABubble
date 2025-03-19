@@ -18,12 +18,6 @@
   width: 100%;
   position: relative;
 
-  .errorMessage {
-    width: 100%;
-    display: flex;
-    align-items: center;
-  }
-
   .login {
     display: flex;
     flex-direction: column;
@@ -184,23 +178,16 @@
       }
 
       .email-icon {
-       
         padding-left: 70px;
       }
-
-      
     }
   }
 }
-
-
-
 
 .icon-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  //margin: 20px 0;
 
   img {
     position: absolute;
@@ -209,18 +196,15 @@
     height: 24px;
   }
 
-  input, button {
-    padding-left: 50px; 
+  input,
+  button {
+    padding-left: 50px;
     height: 50px;
     border-radius: 100px;
     border: 1px solid #ccc;
     width: 100%;
-    // dein restliches Styling ...
   }
 }
-
-
-
 
 .button-anmelden {
   width: 170px;
@@ -230,19 +214,15 @@
 
 .registration-ok {
   max-width: 441px;
-  gap:28px;
+  gap: 28px;
 }
 
-
 @media (max-width: 1278px) {
-  
-
-  .registration-ok{
-    max-width:269px !important;
-    width:100%;
-    gap:18px;
+  .registration-ok {
+    max-width: 269px !important;
+    width: 100%;
+    gap: 18px;
   }
-
 }
 
 @media (max-width: 780px) {
@@ -328,9 +308,7 @@
   .login-container .login h2 {
     font-size: 36px;
   }
-}
 
-@media (max-width: 780px) {
   .button-anmelden {
     margin-top: 20px;
   }
@@ -341,8 +319,8 @@
     top: unset;
   }
 
-  .registration-ok{
-    padding:unset;
+  .registration-ok {
+    padding: unset;
   }
 
   .login-container .login h2 {
