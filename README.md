@@ -20,7 +20,7 @@ DABubble ist eine **Angular**-basierte Chat-Anwendung (TypeScript + SCSS), die *
 
 ## Overview
 
-Die DABubble-App wurde entwickelt, um ein **intuitives und responsives** Chat-Erlebnis zu bieten. Nutzer können in **Kanälen** oder **Thread-Channels** schreiben und andere Mitglieder einladen. Zudem stehen **private Nachrichten** (1:1-Chats) und **Thread** für fokussierte Unterhaltungen zur Verfügung.
+Die DABubble-App wurde entwickelt, um ein **intuitives und responsives** Chat-Erlebnis zu bieten. Nutzer können in **Kanälen** oder **Thread-Channels** schreiben und andere Mitglieder einladen. Zudem stehen **private Nachrichten** (1:1-Chats) und **Threads** für fokussierte Unterhaltungen zur Verfügung.
 
 Zusätzlich gibt es einen **Gastzugang**, falls sich ein Anwender nicht registrieren möchte. Mit Profilanpassungen (Avatar, Anzeigename, E-Mail) können User ihre Identität personalisieren.
 
@@ -30,11 +30,11 @@ Zusätzlich gibt es einen **Gastzugang**, falls sich ein Anwender nicht registri
 
 - **Channel & Threads**  
   - Kanäle (Channels) mit mehreren Teilnehmern, Echtzeit-Updates  
-  - Thread-Channels-Funktion, um Nachrichten thematisch zu vertiefen  
+  - Threads oder Thread-Channels, um Nachrichten thematisch zu vertiefen  
 
 - **Private Nachrichten (DM)**  
   - 1:1-Kommunikation  
-  - Unterstützung von **Thread** auch in privaten Chats  
+  - Unterstützung von Threads auch in privaten Chats  
 
 - **Profilverwaltung**  
   - Avatar/Profilbild, Name, E-Mail ändern  
@@ -75,11 +75,6 @@ Zusätzlich gibt es einen **Gastzugang**, falls sich ein Anwender nicht registri
 - **NPM** oder **Yarn**  
 - **Angular CLI** (optional)  
 - **Firebase-Konto** (für Firestore/Auth)
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
 
 ### Schritte
 
