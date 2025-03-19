@@ -134,8 +134,91 @@ Hier einige Beispiel-Screenshots der Anwendung:
 7. **Passwort zurücksetzen**  
    - Über „Passwort vergessen?“ kannst du ein neues Passwort anfordern (E-Mail-Verifizierung nötig).
 
+
+## tests
+
+Um die Tests auszuführen, stelle sicher, dass du die erforderlichen Abhängigkeiten installiert hast und führe den folgenden Befehl im Terminal aus:
+ng test
+
+## Project Structure
+
+DABubble/
+├─ src/
+│  ├─ app/
+│  │  ├─ components/
+│  │  │  ├─ chat-component.html
+│  │  │  ├─ add-members-dialog.html
+│  │  │  ├─ add-members-dialog-mobile.html
+│  │  │  ├─ auth-action.html
+│  │  │  ├─ avatar.html
+│  │  │  ├─ channel-dialog.html
+│  │  │  ├─ chat-header.html
+│  │  │  ├─ devspace.html
+│  │  │  ├─ direct-messages.html
+│  │  │  ├─ edit-channel-dialog.html
+│  │  │  ├─ entwicklerteam.html
+│  │  │  ├─ footer.html
+│  │  │  ├─ header.html
+│  │  │  ├─ imprint.html
+│  │  │  ├─ inner-channel.html
+│  │  │  ├─ intro.html
+│  │  │  ├─ login.html
+│  │  │  ├─ members-list-dialog.html
+│  │  │  ├─ member-section-dialog.html
+│  │  │  ├─ members-dialog.html
+│  │  │  ├─ new-passwort.html
+│  │  │  ├─ passwort-reset.html
+│  │  │  ├─ privacy.html
+│  │  │  ├─ private-messages.html
+│  │  │  ├─ profil-dialog.html
+│  │  │  ├─ search-field.html
+│  │  │  ├─ search-result-dialog.html
+│  │  │  ├─ selected-mebers-dialog.html
+│  │  │  ├─ signup.html
+│  │  │  ├─ thread.html
+│  │  │  ├─ thread-channel.html
+│  │  │  ├─ verify-email.html
+│  │  │  └─ welcome-screen.html
+│  │  │  
+│  │  │  /* Hinweis:
+│  │  │     Zu jedem .html gehört eine passende .ts und .scss,
+│  │  │     z.B. "chat-component.ts" und "chat-component.scss" */
+│  │  ├─ services/
+│  │  │  ├─ user.service.ts
+│  │  │  ├─ message.service.ts
+│  │  │  ├─ channel.service.ts
+│  │  │  └─ app-state.service.ts
+│  │  ├─ pages/
+|  |  ├─ app.component.html
+|  |  ├─ app.component.scss
+|  |  ├─ app.component.spec.ts
+|  |  ├─ app.component.ts
+│  │  ├─ app.config.ts
+│  │  ├─ app.routes.ts
+│  │  ├─ message.model.ts
+│  │  └─ member.models.ts
+│  ├─ environments/
+│  │  ├─ environment.ts
+│  │  └─ environment.prod.ts
+│  ├─ main.ts
+│  ├─ index.html
+│  └─ ...
+├─ angular.json
+├─ package.json
+├─ README.md
+└─ ...
+
+
+
+## Contributing
+
+Contributions are welcome! Fork the repository, create a new branch, and submit a pull request. 
+
+Please ensure that your code adheres to the following standards:
+- **Clean Code principles**: Write simple, understandable, and maintainable code.
+
 ## License
 
 Dieses Projekt steht unter der **MIT License**. Details findest du in der [LICENSE](./LICENSE)-Datei.  
-*(Falls du eine andere Lizenz verwendest oder die Anwendung privat bleiben soll, passe diesen Abschnitt entsprechend an.)*
+
 
