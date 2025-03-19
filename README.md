@@ -146,7 +146,6 @@ Below are some sample screenshots of the application:
 
 To run the tests, ensure that you have installed the required dependencies, then execute the following command in the terminal:
 
-```bash
 ng test
 
 ## Project Structure
