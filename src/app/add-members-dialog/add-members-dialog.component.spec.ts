@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AddMembersDialogComponent } from './add-members-dialog.component';
+import { appConfig } from '../app.config';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('AddMembersDialogComponent', () => {
   let component: AddMembersDialogComponent;
@@ -8,7 +9,12 @@ describe('AddMembersDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddMembersDialogComponent]
+      imports: [AddMembersDialogComponent],
+      providers: [                      
+                  { provide: MatDialogRef, useValue: {} },
+                  { provide: MAT_DIALOG_DATA, useValue: { } },
+                     ...appConfig.providers
+                  ],
     })
     .compileComponents();
     

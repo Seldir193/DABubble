@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { DirectMessagesComponent } from './direct-messages.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { appConfig } from '../app.config';
 
 describe('DirectMessagesComponent', () => {
   let component: DirectMessagesComponent;
@@ -8,7 +9,13 @@ describe('DirectMessagesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DirectMessagesComponent]
+      imports: [DirectMessagesComponent],
+      providers: [                      
+                  { provide: MatDialogRef, useValue: {} },
+                  { provide: MAT_DIALOG_DATA, useValue: { } },
+                     ...appConfig.providers
+                  ],
+        
     })
     .compileComponents();
     

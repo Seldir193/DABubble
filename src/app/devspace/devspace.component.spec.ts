@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { DevspaceComponent } from './devspace.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { appConfig } from '../app.config';
 
 describe('DevspaceComponent', () => {
   let component: DevspaceComponent;
@@ -8,7 +9,13 @@ describe('DevspaceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DevspaceComponent]
+      imports: [DevspaceComponent],
+      providers: [                      
+                  { provide: MatDialogRef, useValue: {} },
+                  { provide: MAT_DIALOG_DATA, useValue: { } },
+                    ...appConfig.providers
+                   ],
+        
     })
     .compileComponents();
     

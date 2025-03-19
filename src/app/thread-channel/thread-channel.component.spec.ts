@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ThreadChannelComponent } from './thread-channel.component';
+import { appConfig } from '../app.config';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('ThreadChannelComponent', () => {
   let component: ThreadChannelComponent;
@@ -8,7 +10,15 @@ describe('ThreadChannelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ThreadChannelComponent]
+      imports: [ThreadChannelComponent],
+        providers: [
+                                    
+                    { provide: MatDialogRef, useValue: {} },
+                    { provide: MAT_DIALOG_DATA, useValue: { } },
+                      ...appConfig.providers
+                    ],
+              
+        
     })
     .compileComponents();
     

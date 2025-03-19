@@ -65,10 +65,6 @@ export class LoginComponent implements OnInit {
   /** Displays a success message when login succeeds. */
   successMessage = '';
   /** Stores the user's email input. */
-  email = '';
-  /** Stores the user's password input. */
-  password = '';
-  /** Displays an error related to password input. */
   errorPassword = '';
   /** A regex pattern used for validating email format. */
   emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -130,14 +126,17 @@ export class LoginComponent implements OnInit {
   async onSubmit(): Promise<void> {
     this.clearMessages();
     if (this.fieldsAreEmpty()) return;
-    const emailExists = await this.checkEmailExists(this.email);
+  
+    const emailVal = this.myForm.get('email')?.value as string;
+  
+    const emailExists = await this.checkEmailExists(emailVal);
     if (!emailExists) {
       this.errorMessage = 'Diese E-Mail-Adresse ist nicht registriert.';
       return;
     }
     await this.attemptEmailSignIn();
   }
-
+  
   /** Clears all error and success messages. */
   private clearMessages(): void {
     this.errorMessage = '';
@@ -147,26 +146,33 @@ export class LoginComponent implements OnInit {
 
   /** Checks if email or password is empty, sets an error message if so. */
   private fieldsAreEmpty(): boolean {
-    if (!this.email || !this.password) {
+    const emailVal = this.myForm.get('email')?.value;
+    const passwordVal = this.myForm.get('password')?.value;
+  
+    if (!emailVal || !passwordVal) {
       this.errorMessage = 'Bitte füllen Sie alle Felder aus.';
       this.errorPassword = 'Bitte füllen Sie alle Felder aus.';
       return true;
     }
     return false;
   }
-
+  
   /** Attempts sign-in with email and password, handles success or error feedback. */
   private async attemptEmailSignIn(): Promise<void> {
     try {
       const auth = getAuth();
-      await signInWithEmailAndPassword(auth, this.email, this.password);
+  
+      const emailVal = this.myForm.get('email')?.value;
+      const passwordVal = this.myForm.get('password')?.value;
+      await signInWithEmailAndPassword(auth, emailVal, passwordVal);
+  
       this.appStateService.setShowWelcomeContainer(true);
       this.handleLoginSuccess();
     } catch (err) {
       this.handleLoginError(err);
     }
   }
-
+  
   /** Sets a success message and navigates to chat after a short delay. */
   private handleLoginSuccess(): void {
     this.successMessage = 'Anmelden';

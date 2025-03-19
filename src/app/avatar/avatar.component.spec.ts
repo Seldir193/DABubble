@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AvatarComponent } from './avatar.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { appConfig } from '../app.config';
 
 describe('AvatarComponent', () => {
   let component: AvatarComponent;
@@ -8,7 +9,13 @@ describe('AvatarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AvatarComponent]
+      imports: [AvatarComponent],
+      providers: [                      
+                  { provide: MatDialogRef, useValue: {} },
+                  { provide: MAT_DIALOG_DATA, useValue: { } },
+                     ...appConfig.providers
+                   ],
+        
     })
     .compileComponents();
     

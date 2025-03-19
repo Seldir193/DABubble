@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InnerChannelComponent } from './inner-channel.component';
+import { Firestore } from '@angular/fire/firestore';
+import { appConfig } from '../app.config';
 
 describe('InnerChannelComponent', () => {
   let component: InnerChannelComponent;
@@ -8,7 +10,11 @@ describe('InnerChannelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InnerChannelComponent]
+      imports: [InnerChannelComponent],
+      providers: [
+        { provide: Firestore, useValue: {} }, 
+         ...appConfig.providers
+      ]
     })
     .compileComponents();
     

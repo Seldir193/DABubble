@@ -144,7 +144,9 @@ Below are some sample screenshots of the application:
 
 ## Tests
 
-To run the tests, ensure that you have installed the required dependencies, then execute the following command in the terminal:
+### Unit Tests (Jasmine/Karma)
+
+To run the **unit tests** (using Jasmine/Karma), ensure that you have installed all required dependencies. Then execute:
 
 ng test
 

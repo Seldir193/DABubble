@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LoginComponent } from './login.component';
+import { appConfig } from '../app.config';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -8,7 +9,13 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginComponent]
+      imports: [LoginComponent],
+      providers: [                      
+                  { provide: MatDialogRef, useValue: {} },
+                  { provide: MAT_DIALOG_DATA, useValue: { } },
+                     ...appConfig.providers
+                  ],
+        
     })
     .compileComponents();
     

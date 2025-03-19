@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EntwicklerteamComponent } from './entwicklerteam.component';
+import { appConfig } from '../app.config';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('EntwicklerteamComponent', () => {
   let component: EntwicklerteamComponent;
@@ -8,7 +9,14 @@ describe('EntwicklerteamComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntwicklerteamComponent]
+      imports: [EntwicklerteamComponent],
+       providers: [
+                              
+                    { provide: MatDialogRef, useValue: {} },
+                    { provide: MAT_DIALOG_DATA, useValue: { } },
+                      ...appConfig.providers
+                    ],
+        
     })
     .compileComponents();
     
