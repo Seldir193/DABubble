@@ -454,8 +454,7 @@
           [(ngModel)]="privateMessage"
           #textArea
           (keydown)="handleKeyDown($event, textArea)"
-          cdkOverlayOrigin
-          #userTrigger="cdkOverlayOrigin"
+          (input)="onTextareaInput($event)"
         >
         </textarea>
         <div class="image-preview" *ngIf="imageUrl">
@@ -502,59 +501,69 @@
               />
             </button>
 
-            <button class="at-button" (click)="toggleUserDropdown()">
-              <img
-                class="input-image"
-                src="assets/img/qr.png"
-                alt="@ hinzufügen"
-              />
-            </button>
-          </div>
-
-          <ng-template
-            cdkConnectedOverlay
-            [cdkConnectedOverlayOrigin]="userTrigger"
-            [cdkConnectedOverlayOpen]="showUserDropdown"
-            [cdkConnectedOverlayHasBackdrop]="true"
-            (backdropClick)="showUserDropdown = false"
-            [cdkConnectedOverlayPositions]="[
-              {
-                originX: 'start',
-                originY: 'top',
-                overlayX: 'start',
-                overlayY: 'bottom',
-                offsetX: -0
-              }
-            ]"
-          >
-            <ul class="my-user-dropdown pm-scrollable">
-              <li
-                *ngFor="let member of allUsers"
-                (click)="addUserSymbol(member)"
-              >
-                <div class="avatar-container">
-                  <img
-                    [src]="member.avatarUrl || 'assets/img/avatar.png'"
-                    alt="Avatar"
-                    class="avatar"
-                  />
-                  <img
-                    *ngIf="member.isOnline"
-                    src="assets/img/online.png"
-                    class="status-icon"
-                    alt="Online"
-                  />
-                  <img
-                    *ngIf="!member.isOnline"
-                    src="assets/img/offline.png"
-                    class="status-icon"
-                    alt="Offline"
-                  />
+            
+            <div class="dropdown-container" (click)="onSelfClick($event)">
+              <button class="at-button"  (click)="toggleDropdown($event)">
+                <img
+                            class="input-image"
+                            src="assets/img/qr.png"
+                            alt="@ hinzufügen"
+                          />
+            
+              </button>
+            
+              
+              <div *ngIf="dropdownState !== 'hidden'" >
+               
+                <ul *ngIf="dropdownState === 'user'" class="my-user-dropdown pm-scrollable" >
+                  <li *ngFor="let user of allUsers" (click)="addUserSymbol(user)">
+            
+                    <div class="avatar-container">
+                      <img
+                        [src]="user.avatarUrl || 'assets/img/avatar.png'"
+                        alt="Avatar"
+                        class="avatar"
+                      />
+                      <img
+                        *ngIf="user.isOnline"
+                        src="assets/img/online.png"
+                        class="status-icon"
+                        alt="Online"
+                      />
+                      <img
+                        *ngIf="!user.isOnline"
+                        src="assets/img/offline.png"
+                        class="status-icon"
+                        alt="Offline"
+                      />
+                    </div>
+            
+                    {{ user.name }}
+                  </li>
+                </ul>
+            
+                
+                <ul *ngIf="dropdownState === 'channel'" class="my-user-dropdown pm-scrollable" >
+                  <li *ngFor="let ch of allChannels" (click)="selectChannel(ch)">
+            
+                  
+                <div class="tag-container">
+                  <img src="assets/img/tag-black.png" />
                 </div>
-                {{ member.name }}
-              </li>
-            </ul>
-          </ng-template>
+                    {{ ch.name }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+                
+
+
+
+
+</div>
+
+
 
           <div class="send-button">
             <button

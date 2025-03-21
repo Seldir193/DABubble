@@ -206,7 +206,10 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * If a user mention dropdown is open or not.
    */
-  showUserDropdown: boolean = false;
+  allChannels: any[] = [];
+  dropdownState: 'hidden' | 'user' | 'channel' = 'hidden';
+  private cycleStep = 1;
+  lastOpenedChar = '';
 
   /**
    * Optionally receives an entire selected thread channel object, if needed from external contexts.
@@ -222,6 +225,8 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
    * A function reference to unsubscribe from real-time reply count updates.
    */
   private unsubscribeFromReplyCount?: () => void;
+  private unsubscribeChannels: (() => void) | null = null;
+  private unsubscribeUsers: (() => void) | null = null;
 
   /**
    * Constructs the component, injecting services and change detector.
@@ -264,6 +269,14 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
         this.cdr.detectChanges();
       }
     );
+    this.unsubscribeChannels = this.channelService.getAllChannels(
+      (channels) => {
+        this.allChannels = channels;
+      }
+    );
+    this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
+      this.allUsers = users;
+    });
   }
 
   /**
@@ -272,6 +285,26 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.checkDesktopWidth();
+  }
+
+  /**
+   * Closes the dropdown when a click occurs outside its container.
+   * @param {MouseEvent} event - The global document click event.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.dropdownState !== 'hidden') {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+
+  /**
+   * Prevents the dropdown from closing if clicked inside its container.
+   * @param {MouseEvent} event - The local container click event.
+   */
+  onSelfClick(event: MouseEvent): void {
+    event.stopPropagation();
   }
 
   /**
@@ -488,6 +521,12 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (this.unsubscribeFromReplyCount) {
       this.unsubscribeFromReplyCount();
+    }
+    if (this.unsubscribeChannels) {
+      this.unsubscribeChannels();
+    }
+    if (this.unsubscribeUsers) {
+      this.unsubscribeUsers();
     }
   }
 
@@ -976,16 +1015,6 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Toggles a user dropdown (for mentions). Loads all users if needed.
-   */
-  toggleUserDropdown(): void {
-    if (!this.showUserDropdown) {
-      this.loadAllUsers();
-    }
-    this.showUserDropdown = !this.showUserDropdown;
-  }
-
-  /**
    * Loads all users, typically for mention or user selection in the thread.
    */
   loadAllUsers(): void {
@@ -1003,11 +1032,94 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
+   * Toggles the dropdown in a 4-step cycle:
+   * 1) hidden -> user
+   * 2) user -> channel
+   * 3) channel -> user
+   * 4) user -> hidden
+   * @param {MouseEvent} event - The button click event.
+   */
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.cycleStep === 1) {
+      this.dropdownState = 'user';
+      this.cycleStep = 2;
+    } else if (this.cycleStep === 2) {
+      this.dropdownState = 'channel';
+      this.cycleStep = 3;
+    } else if (this.cycleStep === 3) {
+      this.dropdownState = 'user';
+      this.cycleStep = 4;
+    } else {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+
+  /**
+   * Closes the dropdown, resetting its state to hidden.
+   */
+  closeDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+  }
+
+  /** Resets the dropdown to its default hidden state. */
+  private resetDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+    this.lastOpenedChar = '';
+  }
+
+  /**
+   * Evaluates user/channel mention state or hides it based on input events.
+   * @param {Event} event - The input event from the textarea.
+   */
+  onTextareaInput(event: Event): void {
+    const i = event as InputEvent,
+      t = (event.target as HTMLTextAreaElement).value;
+    if (
+      ['deleteContentBackward', 'deleteContentForward'].includes(i.inputType)
+    ) {
+      if (!t.includes('@') && this.dropdownState === 'user')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      if (!t.includes('#') && this.dropdownState === 'channel')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      return;
+    }
+    if (t.endsWith('@') && this.lastOpenedChar !== '@') {
+      this.dropdownState = 'user';
+      this.lastOpenedChar = '@';
+    } else if (t.endsWith('#') && this.lastOpenedChar !== '#') {
+      this.dropdownState = 'channel';
+      this.lastOpenedChar = '#';
+    } else this.lastOpenedChar = '';
+  }
+
+  /**
    * Adds an '@username' reference into the channelMessage text input, then hides the dropdown.
    */
   addUserSymbol(member: any) {
+    if (this.channelMessage.endsWith('@')) {
+      this.channelMessage = this.channelMessage.slice(0, -1);
+    }
     this.channelMessage += ` @${member.name} `;
-    this.showUserDropdown = false;
+    this.closeDropdown();
+  }
+
+  /**
+   * Inserts a channel mention into the message text, removing any trailing '#',
+   * then closes the dropdown.
+   * @param {any} channel - The channel object to mention.
+   */
+  selectChannel(channel: any): void {
+    if (this.channelMessage.endsWith('#')) {
+      this.channelMessage = this.channelMessage.slice(0, -1);
+    }
+    this.channelMessage += `#${channel.name} `;
+    this.closeDropdown();
   }
 
   /**

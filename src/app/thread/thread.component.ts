@@ -25,6 +25,7 @@ import { MessageService } from '../message.service';
 import { UserService } from '../user.service';
 import { serverTimestamp } from '@angular/fire/firestore';
 import { Message } from '../message.models';
+import { ChannelService } from '../channel.service';
 
 /**
  * The ThreadComponent handles a child "thread" chat, where users reply to
@@ -194,7 +195,10 @@ export class ThreadComponent implements OnInit {
   /**
    * Whether a user dropdown overlay is open (e.g. for mentioning).
    */
-  showUserDropdown: boolean = false;
+  allChannels: any[] = [];
+  dropdownState: 'hidden' | 'user' | 'channel' = 'hidden';
+  private cycleStep = 1;
+  lastOpenedChar = '';
 
   /**
    * A cache mapping user IDs to their names for quick re-lookup.
@@ -207,6 +211,8 @@ export class ThreadComponent implements OnInit {
   private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeEmojiListener?: () => void;
   private unsubscribeReplyCount: (() => void) | null = null;
+  private unsubscribeChannels: (() => void) | null = null;
+  private unsubscribeUsers: (() => void) | null = null;
 
   /**
    * Constructor injecting services for messages, user data, and change detection.
@@ -214,7 +220,8 @@ export class ThreadComponent implements OnInit {
   constructor(
     private messageService: MessageService,
     private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private channelService: ChannelService
   ) {}
 
   /**
@@ -233,6 +240,14 @@ export class ThreadComponent implements OnInit {
     } catch (error) {
       this.closeThread.emit();
     }
+    this.unsubscribeChannels = this.channelService.getAllChannels(
+      (channels) => {
+        this.allChannels = channels;
+      }
+    );
+    this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
+      this.allUsers = users;
+    });
   }
 
   /**
@@ -337,6 +352,26 @@ export class ThreadComponent implements OnInit {
   @HostListener('window:resize')
   onResize() {
     this.checkDesktopWidth();
+  }
+
+  /**
+   * Closes the dropdown when a click occurs outside its container.
+   * @param {MouseEvent} event - The global document click event.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.dropdownState !== 'hidden') {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+
+  /**
+   * Prevents the dropdown from closing if clicked inside its container.
+   * @param {MouseEvent} event - The local container click event.
+   */
+  onSelfClick(event: MouseEvent): void {
+    event.stopPropagation();
   }
 
   /**
@@ -864,6 +899,12 @@ export class ThreadComponent implements OnInit {
     if (this.unsubscribeReplyCount) {
       this.unsubscribeReplyCount();
     }
+    if (this.unsubscribeChannels) {
+      this.unsubscribeChannels();
+    }
+    if (this.unsubscribeUsers) {
+      this.unsubscribeUsers();
+    }
   }
 
   /**
@@ -1178,16 +1219,6 @@ export class ThreadComponent implements OnInit {
   }
 
   /**
-   * Toggles a user mention dropdown. If opening, loads all users if not already loaded.
-   */
-  toggleUserDropdown(): void {
-    if (!this.showUserDropdown) {
-      this.loadAllUsers();
-    }
-    this.showUserDropdown = !this.showUserDropdown;
-  }
-
-  /**
    * Loads all users from Firestore, used for mention or user selection in the thread.
    */
   loadAllUsers(): void {
@@ -1205,11 +1236,94 @@ export class ThreadComponent implements OnInit {
   }
 
   /**
+   * Toggles the dropdown in a 4-step cycle:
+   * 1) hidden -> user
+   * 2) user -> channel
+   * 3) channel -> user
+   * 4) user -> hidden
+   * @param {MouseEvent} event - The button click event.
+   */
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.cycleStep === 1) {
+      this.dropdownState = 'user';
+      this.cycleStep = 2;
+    } else if (this.cycleStep === 2) {
+      this.dropdownState = 'channel';
+      this.cycleStep = 3;
+    } else if (this.cycleStep === 3) {
+      this.dropdownState = 'user';
+      this.cycleStep = 4;
+    } else {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+
+  /**
+   * Closes the dropdown, resetting its state to hidden.
+   */
+  closeDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+  }
+
+  /** Resets the dropdown to its default hidden state. */
+  private resetDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+    this.lastOpenedChar = '';
+  }
+
+  /**
+   * Evaluates user/channel mention state or hides it based on input events.
+   * @param {Event} event - The input event from the textarea.
+   */
+  onTextareaInput(event: Event): void {
+    const i = event as InputEvent,
+      t = (event.target as HTMLTextAreaElement).value;
+    if (
+      ['deleteContentBackward', 'deleteContentForward'].includes(i.inputType)
+    ) {
+      if (!t.includes('@') && this.dropdownState === 'user')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      if (!t.includes('#') && this.dropdownState === 'channel')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      return;
+    }
+    if (t.endsWith('@') && this.lastOpenedChar !== '@') {
+      this.dropdownState = 'user';
+      this.lastOpenedChar = '@';
+    } else if (t.endsWith('#') && this.lastOpenedChar !== '#') {
+      this.dropdownState = 'channel';
+      this.lastOpenedChar = '#';
+    } else this.lastOpenedChar = '';
+  }
+
+  /**
    * Inserts an '@username' mention in the reply text and closes the mention dropdown.
    */
   addUserSymbol(member: any) {
+    if (this.privateMessage.endsWith('@')) {
+      this.privateMessage = this.privateMessage.slice(0, -1);
+    }
     this.privateMessage += ` @${member.name} `;
-    this.showUserDropdown = false;
+    this.closeDropdown();
+  }
+
+  /**
+   * Inserts a channel mention into the message text, removing any trailing '#',
+   * then closes the dropdown.
+   * @param {any} channel - The channel object to mention.
+   */
+  selectChannel(channel: any): void {
+    if (this.privateMessage.endsWith('#')) {
+      this.privateMessage = this.privateMessage.slice(0, -1);
+    }
+    this.privateMessage += `#${channel.name} `;
+    this.closeDropdown();
   }
 
   /**

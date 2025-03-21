@@ -1,9 +1,8 @@
-
 /**
- * The PrivateMessagesComponent manages direct (private) chats between the current user 
- * and a specified recipient. It handles sending text or image-based messages, displaying 
- * date separators, loading and maintaining last-used emojis, live-updating messages 
- * via Firestore listeners, and more. No logic or styling has been changed – 
+ * The PrivateMessagesComponent manages direct (private) chats between the current user
+ * and a specified recipient. It handles sending text or image-based messages, displaying
+ * date separators, loading and maintaining last-used emojis, live-updating messages
+ * via Firestore listeners, and more. No logic or styling has been changed –
  * only these English JSDoc comments have been added.
  */
 
@@ -18,7 +17,7 @@ import {
   Output,
   OnChanges,
   SimpleChanges,
-  HostListener
+  HostListener,
 } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +33,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { Message } from '../message.models';
 
 /**
- * Defines the structure of a message's content, which may include text, 
+ * Defines the structure of a message's content, which may include text,
  * an optional image, and an array of emojis with usage counts.
  */
 export interface MessageContent {
@@ -49,7 +48,7 @@ export interface MessageContent {
   imports: [CommonModule, FormsModule, PickerModule, OverlayModule],
   templateUrl: './private-messages.component.html',
   styleUrls: ['./private-messages.component.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PrivateMessagesComponent implements OnInit, OnChanges {
   @ViewChild('messageList') messageList!: ElementRef;
@@ -91,18 +90,24 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   privateMessages: Message[] = [];
   showLargeImage = false;
   largeImageUrl: string | null = null;
-
   private hasScrolledOnChange: boolean = false;
   private isChatChanging: boolean = false;
   isDesktop = false;
 
-  private replyCache: Map<string, any[]> = new Map(); 
+  allChannels: any[] = [];
+  dropdownState: 'hidden' | 'user' | 'channel' = 'hidden';
+  private cycleStep = 1;
+  lastOpenedChar = '';
+
+  private replyCache: Map<string, any[]> = new Map();
   private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeLiveReplyCounts: (() => void) | null = null;
   private unsubscribeFromThreadDetails: (() => void) | null = null;
   private unsubscribeEmojiListener?: () => void;
   private unsubscribeFromPrivateMessages: (() => void) | null = null;
   private unsubscribeRecipient?: () => void;
+  private unsubscribeChannels: (() => void) | null = null;
+  private unsubscribeUsers: (() => void) | null = null;
 
   /**
    * Constructor injecting services for route info, user data, channel logic, dialogs, and messages.
@@ -130,13 +135,22 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
         this.currentUser.id,
         this.recipientId
       );
-    
+
       this.setupMessageListener();
       this.listenForEmojiUpdates();
       this.loadLastUsedEmojis();
       this.startLiveReplyCountUpdates();
       this.startDateUpdater();
     }
+
+    this.unsubscribeChannels = this.channelService.getAllChannels(
+      (channels) => {
+        this.allChannels = channels;
+      }
+    );
+    this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
+      this.allUsers = users;
+    });
   }
 
   /**
@@ -145,6 +159,26 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   @HostListener('window:resize')
   onResize() {
     this.checkDesktopWidth();
+  }
+
+  /**
+   * Closes the dropdown when a click occurs outside its container.
+   * @param {MouseEvent} event - The global document click event.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.dropdownState !== 'hidden') {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+
+  /**
+   * Prevents the dropdown from closing if clicked inside its container.
+   * @param {MouseEvent} event - The local container click event.
+   */
+  onSelfClick(event: MouseEvent): void {
+    event.stopPropagation();
   }
 
   /**
@@ -167,9 +201,9 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
    * Recomputes formattedDate for each message to reflect daily changes.
    */
   private updateMessageDates(): void {
-    const updatedMessages = this.privateMessages.map(msg => ({
+    const updatedMessages = this.privateMessages.map((msg) => ({
       ...msg,
-      formattedDate: this.getFormattedDate(msg.timestamp)
+      formattedDate: this.getFormattedDate(msg.timestamp),
     }));
     this.privateMessages = [...updatedMessages];
   }
@@ -241,7 +275,8 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     if (this.isNearBottom()) {
       setTimeout(() => {
         if (this.messageList) {
-          this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+          this.messageList.nativeElement.scrollTop =
+            this.messageList.nativeElement.scrollHeight;
         }
       }, 100);
     }
@@ -261,9 +296,8 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       if (this.unsubscribeRecipient) {
         this.unsubscribeRecipient();
       }
-      // Neuen Listener starten
+
       this.setupRecipientListener();
-    
 
       setTimeout(() => {
         this.scrollToBottom();
@@ -278,7 +312,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
 
       if (newThreadData.timestamp) {
         this.getFormattedDate(newThreadData.timestamp),
-        formatDate(newThreadData.timestamp, 'HH:mm', 'de');
+          formatDate(newThreadData.timestamp, 'HH:mm', 'de');
       }
     }
   }
@@ -298,12 +332,11 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       this.unsubscribeFromPrivateMessages();
     }
 
-    this.unsubscribeFromPrivateMessages = this.messageService.getPrivateMessagesLive(
-      conversationId,
-      (messages) => {
-        this.privateMessages = messages.map(msg => {
+    this.unsubscribeFromPrivateMessages =
+      this.messageService.getPrivateMessagesLive(conversationId, (messages) => {
+        this.privateMessages = messages.map((msg) => {
           const timestampDate = this.safeConvertTimestamp(msg.timestamp);
-          const lastResponseTime = msg.lastResponseTime 
+          const lastResponseTime = msg.lastResponseTime
             ? this.safeConvertTimestamp(msg.lastResponseTime)
             : timestampDate;
 
@@ -314,15 +347,14 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
             formattedDate: this.getFormattedDate(timestampDate),
             content: {
               ...msg.content,
-              emojis: msg.content?.emojis || []
-            }
+              emojis: msg.content?.emojis || [],
+            },
           };
         });
         setTimeout(() => {
           this.scrollToBottom();
         }, 200);
-      }
-    );
+      });
   }
 
   /**
@@ -364,6 +396,12 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     if (this.unsubscribeRecipient) {
       this.unsubscribeRecipient();
     }
+    if (this.unsubscribeChannels) {
+      this.unsubscribeChannels();
+    }
+    if (this.unsubscribeUsers) {
+      this.unsubscribeUsers();
+    }
     this.replyCache.clear();
   }
 
@@ -378,7 +416,8 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
 
     const updatedMessages = rawMessages.map((msg, index) => {
       const timestampDate = this.safeConvertTimestamp(msg.timestamp);
-      const showDateSeparator = index === 0 || !this.isSameDay(prevDate, timestampDate);
+      const showDateSeparator =
+        index === 0 || !this.isSameDay(prevDate, timestampDate);
       prevDate = timestampDate;
 
       return {
@@ -392,9 +431,9 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
         time: formatDate(timestampDate, 'HH:mm', 'de'),
         content: {
           ...msg.content,
-          emojis: msg.content?.emojis?.slice() || []
+          emojis: msg.content?.emojis?.slice() || [],
         },
-        replyCount: msg.replyCount ?? 0
+        replyCount: msg.replyCount ?? 0,
       };
     });
 
@@ -407,7 +446,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
    */
   private updateLiveReplyCounts(messages: Message[]): void {
     const messageIds = messages
-      .map(m => m.id)
+      .map((m) => m.id)
       .filter((id): id is string => id !== undefined);
 
     if (messageIds.length === 0) return;
@@ -417,13 +456,15 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       'private',
       (partialCounts) => {
         for (const [msgId, data] of Object.entries(partialCounts)) {
-          const msgIndex = this.privateMessages.findIndex(m => m.id === msgId);
+          const msgIndex = this.privateMessages.findIndex(
+            (m) => m.id === msgId
+          );
           if (msgIndex !== -1) {
             this.privateMessages[msgIndex] = {
               ...this.privateMessages[msgIndex],
               replyCount: data.count,
               timestamp: this.privateMessages[msgIndex].timestamp,
-              time: this.privateMessages[msgIndex].time
+              time: this.privateMessages[msgIndex].time,
             };
           }
         }
@@ -454,7 +495,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Loads the thread messages from Firestore for a given threadId, 
+   * Loads the thread messages from Firestore for a given threadId,
    * updating the local privateMessages array when new data arrives.
    */
   private loadThread(threadId: string, msg: any): void {
@@ -467,17 +508,18 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       threadId,
       (messages) => {
         // console.log(`📩 Thread live update for ${threadId}:`, messages);  // REMOVED
-        const lastResponseTime = messages.length > 0 
-          ? this.safeConvertTimestamp(messages[messages.length - 1].timestamp)
-          : null;
+        const lastResponseTime =
+          messages.length > 0
+            ? this.safeConvertTimestamp(messages[messages.length - 1].timestamp)
+            : null;
 
-        this.privateMessages = this.privateMessages.map(message => {
+        this.privateMessages = this.privateMessages.map((message) => {
           if (message.id === msg.id) {
             return {
               ...message,
               replies: [...messages],
               replyCount: messages.length,
-              lastResponseTime
+              lastResponseTime,
             };
           }
           return message;
@@ -495,23 +537,23 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       this.unsubscribeLiveReplyCounts();
     }
 
-    const messageIds = this.privateMessages.map(m => m.id || '');
+    const messageIds = this.privateMessages.map((m) => m.id || '');
     if (messageIds.length === 0) return;
 
     this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
       messageIds,
       'private',
       (partialCounts) => {
-        this.privateMessages = this.privateMessages.map(msg => {
+        this.privateMessages = this.privateMessages.map((msg) => {
           const data = partialCounts[msg.id || ''];
           if (!data) return msg;
 
           return {
             ...msg,
             replyCount: data.count,
-            lastResponseTime: data.lastResponseTime 
+            lastResponseTime: data.lastResponseTime
               ? this.safeConvertTimestamp(data.lastResponseTime)
-              : null
+              : null,
           };
         });
       }
@@ -526,17 +568,20 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.userService.getUserById(this.recipientId).then(userData => {
-      if (userData) {
-        this.recipientName = userData.name;
-        this.recipientAvatarUrl = userData.avatarUrl || '';
-        this.recipientStatus = userData.isOnline ? 'Aktiv' : 'Abwesend';
-      } else {
-        // No recipient found
-      }
-    }).catch(() => {
-      // Error fetching user
-    });
+    this.userService
+      .getUserById(this.recipientId)
+      .then((userData) => {
+        if (userData) {
+          this.recipientName = userData.name;
+          this.recipientAvatarUrl = userData.avatarUrl || '';
+          this.recipientStatus = userData.isOnline ? 'Aktiv' : 'Abwesend';
+        } else {
+          // No recipient found
+        }
+      })
+      .catch(() => {
+        // Error fetching user
+      });
   }
 
   /**
@@ -553,7 +598,9 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
 
     if (event?.emoji?.native) {
       const newEmoji = event.emoji.native;
-      const existingEmoji = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
+      const existingEmoji = msg.content.emojis.find(
+        (e: any) => e.emoji === newEmoji
+      );
 
       if (existingEmoji) {
         existingEmoji.count += 1;
@@ -565,29 +612,37 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
         }
       }
 
-      const isSentByMe = (msg.senderId === this.currentUser?.id);
+      const isSentByMe = msg.senderId === this.currentUser?.id;
       const emojiType = isSentByMe ? 'sent' : 'received';
 
       if (isSentByMe) {
-        this.lastUsedEmojisSent = this.updateLastUsedEmojis(this.lastUsedEmojisSent, newEmoji);
+        this.lastUsedEmojisSent = this.updateLastUsedEmojis(
+          this.lastUsedEmojisSent,
+          newEmoji
+        );
       } else {
-        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(this.lastUsedEmojisReceived, newEmoji);
+        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
+          this.lastUsedEmojisReceived,
+          newEmoji
+        );
       }
 
       if (this.conversationId) {
         this.messageService
           .saveLastUsedEmojis(this.conversationId, [newEmoji], emojiType)
-          .catch(error => console.error('Failed to save emoji usage:', error));
+          .catch((error) =>
+            console.error('Failed to save emoji usage:', error)
+          );
       } else {
         // No conversation ID
       }
 
       try {
         await this.messageService.updateMessage(msg.id, {
-          'content.emojis': msg.content.emojis
+          'content.emojis': msg.content.emojis,
         });
 
-        this.privateMessages = this.privateMessages.map(m =>
+        this.privateMessages = this.privateMessages.map((m) =>
           m.id === msg.id
             ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
             : m
@@ -609,13 +664,16 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
    * @param {string} newEmoji - The new emoji to insert.
    * @returns {string[]} An updated array of emojis.
    */
-  private updateLastUsedEmojis(emojiArray: string[], newEmoji: string): string[] {
-    emojiArray = emojiArray.filter(e => e !== newEmoji);
+  private updateLastUsedEmojis(
+    emojiArray: string[],
+    newEmoji: string
+  ): string[] {
+    emojiArray = emojiArray.filter((e) => e !== newEmoji);
     return emojiArray.slice(0, 2);
   }
 
   /**
-   * Listens for real-time emoji usage updates from Firestore, applying them to the 
+   * Listens for real-time emoji usage updates from Firestore, applying them to the
    * local arrays of last used emojis for 'sent' and 'received'.
    */
   private listenForEmojiUpdates(): void {
@@ -647,7 +705,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
 
       const [lastSent, lastReceived] = await Promise.all([
         this.messageService.getLastUsedEmojis(conversationId, 'sent'),
-        this.messageService.getLastUsedEmojis(conversationId, 'received')
+        this.messageService.getLastUsedEmojis(conversationId, 'received'),
       ]);
 
       this.lastUsedEmojisSent = lastSent || [];
@@ -660,8 +718,8 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Sends a private message, optionally with an attached image. It updates the UI immediately 
-   * with a temp message, then replaces it with the actual Firestore ID once saved. 
+   * Sends a private message, optionally with an attached image. It updates the UI immediately
+   * with a temp message, then replaces it with the actual Firestore ID once saved.
    * Finally, it refreshes last used emojis and date/time logic.
    *
    * @param {HTMLTextAreaElement} textArea - The input area to reset after sending.
@@ -672,15 +730,18 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       return;
     }
 
-    const conversationId = this.messageService.generateConversationId(senderId, this.recipientId);
-    let senderName = this.currentUser?.name || "Unknown";
-    let senderAvatar = this.currentUser?.avatarUrl || "assets/img/avatar.png";
+    const conversationId = this.messageService.generateConversationId(
+      senderId,
+      this.recipientId
+    );
+    let senderName = this.currentUser?.name || 'Unknown';
+    let senderAvatar = this.currentUser?.avatarUrl || 'assets/img/avatar.png';
 
     if (!senderName) {
       try {
         const userData = await this.userService.getUserById(senderId);
-        senderName = userData?.name || "Unknown";
-        senderAvatar = userData?.avatarUrl || "assets/default-avatar.png";
+        senderName = userData?.name || 'Unknown';
+        senderAvatar = userData?.avatarUrl || 'assets/default-avatar.png';
       } catch (error) {
         // Error loading user
       }
@@ -701,9 +762,9 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     const tempMessageData = {
       id: tempMessageId,
       content: {
-        text: this.privateMessage || "",
-        image: typeof this.imageUrl === "string" ? this.imageUrl : "",
-        emojis: []
+        text: this.privateMessage || '',
+        image: typeof this.imageUrl === 'string' ? this.imageUrl : '',
+        emojis: [],
       },
       timestamp,
       formattedDate,
@@ -712,7 +773,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       senderId,
       senderName,
       senderAvatar,
-      conversationId
+      conversationId,
     };
 
     this.privateMessages = [...this.privateMessages, tempMessageData];
@@ -720,27 +781,36 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
 
     try {
       const firestoreId = await this.messageService.sendMessage({
-        type: "private",
+        type: 'private',
         conversationId,
         content: {
-          text: this.privateMessage || "",
-          image: typeof this.imageUrl === "string" ? this.imageUrl : "",
-          emojis: []
+          text: this.privateMessage || '',
+          image: typeof this.imageUrl === 'string' ? this.imageUrl : '',
+          emojis: [],
         },
         senderId,
         senderName,
         senderAvatar,
-        recipientId: this.recipientId
+        recipientId: this.recipientId,
       });
 
       this.privateMessages = this.privateMessages.map((msg) =>
         msg.id === tempMessageId ? { ...msg, id: firestoreId } : msg
       );
 
-      const savedMessage = await this.messageService.getMessage("private", firestoreId);
+      const savedMessage = await this.messageService.getMessage(
+        'private',
+        firestoreId
+      );
       if (conversationId && savedMessage?.content?.emojis?.length) {
-        const emojisInMessage = savedMessage.content.emojis.map((e: { emoji: string }) => e.emoji);
-        await this.messageService.saveLastUsedEmojis(conversationId, emojisInMessage, "sent");
+        const emojisInMessage = savedMessage.content.emojis.map(
+          (e: { emoji: string }) => e.emoji
+        );
+        await this.messageService.saveLastUsedEmojis(
+          conversationId,
+          emojisInMessage,
+          'sent'
+        );
       }
 
       await this.loadLastUsedEmojis();
@@ -749,7 +819,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       // Error sending message
     }
 
-    this.privateMessage = "";
+    this.privateMessage = '';
     this.imageUrl = null;
     if (textArea) this.resetTextareaHeight(textArea);
 
@@ -770,14 +840,12 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       if (messageId) {
         try {
           await this.messageService.updateMessage(messageId, {
-            content: msg.content
+            content: msg.content,
           });
 
           // Update the local list of messages
-          this.privateMessages = this.privateMessages.map(m =>
-            m.id === messageId
-              ? { ...msg, isEditing: false }
-              : m
+          this.privateMessages = this.privateMessages.map((m) =>
+            m.id === messageId ? { ...msg, isEditing: false } : m
           );
         } catch (err) {
           // Error updating message
@@ -805,7 +873,11 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const compareDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
 
     if (compareDate.getTime() === today.getTime()) {
       return 'Heute';
@@ -816,7 +888,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
         weekday: 'long',
         day: '2-digit',
         month: 'long',
-        timeZone: 'Europe/Berlin'
+        timeZone: 'Europe/Berlin',
       });
     }
   }
@@ -859,8 +931,9 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
    * Loads the current user's data from Firestore and stores it in `currentUser`.
    */
   async loadCurrentUser(): Promise<void> {
-    return this.userService.getCurrentUserData()
-      .then(user => {
+    return this.userService
+      .getCurrentUserData()
+      .then((user) => {
         this.currentUser = user;
       })
       .catch(() => {
@@ -953,37 +1026,110 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Toggles a user dropdown (if your UI has a mention system). Loads all users if first open.
-   */
-  toggleUserDropdown(): void {
-    if (!this.showUserDropdown) {
-      this.loadAllUsers();
-    }
-    this.showUserDropdown = !this.showUserDropdown;
-  }
-
-  /**
    * Loads all users for the mention system or user overlay.
    */
   loadAllUsers(): void {
-    this.userService.getAllUsers()
-      .then(users => {
-        this.allUsers = users.map(u => ({
+    this.userService
+      .getAllUsers()
+      .then((users) => {
+        this.allUsers = users.map((u) => ({
           id: u.id,
           name: u.name,
           avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
-          isOnline: u.isOnline ?? false
+          isOnline: u.isOnline ?? false,
         }));
       })
-      .catch(err => console.error('Fehler beim Laden der Nutzer:', err));
+      .catch((err) => console.error('Fehler beim Laden der Nutzer:', err));
+  }
+
+  /**
+   * Toggles the dropdown in a 4-step cycle:
+   * 1) hidden -> user
+   * 2) user -> channel
+   * 3) channel -> user
+   * 4) user -> hidden
+   * @param {MouseEvent} event - The button click event.
+   */
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.cycleStep === 1) {
+      this.dropdownState = 'user';
+      this.cycleStep = 2;
+    } else if (this.cycleStep === 2) {
+      this.dropdownState = 'channel';
+      this.cycleStep = 3;
+    } else if (this.cycleStep === 3) {
+      this.dropdownState = 'user';
+      this.cycleStep = 4;
+    } else {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+  /**
+   * Closes the dropdown, resetting its state to hidden.
+   */
+  closeDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+  }
+
+  /** Resets the dropdown to its default hidden state. */
+  private resetDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+    this.lastOpenedChar = '';
+  }
+
+  /**
+   * Evaluates user/channel mention state or hides it based on input events.
+   * @param {Event} event - The input event from the textarea.
+   */
+  onTextareaInput(event: Event): void {
+    const i = event as InputEvent,
+      t = (event.target as HTMLTextAreaElement).value;
+    if (
+      ['deleteContentBackward', 'deleteContentForward'].includes(i.inputType)
+    ) {
+      if (!t.includes('@') && this.dropdownState === 'user')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      if (!t.includes('#') && this.dropdownState === 'channel')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      return;
+    }
+    if (t.endsWith('@') && this.lastOpenedChar !== '@') {
+      this.dropdownState = 'user';
+      this.lastOpenedChar = '@';
+    } else if (t.endsWith('#') && this.lastOpenedChar !== '#') {
+      this.dropdownState = 'channel';
+      this.lastOpenedChar = '#';
+    } else this.lastOpenedChar = '';
+  }
+
+  /**
+   * Inserts a channel mention into the message text, removing any trailing '#',
+   * then closes the dropdown.
+   * @param {any} channel - The channel object to mention.
+   */
+  selectChannel(channel: any): void {
+    if (this.privateMessage.endsWith('#')) {
+      this.privateMessage = this.privateMessage.slice(0, -1);
+    }
+    this.privateMessage += `#${channel.name} `;
+    this.closeDropdown();
   }
 
   /**
    * Adds an "@username" mention to the `privateMessage` input and closes the dropdown.
    */
   addUserSymbol(member: any) {
+    if (this.privateMessage.endsWith('@')) {
+      this.privateMessage = this.privateMessage.slice(0, -1);
+    }
     this.privateMessage += ` @${member.name} `;
-    this.showUserDropdown = false;
+    this.closeDropdown();
   }
 
   /**
@@ -1069,7 +1215,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     this.tooltipSenderName = senderName;
     this.tooltipPosition = {
       x: event.clientX,
-      y: event.clientY - 40
+      y: event.clientY - 40,
     };
   }
 

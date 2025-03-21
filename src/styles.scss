@@ -144,6 +144,11 @@ body {
   }
 }
 
+.dropdown-container {
+  position: relative;
+  display: inline-block; 
+}
+
 .my-user-dropdown {
   list-style-type: none;
   background-color: white;
@@ -152,6 +157,9 @@ body {
   max-height: 200px;
   overflow-y: auto;
   z-index: 1000;
+  position: absolute; 
+  bottom: calc(100% + 50px);
+  left: -60px;
 
   &.pm-scrollable {
     overflow-y: auto;
@@ -226,6 +234,29 @@ body {
     }
   }
 }
+
+.tag-container{
+    padding-right: 10px;
+    border-radius: 100px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $lightblue;
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+      cursor: pointer;
+    }
+  }
 
 .small-image {
   width: 50px;
@@ -418,6 +449,10 @@ body {
     h1 {
       font-size: 14px;
     }
+  }
+
+  .my-user-dropdown.pm-scrollable{
+    max-width:200px;
   }
 }
 

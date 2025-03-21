@@ -18,12 +18,16 @@ import {
   Output,
   SimpleChanges,
   OnChanges,
-  HostListener
+  HostListener,
 } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-import { OverlayModule, CdkConnectedOverlay, ConnectionPositionPair } from '@angular/cdk/overlay';
+import {
+  OverlayModule,
+  CdkConnectedOverlay,
+  ConnectionPositionPair,
+} from '@angular/cdk/overlay';
 import { ChannelService } from '../channel.service';
 import { MemberListDialogComponent } from '../member-list-dialog/member-list-dialog.component';
 import { AddMembersDialogComponent } from '../add-members-dialog/add-members-dialog.component';
@@ -33,7 +37,6 @@ import { MemberSectionDialogComponent } from '../member-section-dialog/member-se
 import { MessageService } from '../message.service';
 import { ProfilDialogComponent } from '../profil-dialog/profil-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-
 
 /** Defines the structure of the content in a message (text, image, emojis). */
 export interface MessageContent {
@@ -62,11 +65,11 @@ interface ThreadChannelParentDoc {
     PickerModule,
     OverlayModule,
     MemberListDialogComponent,
-    AddMembersDialogComponent
+    AddMembersDialogComponent,
   ],
   templateUrl: './entwicklerteam.component.html',
   styleUrls: ['./entwicklerteam.component.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('membersOverlay') membersOverlay?: CdkConnectedOverlay;
@@ -77,9 +80,13 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   @Output() memberSelected = new EventEmitter<{ uid: string; name: string }>();
 
   /** The currently selected channel (object with id, name, members, etc.). */
-  @Input() selectedChannel:
-    | { id: string; name: string; members: any[]; description?: string; createdBy?: string }
-    | null = null;
+  @Input() selectedChannel: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  } | null = null;
 
   /** If a recipient name is provided (for direct messages). */
   @Input() recipientName: string = '';
@@ -106,10 +113,16 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   @Output() channelLeft = new EventEmitter<void>();
 
   /** Event emitter if a private chat is opened from the chat context. */
-  @Output() openPrivateChatInChat = new EventEmitter<{ id: string; name: string }>();
+  @Output() openPrivateChatInChat = new EventEmitter<{
+    id: string;
+    name: string;
+  }>();
 
   /** Event emitter if a private chat is opened specifically from Entwicklerteam context. */
-  @Output() openPrivateChatFromEntwicklerteam = new EventEmitter<{ id: string; name: string }>();
+  @Output() openPrivateChatFromEntwicklerteam = new EventEmitter<{
+    id: string;
+    name: string;
+  }>();
 
   /** Tracks whether the layout is desktop (>= 1278px). */
   isDesktop = false;
@@ -128,6 +141,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
 
   /** If an image modal is open for a larger preview. */
   isImageModalOpen = false;
+
+  allChannels: any[] = [];
+  dropdownState: 'hidden' | 'user' | 'channel' = 'hidden';
+  private cycleStep = 1;
+  lastOpenedChar = '';
 
   /** Array of channels. Typically, only one is “selected.” */
   channels: {
@@ -216,7 +234,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   allUsers: any[] = [];
 
   /** Controls an overlay to show a user dropdown. */
-  showUserDropdown = false;
+  //showUserDropdown = false;
 
   /** If a large image is displayed in a modal overlay. */
   showLargeImage = false;
@@ -238,6 +256,8 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   private unsubscribeLiveReplyCounts: (() => void) | null = null;
   private unsubscribeFromThreadDetails: (() => void) | null = null;
   private replyCountsUnsubscribe: (() => void) | null = null;
+  private unsubscribeChannels: (() => void) | null = null;
+  private unsubscribeUsers: (() => void) | null = null;
 
   positions: ConnectionPositionPair[] = [
     {
@@ -246,7 +266,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       overlayX: 'start',
       overlayY: 'top',
       offsetX: 0,
-      offsetY: 0
+      offsetY: 0,
     },
     {
       originX: 'end',
@@ -254,8 +274,8 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       overlayX: 'end',
       overlayY: 'top',
       offsetX: 0,
-      offsetY: 0
-    }
+      offsetY: 0,
+    },
   ];
 
   positionsAddMembers: ConnectionPositionPair[] = [
@@ -265,7 +285,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       overlayX: 'start',
       overlayY: 'top',
       offsetX: 0,
-      offsetY: 0
+      offsetY: 0,
     },
     {
       originX: 'end',
@@ -273,8 +293,8 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       overlayX: 'end',
       overlayY: 'top',
       offsetX: 0,
-      offsetY: 0
-    }
+      offsetY: 0,
+    },
   ];
 
   constructor(
@@ -289,11 +309,23 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     this.loadCurrentUser();
     this.checkDesktopWidth();
     this.subscribeToCurrentChannel();
+
+    this.unsubscribeChannels = this.channelService.getAllChannels(
+      (channels) => {
+        this.allChannels = channels;
+      }
+    );
+    this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
+      this.allUsers = users;
+    });
   }
 
   /** Called when @Input() properties change. */
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedChannel'] && !changes['selectedChannel'].isFirstChange()) {
+    if (
+      changes['selectedChannel'] &&
+      !changes['selectedChannel'].isFirstChange()
+    ) {
       // No double loading because we rely on currentChannel subscription
     }
     if (changes['threadData'] && changes['threadData'].currentValue) {
@@ -305,9 +337,35 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     if (this.unsubscribeLiveReplyCounts) this.unsubscribeLiveReplyCounts();
     if (this.unsubscribeFromThreadDetails) this.unsubscribeFromThreadDetails();
-    if (this.unsubscribeFromThreadMessages) this.unsubscribeFromThreadMessages();
+    if (this.unsubscribeFromThreadMessages)
+      this.unsubscribeFromThreadMessages();
+    if (this.unsubscribeChannels) {
+      this.unsubscribeChannels();
+    }
+    if (this.unsubscribeUsers) {
+      this.unsubscribeUsers();
+    }
   }
 
+  /**
+   * Closes the dropdown when a click occurs outside its container.
+   * @param {MouseEvent} event - The global document click event.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.dropdownState !== 'hidden') {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+
+  /**
+   * Prevents the dropdown from closing if clicked inside its container.
+   * @param {MouseEvent} event - The local container click event.
+   */
+  onSelfClick(event: MouseEvent): void {
+    event.stopPropagation();
+  }
   /** Subscribes to channelService.currentChannel for real-time channel updates. */
   private subscribeToCurrentChannel(): void {
     this.channelService.currentChannel.subscribe((channel) => {
@@ -326,10 +384,14 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
         name: channel.name,
         members: channel.members,
         description: channel.description,
-        createdBy: channel.createdBy || ''
-      }
+        createdBy: channel.createdBy || '',
+      },
     ];
-    this.channels = this.channels.map((c) => (c.id === channel.id ? { ...c, members: channel.members, name: channel.name } : c));
+    this.channels = this.channels.map((c) =>
+      c.id === channel.id
+        ? { ...c, members: channel.members, name: channel.name }
+        : c
+    );
     this.selectedChannel = channel;
     this.loadLastUsedEmojis(channel.id);
   }
@@ -339,9 +401,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     this.channelService.getLastUsedEmojis(channelId, 'sent').then((sent) => {
       this.lastUsedEmojisSent = sent || [];
     });
-    this.channelService.getLastUsedEmojis(channelId, 'received').then((recv) => {
-      this.lastUsedEmojisReceived = recv || [];
-    });
+    this.channelService
+      .getLastUsedEmojis(channelId, 'received')
+      .then((recv) => {
+        this.lastUsedEmojisReceived = recv || [];
+      });
   }
 
   /** Loads messages for the channel, updates local array, sets up reply-count watchers. */
@@ -360,7 +424,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       content: { ...m.content, emojis: m.content?.emojis || [] },
       replyCount: m.replyCount || 0,
       threadId: m.threadId || null,
-      parentId: m.parentId || null
+      parentId: m.parentId || null,
     }));
     this.connectReplyCountsToMessages(this.messages);
     if (!this.hasInitialScrollDone) {
@@ -377,10 +441,15 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       const tId = msg.threadId || msg.parentId || msg.id;
       if (!tId) return;
       this.messageService.loadReplyCountsLive([tId], 'thread-channel', (rc) => {
-        const { count, lastResponseTime } = rc[tId] || { count: 0, lastResponseTime: null };
+        const { count, lastResponseTime } = rc[tId] || {
+          count: 0,
+          lastResponseTime: null,
+        };
         msg.replyCount = count;
-        msg.threadLastResponseTime = lastResponseTime || msg.threadLastResponseTime;
-        if (msg.threadLastResponseTime) msg.lastReplyTime = new Date(msg.threadLastResponseTime);
+        msg.threadLastResponseTime =
+          lastResponseTime || msg.threadLastResponseTime;
+        if (msg.threadLastResponseTime)
+          msg.lastReplyTime = new Date(msg.threadLastResponseTime);
       });
     });
   }
@@ -451,7 +520,10 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   openAddMembersDialogMobile(): void {
     if (!this.selectedChannel) return;
     this.dialog.open(AddMembersDialogComponent, {
-      data: { channelId: this.selectedChannel.id, members: this.selectedChannel.members }
+      data: {
+        channelId: this.selectedChannel.id,
+        members: this.selectedChannel.members,
+      },
     });
   }
 
@@ -459,7 +531,10 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   openMemberListDialogMobile(): void {
     if (!this.selectedChannel) return;
     const ref = this.dialog.open(MemberListDialogComponent, {
-      data: { channelId: this.selectedChannel.id, members: this.selectedChannel.members }
+      data: {
+        channelId: this.selectedChannel.id,
+        members: this.selectedChannel.members,
+      },
     });
     ref.afterClosed().subscribe((r) => this.handleMobileMemberListResult(r));
   }
@@ -484,8 +559,8 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
         userName: member.name,
         userAvatarUrl: member.avatarUrl,
         userStatus: member.isOnline ? 'Aktiv' : 'Abwesend',
-        userEmail: member.email
-      }
+        userEmail: member.email,
+      },
     });
     ref.afterClosed().subscribe((result) => {
       if (result?.openChatWith) {
@@ -507,7 +582,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     if (!d) return 'Ungültiges Datum';
     if (this.isSameDay(d, new Date())) return 'Heute';
     if (this.isSameDay(d, this.yesterDayDate)) return 'Gestern';
-    const opt: Intl.DateTimeFormatOptions = { weekday: 'long', day: '2-digit', month: 'long' };
+    const opt: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+    };
     return d.toLocaleDateString('de-DE', opt);
   }
 
@@ -526,7 +605,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
 
   /** Checks if two Date objects refer to the same day. */
   private isSameDay(a: Date, b: Date): boolean {
-    return a.getDate() === b.getDate() && a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear();
+    return (
+      a.getDate() === b.getDate() &&
+      a.getMonth() === b.getMonth() &&
+      a.getFullYear() === b.getFullYear()
+    );
   }
 
   /** Triggered when the user selects an image file. Adjusts textarea if needed. */
@@ -584,7 +667,8 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     const e = ev.emoji.native;
     const existing = msg.content.emojis.find((x: any) => x.emoji === e);
     if (existing) existing.count++;
-    else if (msg.content.emojis.length < 20) msg.content.emojis.push({ emoji: e, count: 1 });
+    else if (msg.content.emojis.length < 20)
+      msg.content.emojis.push({ emoji: e, count: 1 });
     this.updateLastUsedForMessage(e, msg.senderName);
     msg.isEmojiPickerVisible = false;
     this.updateMsgInFirestore(msg);
@@ -598,7 +682,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     const updated = arr.filter((x) => x !== e).slice(0, 2);
     if (!this.selectedChannel?.id) return;
     const type = isSent ? 'sent' : 'received';
-    this.channelService.saveLastUsedEmojis(this.selectedChannel.id, updated, type);
+    this.channelService.saveLastUsedEmojis(
+      this.selectedChannel.id,
+      updated,
+      type
+    );
     if (isSent) this.lastUsedEmojisSent = updated;
     else this.lastUsedEmojisReceived = updated;
   }
@@ -606,7 +694,9 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   /** Writes updated content to Firestore for a specific message. */
   private updateMsgInFirestore(msg: any): void {
     if (!this.selectedChannel?.id) return;
-    this.channelService.updateMessage(this.selectedChannel.id, msg.id, msg.content).then(() => {});
+    this.channelService
+      .updateMessage(this.selectedChannel.id, msg.id, msg.content)
+      .then(() => {});
   }
 
   /** Sends a new message (text or image). Resets input and scrolls. */
@@ -629,14 +719,14 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       content: {
         text: hasText ? this.message.trim() : null,
         image: hasImg ? this.imageUrl : null,
-        emojis: []
+        emojis: [],
       },
       date: formatDate(new Date(), 'dd.MM.yyyy', 'en'),
       timestamp: new Date(),
       time: new Date().toLocaleTimeString(),
       senderName: this.currentUser?.name || '',
       senderAvatar: this.currentUser?.avatarUrl || '',
-      isEmojiPickerVisible: false
+      isEmojiPickerVisible: false,
     };
   }
 
@@ -663,11 +753,13 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   scrollToBottom(): void {
     setTimeout(() => {
       if (this.messageList?.nativeElement) {
-        this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+        this.messageList.nativeElement.scrollTop =
+          this.messageList.nativeElement.scrollHeight;
       }
       setTimeout(() => {
         if (this.messageList?.nativeElement) {
-          this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+          this.messageList.nativeElement.scrollTop =
+            this.messageList.nativeElement.scrollHeight;
         }
       }, 200);
     }, 100);
@@ -689,22 +781,32 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /** Opens the EditChannelDialog for editing a channel or leaving it. */
-  openEditChannelDialog(ch: { id: string; name: string; members: any[]; description?: string; createdBy?: string }): void {
+  openEditChannelDialog(ch: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }): void {
     const ref = this.dialog.open(EditChannelDialogComponent, {
       data: {
         id: ch.id,
         name: ch.name,
         members: ch.members,
         description: ch.description || '',
-        createdBy: ch.createdBy || ''
-      }
+        createdBy: ch.createdBy || '',
+      },
     });
     ref.componentInstance.channelLeft.subscribe(() => {
       this.onLeaveChannel(ch);
     });
     ref.afterClosed().subscribe((result) => {
       if (!result) return;
-      this.channelService.updateChannel(ch.id, result.name, result.description || '');
+      this.channelService.updateChannel(
+        ch.id,
+        result.name,
+        result.description || ''
+      );
       this.channelService.setMembers(ch.id, result.members);
     });
   }
@@ -743,11 +845,16 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
 
   /** Saves changes to a message in Firestore if editing was active. */
   saveMessage(msg: any): void {
-    if (msg?.isEditing === undefined || !msg.id || !this.selectedChannel) return;
+    if (msg?.isEditing === undefined || !msg.id || !this.selectedChannel)
+      return;
     msg.isEditing = false;
-    this.channelService.updateMessage(this.selectedChannel.id, msg.id, msg.content).then(() => {
-      this.messages = this.messages.map((m) => (m.id === msg.id ? { ...msg, isEditing: false } : m));
-    });
+    this.channelService
+      .updateMessage(this.selectedChannel.id, msg.id, msg.content)
+      .then(() => {
+        this.messages = this.messages.map((m) =>
+          m.id === msg.id ? { ...msg, isEditing: false } : m
+        );
+      });
   }
 
   /** Toggles edit options for a single message, hiding them for others. */
@@ -768,10 +875,70 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     this.showEditOptions = false;
   }
 
-  /** Toggles a user dropdown for mention; loads all users on first open. */
-  toggleUserDropdown(): void {
-    if (!this.showUserDropdown) this.loadAllUsers();
-    this.showUserDropdown = !this.showUserDropdown;
+  /**
+   * Toggles the dropdown in a 4-step cycle:
+   * 1) hidden -> user
+   * 2) user -> channel
+   * 3) channel -> user
+   * 4) user -> hidden
+   * @param {MouseEvent} event - The button click event.
+   */
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.cycleStep === 1) {
+      this.dropdownState = 'user';
+      this.cycleStep = 2;
+    } else if (this.cycleStep === 2) {
+      this.dropdownState = 'channel';
+      this.cycleStep = 3;
+    } else if (this.cycleStep === 3) {
+      this.dropdownState = 'user';
+      this.cycleStep = 4;
+    } else {
+      this.dropdownState = 'hidden';
+      this.cycleStep = 1;
+    }
+  }
+  /**
+   * Closes the dropdown, resetting its state to hidden.
+   */
+  closeDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+  }
+
+  /** Resets the dropdown to its default hidden state. */
+  private resetDropdown(): void {
+    this.dropdownState = 'hidden';
+    this.cycleStep = 1;
+    this.lastOpenedChar = '';
+  }
+
+  /**
+   * Evaluates user/channel mention state or hides it based on input events.
+   * @param {Event} event - The input event from the textarea.
+   */
+  onTextareaInput(event: Event): void {
+    const i = event as InputEvent,
+      t = (event.target as HTMLTextAreaElement).value;
+    if (
+      ['deleteContentBackward', 'deleteContentForward'].includes(i.inputType)
+    ) {
+      if (!t.includes('@') && this.dropdownState === 'user')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      if (!t.includes('#') && this.dropdownState === 'channel')
+        this.resetDropdown();
+      this.lastOpenedChar = '';
+      return;
+    }
+    if (t.endsWith('@') && this.lastOpenedChar !== '@') {
+      this.dropdownState = 'user';
+      this.lastOpenedChar = '@';
+    } else if (t.endsWith('#') && this.lastOpenedChar !== '#') {
+      this.dropdownState = 'channel';
+      this.lastOpenedChar = '#';
+    } else this.lastOpenedChar = '';
   }
 
   /** Loads all users from Firestore, storing them in allUsers. */
@@ -781,15 +948,32 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
         id: u.id,
         name: u.name,
         avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
-        isOnline: u.isOnline ?? false
+        isOnline: u.isOnline ?? false,
       }));
     });
   }
 
   /** Inserts an '@username' mention in the typed message. */
   addUserSymbol(member: any): void {
+    if (this.message.endsWith('@')) {
+      this.message = this.privateMessage.slice(0, -1);
+    }
     this.message += ` @${member.name} `;
-    this.showUserDropdown = false;
+    //this.showUserDropdown = false;
+    this.closeDropdown();
+  }
+
+  /**
+   * Inserts a channel mention into the message text, removing any trailing '#',
+   * then closes the dropdown.
+   * @param {any} channel - The channel object to mention.
+   */
+  selectChannel(channel: any): void {
+    if (this.message.endsWith('#')) {
+      this.message = this.message.slice(0, -1);
+    }
+    this.message += `#${channel.name} `;
+    this.closeDropdown();
   }
 
   /** If a private message is typed, clears it after “sending.” */
@@ -820,9 +1004,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   openMemberSelectionDialog(): void {
     const ref = this.dialog.open(MemberSectionDialogComponent, {
       width: '400px',
-      data: { members: this.members }
+      data: { members: this.members },
     });
-    ref.componentInstance.memberSelected.subscribe((sel) => this.handleMemberSelected(sel));
+    ref.componentInstance.memberSelected.subscribe((sel) =>
+      this.handleMemberSelected(sel)
+    );
   }
 
   /** Sets the selectedMember once chosen in the selection dialog. */
@@ -843,7 +1029,9 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       if (!ud?.uid || !channel.id) return;
       this.channelService.leaveChannel(channel.id, ud.uid).then(() => {
         channel.members = channel.members.filter((m: any) => m.uid !== ud.uid);
-        this.channels = this.channels.map((c) => (c.id === channel.id ? { ...c, members: channel.members } : c));
+        this.channels = this.channels.map((c) =>
+          c.id === channel.id ? { ...c, members: channel.members } : c
+        );
         this.selectedChannel = null;
         this.showWelcomeContainer = true;
         this.channelLeft.emit();
@@ -867,24 +1055,35 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   /** Opens a thread channel for a message, loads parent docs, child messages, sets up watchers, then emits data. */
   async openThreadEvent(msg: any): Promise<void> {
     if (!msg?.id) return;
-    if (this.unsubscribeFromThreadMessages) this.unsubscribeFromThreadMessages();
+    if (this.unsubscribeFromThreadMessages)
+      this.unsubscribeFromThreadMessages();
     if (this.unsubscribeFromThreadDetails) this.unsubscribeFromThreadDetails();
     const tid = msg.threadChannelId || msg.parentId || msg.id;
-    const parentDoc = (await this.messageService.getMessage('thread-channel', tid)) as ThreadChannelParentDoc | null;
+    const parentDoc = (await this.messageService.getMessage(
+      'thread-channel',
+      tid
+    )) as ThreadChannelParentDoc | null;
     const cName = await this.resolveThreadChannelName(parentDoc, msg);
-    const kids = await this.messageService.getMessagesOnce('thread-channel', tid);
+    const kids = await this.messageService.getMessagesOnce(
+      'thread-channel',
+      tid
+    );
     const dataObj = this.buildThreadDataObj(msg, parentDoc, cName, kids);
     this.listenThreadMessages(tid);
     this.listenThreadReplyCounts(tid, dataObj.parentMessage);
     if (this.messageService.listenForThreadDetails) {
-      this.unsubscribeFromThreadDetails = this.messageService.listenForThreadDetails(tid, () => {});
+      this.unsubscribeFromThreadDetails =
+        this.messageService.listenForThreadDetails(tid, () => {});
     }
     setTimeout(() => this.positionOverlays(), 300);
     this.openThread.emit(dataObj);
   }
 
   /** Resolves the channel name for a thread, if not already on parentDoc. */
-  private async resolveThreadChannelName(pd: ThreadChannelParentDoc | null, msg: any): Promise<string> {
+  private async resolveThreadChannelName(
+    pd: ThreadChannelParentDoc | null,
+    msg: any
+  ): Promise<string> {
     if (pd?.channelName) return pd.channelName;
     if (!pd?.channelId) return 'Unbekannt';
     const ch = await this.channelService.getChannelById(pd.channelId);
@@ -904,27 +1103,36 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       id: tid,
       text: (p.content?.text ?? msg.text) || 'Kein Text',
       senderName: p.senderName || msg.senderName || 'Unbekannt',
-      senderAvatar: p.senderAvatar || msg.senderAvatar || 'assets/img/default-avatar.png',
+      senderAvatar:
+        p.senderAvatar || msg.senderAvatar || 'assets/img/default-avatar.png',
       timestamp: p.timestamp || msg.timestamp || new Date(),
       replyCount: p.replyCount || msg.replyCount || 0,
       channelName,
       channelId: p.channelId || null,
-      content: p.content ?? msg.content ?? { text: 'Kein Text', emojis: [] }
+      content: p.content ?? msg.content ?? { text: 'Kein Text', emojis: [] },
     };
     const fm = (children || []).map((c) => ({
       ...c,
       content: c.content ?? { text: 'Kein Text', emojis: [] },
-      timestamp: c.timestamp || new Date()
+      timestamp: c.timestamp || new Date(),
     }));
     if (msg.id !== tid) {
-      fm.push({ ...msg, content: msg.content || { text: 'Kein Text', emojis: [] }, timestamp: msg.timestamp || new Date() });
+      fm.push({
+        ...msg,
+        content: msg.content || { text: 'Kein Text', emojis: [] },
+        timestamp: msg.timestamp || new Date(),
+      });
     }
     return { parentMessage, messages: fm };
   }
 
   /** Sets up a listener for thread messages (no processing here). */
   private listenThreadMessages(threadId: string): void {
-    this.unsubscribeFromThreadMessages = this.messageService.listenForMessages('thread-channel', threadId, () => {});
+    this.unsubscribeFromThreadMessages = this.messageService.listenForMessages(
+      'thread-channel',
+      threadId,
+      () => {}
+    );
   }
 
   /** Sets up a live listener for reply counts on the open thread. */
@@ -960,9 +1168,15 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     const el = document.getElementById(`message-${id}`);
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    this.messages = this.messages.map((m) => ({ ...m, isHighlighted: m.id === id }));
+    this.messages = this.messages.map((m) => ({
+      ...m,
+      isHighlighted: m.id === id,
+    }));
     setTimeout(() => {
-      this.messages = this.messages.map((m) => ({ ...m, isHighlighted: false }));
+      this.messages = this.messages.map((m) => ({
+        ...m,
+        isHighlighted: false,
+      }));
     }, 2000);
   }
 
@@ -974,8 +1188,10 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     }
     const ids = msgs.map((m: any) => m.id).filter((x: string) => !!x);
     if (!ids.length) return;
-    this.replyCountsUnsubscribe = this.messageService.loadReplyCountsLive(ids, 'thread-channel', (rc) =>
-      this.updateReplyCountsFromLive(rc)
+    this.replyCountsUnsubscribe = this.messageService.loadReplyCountsLive(
+      ids,
+      'thread-channel',
+      (rc) => this.updateReplyCountsFromLive(rc)
     );
   }
 
@@ -988,7 +1204,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
         ...msg,
         replyCount: d.count,
         threadLastResponseTime: d.lastResponseTime,
-        lastReplyTime: d.lastResponseTime || msg.lastReplyTime
+        lastReplyTime: d.lastResponseTime || msg.lastReplyTime,
       };
     });
   }
@@ -1040,115 +1256,3 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     return r ? r.toLocaleTimeString() : '—';
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
