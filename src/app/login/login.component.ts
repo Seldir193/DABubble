@@ -34,7 +34,9 @@ import {
   signInAnonymously,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signInWithRedirect,
+  User
 } from '@angular/fire/auth';
 import { AppStateService } from '../app-state.service';
 import { UserService } from '../user.service';
@@ -248,22 +250,64 @@ export class LoginComponent implements OnInit {
     await updateDoc(userDoc, updateData);
   }
 
-  /** Signs the user in with Google, then loads/creates their Firestore record. */
-  async signInWithGoogle(): Promise<void> {
-    try {
-      const provider = new GoogleAuthProvider();
-      const auth = getAuth();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      if (user?.email) {
-        const avatarUrl = user.photoURL || '';
-        await this.loadUserData(user.email, user.displayName || undefined, avatarUrl);
-        this.router.navigate(['/avatar']);
-      }
-    } catch (_) {
-      this.errorMessage = 'Fehler bei der Google-Anmeldung.';
-    }
+
+
+  async signInWithGooglePopup(): Promise<User> {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    const result = await signInWithPopup(auth, provider);
+    // result ist vom Typ UserCredential
+    if (!result.user) throw new Error('No user returned');
+    return result.user;
   }
+  
+  async signInWithGoogleRedirect(): Promise<void> {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    await signInWithRedirect(auth, provider); 
+    // Hier bekommst du das 'user' i.d.R. über getRedirectResult oder onAuthStateChanged
+  }
+
+
+
+  /** 
+ * Detects whether user is on mobile, then uses popup (desktop) or redirect (mobile).
+ */
+async signInWithGoogle(): Promise<void> {
+  try {
+    const isMobile = this.isMobileDevice(); // s. Methode unten
+
+    let user: any;
+    if (isMobile) {
+      await this.signInWithGoogleRedirect();
+      // user Info erhältst du später über onAuthStateChanged oder getRedirectResult
+    } else {
+      user = await this.signInWithGooglePopup();
+      // user = result.user
+    }
+
+    // Wenn Desktop => user ist direkt da, 
+    // Mobile => user Info via onAuthStateChanged/getRedirectResult in ngOnInit oder so
+    if (!isMobile && user?.email) {
+      const avatarUrl = user.photoURL || '';
+      await this.loadUserData(user.email, user.displayName || undefined, avatarUrl);
+      this.router.navigate(['/avatar']);
+    }
+
+  } catch (_) {
+    this.errorMessage = 'Fehler bei der Google-Anmeldung.';
+  }
+}
+
+/** 
+ * Ermittelt, ob Mobil (z. B. screen width < 768) oder 
+ * falls du einen User-Agent-Check machen willst.
+ */
+private isMobileDevice(): boolean {
+  return window.innerWidth < 768;
+}
+
+  
 
   /** Navigates to the signup page if the user chooses to register. */
   navigateToSignup(): void {

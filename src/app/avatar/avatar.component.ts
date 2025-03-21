@@ -138,7 +138,7 @@ export class AvatarComponent implements OnInit {
           this.successMessage = 'Account successfully updated!';
           setTimeout(() => {
             this.successMessage = '';
-            this.router.navigate(['/login']);
+            this.router.navigate(['/chat']);
           }, 3000);
         } else {
           this.errorMessage = 'User not found.';
