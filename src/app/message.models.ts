@@ -25,6 +25,9 @@ export interface Message {
   threadId?: string;
   lastReplyTime?: any;
   recipientName?: string;
+  
+  showDateSeparator?: boolean; 
+
 }
 
 export interface MessageContent {

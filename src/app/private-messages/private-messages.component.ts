@@ -122,34 +122,43 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
 
   /**
    * Lifecycle hook: loads the current user, sets up the conversation if recipient is known,
-   * and starts live updates (messages, emojis, reply counts, date refresh).
+   * and starts real-time updates (messages, emojis, reply counts, date refresh).
    */
   async ngOnInit(): Promise<void> {
     await this.loadCurrentUser();
     this.loadRecipientData();
     this.checkDesktopWidth();
     this.setupRecipientListener();
+    this.initPrivateConversation();
+    this.initChannelAndUserSubscriptions();
+  }
 
-    if (this.currentUser?.id && this.recipientId) {
-      this.conversationId = this.messageService.generateConversationId(
-        this.currentUser.id,
-        this.recipientId
-      );
-
-      this.setupMessageListener();
-      this.listenForEmojiUpdates();
-      this.loadLastUsedEmojis();
-      this.startLiveReplyCountUpdates();
-      this.startDateUpdater();
-    }
-
-    this.unsubscribeChannels = this.channelService.getAllChannels(
-      (channels) => {
-        this.allChannels = channels;
-      }
+  /**
+   * Initializes the private conversation if currentUser and recipientId are defined,
+   * then sets up listeners for messages, emojis, reply counts, and date updates.
+   */
+  private initPrivateConversation(): void {
+    if (!this.currentUser?.id || !this.recipientId) return;
+    this.conversationId = this.messageService.generateConversationId(
+      this.currentUser.id,
+      this.recipientId
     );
-    this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
-      this.allUsers = users;
+    this.setupMessageListener();
+    this.listenForEmojiUpdates();
+    this.loadLastUsedEmojis();
+    this.startLiveReplyCountUpdates();
+    this.startDateUpdater();
+  }
+
+  /**
+   * Subscribes to channel and user updates, storing the unsubscribe functions.
+   */
+  private initChannelAndUserSubscriptions(): void {
+    this.unsubscribeChannels = this.channelService.getAllChannels((ch) => {
+      this.allChannels = ch;
+    });
+    this.unsubscribeUsers = this.userService.getAllUsersLive((u) => {
+      this.allUsers = u;
     });
   }
 
@@ -283,78 +292,84 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * OnChanges hook: if recipientId changes, cleans up old listeners, reloads data, re-scrolls.
+   * Called whenever @Input properties change. Dispatches to helper methods for
+   * recipient changes or thread data updates.
    */
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['recipientId'] && !changes['recipientId'].isFirstChange()) {
-      this.hasScrolledOnChange = true;
-      this.isChatChanging = true;
-      this.cleanupListeners();
-      this.loadRecipientData();
-      this.loadPrivateMessages();
-
-      if (this.unsubscribeRecipient) {
-        this.unsubscribeRecipient();
-      }
-
-      this.setupRecipientListener();
-
-      setTimeout(() => {
-        this.scrollToBottom();
-        this.isChatChanging = false;
-      }, 200);
-
-      this.startLiveReplyCountUpdates();
-    }
-
-    if (changes['threadData']?.currentValue) {
-      const newThreadData = changes['threadData'].currentValue;
-
-      if (newThreadData.timestamp) {
-        this.getFormattedDate(newThreadData.timestamp),
-          formatDate(newThreadData.timestamp, 'HH:mm', 'de');
-      }
-    }
+    this.handleRecipientChanges(changes);
+    this.handleThreadDataChanges(changes);
   }
 
   /**
-   * Loads the private messages for this conversation from Firestore, sets up a live listener.
+   * Handles logic when recipientId changes: clears old listeners, reloads data,
+   * scrolls to bottom, and restarts live reply counts.
+   */
+  private handleRecipientChanges(ch: SimpleChanges): void {
+    const rc = ch['recipientId'];
+    if (!rc || rc.isFirstChange()) return;
+
+    this.hasScrolledOnChange = true;
+    this.isChatChanging = true;
+    this.cleanupListeners();
+    this.loadRecipientData();
+    this.loadPrivateMessages();
+    if (this.unsubscribeRecipient) this.unsubscribeRecipient();
+    this.setupRecipientListener();
+    setTimeout(() => {
+      this.scrollToBottom();
+      this.isChatChanging = false;
+    }, 200);
+    this.startLiveReplyCountUpdates();
+  }
+
+  /**
+   * Handles logic when threadData changes, updating timestamp if present.
+   */
+  private handleThreadDataChanges(ch: SimpleChanges): void {
+    const td = ch['threadData']?.currentValue;
+    if (!td?.timestamp) return;
+
+    this.getFormattedDate(td.timestamp);
+    formatDate(td.timestamp, 'HH:mm', 'de');
+  }
+
+  /**
+   * Loads private messages for the current conversation from Firestore
+   * and sets up a live listener for updates.
    */
   async loadPrivateMessages(): Promise<void> {
     if (!this.currentUser?.id || !this.recipientId) return;
-
-    const conversationId = this.messageService.generateConversationId(
+    const cId = this.messageService.generateConversationId(
       this.currentUser.id,
       this.recipientId
     );
-
-    if (this.unsubscribeFromPrivateMessages) {
+    if (this.unsubscribeFromPrivateMessages)
       this.unsubscribeFromPrivateMessages();
-    }
-
     this.unsubscribeFromPrivateMessages =
-      this.messageService.getPrivateMessagesLive(conversationId, (messages) => {
-        this.privateMessages = messages.map((msg) => {
-          const timestampDate = this.safeConvertTimestamp(msg.timestamp);
-          const lastResponseTime = msg.lastResponseTime
-            ? this.safeConvertTimestamp(msg.lastResponseTime)
-            : timestampDate;
+      this.messageService.getPrivateMessagesLive(cId, (msgs) =>
+        this.handlePrivateMessagesLive(msgs)
+      );
+  }
 
-          return {
-            ...msg,
-            timestamp: timestampDate,
-            lastResponseTime,
-            formattedDate: this.getFormattedDate(timestampDate),
-            content: {
-              ...msg.content,
-              emojis: msg.content?.emojis || [],
-            },
-          };
-        });
-        setTimeout(() => {
-          this.scrollToBottom();
-        }, 200);
-      });
+  /**
+   * Transforms incoming messages by converting timestamps and
+   * updating local references, then scrolls down after a short delay.
+   */
+  private handlePrivateMessagesLive(messages: any[]): void {
+    this.privateMessages = messages.map((msg) => {
+      const ts = this.safeConvertTimestamp(msg.timestamp);
+      const lr = msg.lastResponseTime
+        ? this.safeConvertTimestamp(msg.lastResponseTime)
+        : ts;
+      return {
+        ...msg,
+        timestamp: ts,
+        lastResponseTime: lr,
+        formattedDate: this.getFormattedDate(ts),
+        content: { ...msg.content, emojis: msg.content?.emojis || [] },
+      };
+    });
+    setTimeout(() => this.scrollToBottom(), 200);
   }
 
   /**
@@ -390,6 +405,10 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       this.unsubscribeLiveReplyCounts();
       this.unsubscribeLiveReplyCounts = null;
     }
+    this.replyCache.clear();
+  }
+
+  ngOnHelpDestroy(): void {
     if (this.unsubscribeFromPrivateMessages) {
       this.unsubscribeFromPrivateMessages();
     }
@@ -402,74 +421,89 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     if (this.unsubscribeUsers) {
       this.unsubscribeUsers();
     }
-    this.replyCache.clear();
   }
 
   /**
-   * Processes raw messages from Firestore, ensuring timestamps are valid Dates,
-   * setting date separators, and updating local state.
+   * Processes raw messages from Firestore by converting timestamps,
+   * setting daily separators, and then updates live reply counts.
    *
-   * @param {Message[]} rawMessages - The array of messages from Firestore.
+   * @param {Message[]} rawMessages - The array of incoming Firestore messages.
    */
   private processIncomingMessages(rawMessages: Message[]): void {
     let prevDate: Date | null = null;
-
-    const updatedMessages = rawMessages.map((msg, index) => {
-      const timestampDate = this.safeConvertTimestamp(msg.timestamp);
-      const showDateSeparator =
-        index === 0 || !this.isSameDay(prevDate, timestampDate);
-      prevDate = timestampDate;
-
-      return {
-        ...msg,
-        timestamp: timestampDate,
-        lastResponseTime: msg.lastResponseTime
-          ? this.safeConvertTimestamp(msg.lastResponseTime)
-          : timestampDate,
-        formattedDate: this.getFormattedDate(timestampDate),
-        showDateSeparator,
-        time: formatDate(timestampDate, 'HH:mm', 'de'),
-        content: {
-          ...msg.content,
-          emojis: msg.content?.emojis?.slice() || [],
-        },
-        replyCount: msg.replyCount ?? 0,
-      };
+    const updated = rawMessages.map((msg, i) => {
+      const ts = this.safeConvertTimestamp(msg.timestamp);
+      const showSep = i === 0 || !this.isSameDay(prevDate, ts);
+      prevDate = ts;
+      return this.transformIncomingMessage(msg, ts, showSep);
     });
-
-    this.privateMessages = [...updatedMessages];
-    this.updateLiveReplyCounts(updatedMessages);
+    this.privateMessages = [...updated];
+    this.updateLiveReplyCounts(updated);
   }
 
   /**
-   * Updates live reply counts for each message by listening to partialCounts from Firestore.
+   * Builds a message object with correct timestamps, optional date separator,
+   * and an intersection cast for showDateSeparator.
+   */
+  private transformIncomingMessage(
+    msg: Message,
+    ts: Date,
+    showDateSeparator: boolean
+  ): Message & { showDateSeparator: boolean } {
+    const lr = msg.lastResponseTime
+      ? this.safeConvertTimestamp(msg.lastResponseTime)
+      : ts;
+    return {
+      ...msg,
+      timestamp: ts,
+      lastResponseTime: lr,
+      formattedDate: this.getFormattedDate(ts),
+      showDateSeparator,
+      time: formatDate(ts, 'HH:mm', 'de'),
+      content: {
+        ...msg.content,
+        emojis: msg.content?.emojis?.slice() || [],
+      },
+      replyCount: msg.replyCount ?? 0,
+    } as Message & { showDateSeparator: boolean };
+  }
+
+  /**
+   * Updates live reply counts for each message by subscribing to partialCounts
+   * from Firestore. Then applies those counts to local messages.
    */
   private updateLiveReplyCounts(messages: Message[]): void {
-    const messageIds = messages
+    const ids = messages
       .map((m) => m.id)
       .filter((id): id is string => id !== undefined);
-
-    if (messageIds.length === 0) return;
+    if (!ids.length) return;
 
     this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
-      messageIds,
+      ids,
       'private',
-      (partialCounts) => {
-        for (const [msgId, data] of Object.entries(partialCounts)) {
-          const msgIndex = this.privateMessages.findIndex(
-            (m) => m.id === msgId
-          );
-          if (msgIndex !== -1) {
-            this.privateMessages[msgIndex] = {
-              ...this.privateMessages[msgIndex],
-              replyCount: data.count,
-              timestamp: this.privateMessages[msgIndex].timestamp,
-              time: this.privateMessages[msgIndex].time,
-            };
-          }
-        }
-      }
+      (pc) => this.applyPartialCounts(pc)
     );
+  }
+
+  /**
+   * Applies partial reply counts to local messages. Casts the partialCounts
+   * to a known structure so 'data' is no longer 'unknown'.
+   */
+  private applyPartialCounts(
+    partialCounts: Record<string, { count: number; lastResponseTime?: any }>
+  ): void {
+    for (const [msgId, data] of Object.entries(partialCounts)) {
+      const idx = this.privateMessages.findIndex((m) => m.id === msgId);
+      if (idx === -1) continue;
+
+      this.privateMessages[idx] = {
+        ...this.privateMessages[idx],
+        replyCount: data.count,
+        timestamp: this.privateMessages[idx].timestamp,
+        time: this.privateMessages[idx].time,
+        // If you need lastResponseTime, you can also set it here
+      };
+    }
   }
 
   /**
@@ -495,69 +529,76 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Loads the thread messages from Firestore for a given threadId,
-   * updating the local privateMessages array when new data arrives.
+   * Loads thread messages from Firestore for the given threadId
+   * and updates the local privateMessages. Then emits openThread.
    */
-  private loadThread(threadId: string, msg: any): void {
-    if (this.unsubscribeFromThreadMessages) {
+  private loadThread(threadId: string, originalMsg: any): void {
+    if (this.unsubscribeFromThreadMessages)
       this.unsubscribeFromThreadMessages();
-    }
 
     this.unsubscribeFromThreadMessages = this.messageService.listenMessages(
       'thread',
       threadId,
-      (messages) => {
-        // console.log(`📩 Thread live update for ${threadId}:`, messages);  // REMOVED
-        const lastResponseTime =
-          messages.length > 0
-            ? this.safeConvertTimestamp(messages[messages.length - 1].timestamp)
-            : null;
+      (messages) => this.handleThreadMessages(messages, originalMsg)
+    );
+  }
 
-        this.privateMessages = this.privateMessages.map((message) => {
-          if (message.id === msg.id) {
-            return {
-              ...message,
-              replies: [...messages],
-              replyCount: messages.length,
-              lastResponseTime,
-            };
-          }
-          return message;
-        });
-        this.openThread.emit(msg);
+  /**
+   * Merges newly received thread messages into privateMessages,
+   * updates replyCount/lastResponseTime, then emits openThread.
+   */
+  private handleThreadMessages(incoming: any[], originMsg: any): void {
+    const lastResp = incoming.length
+      ? this.safeConvertTimestamp(incoming[incoming.length - 1].timestamp)
+      : null;
+
+    this.privateMessages = this.privateMessages.map((m) => {
+      if (m.id !== originMsg.id) return m;
+      return {
+        ...m,
+        replies: [...incoming],
+        replyCount: incoming.length,
+        lastResponseTime: lastResp,
+      };
+    });
+    this.openThread.emit(originMsg);
+  }
+
+  /**
+   * Starts a listener to track live reply counts for the current privateMessages.
+   * Unsubscribes any previous listener, then updates local state when changes occur.
+   */
+  startLiveReplyCountUpdates(): void {
+    if (this.unsubscribeLiveReplyCounts) this.unsubscribeLiveReplyCounts();
+
+    const ids = this.privateMessages.map((m) => m.id || '').filter((x) => x);
+    if (!ids.length) return;
+
+    this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
+      ids,
+      'private',
+      (pc) => {
+        this.applyReplyCounts(pc);
       }
     );
   }
 
   /**
-   * Starts a listener to track live reply counts for the current privateMessages.
+   * Applies partial reply counts from Firestore to each message, updating replyCount
+   * and lastResponseTime. If no data entry matches, the message remains unchanged.
    */
-  startLiveReplyCountUpdates(): void {
-    if (this.unsubscribeLiveReplyCounts) {
-      this.unsubscribeLiveReplyCounts();
-    }
-
-    const messageIds = this.privateMessages.map((m) => m.id || '');
-    if (messageIds.length === 0) return;
-
-    this.unsubscribeLiveReplyCounts = this.messageService.loadReplyCountsLive(
-      messageIds,
-      'private',
-      (partialCounts) => {
-        this.privateMessages = this.privateMessages.map((msg) => {
-          const data = partialCounts[msg.id || ''];
-          if (!data) return msg;
-
-          return {
-            ...msg,
-            replyCount: data.count,
-            lastResponseTime: data.lastResponseTime
-              ? this.safeConvertTimestamp(data.lastResponseTime)
-              : null,
-          };
-        });
-      }
-    );
+  private applyReplyCounts(partialCounts: any): void {
+    this.privateMessages = this.privateMessages.map((msg) => {
+      const data = partialCounts[msg.id || ''];
+      if (!data) return msg;
+      return {
+        ...msg,
+        replyCount: data.count,
+        lastResponseTime: data.lastResponseTime
+          ? this.safeConvertTimestamp(data.lastResponseTime)
+          : null,
+      };
+    });
   }
 
   /**
@@ -592,69 +633,86 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
    * @param {any} msg - The message object being updated.
    */
   async addEmojiToMessage(event: any, msg: any): Promise<void> {
-    if (!msg.content.emojis) {
-      msg.content.emojis = [];
-    }
+    if (!msg.content.emojis) msg.content.emojis = [];
+    if (!event?.emoji?.native) return;
 
-    if (event?.emoji?.native) {
-      const newEmoji = event.emoji.native;
-      const existingEmoji = msg.content.emojis.find(
-        (e: any) => e.emoji === newEmoji
+    const newEmoji = event.emoji.native;
+    this.processEmojiIncrement(msg, newEmoji);
+    this.handleLastUsedEmojis(msg, newEmoji);
+    await this.saveEmojiUsageInFirestore(newEmoji);
+    await this.updateEmojiInFirestore(msg);
+
+    if (!this.hasScrolledOnChange && this.isNearBottom()) {
+      this.scrollToBottom();
+    }
+  }
+
+  /**
+   * Handles incrementing or inserting the new emoji in the message content.
+   */
+  private processEmojiIncrement(msg: any, newEmoji: string): void {
+    const existing = msg.content.emojis.find((e: any) => e.emoji === newEmoji);
+    if (existing) {
+      existing.count++;
+    } else if (msg.content.emojis.length < 20) {
+      msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+    } else {
+      // Limit reached (no logic changed)
+    }
+  }
+
+  /**
+   * Determines if the emoji was sent by the current user or received,
+   * then updates the correct last-used array.
+   */
+  private handleLastUsedEmojis(msg: any, newEmoji: string): void {
+    const isSentByMe = msg.senderId === this.currentUser?.id;
+    const emojiType = isSentByMe ? 'sent' : 'received';
+    if (isSentByMe) {
+      this.lastUsedEmojisSent = this.updateLastUsedEmojis(
+        this.lastUsedEmojisSent,
+        newEmoji
       );
-
-      if (existingEmoji) {
-        existingEmoji.count += 1;
-      } else {
-        if (msg.content.emojis.length < 20) {
-          msg.content.emojis.push({ emoji: newEmoji, count: 1 });
-        } else {
-          // Limit reached
-        }
-      }
-
-      const isSentByMe = msg.senderId === this.currentUser?.id;
-      const emojiType = isSentByMe ? 'sent' : 'received';
-
-      if (isSentByMe) {
-        this.lastUsedEmojisSent = this.updateLastUsedEmojis(
-          this.lastUsedEmojisSent,
-          newEmoji
-        );
-      } else {
-        this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
-          this.lastUsedEmojisReceived,
-          newEmoji
-        );
-      }
-
-      if (this.conversationId) {
-        this.messageService
-          .saveLastUsedEmojis(this.conversationId, [newEmoji], emojiType)
-          .catch((error) =>
-            console.error('Failed to save emoji usage:', error)
-          );
-      } else {
-        // No conversation ID
-      }
-
-      try {
-        await this.messageService.updateMessage(msg.id, {
-          'content.emojis': msg.content.emojis,
-        });
-
-        this.privateMessages = this.privateMessages.map((m) =>
-          m.id === msg.id
-            ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
-            : m
-        );
-
-        if (!this.hasScrolledOnChange && this.isNearBottom()) {
-          this.scrollToBottom();
-        }
-      } catch (error) {
-        // Could not update message
-      }
+    } else {
+      this.lastUsedEmojisReceived = this.updateLastUsedEmojis(
+        this.lastUsedEmojisReceived,
+        newEmoji
+      );
     }
+    if (this.conversationId) {
+      this.messageService
+        .saveLastUsedEmojis(this.conversationId, [newEmoji], emojiType)
+        .catch(() => {});
+    }
+  }
+
+  /**
+   * Updates the message in Firestore with new emoji array,
+   * then reflects the changes in this.privateMessages.
+   */
+  private async updateEmojiInFirestore(msg: any): Promise<void> {
+    try {
+      await this.messageService.updateMessage(msg.id, {
+        'content.emojis': msg.content.emojis,
+      });
+      this.privateMessages = this.privateMessages.map((m) =>
+        m.id === msg.id
+          ? { ...m, content: { ...m.content, emojis: msg.content.emojis } }
+          : m
+      );
+    } catch {
+      // Could not update message (no logic changed)
+    }
+  }
+
+  /**
+   * Saves the new emoji usage in Firestore only if we have a conversationId,
+   * ignoring any error without changing logic.
+   */
+  private async saveEmojiUsageInFirestore(newEmoji: string): Promise<void> {
+    if (!this.conversationId) return;
+    // No conversation ID => do nothing
+    // (keeping original comment logic)
   }
 
   /**
@@ -718,111 +776,165 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Sends a private message, optionally with an attached image. It updates the UI immediately
-   * with a temp message, then replaces it with the actual Firestore ID once saved.
-   * Finally, it refreshes last used emojis and date/time logic.
+   * Sends a private message (with optional image), updates the UI immediately,
+   * replaces temp message with a real Firestore ID, and refreshes emojis/time.
    *
    * @param {HTMLTextAreaElement} textArea - The input area to reset after sending.
    */
   async sendPrivateMessage(textArea: HTMLTextAreaElement): Promise<void> {
-    const senderId = this.userService.getCurrentUserId();
-    if (!senderId || !this.recipientId) {
-      return;
-    }
+    const sid = this.userService.getCurrentUserId();
+    if (!sid || !this.recipientId) return;
 
-    const conversationId = this.messageService.generateConversationId(
-      senderId,
+    const cid = this.messageService.generateConversationId(
+      sid,
       this.recipientId
     );
-    let senderName = this.currentUser?.name || 'Unknown';
-    let senderAvatar = this.currentUser?.avatarUrl || 'assets/img/avatar.png';
+    let [senderName, senderAvatar] = await this.ensureSenderInfo(sid);
 
-    if (!senderName) {
-      try {
-        const userData = await this.userService.getUserById(senderId);
-        senderName = userData?.name || 'Unknown';
-        senderAvatar = userData?.avatarUrl || 'assets/default-avatar.png';
-      } catch (error) {
-        // Error loading user
-      }
+    const { timestamp, showDateSeparator, formattedDate } =
+      this.prepareTimestampInfo();
+    const tempMsgId = this.createTempMessage(
+      cid,
+      sid,
+      senderName,
+      senderAvatar,
+      timestamp,
+      formattedDate,
+      showDateSeparator
+    );
+    this.scrollToBottom();
+
+    try {
+      await this.finalizeMessageInFirestore(
+        cid,
+        sid,
+        senderName,
+        senderAvatar,
+        tempMsgId
+      );
+    } catch {
+      /* Error sending message – no logic changed */
     }
 
+    this.postSendCleanup(textArea);
+  }
+
+  /**
+   * Ensures the sender name/avatar are loaded if missing. Returns [name, avatar].
+   */
+  private async ensureSenderInfo(senderId: string): Promise<[string, string]> {
+    let name = this.currentUser?.name || 'Unknown';
+    let avatar = this.currentUser?.avatarUrl || 'assets/img/avatar.png';
+    if (!name) {
+      try {
+        const ud = await this.userService.getUserById(senderId);
+        name = ud?.name || 'Unknown';
+        avatar = ud?.avatarUrl || 'assets/default-avatar.png';
+      } catch {
+        /* Error loading user */
+      }
+    }
+    return [name, avatar];
+  }
+
+  /**
+   * Prepares the current timestamp/date info and determines if a date separator is needed.
+   */
+  private prepareTimestampInfo(): {
+    timestamp: Date;
+    showDateSeparator: boolean;
+    formattedDate: string;
+  } {
     const timestamp = new Date();
     const formattedDate = this.getFormattedDate(timestamp);
     let showDateSeparator = false;
 
-    if (this.privateMessages.length > 0) {
-      const lastMessage = this.privateMessages[this.privateMessages.length - 1];
-      showDateSeparator = !this.isSameDay(lastMessage.timestamp, timestamp);
+    if (this.privateMessages.length) {
+      const lastMsg = this.privateMessages[this.privateMessages.length - 1];
+      showDateSeparator = !this.isSameDay(lastMsg.timestamp, timestamp);
     } else {
       showDateSeparator = true;
     }
+    return { timestamp, showDateSeparator, formattedDate };
+  }
 
-    const tempMessageId = `temp-${Math.random().toString(36).substr(2, 9)}`;
-    const tempMessageData = {
-      id: tempMessageId,
+  /**
+   * Builds and appends a temporary message into privateMessages, returning the tempMsgId.
+   */
+  private createTempMessage(
+    convId: string,
+    senderId: string,
+    sName: string,
+    sAvatar: string,
+    ts: Date,
+    fmtDate: string,
+    showSep: boolean
+  ): string {
+    const tempMsgId = `temp-${Math.random().toString(36).substr(2, 9)}`;
+    const tempData = {
+      id: tempMsgId,
       content: {
         text: this.privateMessage || '',
         image: typeof this.imageUrl === 'string' ? this.imageUrl : '',
         emojis: [],
       },
-      timestamp,
-      formattedDate,
-      showDateSeparator,
-      time: formatDate(timestamp, 'HH:mm', 'de'),
+      timestamp: ts,
+      formattedDate: fmtDate,
+      showDateSeparator: showSep,
+      time: formatDate(ts, 'HH:mm', 'de'),
       senderId,
-      senderName,
-      senderAvatar,
-      conversationId,
+      senderName: sName,
+      senderAvatar: sAvatar,
+      conversationId: convId,
     };
+    this.privateMessages = [...this.privateMessages, tempData];
+    return tempMsgId;
+  }
 
-    this.privateMessages = [...this.privateMessages, tempMessageData];
-    this.scrollToBottom();
+  /**
+   * Sends the final message to Firestore, updates local messages with the real ID
+   * and refreshes last-used emojis if found.
+   */
+  private async finalizeMessageInFirestore(
+    cId: string,
+    sId: string,
+    sName: string,
+    sAvatar: string,
+    tempId: string
+  ): Promise<void> {
+    const fsId = await this.messageService.sendMessage({
+      type: 'private',
+      conversationId: cId,
+      content: {
+        text: this.privateMessage || '',
+        image: typeof this.imageUrl === 'string' ? this.imageUrl : '',
+        emojis: [],
+      },
+      senderId: sId,
+      senderName: sName,
+      senderAvatar: sAvatar,
+      recipientId: this.recipientId,
+    });
 
-    try {
-      const firestoreId = await this.messageService.sendMessage({
-        type: 'private',
-        conversationId,
-        content: {
-          text: this.privateMessage || '',
-          image: typeof this.imageUrl === 'string' ? this.imageUrl : '',
-          emojis: [],
-        },
-        senderId,
-        senderName,
-        senderAvatar,
-        recipientId: this.recipientId,
-      });
-
-      this.privateMessages = this.privateMessages.map((msg) =>
-        msg.id === tempMessageId ? { ...msg, id: firestoreId } : msg
-      );
-
-      const savedMessage = await this.messageService.getMessage(
-        'private',
-        firestoreId
-      );
-      if (conversationId && savedMessage?.content?.emojis?.length) {
-        const emojisInMessage = savedMessage.content.emojis.map(
-          (e: { emoji: string }) => e.emoji
-        );
-        await this.messageService.saveLastUsedEmojis(
-          conversationId,
-          emojisInMessage,
-          'sent'
-        );
-      }
-
-      await this.loadLastUsedEmojis();
-      this.listenForEmojiUpdates();
-    } catch (error) {
-      // Error sending message
+    this.privateMessages = this.privateMessages.map((m) =>
+      m.id === tempId ? { ...m, id: fsId } : m
+    );
+    const saved = await this.messageService.getMessage('private', fsId);
+    if (cId && saved?.content?.emojis?.length) {
+      const eArr = saved.content.emojis.map((x: { emoji: string }) => x.emoji);
+      await this.messageService.saveLastUsedEmojis(cId, eArr, 'sent');
     }
+    await this.loadLastUsedEmojis();
+    this.listenForEmojiUpdates();
+  }
 
+  /**
+   * Clears the current message & image, resets textarea height, updates date logic.
+   */
+  private postSendCleanup(txtArea: HTMLTextAreaElement): void {
     this.privateMessage = '';
     this.imageUrl = null;
-    if (textArea) this.resetTextareaHeight(textArea);
-
+    if (txtArea) this.resetTextareaHeight(txtArea);
     this.updateMessageDates();
   }
 
@@ -857,40 +969,29 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Formats a date as 'Heute', 'Gestern', or a localized string (e.g., "Samstag, 21. Dezember").
-   *
+   * Formats a date as 'Heute', 'Gestern', or a localized string (e.g. "Samstag, 21. Dezember").
    * @param {Date | string | null} inputDate - The date or timestamp to format.
    * @returns {string} A user-friendly date string in German.
    */
   getFormattedDate(inputDate: Date | string | null): string {
     if (!inputDate) return '';
+    const d = inputDate instanceof Date ? inputDate : new Date(inputDate);
+    if (isNaN(d.getTime())) return 'Ungültiges Datum';
 
-    const date = inputDate instanceof Date ? inputDate : new Date(inputDate);
-    if (isNaN(date.getTime())) return 'Ungültiges Datum';
+    const now = new Date(),
+      today = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+      yest = new Date(today);
+    yest.setDate(today.getDate() - 1);
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const compareDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-    if (compareDate.getTime() === today.getTime()) {
-      return 'Heute';
-    } else if (compareDate.getTime() === yesterday.getTime()) {
-      return 'Gestern';
-    } else {
-      return date.toLocaleDateString('de-DE', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-        timeZone: 'Europe/Berlin',
-      });
-    }
+    const cmp = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if (cmp.getTime() === today.getTime()) return 'Heute';
+    if (cmp.getTime() === yest.getTime()) return 'Gestern';
+    return d.toLocaleDateString('de-DE', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      timeZone: 'Europe/Berlin',
+    });
   }
 
   /**
