@@ -297,6 +297,9 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
       this.dropdownState = 'hidden';
       this.cycleStep = 1;
     }
+    if (this.isEmojiPickerVisible) {
+      this.isEmojiPickerVisible = false;
+    }
   }
 
   /**
@@ -769,9 +772,10 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Toggles the main emoji picker for the new message input field.
+   * Toggles the global emoji picker for sending a new message.
    */
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker(event: MouseEvent) {
+    event.stopPropagation();
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
 
@@ -782,8 +786,12 @@ export class ThreadChannelComponent implements OnInit, OnChanges, OnDestroy {
     if (event?.emoji?.native) {
       this.channelMessage += event.emoji.native;
     }
-    this.isEmojiPickerVisible = false;
   }
+
+  onEmojiPickerClick(e: MouseEvent): void {
+    e.stopPropagation(); // Verhindert, dass der Klick als Außenklick gilt.
+  }
+
 
   /**
    * Scrolls the thread's message list to the bottom. Called after sending/receiving messages.

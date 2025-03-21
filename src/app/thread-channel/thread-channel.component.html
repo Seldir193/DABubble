@@ -480,32 +480,32 @@
               />
             </label>
 
-            <button (click)="toggleEmojiPicker()">
+            <button (click)="toggleEmojiPicker($event)">
               <img
                 class="input-image"
                 src="assets/img/emoji.png"
                 alt="Emoji hinzufügen"
               />
             </button>
-           
-
 
             <div class="dropdown-container" (click)="onSelfClick($event)">
-              <button class="at-button"  (click)="toggleDropdown($event)">
+              <button class="at-button" (click)="toggleDropdown($event)">
                 <img
-                            class="input-image"
-                            src="assets/img/qr.png"
-                            alt="@ hinzufügen"
-                          />
-            
+                  class="input-image"
+                  src="assets/img/qr.png"
+                  alt="@ hinzufügen"
+                />
               </button>
-            
-              
-              <div *ngIf="dropdownState !== 'hidden'" >
-               
-                <ul *ngIf="dropdownState === 'user'" class="my-user-dropdown pm-scrollable" >
-                  <li *ngFor="let user of allUsers" (click)="addUserSymbol(user)">
-            
+
+              <div *ngIf="dropdownState !== 'hidden'">
+                <ul
+                  *ngIf="dropdownState === 'user'"
+                  class="my-user-dropdown pm-scrollable"
+                >
+                  <li
+                    *ngFor="let user of allUsers"
+                    (click)="addUserSymbol(user)"
+                  >
                     <div class="avatar-container">
                       <img
                         [src]="user.avatarUrl || 'assets/img/avatar.png'"
@@ -525,33 +525,28 @@
                         alt="Offline"
                       />
                     </div>
-            
+
                     {{ user.name }}
                   </li>
                 </ul>
-            
-                
-                <ul *ngIf="dropdownState === 'channel'" class="my-user-dropdown pm-scrollable" >
-                  <li *ngFor="let ch of allChannels" (click)="selectChannel(ch)">
-            
-                  
-                <div class="tag-container">
-                  <img src="assets/img/tag-black.png" />
-                </div>
+
+                <ul
+                  *ngIf="dropdownState === 'channel'"
+                  class="my-user-dropdown pm-scrollable"
+                >
+                  <li
+                    *ngFor="let ch of allChannels"
+                    (click)="selectChannel(ch)"
+                  >
+                    <div class="tag-container">
+                      <img src="assets/img/tag-black.png" />
+                    </div>
                     {{ ch.name }}
                   </li>
                 </ul>
               </div>
             </div>
-            
-                
-
-
-
-
-</div>
-
-
+          </div>
 
           <div class="send-button">
             <button (click)="sendThreadMessage(textArea)">
@@ -561,8 +556,11 @@
         </div>
       </div>
 
-      <div class="emoji-picker" *ngIf="isEmojiPickerVisible">
-        <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+      <div class="emoji-picker" *ngIf="isEmojiPickerVisible"(click)="onEmojiPickerClick($event)" >
+        <emoji-mart 
+            [emojiTooltip]="false" 
+            [showPreview]="false"
+            (emojiSelect)="addEmoji($event)"></emoji-mart>
       </div>
 
       <div

@@ -180,6 +180,9 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
       this.dropdownState = 'hidden';
       this.cycleStep = 1;
     }
+    if (this.isEmojiPickerVisible) {
+      this.isEmojiPickerVisible = false;
+    }
   }
 
   /**
@@ -1064,7 +1067,8 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   /**
    * Toggles the global emoji picker for sending a new message.
    */
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker(event: MouseEvent) {
+    event.stopPropagation();
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
 
@@ -1075,7 +1079,10 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     if (event && event.emoji && event.emoji.native) {
       this.privateMessage += event.emoji.native;
     }
-    this.isEmojiPickerVisible = false;
+  }
+
+  onEmojiPickerClick(e: MouseEvent): void {
+    e.stopPropagation(); // Verhindert, dass der Klick als Außenklick gilt.
   }
 
   /**

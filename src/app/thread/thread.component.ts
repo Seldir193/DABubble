@@ -364,6 +364,9 @@ export class ThreadComponent implements OnInit {
       this.dropdownState = 'hidden';
       this.cycleStep = 1;
     }
+    if (this.isEmojiPickerVisible) {
+      this.isEmojiPickerVisible = false;
+    }
   }
 
   /**
@@ -1118,9 +1121,10 @@ export class ThreadComponent implements OnInit {
   }
 
   /**
-   * Toggles the main emoji picker for composing a new thread reply.
+   * Toggles the global emoji picker for sending a new message.
    */
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker(event: MouseEvent) {
+    event.stopPropagation();
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
 
@@ -1131,7 +1135,10 @@ export class ThreadComponent implements OnInit {
     if (event?.emoji?.native) {
       this.privateMessage += event.emoji.native;
     }
-    this.isEmojiPickerVisible = false;
+  }
+
+  onEmojiPickerClick(e: MouseEvent): void {
+    e.stopPropagation(); 
   }
 
   /**

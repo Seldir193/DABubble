@@ -357,6 +357,9 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       this.dropdownState = 'hidden';
       this.cycleStep = 1;
     }
+    if (this.isEmojiPickerVisible) {
+      this.isEmojiPickerVisible = false;
+    }
   }
 
   /**
@@ -644,16 +647,20 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /** Toggles the global emoji picker for the main message input. */
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker(event: MouseEvent) {
+    event.stopPropagation();   
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
 
   /** Adds a selected emoji (from global picker) to the current typed message. */
   addEmoji(ev: any): void {
     if (ev?.emoji?.native) this.message += ev.emoji.native;
-    this.isEmojiPickerVisible = false;
   }
 
+  onEmojiPickerClick(e: MouseEvent): void {
+    e.stopPropagation(); 
+  }
+  
   /** Toggles an emoji picker for a specific message. */
   toggleEmojiPickerForMessage(msg: any): void {
     const visible = msg.isEmojiPickerVisible;
@@ -959,7 +966,6 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       this.message = this.privateMessage.slice(0, -1);
     }
     this.message += ` @${member.name} `;
-    //this.showUserDropdown = false;
     this.closeDropdown();
   }
 
