@@ -25,25 +25,17 @@ $button-border: #adb0d9;
   }
 }
 
-@media (max-width: 780px) {
-  body {
-    overflow: auto;
-  }
-}
-
 html,
 body {
   margin: 0;
   padding: 0;
- //overflow-x: hidden;
- //  overflow-y: auto;
-  //overflow-y: hidden;
 }
 body {
   font-family: "Nunito", "Noto Color Emoji", "Segoe UI Emoji", sans-serif;
   height: 100%;
   width: 100%;
   background-color: $lightblue;
+  min-height: 100vh;
 }
 
 .button-anmelden {
@@ -89,64 +81,34 @@ body {
 
 @keyframes slideInFromRight {
   from {
-    transform: translateX(100%);
+    transform: translate(100%, -50%);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translate(0, -50%);
     opacity: 1;
   }
 }
 
-
-
-
 .registration-ok {
   @include dFlex(center, center, 0px);
-  //width: 100%;
-  
-  width:auto;
-  max-width: 531px;
-  height: auto;
-  padding: 50px;
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translate(100%, -50%);
+  padding: 1rem 2rem;
   border-radius: 30px 30px 0px 30px;
   background-color: $button-blue;
   line-height: 49.1px;
   text-align: center;
   box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
   border: 2px solid $button-blue;
-  margin: 20px auto;
-  position: absolute;
-  right: 0;
-  animation: slideInFromRight 1s ease-out;
-  top: 60%;
-}
-
-
-
-@media (max-width: 1278px) {
-  section {
-    padding: 0 !important;
-    gap: 0 !important;
-  }
-
-  .registration-ok {
-    padding: unset !important;
-
-    img {
-      width: 24px;
-    }
-
-    p {
-      font-size: 22px !important;
-      margin: 0;
-    }
-  }
+  animation: slideInFromRight 3s ease-out forwards;
 }
 
 .dropdown-container {
   position: relative;
-  display: inline-block; 
+  display: inline-block;
 }
 
 .my-user-dropdown {
@@ -157,7 +119,7 @@ body {
   max-height: 200px;
   overflow-y: auto;
   z-index: 1000;
-  position: absolute; 
+  position: absolute;
   bottom: calc(100% + 50px);
   left: -60px;
 
@@ -235,28 +197,28 @@ body {
   }
 }
 
-.tag-container{
-    padding-right: 10px;
-    border-radius: 100px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    cursor: pointer;
+.tag-container {
+  padding-right: 10px;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
 
-    &:hover {
-      background-color: $lightblue;
-      img {
-        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
-          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
-      }
-    }
-
+  &:hover {
+    background-color: $lightblue;
     img {
-      width: 24px;
-      height: 24px;
-      object-fit: cover;
-      transition: filter 0.3s ease;
-      cursor: pointer;
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+        saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
     }
   }
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+    cursor: pointer;
+  }
+}
 
 .small-image {
   width: 50px;
@@ -451,8 +413,26 @@ body {
     }
   }
 
-  .my-user-dropdown.pm-scrollable{
-    max-width:200px;
+  .my-user-dropdown.pm-scrollable {
+    max-width: 200px;
+  }
+
+  section {
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  .registration-ok {
+    padding: unset !important;
+
+    img {
+      width: 24px;
+    }
+
+    p {
+      font-size: 22px !important;
+      margin: 0;
+    }
   }
 }
 

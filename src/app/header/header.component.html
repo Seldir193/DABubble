@@ -1,7 +1,9 @@
 <div class="container">
-  <div class="register" *ngIf="showRegister">
-    <h3>Neu bei DABubble?</h3>
-    <button (click)="navigateToSignup()">Konto erstellen</button>
+  <div class="register">
+    <div class="box" *ngIf="showRegister">
+      <h3>Neu bei DABubble?</h3>
+      <button (click)="navigateToSignup()">Konto erstellen</button>
+    </div>
   </div>
 
   <div class="content-container">

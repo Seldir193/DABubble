@@ -31,6 +31,10 @@ h1 {
   z-index: 2;
 }
 
+.section{
+  width: 100vw;
+}
+
 @keyframes moveLeft {
   from {
     opacity: 0;

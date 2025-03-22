@@ -1,12 +1,19 @@
 @import "./../../styles.scss";
 
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .container {
   @include dFlex(center, center, null);
   width: 100%;
   background-color: $lightblue;
-  padding: 160px 0;
   flex-direction: column;
-  min-height: 100vh;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
 .login-container {
@@ -14,7 +21,7 @@
   background-color: white;
   border-radius: 30px;
   box-shadow: 0px 2px 10px 0px #00000014;
-  max-width: 606px;
+  max-width: 698px;
   width: 100%;
   position: relative;
 
@@ -223,6 +230,10 @@
     width: 100%;
     gap: 18px;
   }
+
+  //.container{
+  //  flex:none;
+  // }
 }
 
 @media (max-width: 780px) {
@@ -255,7 +266,6 @@
   }
 
   .container {
-    padding: 10rem 2rem;
     box-sizing: border-box;
   }
 
@@ -352,13 +362,11 @@
   }
 
   .login-container .login {
-    overflow: hidden;
     padding: unset;
   }
 
   .login-container {
     padding: 20px;
-    overflow: hidden;
   }
 
   .login-container .login form .input-container input {

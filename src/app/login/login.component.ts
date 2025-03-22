@@ -11,7 +11,7 @@ import {
   FormGroup,
   Validators,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
 } from '@angular/forms';
 import { FirebaseError } from '@firebase/util';
 import {
@@ -23,7 +23,7 @@ import {
   setDoc,
   doc,
   getDoc,
-  updateDoc
+  updateDoc,
 } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
@@ -36,7 +36,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
-  User
+  User,
 } from '@angular/fire/auth';
 import { AppStateService } from '../app-state.service';
 import { UserService } from '../user.service';
@@ -50,10 +50,10 @@ import { UserService } from '../user.service';
     FooterComponent,
     HeaderComponent,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   /** Indicates whether the email field is currently filled. */
@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, this.emailValidator.bind(this)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      checkbox: [false, Validators.requiredTrue]
+      checkbox: [false, Validators.requiredTrue],
     });
   }
 
@@ -128,9 +128,9 @@ export class LoginComponent implements OnInit {
   async onSubmit(): Promise<void> {
     this.clearMessages();
     if (this.fieldsAreEmpty()) return;
-  
+
     const emailVal = this.myForm.get('email')?.value as string;
-  
+
     const emailExists = await this.checkEmailExists(emailVal);
     if (!emailExists) {
       this.errorMessage = 'Diese E-Mail-Adresse ist nicht registriert.';
@@ -138,7 +138,7 @@ export class LoginComponent implements OnInit {
     }
     await this.attemptEmailSignIn();
   }
-  
+
   /** Clears all error and success messages. */
   private clearMessages(): void {
     this.errorMessage = '';
@@ -150,7 +150,7 @@ export class LoginComponent implements OnInit {
   private fieldsAreEmpty(): boolean {
     const emailVal = this.myForm.get('email')?.value;
     const passwordVal = this.myForm.get('password')?.value;
-  
+
     if (!emailVal || !passwordVal) {
       this.errorMessage = 'Bitte füllen Sie alle Felder aus.';
       this.errorPassword = 'Bitte füllen Sie alle Felder aus.';
@@ -158,23 +158,23 @@ export class LoginComponent implements OnInit {
     }
     return false;
   }
-  
+
   /** Attempts sign-in with email and password, handles success or error feedback. */
   private async attemptEmailSignIn(): Promise<void> {
     try {
       const auth = getAuth();
-  
+
       const emailVal = this.myForm.get('email')?.value;
       const passwordVal = this.myForm.get('password')?.value;
       await signInWithEmailAndPassword(auth, emailVal, passwordVal);
-  
+
       this.appStateService.setShowWelcomeContainer(true);
       this.handleLoginSuccess();
     } catch (err) {
       this.handleLoginError(err);
     }
   }
-  
+
   /** Sets a success message and navigates to chat after a short delay. */
   private handleLoginSuccess(): void {
     this.successMessage = 'Anmelden';
@@ -216,7 +216,7 @@ export class LoginComponent implements OnInit {
           ? await this.updateExistingUser(ref, {
               lastLogin: new Date(),
               name,
-              avatarUrl
+              avatarUrl,
             })
           : await this.saveNewUser(user.uid, email, name, avatarUrl);
       } catch (_) {}
@@ -236,7 +236,7 @@ export class LoginComponent implements OnInit {
       name: name || 'Unbekannt',
       avatarUrl: avatarUrl || '',
       createdAt: new Date(),
-      lastLogin: new Date()
+      lastLogin: new Date(),
     };
     await setDoc(doc(this.firestore, 'users', uid), user);
   }
@@ -250,64 +250,26 @@ export class LoginComponent implements OnInit {
     await updateDoc(userDoc, updateData);
   }
 
-
-
-  async signInWithGooglePopup(): Promise<User> {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-    const result = await signInWithPopup(auth, provider);
-    // result ist vom Typ UserCredential
-    if (!result.user) throw new Error('No user returned');
-    return result.user;
-  }
-  
-  async signInWithGoogleRedirect(): Promise<void> {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-    await signInWithRedirect(auth, provider); 
-    // Hier bekommst du das 'user' i.d.R. über getRedirectResult oder onAuthStateChanged
-  }
-
-
-
-  /** 
- * Detects whether user is on mobile, then uses popup (desktop) or redirect (mobile).
- */
-async signInWithGoogle(): Promise<void> {
-  try {
-    const isMobile = this.isMobileDevice(); // s. Methode unten
-
-    let user: any;
-    if (isMobile) {
-      await this.signInWithGoogleRedirect();
-      // user Info erhältst du später über onAuthStateChanged oder getRedirectResult
-    } else {
-      user = await this.signInWithGooglePopup();
-      // user = result.user
+  /** Signs the user in with Google, then loads/creates their Firestore record. */
+  async signInWithGoogle(): Promise<void> {
+    try {
+      const provider = new GoogleAuthProvider();
+      const auth = getAuth();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      if (user?.email) {
+        const avatarUrl = user.photoURL || '';
+        await this.loadUserData(
+          user.email,
+          user.displayName || undefined,
+          avatarUrl
+        );
+        this.router.navigate(['/avatar']);
+      }
+    } catch (_) {
+      this.errorMessage = 'Fehler bei der Google-Anmeldung.';
     }
-
-    // Wenn Desktop => user ist direkt da, 
-    // Mobile => user Info via onAuthStateChanged/getRedirectResult in ngOnInit oder so
-    if (!isMobile && user?.email) {
-      const avatarUrl = user.photoURL || '';
-      await this.loadUserData(user.email, user.displayName || undefined, avatarUrl);
-      this.router.navigate(['/avatar']);
-    }
-
-  } catch (_) {
-    this.errorMessage = 'Fehler bei der Google-Anmeldung.';
   }
-}
-
-/** 
- * Ermittelt, ob Mobil (z. B. screen width < 768) oder 
- * falls du einen User-Agent-Check machen willst.
- */
-private isMobileDevice(): boolean {
-  return window.innerWidth < 768;
-}
-
-  
 
   /** Navigates to the signup page if the user chooses to register. */
   navigateToSignup(): void {
@@ -327,7 +289,7 @@ private isMobileDevice(): boolean {
           uid: cred.user.uid,
           name: guestName,
           isOnline: true,
-          createdAt: new Date()
+          createdAt: new Date(),
         });
         this.router.navigate(['/chat']);
       })

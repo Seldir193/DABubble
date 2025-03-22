@@ -15,8 +15,8 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.showRegister = this.router.url !== '/signup';
-    this.showRegister = this.router.url !== '/avatar';
+    this.showRegister =
+      this.router.url !== '/signup' && this.router.url !== '/avatar';
   }
 
   navigateToSignup() {

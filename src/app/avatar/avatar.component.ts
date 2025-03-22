@@ -1,15 +1,11 @@
-import {
-  Component,
-  OnInit,
-  HostListener
-} from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import {
   Firestore,
   updateDoc,
   collection,
   query,
   where,
-  getDocs
+  getDocs,
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
@@ -27,10 +23,10 @@ import { FooterComponent } from '../footer/footer.component';
     FooterComponent,
     CommonModule,
     FormsModule,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.scss']
+  styleUrls: ['./avatar.component.scss'],
 })
 export class AvatarComponent implements OnInit {
   avatars = [
@@ -39,7 +35,7 @@ export class AvatarComponent implements OnInit {
     'assets/img/frederik.png',
     'assets/img/steffen.png',
     'assets/img/sofia.png',
-    'assets/img/noah.png'
+    'assets/img/noah.png',
   ];
   selectedAvatar: string | null = null;
   errorMessage = '';
@@ -48,10 +44,7 @@ export class AvatarComponent implements OnInit {
   successMessage = '';
   isSmallScreen = window.innerWidth < 780;
 
-  constructor(
-    private firestore: Firestore,
-    private router: Router
-  ) {}
+  constructor(private firestore: Firestore, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUserData();
@@ -129,11 +122,13 @@ export class AvatarComponent implements OnInit {
       const current = getAuth().currentUser;
       if (current && current.email) {
         const ref = collection(this.firestore, 'users');
-        const snap = await getDocs(query(ref, where('email', '==', current.email)));
+        const snap = await getDocs(
+          query(ref, where('email', '==', current.email))
+        );
         if (!snap.empty) {
           await updateDoc(snap.docs[0].ref, {
             avatarUrl: this.selectedAvatar,
-            name: this.userName
+            name: this.userName,
           });
           this.successMessage = 'Account successfully updated!';
           setTimeout(() => {

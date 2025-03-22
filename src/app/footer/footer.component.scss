@@ -4,8 +4,7 @@
   height: 50px;
   background-color: $lightblue;
   text-align: center;
-  padding: 10px;
-  margin-top: -100px;
+  padding: 4rem 2rem;
 
   .impressum-datenschutz-box {
     @include dFlex(center, null, 16px);
