@@ -59,6 +59,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   @Input() showSearchField: boolean = false;
   @Output() openThread = new EventEmitter<any>();
   @Input() threadData: any = null;
+  @ViewChild('textArea') textAreaRef!: ElementRef<HTMLTextAreaElement>;
 
   parentMessage: any = null;
   imageUrl: string | ArrayBuffer | null = null;
@@ -99,6 +100,10 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   private cycleStep = 1;
   lastOpenedChar = '';
 
+  userMap: {
+    [uid: string]: { name: string; avatarUrl: string } | undefined;
+  } = {};
+
   private replyCache: Map<string, any[]> = new Map();
   private unsubscribeFromThreadMessages: (() => void) | null = null;
   private unsubscribeLiveReplyCounts: (() => void) | null = null;
@@ -131,6 +136,8 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     this.setupRecipientListener();
     this.initPrivateConversation();
     this.initChannelAndUserSubscriptions();
+
+    setTimeout(() => this.focusTextArea(), 0);
   }
 
   /**
@@ -157,8 +164,15 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     this.unsubscribeChannels = this.channelService.getAllChannels((ch) => {
       this.allChannels = ch;
     });
-    this.unsubscribeUsers = this.userService.getAllUsersLive((u) => {
-      this.allUsers = u;
+
+    this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
+      this.allUsers = users;
+      users.forEach((u) => {
+        this.userMap[u.id] = {
+          name: u.name || 'Unbekannt',
+          avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
+        };
+      });
     });
   }
 
@@ -321,8 +335,18 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     setTimeout(() => {
       this.scrollToBottom();
       this.isChatChanging = false;
+      this.focusTextArea();
     }, 200);
     this.startLiveReplyCountUpdates();
+  }
+
+  /**
+   * Focuses the textarea so the user can immediately start typing.
+   */
+  private focusTextArea(): void {
+    if (this.textAreaRef) {
+      this.textAreaRef.nativeElement.focus();
+    }
   }
 
   /**
@@ -433,15 +457,37 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
    * @param {Message[]} rawMessages - The array of incoming Firestore messages.
    */
   private processIncomingMessages(rawMessages: Message[]): void {
+    rawMessages.forEach((msg) => {
+      if (msg.senderId && !this.userMap[msg.senderId]) {
+        this.loadUserIntoMap(msg.senderId);
+      }
+    });
+
     let prevDate: Date | null = null;
+
     const updated = rawMessages.map((msg, i) => {
       const ts = this.safeConvertTimestamp(msg.timestamp);
       const showSep = i === 0 || !this.isSameDay(prevDate, ts);
       prevDate = ts;
       return this.transformIncomingMessage(msg, ts, showSep);
     });
+
     this.privateMessages = [...updated];
     this.updateLiveReplyCounts(updated);
+  }
+
+  private loadUserIntoMap(userId: string): void {
+    this.userService
+      .getUserById(userId)
+      .then((userData) => {
+        if (userData) {
+          this.userMap[userId] = {
+            name: userData.name || 'Unbekannt',
+            avatarUrl: userData.avatarUrl || 'assets/img/avatar.png',
+          };
+        }
+      })
+      .catch((err) => {});
   }
 
   /**
@@ -808,13 +854,7 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
     this.scrollToBottom();
 
     try {
-      await this.finalizeMessageInFirestore(
-        cid,
-        sid,
-        senderName,
-        senderAvatar,
-        tempMsgId
-      );
+      await this.finalizeMessageInFirestore(cid, sid, tempMsgId);
     } catch {
       /* Error sending message – no logic changed */
     }
@@ -901,8 +941,6 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   private async finalizeMessageInFirestore(
     cId: string,
     sId: string,
-    sName: string,
-    sAvatar: string,
     tempId: string
   ): Promise<void> {
     const fsId = await this.messageService.sendMessage({
@@ -914,8 +952,6 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
         emojis: [],
       },
       senderId: sId,
-      senderName: sName,
-      senderAvatar: sAvatar,
       recipientId: this.recipientId,
     });
 
@@ -1315,15 +1351,49 @@ export class PrivateMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Shows a tooltip near an emoji, displaying the emoji char and the sender's name.
+   * Returns only the channels in which the current user is a member.
+   *
+   * 1. Checks if the current user (with a valid `uid`) and the `allChannels` list exist.
+   * 2. Filters `allChannels` by verifying if each channel's `members` array
+   *    contains an object whose `uid` matches the `currentUser.uid`.
+   * 3. If either the user or channel list is unavailable, returns an empty array.
+   *
+   * @returns {any[]} An array of channels where the current user is a member.
+   */
+  get filteredChannels(): any[] {
+    if (!this.currentUser?.uid || !this.allChannels) {
+      return [];
+    }
+
+    return this.allChannels.filter((ch) =>
+      ch.members?.some((m: any) => m.uid === this.currentUser.uid)
+    );
+  }
+
+  /**
+   * Displays the tooltip for a hovered emoji at a position slightly above its horizontal center.
+   *
+   * 1. Sets the tooltip visibility, the hovered emoji, and the sender name.
+   * 2. Retrieves the bounding rectangle of the hovered element to calculate its center.
+   * 3. Positions the tooltip horizontally at the midpoint, and slightly above the element (using a small offset).
+   *
+   * @param {MouseEvent} event - The mouse event triggered by hovering over the emoji.
+   * @param {string} emoji - The emoji character being hovered.
+   * @param {string} senderName - The name of the user who used the emoji.
+   * @returns {void}
    */
   showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
     this.tooltipVisible = true;
     this.tooltipEmoji = emoji;
     this.tooltipSenderName = senderName;
+
+    const targetElem = event.target as HTMLElement;
+    const rect = targetElem.getBoundingClientRect();
+
+    const offset = 5;
     this.tooltipPosition = {
-      x: event.clientX,
-      y: event.clientY - 40,
+      x: rect.left + rect.width / 2 + window.scrollX, // horizontal midpoint
+      y: rect.top + window.scrollY - offset, // slightly above the element
     };
   }
 

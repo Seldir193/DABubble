@@ -113,15 +113,25 @@
               (blur)="onBlur('password')"
             />
           </div>
+
           <div
             class="error-message"
             *ngIf="
-              myForm.get('password')?.touched && myForm.get('password')?.invalid
+          passwordFocused &&
+          myForm.get('password')?.errors?.['minlength']
+        "
+          >
+            Bitte geben Sie mindestens 6 Zeichen ein.
+          </div>
+
+          <div
+            class="error-message"
+            *ngIf="
+              myForm.get('password')?.value?.length >= 6 &&
+              !myForm.get('checkbox')?.value
             "
           >
-            <ng-container *ngIf="myForm.get('password')?.errors?.['required']">
-              Bitte fülle das Passwortfeld aus.
-            </ng-container>
+            Bitte stimmen Sie die Datenschutzerklärung zu ...
           </div>
 
           <div class="privacy-box">

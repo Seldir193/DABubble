@@ -102,7 +102,8 @@ export class ChannelService {
 
   /**
    * addChannel creates a new channel in Firestore, storing both 'members' and 'membersUid' (UID array).
-   * After creation, it calls loadChannels to refresh local state, then sets the new channel as current.
+   * After creation, it calls loadChannels to refresh local state and sets the newly created channel as current.
+   *
    * @param channel - The channel object containing name, members, and optional description/createdBy fields.
    */
   async addChannel(channel: {
@@ -112,11 +113,42 @@ export class ChannelService {
     createdBy?: string;
   }): Promise<void> {
     try {
+      // 1) Ensure the creator (current user) is included in the members list
+      await this.ensureCreatorInChannel(channel);
+
+      // 2) Create the channel document in Firestore
       const docRef = await this.createChannelDoc(channel);
+
+      // 3) Construct the local channel object, refresh channels, and set this new one as current
       const newChannel = this.buildNewChannelObj(channel, docRef.id);
       await this.loadChannels();
       this.changeChannel(newChannel);
-    } catch (error) {}
+    } catch (error) {
+      // Handle or log the error as needed
+    }
+  }
+
+  /**
+   * ensureCreatorInChannel checks if the current user (creator) is already in the channel's members list.
+   * If not, it loads the user's data from Firestore and pushes that user object into channel.members.
+   *
+   * @private
+   * @param channel - The partial channel object that might or might not contain the current user.
+   */
+  private async ensureCreatorInChannel(channel: {
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }): Promise<void> {
+    const currentUid = this.userService.getCurrentUserId();
+    if (!currentUid) return;
+
+    const alreadyHasCreator = channel.members.some((m) => m.uid === currentUid);
+    if (!alreadyHasCreator) {
+      const userData = await this.userService.getUserById(currentUid);
+      channel.members.push({ uid: currentUid, ...userData });
+    }
   }
 
   /** Creates the channel document in Firestore and returns the DocumentReference. */
@@ -655,5 +687,17 @@ export class ChannelService {
     const channelsCollection = collection(this.firestore, 'channels');
     const querySnapshot = await getDocs(channelsCollection);
     return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  }
+
+  /**
+   * Prüft, ob bereits ein Kanal mit dem angegebenen Namen existiert.
+   * Gibt true zurück, wenn mindestens ein Firestore-Dokument diesen Namen hat.
+   * @param name Der zu prüfende Kanalname.
+   */
+  async channelNameExists(name: string): Promise<boolean> {
+    const channelsColl = collection(this.firestore, 'channels');
+    const qChannelName = query(channelsColl, where('name', '==', name));
+    const snap = await getDocs(qChannelName);
+    return !snap.empty;
   }
 }

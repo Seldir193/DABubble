@@ -1,16 +1,22 @@
-import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { MessageService } from '../message.service'; // ACHTUNG: anpassen, falls anderer Pfad
-import { getAuth,onAuthStateChanged  } from '@angular/fire/auth';
+import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './direct-messages.component.html',
-  styleUrls: ['./direct-messages.component.scss']
+  styleUrls: ['./direct-messages.component.scss'],
 })
 export class DirectMessagesComponent implements OnInit {
   @Output() memberSelected = new EventEmitter<any>();
@@ -23,40 +29,40 @@ export class DirectMessagesComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private messageService: MessageService, // neu dazu
+    private messageService: MessageService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    // 1) Initial einmal die Mitglieder laden (optional, falls du es brauchst)
     this.loadMembers();
 
-    // 2) Jetzt Realtime-Änderungen über messageService.onAllUsersChanged
     this.messageService.onAllUsersChanged((allUsers) => {
-      this.members = allUsers.map((m) => ({
-        ...m,
-        userStatus: m.isOnline ? 'Aktiv' : 'Abwesend'
-      }));
-      // Falls du Debug-Logs hattest -> entfernt
+      const auth = getAuth();
+      const currentUid = auth.currentUser?.uid;
+      this.members = allUsers
+        .filter((m) => m.id !== currentUid)
+        .map((m) => ({
+          ...m,
+          userStatus: m.isOnline ? 'Aktiv' : 'Abwesend',
+        }));
     });
 
-    // 3) Auf Auth-Änderungen reagieren (setUserOnlineStatus, etc.)
     this.listenForAuthChanges();
-
-    // 4) Inaktivitäts-Timer starten
     this.resetInactivityTimer();
   }
 
-  // -----------------------------------------------
-  // 1) MEMBER LOADING (einmalig)
-  // -----------------------------------------------
   private loadMembers(): void {
-    this.userService.getAllUsers()
+    this.userService
+      .getAllUsers()
       .then((data) => {
-        this.members = data.map((m) => ({
-          ...m,
-          userStatus: m.isOnline ? 'Aktiv' : 'Abwesend'
-        }));
+        const auth = getAuth();
+        const currentUid = auth.currentUser?.uid;
+        this.members = data
+          .filter((m) => m.id !== currentUid)
+          .map((m) => ({
+            ...m,
+            userStatus: m.isOnline ? 'Aktiv' : 'Abwesend',
+          }));
       })
       .catch(() => {
         // intentionally empty

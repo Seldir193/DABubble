@@ -200,6 +200,15 @@ export class ThreadComponent implements OnInit {
   private cycleStep = 1;
   lastOpenedChar = '';
 
+  userMap: {
+    [key: string]:
+      | {
+          name: string;
+          avatarUrl: string;
+        }
+      | undefined;
+  } = {};
+
   /**
    * A cache mapping user IDs to their names for quick re-lookup.
    */
@@ -245,8 +254,15 @@ export class ThreadComponent implements OnInit {
         this.allChannels = channels;
       }
     );
+
     this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
       this.allUsers = users;
+      users.forEach((u) => {
+        this.userMap[u.id] = {
+          name: u.name || 'Unbekannt',
+          avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
+        };
+      });
     });
   }
 
@@ -364,6 +380,7 @@ export class ThreadComponent implements OnInit {
       this.dropdownState = 'hidden';
       this.cycleStep = 1;
     }
+
     if (this.isEmojiPickerVisible) {
       this.isEmojiPickerVisible = false;
     }
@@ -1138,9 +1155,8 @@ export class ThreadComponent implements OnInit {
   }
 
   onEmojiPickerClick(e: MouseEvent): void {
-    e.stopPropagation(); 
+    e.stopPropagation();
   }
-
   /**
    * Called when a user selects an image file for their reply,
    * reading it in as a data URL.
@@ -1187,17 +1203,54 @@ export class ThreadComponent implements OnInit {
   }
 
   /**
-   * Displays an emoji tooltip over a hovered emoji, showing who sent it.
+   * Returns only the channels in which the current user is a member.
+   *
+   * 1. Checks if the current user (with a valid `uid`) and the `allChannels` list exist.
+   * 2. Filters `allChannels` by verifying if each channel's `members` array
+   *    contains an object whose `uid` matches the `currentUser.uid`.
+   * 3. If either the user or channel list is unavailable, returns an empty array.
+   *
+   * @returns {any[]} An array of channels where the current user is a member.
+   */
+  get filteredChannels(): any[] {
+    if (!this.currentUser?.uid || !this.allChannels) {
+      return [];
+    }
+
+    return this.allChannels.filter((ch) =>
+      ch.members?.some((m: any) => m.uid === this.currentUser.uid)
+    );
+  }
+
+  /**
+   * Displays the tooltip for a hovered emoji at a position slightly above its horizontal center.
+   *
+   * 1. Sets the tooltip visibility, the hovered emoji, and the sender name.
+   * 2. Retrieves the bounding rectangle of the hovered element to calculate its center.
+   * 3. Positions the tooltip horizontally at the midpoint, and slightly above the element (using a small offset).
+   *
+   * @param {MouseEvent} event - The mouse event triggered by hovering over the emoji.
+   * @param {string} emoji - The emoji character being hovered.
+   * @param {string} senderName - The name of the user who used the emoji.
+   * @returns {void}
    */
   showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
     this.tooltipVisible = true;
     this.tooltipEmoji = emoji;
     this.tooltipSenderName = senderName;
-    this.tooltipPosition = { x: event.clientX, y: event.clientY - 40 };
+
+    const targetElem = event.target as HTMLElement;
+    const rect = targetElem.getBoundingClientRect();
+
+    const offset = 5;
+    this.tooltipPosition = {
+      x: rect.left + rect.width / 2 + window.scrollX, // horizontal midpoint
+      y: rect.top + window.scrollY - offset, // slightly above the element
+    };
   }
 
   /**
-   * Hides the currently displayed emoji tooltip.
+   * Hides the emoji tooltip.
    */
   hideTooltip(): void {
     this.tooltipVisible = false;

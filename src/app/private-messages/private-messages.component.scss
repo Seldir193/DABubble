@@ -27,6 +27,7 @@
   .message-list {
     overflow-x: hidden;
     flex-grow: 1;
+    
 
     .message-time {
       font-size: 14px;
@@ -762,7 +763,8 @@ nav {
   top: 0;
   left: 0;
   z-index: 9999;
-  width: 368px;
+  width: 100%;
+  max-width:368px;
   padding: 12px;
   gap: 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -798,6 +800,10 @@ nav {
 
   .toggle-box {
     display: flex;
+
+    img{
+      display: none;
+    }
   }
 }
 
@@ -860,7 +866,7 @@ nav {
   font-weight: 400;
   z-index: 1000;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  transform: translate(-50%, -100%);
+  transform: translate(0%, -100%);
   padding: 15px 10px;
   border-radius: 30px 30px 30px 0px;
   width: 180px;

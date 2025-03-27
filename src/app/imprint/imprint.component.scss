@@ -1,22 +1,29 @@
 @import "./../../styles.scss";
 
-.container {
-  @include dFlex(center, center, null);
-  width: 100%;
-  background-color: $lightblue;
-  padding: 160px 0;
+.page {
+  display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
 .login-container {
   text-align: center;
-  padding: 40px 53px;
   max-height: 669px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0px 2px 10px 0px #00000014;
   max-width: 606px;
+  padding: 2rem;
 
   .login {
     max-width: 500px;
@@ -108,9 +115,14 @@
   }
 }
 
+@media (max-width: 1278px) {
+  .container {
+    padding: 8px 0 0 0;
+  }
+}
+
 @media (max-width: 780px) {
   .container {
-    padding: 10rem 2rem;
     box-sizing: border-box;
   }
 
@@ -146,12 +158,12 @@
     width: unset;
   }
 
-  .main{
+  .main {
     overflow: hidden;
     max-width: 320px;
   }
 
-  .login-container .login h3{
+  .login-container .login h3 {
     font-size: 22px;
   }
 }
@@ -163,27 +175,25 @@
 
   .login-container {
     padding: 20px;
-    overflow: hidden;
   }
 
   .login-container .login h2 {
     font-size: 30px;
   }
 
-  .main .headline h2{
+  .main .headline h2 {
     font-size: 22px;
   }
 
-  .login-container .login h3{
+  .login-container .login h3 {
     font-size: 20px;
   }
 
   .login-container .login {
-    overflow: hidden;
     max-width: 300px;
   }
 
-  .main{
+  .main {
     overflow: hidden;
     max-width: 300px;
   }
@@ -193,7 +203,7 @@
   }
 
   .login-container .login .image-container {
-    width:unset;
+    width: unset;
   }
 }
 
@@ -202,7 +212,7 @@
     width: 260px;
   }
 
-  .main{
+  .main {
     overflow: hidden;
     max-width: 260px;
   }

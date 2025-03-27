@@ -9,7 +9,7 @@ import {
   query,
   where,
   onSnapshot,
-  deleteDoc,
+  deleteDoc
 } from '@angular/fire/firestore';
 import {
   getAuth,
@@ -67,12 +67,13 @@ export class UserService {
     try {
       const userDocRef = doc(this.firestore, 'users', user.uid);
       const userDocSnap = await getDoc(userDocRef);
-      await updateDoc(userDocRef, { isOnline: true });
-
+  
       if (!userDocSnap.exists()) {
         return reject(new Error('User not found.'));
       }
+      await updateDoc(userDocRef, { isOnline: true });
       resolve({ ...userDocSnap.data(), id: user.uid });
+
     } catch (error) {
       reject(error);
     }
@@ -294,3 +295,6 @@ export class UserService {
     await signOut(auth);
   }
 }
+
+
+

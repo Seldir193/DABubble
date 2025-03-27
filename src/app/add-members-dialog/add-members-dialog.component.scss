@@ -1,14 +1,11 @@
 @import "./../../styles.scss";
 
 .button-box {
-  display: flex;
-  justify-content: flex-end;
+  @include dFlex(flex-end,null,null,null);
 }
 
 .close-dialog {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @include dFlex(space-between,center,null,null);
   transition: background-color 0.3s ease, transform 0.3s ease;
 
   h1 {
@@ -36,10 +33,9 @@
 }
 
 .container {
+  @include dFlex(null, null,null, column);
   padding: 40px;
   border-radius: 30px 0px 30px 30px;
-  display: flex;
-  flex-direction: column;
   background-color: white;
 }
 
@@ -82,16 +78,12 @@
 }
 
 .member-selection {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  @include dFlex(null,null,20px,column);
   width: 434px;
 }
 
 .specific-members {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  @include dFlex(null,center,15px,null);
   position: relative;
 
   input[type="text"] {

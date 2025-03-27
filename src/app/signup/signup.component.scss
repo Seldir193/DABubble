@@ -18,7 +18,6 @@
 
 .login-container {
   text-align: center;
-  // padding: 40px 53px;
   max-height: 669px;
   background-color: white;
   border-radius: 30px;
@@ -201,6 +200,8 @@
         font-weight: 400;
         margin: 0;
         position: absolute;
+        display: flex;
+        padding-left:50px;
       }
 
       .input-container {
@@ -270,6 +271,10 @@
   //.container{
   //  flex:none;
   //}
+
+  .container{
+    padding:8px 0 0 0;
+  }
 }
 
 @media (max-width: 780px) {
@@ -290,8 +295,21 @@
     form {
       width: 100%;
       max-width: 320px;
+      
       .privacy-box {
-        display: none;
+        margin-top:20px;
+       p{
+        font-size: 14px;
+       }
+
+       a{
+        font-size: 16px;
+       }
+
+       .checkbox{
+        width:22px;
+        height:15px;
+       }
       }
     }
   }
@@ -402,4 +420,29 @@
   .login-container .login p {
     width: 260px;
   }
+
+
+  .login-container .login {
+    form {
+      width: 100%;
+      max-width: 320px;
+      
+      .privacy-box {
+        margin-top:20px;
+       p{
+        font-size: 14px;
+       }
+
+       a{
+        font-size: 14px;
+       }
+
+       .checkbox{
+        width:18px;
+        height:18px;
+       }
+      }
+    }
+  }
+
 }

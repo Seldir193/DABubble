@@ -74,7 +74,7 @@ export class ChatHeaderComponent implements OnInit {
   /**
    * Temporary editable field for the user's email in editing mode.
    */
-  editableUserEmail: string = '';
+ // editableUserEmail: string = '';
 
   /**
    * Stores an error message for display if needed.
@@ -280,7 +280,6 @@ export class ChatHeaderComponent implements OnInit {
     this.resetInactivityTimer();
     this.loadUserData();
     this.checkIfDesktop();
-    this.isDesktop = window.innerWidth >= 1278;
   }
 
   /**
@@ -332,7 +331,7 @@ export class ChatHeaderComponent implements OnInit {
   openSettingCard() {
     this.isEditingProfile = true;
     this.editableUserName = this.userName;
-    this.editableUserEmail = this.userEmail;
+   // this.editableUserEmail = this.userEmail;
   }
 
   /**
@@ -384,7 +383,7 @@ export class ChatHeaderComponent implements OnInit {
     try {
       const user = this.ensureUserIsLoggedIn();
       await this.checkAndUpdateUserName(user);
-      await this.checkAndUpdateUserEmail(user);
+      //await this.checkAndUpdateUserEmail(user);
     } catch (error: any) {
       this.errorMessage =
         error.message || 'Fehler beim Speichern der Profiländerungen.';
@@ -403,6 +402,10 @@ export class ChatHeaderComponent implements OnInit {
     return user;
   }
 
+  
+
+
+
   /**
    * Checks if the username changed, and if so, updates it.
    */
@@ -413,48 +416,7 @@ export class ChatHeaderComponent implements OnInit {
     }
   }
 
-  /**
-   * Checks if the email changed, validates it, prompts for password,
-   * reauthenticates, then updates the email.
-   */
-  private async checkAndUpdateUserEmail(user: any): Promise<void> {
-    if (this.editableUserEmail && this.editableUserEmail !== this.userEmail) {
-      if (!this.isValidEmail(this.editableUserEmail)) {
-        this.errorMessage = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        return;
-      }
-      const password = prompt(
-        'Bitte geben Sie Ihr Passwort ein, um die E-Mail zu ändern:'
-      );
-      if (password) {
-        try {
-          const credential = EmailAuthProvider.credential(
-            user.email!,
-            password
-          );
-          await reauthenticateWithCredential(user, credential);
-          await updateEmail(user, this.editableUserEmail);
-          await this.userService.updateUserEmail(this.editableUserEmail);
-          localStorage.setItem('newEmail', this.editableUserEmail);
-          this.successMessage =
-            'Ihre E-Mail-Adresse wurde erfolgreich geändert.';
-        } catch (err) {
-          this.errorMessage =
-            'Fehler bei der Änderung der E-Mail. Bitte versuchen Sie es erneut.';
-        }
-      } else {
-        this.errorMessage = 'Passwort erforderlich, um die E-Mail zu ändern.';
-      }
-    }
-  }
-
-  /**
-   * Validates the email format via a simple regex.
-   */
-  isValidEmail(email: string): boolean {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  }
+  
 
   /***************************************************************************************
    * Triggers file selection for updating the user's avatar.
@@ -1164,7 +1126,7 @@ export class ChatHeaderComponent implements OnInit {
   cancelEditing(): void {
     this.isEditingProfile = false;
     this.editableUserName = this.userName;
-    this.editableUserEmail = this.userEmail;
+   // this.editableUserEmail = this.userEmail;
     this.resetInputBorders();
     this.closeProfileCard();
   }

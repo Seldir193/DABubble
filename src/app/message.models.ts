@@ -3,8 +3,8 @@ export interface Message {
   content: MessageContent;
   timestamp: any;
   senderId: string;
-  senderName: string;
-  senderAvatar: string;
+  //senderName: string;
+ // senderAvatar: string;
   time: string;
   date?: string | { seconds: number; nanoseconds: number };
   recipientId?: string;

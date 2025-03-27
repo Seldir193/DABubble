@@ -9,7 +9,7 @@ $button-border: #adb0d9;
 
 @mixin dFlex($jc: null, $ai: center, $g: 0px, $direction: row) {
   display: flex;
-  align-items: $ai;
+  //align-items: $ai;
   gap: $g;
 
   @if $jc != null {
@@ -103,7 +103,7 @@ body {
   text-align: center;
   box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
   border: 2px solid $button-blue;
-  animation: slideInFromRight 3s ease-out forwards;
+  animation: slideInFromRight 125ms ease-out forwards;
 }
 
 .dropdown-container {

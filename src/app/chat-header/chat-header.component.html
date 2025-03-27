@@ -25,7 +25,7 @@
   </div>
 
   <div class="right-section" (click)="stopPropagation($event)">
-    <span *ngIf="isDesktop" class="user-name">{{ userName }}</span>
+    <span *ngIf="isDesktop"  (click)="toggleMenu()" class="user-name">{{ userName }}</span>
 
     <div class="avatar-container">
       <img
@@ -202,25 +202,19 @@
             [ngClass]="{ active: inputStates['name'] }"
           />
 
-          <div class="email-box" *ngIf="isDesktop">
-            <img src="assets/img/pmail.png" />
-            <label for="email">E-Mail-Adresse:</label>
-          </div>
-          <input
-            placeholder="E-Mail"
-            type="email"
-            id="email"
-            [(ngModel)]="editableUserEmail"
-            (focus)="onInputFocus('email')"
-            (blur)="onInputBlur('email', editableUserEmail)"
-            [ngClass]="{ active: inputStates['email'] }"
-            *ngIf="isDesktop"
-          />
           <div class="button-box">
             <button class="button-abbrechen" (click)="cancelEditing()">
               Abbrechen
             </button>
-            <button (click)="saveProfileChanges()" (click)="closeProfileCard()">
+            <button
+              (click)="saveProfileChanges()"
+              (click)="closeProfileCard()"
+              [disabled]="!editableUserName"
+              [ngClass]="{
+                'btn-disabled': !editableUserName,
+                'btn-enabled': editableUserName
+              }"
+            >
               Speichern
             </button>
           </div>

@@ -1,32 +1,35 @@
 @import "./../../styles.scss";
 
-/* 1) .container */
-.container {
-  @include dFlex(center, center, null);
-  width: 100%;
-  background-color: $lightblue;
-  padding: 160px 0;
+.page {
+  display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* 2) .login-container */
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
 .login-container {
   text-align: center;
-  padding: 40px 53px;
   max-height: 669px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0px 2px 10px 0px #00000014;
   max-width: 606px;
-  overflow: hidden;
+  overflow: auto;
+  padding: 2rem;
 
-  /* 3) .login */
   .login {
     max-width: 500px;
     width: 100%;
 
-    /* 4) .box */
     .box {
       @include dFlex(null, null, 30px);
       flex-direction: column;
@@ -34,7 +37,6 @@
       overflow: hidden;
     }
 
-    /* KLASSE .konto-container – JETZT 4. EBENE, nicht mehr 5. */
     .konto-container {
       @include dFlex(flex-end, center, null);
       flex-direction: row-reverse;
@@ -61,15 +63,13 @@
       cursor: pointer;
 
       &:hover {
-        filter: brightness(0) saturate(100%)
-          invert(35%) sepia(62%) saturate(2733%)
-          hue-rotate(225deg) brightness(93%)
-          contrast(104%);
+        filter: brightness(0) saturate(100%) invert(35%) sepia(62%)
+          saturate(2733%) hue-rotate(225deg) brightness(93%) contrast(104%);
       }
     }
 
     .main {
-      height: calc(100vh - 200px);
+     // height: calc(100vh - 200px);
       overflow-y: auto;
       padding-right: 10px;
 
@@ -119,18 +119,23 @@
       font-size: 18px;
       font-weight: 400;
       text-decoration: none;
-      transition: background-color 0.3s,
-        border-radius 0.3s,
-        padding 0.3s;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
     }
   }
 }
 
-/* -- MEDIA QUERIES ab hier unverändert -- */
+@media (max-width: 1278px) {
+  .container {
+    padding: 8px 0 0 0;
+  }
+
+  .login-container .login .main{
+    height:calc(100vh - 200px);
+  }
+}
 
 @media (max-width: 780px) {
   .container {
-    padding: 10rem 2rem;
     box-sizing: border-box;
   }
 
@@ -188,7 +193,6 @@
 
   .login-container {
     padding: 20px;
-    overflow: hidden;
   }
 
   .login-container .login h2 {
@@ -205,7 +209,6 @@
   }
 
   .login-container .login {
-    overflow: hidden;
     max-width: 300px;
   }
 

@@ -154,6 +154,8 @@
         margin: 0;
         text-align: left;
         position: absolute;
+        display: flex;
+        padding-left:50px;
       }
 
       .email-icon,
@@ -204,11 +206,6 @@
   }
 }
 
-.error-message {
-  color: red;
-  font-weight: bold;
-}
-
 .success-message {
   color: green;
   font-weight: bold;
@@ -247,16 +244,62 @@
   max-width: 273px;
 }
 
-@media (max-width: 1278px) {
+
+@media (max-width: 850px) {
   .registration-ok {
     max-width: 166px !important;
     width: 100%;
   }
 
-  //.container{
-  // flex:none;
-  // }
+  .container{
+    padding:8px 0 0 0;
+  }
+
+  .content-container {
+    @include dFlex(center, center, null);
+    max-width: 0px;
+    padding: 4rem 0rem;
+    animation: moveVertical 1s ease-in-out forwards;
+  }
+
+
+  .container-box {
+    img {
+      width: 56px;
+    }
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media (max-width: 780px) {
   .container {

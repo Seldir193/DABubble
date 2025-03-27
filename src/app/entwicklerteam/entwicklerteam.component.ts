@@ -38,6 +38,8 @@ import { MessageService } from '../message.service';
 import { ProfilDialogComponent } from '../profil-dialog/profil-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
+import { AfterViewInit } from '@angular/core';
+
 /** Defines the structure of the content in a message (text, image, emojis). */
 export interface MessageContent {
   text?: string;
@@ -47,8 +49,9 @@ export interface MessageContent {
 
 /** Describes the structure for a parent document in a thread-channel context. */
 interface ThreadChannelParentDoc {
-  senderName?: string;
-  senderAvatar?: string;
+  senderId?: string;
+  // senderName?: string;
+  //senderAvatar?: string;
   content?: { text?: string; emojis?: any[] };
   timestamp?: any;
   replyCount?: number;
@@ -71,10 +74,13 @@ interface ThreadChannelParentDoc {
   styleUrls: ['./entwicklerteam.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
+export class EntwicklerteamComponent
+  implements OnInit, OnChanges, OnDestroy, AfterViewInit
+{
   @ViewChild('membersOverlay') membersOverlay?: CdkConnectedOverlay;
   @ViewChild('addMembersOverlay') addMembersOverlay?: CdkConnectedOverlay;
   @ViewChild('messageList') messageList!: ElementRef;
+  @ViewChild('textArea') textAreaRef!: ElementRef<HTMLTextAreaElement>;
 
   /** Emits an event when a member is selected, carrying the member's ID and name. */
   @Output() memberSelected = new EventEmitter<{ uid: string; name: string }>();
@@ -161,8 +167,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     id: string;
     type: string;
     content: MessageContent;
-    senderName: string;
-    senderAvatar: string;
+    senderId: string;
     time: string;
     date: string;
     timestamp?: Date;
@@ -233,9 +238,6 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   /** An array of all users if needed for mention. */
   allUsers: any[] = [];
 
-  /** Controls an overlay to show a user dropdown. */
-  //showUserDropdown = false;
-
   /** If a large image is displayed in a modal overlay. */
   showLargeImage = false;
 
@@ -250,6 +252,15 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
 
   /** Tracks whether the Add Members overlay is open (desktop). */
   isAddMembersOverlayOpen = false;
+
+  userMap: {
+    [uid: string]:
+      | {
+          name: string;
+          avatarUrl: string;
+        }
+      | undefined;
+  } = {};
 
   /** Subscriptions for thread messages, reply counts, etc. */
   private unsubscribeFromThreadMessages: (() => void) | null = null;
@@ -317,7 +328,33 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     );
     this.unsubscribeUsers = this.userService.getAllUsersLive((users) => {
       this.allUsers = users;
+      users.forEach((u) => {
+        this.userMap[u.id] = {
+          name: u.name || 'Unbekannt',
+          avatarUrl: u.avatarUrl || 'assets/img/avatar.png',
+        };
+      });
     });
+  }
+
+  /**
+   * Returns only the channels in which the current user is a member.
+   *
+   * 1. Checks if the current user (with a valid `uid`) and the `allChannels` list exist.
+   * 2. Filters `allChannels` by verifying if each channel's `members` array
+   *    contains an object whose `uid` matches the `currentUser.uid`.
+   * 3. If either the user or channel list is unavailable, returns an empty array.
+   *
+   * @returns {any[]} An array of channels where the current user is a member.
+   */
+  get filteredChannels(): any[] {
+    if (!this.currentUser?.uid || !this.allChannels) {
+      return [];
+    }
+
+    return this.allChannels.filter((ch) =>
+      ch.members?.some((m: any) => m.uid === this.currentUser.uid)
+    );
   }
 
   /** Called when @Input() properties change. */
@@ -331,6 +368,11 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['threadData'] && changes['threadData'].currentValue) {
       // ...
     }
+  }
+
+  private focusTextArea(): void {
+    if (!this.textAreaRef) return;
+    this.textAreaRef.nativeElement.focus();
   }
 
   /** Cleans up on destroy, unsubscribing from any listeners. */
@@ -379,6 +421,10 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => this.focusTextArea(), 1000);
+  }
+
   /** Initializes local channel data, loads last-used emojis for the new channel. */
   private initChannel(channel: any): void {
     this.channels = [
@@ -397,6 +443,10 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     );
     this.selectedChannel = channel;
     this.loadLastUsedEmojis(channel.id);
+
+    setTimeout(() => {
+      this.focusTextArea();
+    }, 0);
   }
 
   /** Fetches last-used emojis for “sent” and “received” from Firestore. */
@@ -648,7 +698,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
 
   /** Toggles the global emoji picker for the main message input. */
   toggleEmojiPicker(event: MouseEvent) {
-    event.stopPropagation();   
+    event.stopPropagation();
     this.isEmojiPickerVisible = !this.isEmojiPickerVisible;
   }
 
@@ -658,9 +708,9 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onEmojiPickerClick(e: MouseEvent): void {
-    e.stopPropagation(); 
+    e.stopPropagation();
   }
-  
+
   /** Toggles an emoji picker for a specific message. */
   toggleEmojiPickerForMessage(msg: any): void {
     const visible = msg.isEmojiPickerVisible;
@@ -731,8 +781,9 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
       date: formatDate(new Date(), 'dd.MM.yyyy', 'en'),
       timestamp: new Date(),
       time: new Date().toLocaleTimeString(),
-      senderName: this.currentUser?.name || '',
-      senderAvatar: this.currentUser?.avatarUrl || '',
+      senderId: this.currentUser?.id,
+      // senderName: this.currentUser?.name || '',
+      //  senderAvatar: this.currentUser?.avatarUrl || '',
       isEmojiPickerVisible: false,
     };
   }
@@ -1045,12 +1096,31 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  /** Shows a tooltip with an emoji near the mouse position. */
-  showTooltip(e: MouseEvent, emoji: string, sender: string): void {
+  /**
+   * Displays the tooltip for a hovered emoji at a position slightly above its horizontal center.
+   *
+   * 1. Sets the tooltip visibility, the hovered emoji, and the sender name.
+   * 2. Retrieves the bounding rectangle of the hovered element to calculate its center.
+   * 3. Positions the tooltip horizontally at the midpoint, and slightly above the element (using a small offset).
+   *
+   * @param {MouseEvent} event - The mouse event triggered by hovering over the emoji.
+   * @param {string} emoji - The emoji character being hovered.
+   * @param {string} senderName - The name of the user who used the emoji.
+   * @returns {void}
+   */
+  showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
     this.tooltipVisible = true;
     this.tooltipEmoji = emoji;
-    this.tooltipSenderName = sender;
-    this.tooltipPosition = { x: e.clientX, y: e.clientY - 40 };
+    this.tooltipSenderName = senderName;
+
+    const targetElem = event.target as HTMLElement;
+    const rect = targetElem.getBoundingClientRect();
+
+    const offset = 5;
+    this.tooltipPosition = {
+      x: rect.left + rect.width / 2 + window.scrollX, // horizontal midpoint
+      y: rect.top + window.scrollY - offset, // slightly above the element
+    };
   }
 
   /** Hides the emoji tooltip. */
@@ -1108,9 +1178,7 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     const parentMessage = {
       id: tid,
       text: (p.content?.text ?? msg.text) || 'Kein Text',
-      senderName: p.senderName || msg.senderName || 'Unbekannt',
-      senderAvatar:
-        p.senderAvatar || msg.senderAvatar || 'assets/img/default-avatar.png',
+      senderId: p.senderId || msg.senderId || 'unknown',
       timestamp: p.timestamp || msg.timestamp || new Date(),
       replyCount: p.replyCount || msg.replyCount || 0,
       channelName,
@@ -1230,9 +1298,6 @@ export class EntwicklerteamComponent implements OnInit, OnChanges, OnDestroy {
     if (!msg.showAllEmojisList) msg.expanded = false;
     else if (msg.expanded === undefined) msg.expanded = false;
   }
-
-  /** Called when the user clicks a plus icon in an emoji popup. */
-  onEmojiPlusInPopup(_msg: any): void {}
 
   /** Opens a large image overlay if imageData is a string. */
   openLargeImage(imageData: string | ArrayBuffer): void {

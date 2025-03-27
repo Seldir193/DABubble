@@ -6,7 +6,7 @@
  * added.
  ***************************************************************/
 
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -105,37 +105,7 @@ export class SignupComponent implements OnInit {
   /**
    * Lifecycle hook: detects the screen size on initialization and updates the form's state.
    */
-  ngOnInit(): void {
-    this.updateScreenSize();
-  }
-
-  /**
-   * Host listener checking window resize events to dynamically enable or disable
-   * the TOS checkbox on large vs. small screens.
-   *
-   * @param {Event} event - The resize event.
-   */
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.updateScreenSize();
-  }
-
-  /**
-   * updateScreenSize adjusts the `isSmallScreen` flag and
-   * enables/disables the TOS checkbox accordingly.
-   */
-  updateScreenSize() {
-    this.isSmallScreen = window.innerWidth < 780;
-    const checkboxControl = this.myForm.get('checkbox');
-    if (checkboxControl) {
-      if (this.isSmallScreen) {
-        checkboxControl.disable();
-        this.myForm.get('checkbox')?.setValue(false);
-      } else {
-        checkboxControl.enable();
-      }
-    }
-  }
+  ngOnInit(): void {}
 
   /**
    * A validator function for the `email` form control using `this.emailPattern`.
@@ -151,6 +121,7 @@ export class SignupComponent implements OnInit {
     return null;
   }
 
+  passwordFocused = false;
   /**
    * Invoked on focus of a form input, updates `filledStates`.
    *
@@ -159,6 +130,10 @@ export class SignupComponent implements OnInit {
   onFocus(type: string) {
     this.filledStates[type + 'Filled'] = true;
     this.errorMessage = '';
+
+    if (type === 'password') {
+      this.passwordFocused = true;
+    }
   }
 
   /**
@@ -168,6 +143,10 @@ export class SignupComponent implements OnInit {
    */
   onBlur(type: string) {
     this.filledStates[type + 'Filled'] = Boolean(this.myForm.get(type)?.value);
+
+    if (type === 'password') {
+      this.passwordFocused = false;
+    }
   }
 
   /**
@@ -200,6 +179,7 @@ export class SignupComponent implements OnInit {
         password
       );
 
+      //await signOut(this.auth);
       // 4) Handle sign-up success: build user data, save to Firestore, show success msg
       await this.handleSuccessfulSignup(userCredential.user, name, email);
     } catch (error: any) {

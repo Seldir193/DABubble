@@ -79,6 +79,8 @@ export class EditChannelDialogComponent implements OnInit {
    */
   isDesktop = false;
 
+  channelNameError: string = '';
+
   /**
    * Emitted if a members overlay is opened externally (optional usage).
    */
@@ -187,19 +189,36 @@ export class EditChannelDialogComponent implements OnInit {
     this.dialogRef.close(updatedChannel);
   }
 
-  /**
-   * Persists the new channel name if one was entered, then ends editing mode.
-   */
-  saveChannelName(): void {
-    if (this.editedChannelName.trim()) {
-      this.channelService.updateChannel(
+  /** Validates the edited channel name. @private @returns {Promise<boolean>} */
+  private async validateEditedChannelName(): Promise<boolean> {
+    this.channelNameError = '';
+    const nm = this.editedChannelName.trim();
+    if (!nm) {
+      this.channelNameError = 'Bitte einen Kanalnamen eingeben.';
+      return false;
+    }
+    if (
+      nm !== this.channelName &&
+      (await this.channelService.channelNameExists(nm))
+    ) {
+      this.channelNameError = 'Kanalname existiert schon!';
+      return false;
+    }
+    return true;
+  }
+  /** Saves the name if valid. @returns {Promise<boolean>} */
+  async saveChannelName(): Promise<boolean> {
+    if (!(await this.validateEditedChannelName())) return false;
+    const nm = this.editedChannelName.trim();
+    if (nm !== this.channelName) {
+      await this.channelService.updateChannel(
         this.data.id,
-        this.editedChannelName,
+        nm,
         this.description
       );
-      this.channelName = this.editedChannelName;
+      this.channelName = nm;
     }
-    this.isEditingName = false;
+    return true;
   }
 
   /**
@@ -220,10 +239,34 @@ export class EditChannelDialogComponent implements OnInit {
   /**
    * Toggles editing for the channel name. If turning off, triggers saveChannelName().
    */
-  toggleEditingName(): void {
-    this.isEditingName = !this.isEditingName;
+  async toggleEditingName(): Promise<void> {
     if (!this.isEditingName) {
-      this.saveChannelName();
+      this.isEditingName = true;
+
+      if (!this.editedChannelName.trim()) {
+        this.channelNameError = 'Bitte einen Kanalnamen eingeben.';
+      } else {
+        this.channelNameError = '';
+      }
+      return;
+    }
+    const success = await this.saveChannelName();
+    if (!success) {
+      return;
+    }
+    this.isEditingName = false;
+  }
+
+  /**
+   * Handles user input in the channel name field.
+   * If the trimmed input is empty, sets an error message; otherwise clears it.
+   */
+  onChannelNameInput(): void {
+    const nameTrim = this.editedChannelName.trim();
+    if (!nameTrim) {
+      this.channelNameError = 'Bitte einen Kanalnamen eingeben.';
+    } else {
+      this.channelNameError = '';
     }
   }
 

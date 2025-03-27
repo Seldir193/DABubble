@@ -14,7 +14,7 @@ import { DirectMessagesComponent } from './direct-messages/direct-messages.compo
 
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/intro', pathMatch: 'full' },
+    { path: '', redirectTo: 'intro', pathMatch: 'full' },
     { path: 'intro', component: IntroComponent },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },

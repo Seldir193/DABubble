@@ -51,8 +51,12 @@
             [placeholder]="channelName || 'Channel Name bearbeiten'"
             [(ngModel)]="editedChannelName"
             class="visible"
+            (input)="onChannelNameInput()"
           />
         </div>
+      </div>
+      <div *ngIf="channelNameError" class="error-message">
+        {{ channelNameError }}
       </div>
     </div>
   </div>

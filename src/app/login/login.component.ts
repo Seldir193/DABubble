@@ -40,7 +40,7 @@ import {
 } from '@angular/fire/auth';
 import { AppStateService } from '../app-state.service';
 import { UserService } from '../user.service';
-
+import { ChannelService } from '../channel.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -75,10 +75,12 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private firestore: Firestore,
-    private router: Router,
+   // private router: Router,
     private fb: FormBuilder,
     private appStateService: AppStateService,
-    private userService: UserService
+    private userService: UserService,
+    public router: Router,
+    private channelService: ChannelService
   ) {
     this.myForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -89,8 +91,8 @@ export class LoginComponent implements OnInit {
   }
 
   /** Lifecycle hook that runs after component initialization. */
-  ngOnInit(): void {}
-
+  ngOnInit(): void { 
+}
   /** Validates the email format using a regex pattern. */
   emailValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
@@ -285,12 +287,14 @@ export class LoginComponent implements OnInit {
         const randomSuffix = Math.random().toString(36).substring(2, 6);
         const guestName = `Guest-${randomSuffix}`;
         const ref = doc(this.firestore, 'users', cred.user.uid);
+
         await setDoc(ref, {
           uid: cred.user.uid,
           name: guestName,
           isOnline: true,
           createdAt: new Date(),
         });
+
         this.router.navigate(['/chat']);
       })
       .catch(() => {});

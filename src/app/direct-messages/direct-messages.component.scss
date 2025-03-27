@@ -93,11 +93,17 @@
     h2 {
       font-size: 18px;
       font-weight: 400;
-      display: inline-flex;
       padding: 10px 15px;
       transition: background-color 0.3s ease;
       border-radius: 50px;
+      display: inline-block;   
+      width: 100%;
+      max-width: 150px;            
+      white-space: nowrap;    
+      overflow: hidden;        
+      text-overflow: ellipsis; 
     }
+    
     &:hover {
       background-color: $lightblue;
       padding-right: 30px;

@@ -16,6 +16,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import { LOCALE_ID } from '@angular/core';
+
+import { provideAnimations } from '@angular/platform-browser/animations';
 registerLocaleData(localeDe);
 
 export const appConfig: ApplicationConfig = {
@@ -28,6 +30,7 @@ export const appConfig: ApplicationConfig = {
     ReactiveFormsModule, provideAnimationsAsync(),
     MatInputModule, MatFormFieldModule, MatDialogModule,BrowserAnimationsModule,
     MatButtonModule,
+    provideAnimations(),
     { provide: LOCALE_ID, useValue: 'de-DE' }
   ]
 };

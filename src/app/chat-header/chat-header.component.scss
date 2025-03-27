@@ -64,6 +64,7 @@ h1 {
 
 .right-section {
   @include dFlex(null, center, 15px);
+  cursor: pointer;
 
   .user-name {
     font-size: 32px;
@@ -530,6 +531,25 @@ h1 {
   width: 20px;
   height: 20px;
 }
+
+.error-message{
+  color: red;
+}
+
+.btn-disabled {
+  background-color: gray !important;
+  color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.btn-enabled {
+  background-color: $button-blue !important;
+  color: white !important;
+  cursor: pointer !important;
+  opacity: 1;
+}
+
 
 @media (min-width: 1278px) {
   .bottom-menu {

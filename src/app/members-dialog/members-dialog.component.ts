@@ -145,14 +145,20 @@ export class MembersDialogComponent implements OnInit {
    * Loads user data from the user service, mapping isOnline to userStatus (Aktiv/Abwesend).
    * Stored in `members`.
    */
+
   loadMembers(): void {
     this.userService
       .getAllUsers()
       .then((data) => {
-        this.members = data.map((member) => ({
-          ...member,
-          userStatus: member.isOnline ? 'Aktiv' : 'Abwesend',
-        }));
+        const currentUid = this.userService.getCurrentUserId();
+        this.members = data
+
+          .map((member) => ({
+            ...member,
+            userStatus: member.isOnline ? 'Aktiv' : 'Abwesend',
+          }))
+
+          .filter((member) => member.uid !== currentUid);
       })
       .catch(() => {});
   }

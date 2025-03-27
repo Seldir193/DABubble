@@ -178,6 +178,7 @@
         max-width: 320px;
         align-items: flex-end;
         display: flex;
+        padding-left:50px;
       }
 
       .input-container {
@@ -231,9 +232,10 @@
     gap: 18px;
   }
 
-  //.container{
+  .container{
   //  flex:none;
-  // }
+     padding:8px 0 0 0 ;
+   }
 }
 
 @media (max-width: 780px) {

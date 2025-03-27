@@ -61,12 +61,14 @@
           <div class="message-container sent-message" (click)="closePopup(msg)">
             <img
               class="avatar"
-              [src]="msg.senderAvatar || 'assets/img/avatar.png'"
-              alt="{{ msg.senderName }}'s Avatar"
+              [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
+              alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
             />
             <div class="message-box">
               <span class="message-info">
-                <span class="sender-name">{{ msg.senderName }}</span>
+                <span class="sender-name">{{
+                  userMap[msg.senderId]?.name
+                }}</span>
                 <span class="message-time">{{ msg.time }} Uhr</span>
               </span>
               <div
@@ -134,11 +136,14 @@
               >
                 <ng-container *ngIf="!msg.showAllEmojisList">
                   <span
-                    class="emoji-item"
-                    *ngFor="
-                      let emojiObj of msg.content?.emojis || [] | slice : 0 : 2
-                    "
-                  >
+                  
+                  class="emoji-item"
+                  *ngFor="
+                    let emojiObj of msg.content?.emojis || [] | slice : 0 : 2
+                  "
+                  (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
+                   (mouseleave)="hideTooltip()"
+                >
                     {{ emojiObj.emoji }}
                     <nav class="emoji-count">{{ emojiObj.count }}</nav>
                   </span>
@@ -301,12 +306,15 @@
           >
             <img
               class="avatar"
-              [src]="msg.senderAvatar || 'assets/img/avatar.png'"
-              alt="{{ msg.senderName }}'s Avatar"
+              [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
+              alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
             />
+
             <div class="message-box">
               <span class="message-info">
-                <span class="sender-name">{{ msg.senderName }}</span>
+                <span class="sender-name">{{
+                  userMap[msg.senderId]?.name
+                }}</span>
                 <span class="message-time">{{ msg.time }} Uhr</span>
               </span>
 
@@ -363,6 +371,8 @@
                     *ngFor="
                       let emojiObj of msg.content?.emojis || [] | slice : 0 : 2
                     "
+                    (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
+                   (mouseleave)="hideTooltip()"
                   >
                     {{ emojiObj.emoji }}
                     <nav class="emoji-count">{{ emojiObj.count }}</nav>
@@ -601,7 +611,7 @@
                   class="my-user-dropdown pm-scrollable"
                 >
                   <li
-                    *ngFor="let ch of allChannels"
+                    *ngFor="let ch of filteredChannels"
                     (click)="selectChannel(ch)"
                   >
                     <div class="tag-container">
@@ -622,11 +632,16 @@
         </div>
       </div>
 
-      <div class="emoji-picker" *ngIf="isEmojiPickerVisible" (click)="onEmojiPickerClick($event)">
-        <emoji-mart 
-            [emojiTooltip]="false" 
-            [showPreview]="false"
-            (emojiSelect)="addEmoji($event)"></emoji-mart>
+      <div
+        class="emoji-picker"
+        *ngIf="isEmojiPickerVisible"
+        (click)="onEmojiPickerClick($event)"
+      >
+        <emoji-mart
+          [emojiTooltip]="false"
+          [showPreview]="false"
+          (emojiSelect)="addEmoji($event)"
+        ></emoji-mart>
       </div>
 
       <div
