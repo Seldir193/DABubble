@@ -81,7 +81,7 @@ export class AuthActionComponent implements OnInit {
         localStorage.removeItem('newEmail');
       }
       this.loading = false;
-      this.router.navigate(['/chat']);
+      this.router.navigate(['/avatar']);
     } catch {}
   }
 }

@@ -12,7 +12,6 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { AuthActionComponent } from './auth-action/auth-action.component';
 import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
 
-
 export const routes: Routes = [
     { path: '', redirectTo: 'intro', pathMatch: 'full' },
     { path: 'intro', component: IntroComponent },

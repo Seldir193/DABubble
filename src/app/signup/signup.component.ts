@@ -17,7 +17,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, sendEmailVerification  } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -179,6 +179,16 @@ export class SignupComponent implements OnInit {
         password
       );
 
+      // NEU: Bestätigungs-E-Mail schicken
+    await sendEmailVerification(userCredential.user, {
+      
+      url: 'http://localhost:4200/auth-action',
+      handleCodeInApp: false,
+    });
+    this.successMessage = 'Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach, um deine Adresse zu bestätigen.';
+
+
+
       //await signOut(this.auth);
       // 4) Handle sign-up success: build user data, save to Firestore, show success msg
       await this.handleSuccessfulSignup(userCredential.user, name, email);
@@ -219,12 +229,7 @@ export class SignupComponent implements OnInit {
     };
 
     await this.saveUser(userData);
-
-    this.successMessage = 'Sie werden weitergeleitet zum Avatar Seite!';
-    setTimeout(() => {
-      this.successMessage = '';
-      this.router.navigate(['/avatar']);
-    }, 3000);
+    this.successMessage = 'Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach, um deine Adresse zu bestätigen.';
   }
 
   /**
