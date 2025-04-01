@@ -221,7 +221,7 @@ export class UserService {
     const user = auth.currentUser;
     return user ? user.uid : null;
   }
-
+  
   async getUserById(userId: string): Promise<any> {
     const userDocRef = doc(this.firestore, 'users', userId);
     const userDocSnap = await getDoc(userDocRef);
@@ -294,6 +294,8 @@ export class UserService {
 
     await signOut(auth);
   }
+
+  
 }
 
 

@@ -29,6 +29,7 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { RouterModule, Router } from '@angular/router';
+
 import {
   getAuth,
   signInAnonymously,
@@ -279,6 +280,8 @@ export class LoginComponent implements OnInit {
   }
 
   /** Signs in user as a guest (anonymous), creates a Firestore doc, then goes to /chat. */
+
+
   navigateToGuestLogin(): void {
     const auth = getAuth();
     signInAnonymously(auth)
@@ -299,6 +302,7 @@ export class LoginComponent implements OnInit {
       })
       .catch(() => {});
   }
+
 
   /** Logs the user out via the UserService. */
   logout(): void {

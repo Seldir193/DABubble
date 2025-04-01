@@ -23,9 +23,7 @@ export interface Message {
   threadId?: string;
   lastReplyTime?: any;
   recipientName?: string;
-  
   showDateSeparator?: boolean; 
-
 }
 
 export interface MessageContent {
@@ -49,8 +47,6 @@ export interface FirestoreMessageData {
 }
 
 
-
-
 // message.models.ts
 export interface BroadcastMessageData {
   broadcastChannels: string[]; 
@@ -68,10 +64,6 @@ export interface BroadcastMessageData {
   messageFormat: string; 
 }
 
-
-
-
-
 // message.models.ts
 
 export interface ChannelMessageData {
@@ -81,7 +73,9 @@ export interface ChannelMessageData {
   timestamp?: any;
   senderId: string;
   senderName?: string;
-  senderAvatar?: string;
+ 
+
+ senderAvatar?: string ;
   content: {
     text: string;
     image?: string;

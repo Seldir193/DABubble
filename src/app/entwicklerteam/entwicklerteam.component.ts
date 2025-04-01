@@ -875,7 +875,7 @@ export class EntwicklerteamComponent
       timestamp: m.timestamp,
       senderId: m.senderId,
       senderName: this.currentUser?.name,
-      senderAvatar: this.currentUser?.avatarUrl,
+      senderAvatar: this.currentUser?.avatarUrl || 'assets/img/avatar.png',
       content: m.content,
       messageFormat: m.messageFormat,
     };
@@ -1450,4 +1450,6 @@ export class EntwicklerteamComponent
     this.removeEmojiAtIndex(message, index);
     this.updateMessageInFirestore(message);
   }
+
 }
+
