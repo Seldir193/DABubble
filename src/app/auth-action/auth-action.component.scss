@@ -1,0 +1,97 @@
+
+@import "./../../styles.scss";
+
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  padding: 160px 0;
+  flex-direction: column;
+  min-height: 100vh;
+
+  p {
+    font-size: 50px;
+    color: $hoverColor;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 920px) {
+  .container {
+    padding: 10rem 2rem;
+    box-sizing: border-box;
+
+    p {
+      font-size: 30px;
+    }
+  }
+}
+
+@media (max-width: 780px) {
+  .container {
+    padding: 10rem 2rem;
+    box-sizing: border-box;
+
+    p {
+      font-size: 20px;
+    }
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    padding: 10rem 2rem;
+    box-sizing: border-box;
+
+    p {
+      font-size: 18px;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .container {
+    padding: 10rem 2rem;
+    box-sizing: border-box;
+
+    p {
+      font-size: 14px;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,90 @@
+<div class="page">
+  <app-header></app-header>
+
+  <div class="container">
+    <div class="login-container">
+      <div class="login">
+        <div class="box">
+          <div class="konto-container">
+            <h2>Wähle deinen Avatar</h2>
+            <div class="image-container">
+              <img [routerLink]="['/login']" src="assets/img/leftfile.png" />
+            </div>
+          </div>
+        </div>
+
+        <form (ngSubmit)="confirmSelection()" #avatarForm="ngForm">
+          <div class="avatar-container">
+            <div class="profile-avatar">
+              <img
+                [src]="selectedAvatar || 'assets/img/avatar.png'"
+                alt="Profilbild"
+              />
+            </div>
+            <div class="headline">
+              <h3>{{ userName }}</h3>
+              <p *ngIf="!isSmallScreen">Aus der Liste wählen</p>
+              <p *ngIf="isSmallScreen">Choose your avatar....</p>
+            </div>
+            <div class="avatar-selection">
+              <div
+                class="avatar"
+                *ngFor="let avatar of avatars"
+                (click)="selectAvatar(avatar)"
+                [class.selected]="avatar === selectedAvatar"
+              >
+                <img [src]="avatar" alt="Avatar" />
+              </div>
+            </div>
+
+            <div class="file-upload">
+              <input
+                type="file"
+                (change)="validateAndUploadProfilePicture($event)"
+                #fileInput
+                style="display: none"
+              />
+              <span *ngIf="!isSmallScreen">eigenes Bild verwenden</span>
+              <span *ngIf="isSmallScreen">or you can</span>
+              <button
+                type="button"
+                (click)="fileInput.click()"
+                class="button-gäste-login button-gäste-login-mobile"
+                *ngIf="!isSmallScreen"
+              >
+                Datei hochladen
+              </button>
+              <button
+                type="button"
+                (click)="fileInput.click()"
+                class="button-gäste-login button-gäste-login-mobile"
+                *ngIf="isSmallScreen"
+              >
+                Upload foto
+              </button>
+            </div>
+
+            <div class="button-container">
+              <div class="errorMessage" *ngIf="errorMessage">
+                <p style="color: red; font-size: 10px">{{ errorMessage }}</p>
+              </div>
+              <button
+                class="button-anmelden"
+                type="submit"
+                [ngClass]="{ 'ng-invalid': !avatarForm.form.valid }"
+              >
+                Weiter
+              </button>
+            </div>
+          </div>
+        </form>
+        <div class="registration-ok" *ngIf="successMessage">
+          <p style="color: white; font-size: 36px; font-weight: 700">
+            {{ successMessage }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-footer></app-footer>
+</div>

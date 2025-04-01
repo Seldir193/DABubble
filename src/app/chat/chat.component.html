@@ -1,0 +1,165 @@
+<app-chat-header
+  [showDesktop]="showDesktopHeader"
+  (backClicked)="onHeaderBackClicked()"
+  (openThread)="openThreadFromPrivateMessage($event)"
+  (threadSelected)="openThreadFromSearch($event)"
+  (threadChannelSelected)="openThreadChannelFromSearch($event)"
+  (memberSelected)="onMemberSelected($event)"
+  #innerChannel
+  (channelSelected)="onChannelSelected($event)"
+>
+</app-chat-header>
+
+<section>
+  <!-- WORKSPACE / DEVSPACE -->
+
+  <div class="work-space" (click)="toggleWorkspace()">
+    <span
+      >Workspace-Menü schließen <img src="assets/img/Show menu.png" alt="Menu"
+    /></span>
+  </div>
+
+  <div
+    class="container"
+    [ngClass]="{ 'show-mobile': currentMobileView === 'container' }"
+    *ngIf="isWorkspaceVisible && shouldShowContainer"
+  >
+    <app-devspace
+      #devspaceRef
+      (searchTriggered)="openSearchField($event)"
+      (channelSelected)="onChannelSelected($event)"
+      (memberSelected)="onMemberSelected($event)"
+      (threadChannelSelected)="openThreadChannelFromSearch($event)"
+      (threadSelected)="openThreadFromSearch($event)"
+    ></app-devspace>
+
+    <div class="property-box">
+      <img
+        src="assets/img/Property1.png"
+        alt="Square"
+        (click)="onEditSquareIconClick()"
+      />
+    </div>
+
+    <div class="scrollable-area">
+      <!-- Channel-Übersicht -->
+      <app-inner-channel
+        #innerChannel
+        (channelSelected)="onChannelSelected($event)"
+      >
+      </app-inner-channel>
+
+      <!-- Private-Nachrichten-Liste -->
+      <app-direct-messages (memberSelected)="onMemberSelected($event)">
+      </app-direct-messages>
+    </div>
+  </div>
+
+  <!-- =========================
+       1) ENTWICKLERTEAM (Kanal-Ansicht)
+      ========================= -->
+  <div
+    class="team-container"
+    [ngClass]="{ 'show-mobile': currentMobileView === 'team' }"
+    *ngIf="selectedChannel && !isSearchActive"
+  >
+    <!-- Nur anzeigen, wenn KEIN private Chat aktiv ist -->
+    <div *ngIf="!isPrivateChat && selectedChannel">
+      <app-entwicklerteam
+        (channelLeft)="onChannelSelected(null)"
+        [selectedChannel]="selectedChannel"
+        (openPrivateChatFromEntwicklerteam)="onOpenPrivateChat($event)"
+        (openThread)="openThreadChannel($event)"
+      >
+      </app-entwicklerteam>
+    </div>
+  </div>
+
+  <!-- =========================
+       2) PRIVATER CHAT
+      ========================= -->
+  <div
+    class="privat-chat-container"
+    [ngClass]="{ 'show-mobile': currentMobileView === 'private' }"
+    *ngIf="isPrivateChat && selectedMember && !isSearchActive"
+  >
+    <app-private-messages
+      [recipientId]="selectedMember.id"
+      [recipientName]="selectedMember.name"
+      [threadData]="selectedThread"
+      (openThread)="openThread($event)"
+    >
+    </app-private-messages>
+  </div>
+
+  <!-- =========================
+       3) THREAD-CHANNEL ANSICHT
+      ========================= -->
+  <div
+    *ngIf="selectedThreadChannel"
+    class="thread-area"
+    [ngClass]="{
+      'thread-activ': isThreadChannelFromSearch,
+      'show-mobile': currentMobileView === 'threadChannel'
+    }"
+  >
+    <app-thread-channel
+      [parentMessage]="selectedThreadChannel.parentMessage"
+      [messages]="selectedThreadChannel.messages"
+      [channelName]="
+        selectedThreadChannel?.parentMessage?.channelName ||
+        selectedChannel?.name ||
+        'Unbekat'
+      "
+      [channelId]="
+        selectedThreadChannel?.parentMessage?.channelId || selectedChannel?.id
+      "
+      (closeThread)="closeThreadChannel()"
+    >
+    </app-thread-channel>
+  </div>
+
+  <!-- =========================
+       4) THREAD ANSICHT
+      ========================= -->
+  <div
+    *ngIf="selectedThread"
+    class="thread-area"
+    [ngClass]="{
+      'thread-activ': isThreadFromSearch,
+      'show-mobile': currentMobileView === 'thread'
+    }"
+  >
+    <app-thread
+      [parentMessage]="selectedThread"
+      [recipientName]="
+        selectedThread.recipientName || selectedMember?.name || 'Unbekannt'
+      "
+      [recipientId]="selectedMember?.id"
+      (closeThread)="closeThread()"
+    >
+    </app-thread>
+  </div>
+
+  <!-- SUCHE -->
+  <div
+    class="search-container"
+    *ngIf=" isSearchActive && currentMobileView === 'search'"
+    [ngClass]="{ 'show-mobile': currentMobileView === 'search' }"
+  >
+    <app-search-field
+      (close)="closeSearchField()"
+      (memberSelected)="handleMemberSelection($event)"
+    >
+    </app-search-field>
+  </div>
+
+  <!-- WELCOME-SCREEN -->
+  <div
+    *ngIf="!selectedChannel && showWelcomeContainer && !isSearchActive"
+    [ngClass]="{ 'show-mobile': currentMobileView === 'welcome' }"
+    class="welcome-container"
+  >
+    <app-welcome-screen></app-welcome-screen>
+  </div>
+</section>

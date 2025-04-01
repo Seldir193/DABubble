@@ -1,0 +1,449 @@
+$button-blue: #444df2;
+$lightblue: #eceefe;
+$middleblue: #797ef3;
+$hoverColor: #535af1;
+$lightgray: #686868;
+$button-border: #adb0d9;
+
+@import "@ctrl/ngx-emoji-mart/picker";
+
+@mixin dFlex($jc: null, $ai: center, $g: 0px, $direction: row) {
+  display: flex;
+  //align-items: $ai;
+  gap: $g;
+
+  @if $jc != null {
+    justify-content: $jc;
+  }
+
+  @if $ai != null {
+    align-items: $ai;
+  }
+
+  @if $direction != null {
+    flex-direction: $direction;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Nunito", "Noto Color Emoji", "Segoe UI Emoji", sans-serif;
+  height: 100%;
+  width: 100%;
+  background-color: $lightblue;
+  min-height: 100vh;
+}
+
+.button-anmelden {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+  width: 137px;
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: #5b5ffc;
+  }
+
+  &:disabled {
+    background-color: #686868;
+    cursor: not-allowed;
+  }
+}
+
+.button-gäste-login {
+  background: white;
+  border: 1px solid $middleblue;
+  border-radius: 100px;
+  color: $button-blue;
+  font-size: 18px;
+  font-weight: 700;
+  width: 153px;
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background: $button-blue;
+    color: white;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translate(100%, -50%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, -50%);
+    opacity: 1;
+  }
+}
+
+.registration-ok {
+  @include dFlex(center, center, 0px);
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translate(100%, -50%);
+  padding: 1rem 2rem;
+  border-radius: 30px 30px 0px 30px;
+  background-color: $button-blue;
+  line-height: 49.1px;
+  text-align: center;
+  box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
+  border: 2px solid $button-blue;
+  animation: slideInFromRight 125ms ease-out forwards;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.my-user-dropdown {
+  list-style-type: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  position: absolute;
+  bottom: calc(100% + 50px);
+  left: -60px;
+ 
+  min-width: 0;
+  transition: background-color 0.3s ease;
+  .text-truncate {
+    display: inline-block;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+
+
+  
+  &.pm-scrollable {
+    overflow-y: auto;
+    max-height: 467px;
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 10px;
+    padding-top: 20px;
+    width: calc(100vh - 20px);
+    border-radius: 20px 20px 20px 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      background: transparent !important;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 0;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-button {
+      display: none;
+      height: 0;
+      width: 0;
+    }
+  }
+
+  .avatar-container {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  li {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    max-width: fit-content;
+    border-radius: 2.1875rem;
+    font-size: 18px;
+    height: 35px;
+    max-width: 206px;
+    width: 100%;
+
+    &:hover {
+      background-color: $lightblue;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+
+    .status-icon {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid white;
+      right: 20px;
+    }
+  }
+}
+
+.tag-container {
+  padding-right: 10px;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $lightblue;
+    img {
+      filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+        saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+    }
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+    cursor: pointer;
+  }
+}
+
+.small-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.image-modal-content {
+  position: relative;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 80vw;
+  max-height: 80vh;
+  cursor: auto;
+}
+
+.large-image {
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+@media (max-width: 1278px) {
+  .entwickler-box {
+    padding: 10px 16px;
+    border-radius: unset !important;
+
+    .avatar-list {
+      img.avatar {
+        height: 34px !important;
+        width: 34px !important;
+      }
+    }
+
+    .channel-container,
+    .static-member {
+      height: 34px !important;
+    }
+
+    .office-box {
+      img {
+        width: 16px;
+        height: 17px;
+      }
+
+      .arrow {
+        width: 12px;
+        height: 6.19px;
+      }
+      h1 {
+        font-size: 20px !important;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .channel-input-box {
+    height: calc(100vh - 10rem);
+  }
+  .channel-box,
+  .message-content {
+    p {
+      font-size: 17px !important;
+    }
+  }
+
+  .channel-box {
+    padding: 10px;
+
+    .message-list .sent-message-container .message-container {
+      padding: 10px;
+    }
+  }
+
+  .channel-box {
+    padding: 10px;
+
+    .message-list .received-message-container .message-container {
+      padding: 10px;
+    }
+  }
+
+  .seperator {
+    padding: 0px 10px 0px 10px;
+  }
+
+  .channel-box .message-list .emoji-box {
+    position: absolute;
+    transform: none;
+  }
+
+  .channel-box .message-list .emoji-box .image-wrapper {
+    width: 30px;
+    height: 30px;
+  }
+
+  .channel-box .message-list {
+    .received-message-container {
+      position: relative;
+
+      &:hover .emoji-box-received {
+        right: 0 !important;
+      }
+    }
+
+    .emoji-box-received {
+      position: absolute;
+      top: -20px;
+      right: 0;
+    }
+  }
+
+  .reply-count {
+    padding: unset !important;
+  }
+
+  .channel-box .message-list .emoji-box-received .image-wrapper {
+    width: 30px;
+    height: 30px;
+  }
+
+  .edit-message-box .edit-buttons {
+    display: unset;
+  }
+
+  .edit-message-box {
+    position: unset;
+    width: unset;
+    max-width: unset;
+    margin-top: unset;
+  }
+
+  .edit-message-box .edit-textarea {
+    padding: unset;
+  }
+
+  .edit-options {
+    padding: unset;
+    left: 40px;
+    top: 30px;
+  }
+
+  .edit-options button {
+    font-size: 17px !important;
+    height: 35px;
+    width: 170px;
+  }
+
+  .private-message-header h1 {
+    font-size: 20px;
+  }
+
+  .private-message-header .status-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .private-message-header {
+    h3 {
+      font-size: 20px;
+    }
+    h1 {
+      font-size: 14px;
+    }
+  }
+
+  section {
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  .registration-ok {
+    padding: unset !important;
+
+    img {
+      width: 24px;
+    }
+
+    p {
+      font-size: 22px !important;
+      margin: 0;
+    }
+  }
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");

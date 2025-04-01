@@ -1,0 +1,310 @@
+<div class="container">
+  <div class="content-container" *ngIf="!showDesktop">
+    <div class="container-box">
+      <img src="assets/img/logo-dabubble.png" />
+    </div>
+
+    <h1>DABubble</h1>
+  </div>
+
+  <div class="desktop-content" *ngIf="showDesktop">
+    <img class="left" src="/assets/img/pfeilleft.png" (click)="onBackClick()" />
+    <img src="assets/img/dev_logo.png" alt="Dev Space" />
+    <h1>Devspace</h1>
+  </div>
+
+  <div class="center-section" *ngIf="isDesktop">
+    <input
+      type="text"
+      placeholder="Devspace durchsuchen"
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (keyup)="onSearchChange()"
+    />
+    <img src="assets/img/search.png" class="search-icon" alt="Suche" />
+
+    <div class="search-dropdown" *ngIf="dropdownOpen">
+      <ul>
+        <li
+          *ngFor="let result of searchResults"
+          (click)="onSelectResult(result)"
+        >
+          <div class="channel-container" *ngIf="result.type === 'channel'">
+            <img src="assets/img/tag-black.png" />
+            <span class="text-truncate">{{ result.name }}</span>
+          </div>
+
+          <div *ngIf="result.type === 'user'" class="avatar-container">
+            <img
+              [src]="
+                result.avatarUrl &&
+                result.avatarUrl !== 'assets/img/avatar.png' &&
+                result.avatarUrl !== 'assets/default-avatar.png'
+                  ? result.avatarUrl
+                  : 'assets/img/avatar.png'
+              "
+              alt="{{ result.name }}"
+              class="avatar"
+            />
+            <div class="status-box">
+              <img
+                *ngIf="result.isOnline"
+                src="assets/img/online.png"
+                class="status-icon"
+                alt="Online"
+              />
+              <img
+                *ngIf="!result.isOnline"
+                src="assets/img/offline.png"
+                class="status-icon"
+                alt="Offline"
+              />
+            </div>
+
+            <span class="text-truncate">{{ result.name }}</span>
+          </div>
+
+          <div
+            *ngIf="
+              result.type === 'thread' ||
+              result.type === 'message' ||
+              result.type === 'private-message' ||
+              result.type === 'thread-channel'
+            "
+          >
+            <span class="message-preview">
+              {{ result.text | slice : 0 : 15 }}
+              <ng-container *ngIf="(result.text?.length || 0) > 15"
+                >...</ng-container
+              >
+            </span>
+            <span>
+              {{ result.formattedTimestamp | date : "dd.MM.yyyy HH:mm" }}
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="noResultsFound" class="no-results">
+      Keine Ergebnisse gefunden.
+    </div>
+  </div>
+
+  <div class="right-section" (click)="stopPropagation($event)">
+    <span *ngIf="isDesktop" (click)="toggleMenu()" class="user-name">{{
+      userName
+    }}</span>
+
+    <div class="avatar-container">
+      <img
+        [src]="userAvatarUrl || 'assets/img/avatar.png'"
+        class="avatar"
+        (click)="toggleMenu()"
+        alt="User Avatar"
+      />
+
+      <img
+        *ngIf="userStatus === 'Aktiv'"
+        src="assets/img/online.png"
+        class="status-icon"
+        alt="Online"
+      />
+      <img
+        *ngIf="userStatus === 'Abwesend'"
+        src="assets/img/offline.png"
+        class="status-icon"
+        alt="Offline"
+      />
+    </div>
+
+    <div class="menu-dropdown" (click)="stopPropagation($event)">
+      <div class="menu-toggle" (click)="toggleMenu()">
+        <img
+          class="menu-img"
+          *ngIf="isDesktop"
+          src="assets/img/keyboard_arrow_down-1.png"
+        />
+      </div>
+
+      <div
+        class="menu-content"
+        *ngIf="isDesktop"
+        [ngClass]="{ show: menuOpen }"
+        (click)="stopPropagation($event)"
+      >
+        <button class="menu-item" (click)="openProfileCard()">Profile</button>
+        <button class="menu-item" (click)="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="bottom-menu" *ngIf="!isDesktop">
+      <div
+        class="menu-backdrop"
+        [ngClass]="{ open: menuOpen }"
+        (click)="toggleMenu()"
+      ></div>
+
+      <div class="bottom-menu-content" [ngClass]="{ open: menuOpen }">
+        <div class="handle-bar"></div>
+
+        <button
+          class="menu-item"
+          (click)="openProfileCard()"
+          (click)="toggleMenu()"
+        >
+          <img src="assets/img/vollständigername.png" alt="Profile Icon" />
+          <span>Profile</span>
+        </button>
+
+        <button class="menu-item" (click)="logout()" (click)="toggleMenu()">
+          <img src="assets/img/logout.png" alt="Logout Icon" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="profile-card-container"
+      [ngClass]="{ show: profileOpen }"
+      (click)="stopPropagation($event)"
+    >
+      <div class="profile-card">
+        <div class="profil-container">
+          <h2 *ngIf="!isEditingProfile">Profil</h2>
+          <h2 *ngIf="isEditingProfile">Dein Profil bearbeiten</h2>
+          <div class="img-wrapper">
+            <img
+              (click)="closeProfileCard()"
+              src="assets/img/close.png"
+              alt="Schließen"
+            />
+          </div>
+        </div>
+
+        <div class="profile-avatar">
+          <img
+            *ngIf="!isEditingProfile"
+             [src]="userAvatarUrl || 'assets/img/avatar.png'"
+            alt="User Avatar"
+            (click)="onAvatarClick()"
+          />
+
+          <input
+          type="file"
+          accept="image/*"
+          #fileInput
+          style="display: none"
+          (change)="onFileSelected($event)"
+        />
+          <div *ngIf="isEditingProfile">
+            <img
+              [src]="userAvatarUrl || 'assets/img/avatar.png'"
+              alt="User Avatar"
+              (click)="onAvatarClick()"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              #fileInput
+              style="display: none"
+              (change)="onFileSelected($event)"
+            />
+          </div>
+        </div>
+        <div class="profile-info" *ngIf="!isEditingProfile">
+          <div class="profil-box">
+            <div class="profil-settings">
+              <p>
+                <strong>{{ userName }}</strong>
+              </p>
+
+              <div
+                class="profil-settings-button"
+                *ngIf="isDesktop"
+                (click)="openSettingCard()"
+              >
+                Bearbeiten
+              </div>
+
+              <div class="img-wrapper">
+                <img
+                  src="assets/img/edit.png"
+                  (click)="openSettingCard()"
+                  *ngIf="!isDesktop"
+                />
+              </div>
+            </div>
+
+            <div class="online-aktiv-passiv">
+              <img
+                *ngIf="userStatus === 'Aktiv'"
+                src="assets/img/online.png"
+                alt="Online"
+              />
+              <img
+                *ngIf="userStatus === 'Abwesend'"
+                src="assets/img/offline.png"
+                alt="Offline"
+              />
+              <p
+                [ngStyle]="{
+                  color: userStatus === 'Abwesend' ? 'gray' : '#92C83E'
+                }"
+              >
+                {{ userStatus }}
+              </p>
+            </div>
+          </div>
+          <div class="profil-email-box">
+            <div class="email-container">
+              <img src="assets/img/pmail.png" />
+              <p>E-Mail-Adresse</p>
+            </div>
+            <p class="secondary-text">{{ userEmail }}</p>
+          </div>
+        </div>
+
+        <div class="profile-edit" *ngIf="isEditingProfile">
+          <div class="name-box">
+            <img src="assets/img/vollständigername.png" />
+            <label for="name">Vollständiger Name:</label>
+          </div>
+          <input
+            placeholder="Name"
+            type="text"
+            id="name"
+            [(ngModel)]="editableUserName"
+            (focus)="onInputFocus('name')"
+            (blur)="onInputBlur('name', editableUserName)"
+            [ngClass]="{ active: inputStates['name'] }"
+          />
+
+          <div class="button-box">
+            <button class="button-abbrechen" (click)="cancelEditing()">
+              Abbrechen
+            </button>
+            <button
+              (click)="saveProfileChanges()"
+              (click)="closeProfileCard()"
+              [disabled]="!editableUserName"
+              [ngClass]="{
+                'btn-disabled': !editableUserName,
+                'btn-enabled': editableUserName
+              }"
+            >
+              Speichern
+            </button>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="success-message">
+            {{ successMessage }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

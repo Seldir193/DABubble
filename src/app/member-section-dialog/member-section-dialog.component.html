@@ -1,0 +1,10 @@
+<div class="container">
+  <ul>
+    <li *ngFor="let member of members" (click)="selectMember(member)">
+      <div class="avatar-container">
+        <img [src]="member.avatarUrl" alt="{{ member.name }}" class="avatar" />
+      </div>
+      <span>{{ member.name }}</span>
+    </li>
+  </ul>
+</div>

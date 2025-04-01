@@ -1,0 +1,294 @@
+@import "./../../styles.scss";
+
+.button-box {
+  @include dFlex(flex-end,null,null,null);
+}
+
+.close-dialog {
+  @include dFlex(space-between,center,null,null);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  img {
+    cursor: pointer;
+    transition: filter 0.3s ease, background-color 0.3s ease;
+    border-radius: 50%;
+    margin-left: auto;
+
+    &:hover {
+      background-color: $lightblue;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+  }
+}
+
+.container {
+  @include dFlex(null, null,null, column);
+  padding: 40px;
+  border-radius: 30px 0px 30px 30px;
+  background-color: white;
+}
+
+.primary-button {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+  width: 147px;
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: #5b5ffc;
+  }
+
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+}
+
+.mat-mdc-dialog-actions {
+  padding: 0 20px 20px 0;
+  justify-content: flex-end;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 30px 0px 30px 30px !important;
+  width: unset;
+}
+
+::ng-deep .mdc-dialog__surface {
+  border-radius: 30px 0px 30px 30px !important;
+  overflow: hidden;
+}
+
+.member-selection {
+  @include dFlex(null,null,20px,column);
+  width: 434px;
+}
+
+.specific-members {
+  @include dFlex(null,center,15px,null);
+  position: relative;
+
+  input[type="text"] {
+    width: 100%;
+    max-width: 630px;
+    height: 60px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+
+    &:hover {
+      border-color: #686868;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $button-blue;
+    }
+
+    &:not(:focus) {
+      &:has(+ input:focus) {
+        border-color: blue;
+      }
+    }
+  }
+}
+
+.dropdown-list {
+  list-style-type: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+
+  li {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    max-width: fit-content;
+    border-radius: 2.1875rem;
+    font-size: 18px;
+
+    .text-truncate {
+      display: inline-block;
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+  
+
+    &:hover {
+      background-color: $lightblue;
+    }
+
+    .avatar {
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-icon {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid white;
+      right: 20px;
+    }
+  }
+}
+
+.selected-member {
+  display: flex;
+  align-items: center;
+  background-color: $lightblue;
+  padding: 5px 10px;
+  border-radius: 20px;
+  position: absolute;
+  gap: 15px;
+  left: 20px;
+  cursor: pointer;
+
+  .avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+  }
+
+  .remove-btn {
+    background-color: transparent;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 5px;
+
+    &:hover {
+      color: $hoverColor;
+      scale: 1.1;
+    }
+  }
+}
+
+.scrollable-area {
+  overflow-y: auto;
+  max-height: 200px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 10px;
+  max-width: 335px;
+  width: 100%;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  border-radius: 0px 20px 20px 20px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background: transparent !important;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+
+  &:hover {
+    scrollbar-color: blue white;
+  }
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+
+  p {
+    font-size: 18px;
+    font-weight: 400;
+    color: $hoverColor;
+    margin: 0;
+  }
+}
+
+.input-button-box {
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media(max-width:1278px){
+  .dropdown-list,
+  .scrollable-area {
+    max-width: 200px;
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .specific-members input[type="text"] {
+    max-width: 366px;
+  }
+
+  .member-selection {
+    width: 100%;
+  }
+
+  .container {
+    padding: 30px 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .close-dialog img {
+    width: 30px;
+  }
+
+  .team p {
+    font-size: 16px;
+  }
+
+  .dropdown-list,
+  .scrollable-area {
+    max-width: 180px;
+    width: auto;
+  }
+}

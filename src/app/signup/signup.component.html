@@ -1,0 +1,184 @@
+<div class="page">
+  <app-header></app-header>
+
+  <div class="container">
+    <div class="login-container">
+      <div class="login">
+        <div class="box">
+          <div class="konto-container">
+            <h2>Konto erstellen</h2>
+            <div class="image-container">
+              <a [routerLink]="['/login']">
+                <img src="assets/img/leftfile.png" alt="Zurück zum Login" />
+              </a>
+            </div>
+          </div>
+          <p>
+            Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
+            DABubble-Konto.
+          </p>
+        </div>
+
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+          <div
+            class="input-container icon-wrapper"
+            [ngClass]="{ filled: filledStates['nameFilled'] }"
+          >
+            <img
+              [src]="
+                filledStates['nameFilled']
+                  ? 'assets/img/person-black.png'
+                  : 'assets/img/person.png'
+              "
+              alt="Name Icon"
+            />
+
+            <input
+              [ngClass]="{
+                'name-icon': true,
+                filled: filledStates['nameFilled']
+              }"
+              type="text"
+              id="name"
+              formControlName="name"
+              placeholder="Name und Nachname"
+              (focus)="onFocus('name')"
+              (blur)="onBlur('name')"
+            />
+          </div>
+          <div
+            class="error-message"
+            *ngIf="myForm.get('name')?.invalid && myForm.get('name')?.touched"
+          >
+            Bitte fülle das Feld aus.
+          </div>
+
+          <div
+            class="input-container icon-wrapper"
+            [ngClass]="{ filled: filledStates['emailFilled'] }"
+          >
+            <img
+              [src]="
+                filledStates['emailFilled']
+                  ? 'assets/img/black-mail.png'
+                  : 'assets/img/mail.png'
+              "
+              alt="Email Icon"
+            />
+
+            <input
+              [ngClass]="{
+                'email-icon': true,
+                filled: filledStates['emailFilled']
+              }"
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="beispielname@email.com"
+              (focus)="onFocus('email')"
+              (blur)="onBlur('email')"
+            />
+          </div>
+          <div class="error-message">
+            <ng-container *ngIf="errorMessage">
+              {{ errorMessage }}
+            </ng-container>
+
+            <ng-container *ngIf="!errorMessage">
+              <ng-container *ngIf="myForm.get('email')?.touched">
+                <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
+                  *Bitte füllen Sie das E-Mail-Feld aus.
+                </ng-container>
+
+                <ng-container
+                  *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
+                >
+                  Diese E-Mail-Adresse ist leider ungültig.
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <div class="input-container">
+            <input
+              [ngClass]="{
+                'passwort-icon': true,
+                filled: filledStates['passwordFilled']
+              }"
+              type="password"
+              id="password"
+              formControlName="password"
+              placeholder="Passwort"
+              (focus)="onFocus('password')"
+              (blur)="onBlur('password')"
+            />
+          </div>
+
+          <div
+            class="error-message"
+            *ngIf="
+          passwordFocused &&
+          myForm.get('password')?.errors?.['minlength']
+        "
+          >
+            Bitte geben Sie mindestens 6 Zeichen ein.
+          </div>
+
+          <div
+            class="error-message"
+            *ngIf="
+              myForm.get('password')?.value?.length >= 6 &&
+              !myForm.get('checkbox')?.value
+            "
+          >
+            Bitte stimmen Sie die Datenschutzerklärung zu ...
+          </div>
+
+          <div class="privacy-box">
+            <div class="checkbox" (click)="toggleCheckbox()">
+              <input
+                type="checkbox"
+                formControlName="checkbox"
+                [checked]="isChecked"
+                style="display: none"
+              />
+              <div
+                class="checkmark"
+                *ngIf="myForm.get('checkbox')?.value"
+              ></div>
+            </div>
+            <p>
+              Ich stimme der
+              <a class="forgot-password" [routerLink]="['/privacy']"
+                >Datenschutzerklärung</a
+              >
+              zu.
+            </p>
+          </div>
+
+          <div class="button-container">
+            <button
+              class="button-anmelden"
+              type="submit"
+              [disabled]="!myForm.valid || (!isSmallScreen && !isChecked)"
+              [ngClass]="{
+                'btn-blue': isSubmitButtonEnabled(),
+                'disabled-button':
+                  !myForm.valid || (!isSmallScreen && !isChecked)
+              }"
+            >
+              Weiter
+            </button>
+          </div>
+        </form>
+        <div class="registration-ok" *ngIf="successMessage">
+          <p style="color: white; font-size: 36px; font-weight: 700">
+            {{ successMessage }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>

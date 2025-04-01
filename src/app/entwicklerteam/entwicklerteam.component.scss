@@ -1,0 +1,1261 @@
+@import "./../../styles.scss";
+
+/* -------------------------------------------------------
+   ENTWICKLER-BOX
+   ------------------------------------------------------- */
+.entwickler-box {
+  cursor: pointer;
+  height: auto;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  padding: 25px 45px;
+  background-color: white;
+  border-radius: 30px 30px 0 0;
+}
+
+/* channel-container */
+.entwickler-box .channel-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* office-box */
+.entwickler-box .channel-container .office-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 30px;
+  height: 45px;
+  flex: 1;
+}
+
+/* hover-box */
+.entwickler-box .channel-container .hover-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 30px;
+  height: 45px;
+  padding: 0 10px 0 10px;
+}
+
+.entwickler-box .channel-container .hover-box:hover {
+  background-color: $lightblue;
+  border-radius: 100px;
+}
+
+.entwickler-box .channel-container .hover-box:hover img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+.entwickler-box .channel-container .hover-box:hover h1 {
+  color: $hoverColor;
+  font-size: 24px;
+  font-weight: 700;
+  transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+.entwickler-box .channel-container .hover-box h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* avatar-list */
+.entwickler-box .channel-container .avatar-list {
+  display: flex;
+  padding-right: 10px;
+  margin-left: auto;
+  transition: background-color 0.3s ease, width 0.3s ease,
+    border-radius 0.3s ease;
+}
+
+.entwickler-box .channel-container .avatar-list:hover {
+  background-color: $lightblue;
+  border-radius: 100px;
+}
+
+.entwickler-box .channel-container .avatar-list li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.entwickler-box .channel-container .avatar-list li img.avatar {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  position: relative;
+  margin-left: -15px;
+  z-index: 1;
+  border: 2px solid white;
+}
+
+.entwickler-box .channel-container .avatar-list li .member-counter {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 14px;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+/* -------------------------------------------------------
+   CHANNEL-INPUT-BOX
+   ------------------------------------------------------- */
+.channel-input-box {
+  height: calc(100vh - 20.3rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* channel-box */
+.channel-input-box .channel-box {
+  padding: 45px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow-x: hidden;
+  flex-grow: 1;
+}
+
+/* -------------------------------------------------------
+   MESSAGE-LIST
+   ------------------------------------------------------- */
+.channel-input-box .channel-box .message-list {
+  overflow-x: hidden;
+  flex-grow: 1;
+}
+
+/* message-time */
+.channel-input-box .channel-box .message-list .message-time {
+  font-size: 14px;
+  font-weight: 400;
+  color: $lightgray;
+}
+
+/* sender-name */
+.channel-input-box .channel-box .message-list .sender-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.channel-input-box .channel-box .message-list .sender-name:hover {
+  color: $middleblue;
+  cursor: pointer;
+}
+
+/* SENT-MESSAGE-CONTAINER */
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container {
+  position: relative;
+  display: flex;
+ // justify-content: flex-end;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .sent-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container:hover {
+  background-color: $lightblue;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container:hover
+  .emoji-box {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: -20px;
+}
+
+/* .message-container (in sent-message-container) */
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row-reverse;
+  padding: 10px 45px;
+  background-color: transparent;
+  width: 100%;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container:hover {
+  background-color: $lightblue;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container:hover
+  .emoji-box {
+  display: flex;
+  align-items: center;
+}
+
+/* .message-box */
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container
+  .message-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px;
+  padding-right:30px;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container
+  .message-box
+  .message-info {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  gap: 20px;
+  align-items: center;
+}
+
+/* EMOJI-CONTAINER (sent) */
+.channel-input-box .channel-box .message-list .emoji-container {
+  margin-right: 10px;
+  margin-top: -55px;
+}
+
+/* EMOJI-CONTAINER (received) */
+.channel-input-box .channel-box .message-list .emoji-container-received {
+  margin-left: -10px;
+  margin-top: -55px;
+}
+
+/* EMOJI-BOX (sent) */
+.channel-input-box .channel-box .message-list .emoji-box {
+  padding: 3px 15px 3px 20px;
+  gap: 5px;
+  border-radius: 25px 25px 0;
+  border: 1px solid #adb0d9;
+  background: #fff;
+  left: 0;
+  top: 0px;
+  z-index: 3;
+  display: none;
+
+  margin-left: 10px;
+}
+
+.channel-input-box .channel-box .message-list .emoji-box .image-wrapper {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .emoji-box
+  .image-wrapper:hover {
+  background-color: $lightblue;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .emoji-box
+  .image-wrapper:hover
+  img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+.channel-input-box .channel-box .message-list .emoji-box .image-wrapper img {
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* RECEIVED-MESSAGE-CONTAINER */
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .received-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container:hover {
+  background-color: $lightblue;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container:hover
+  p {
+  color: white;
+}
+
+/* emoji-box-received */
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .emoji-box-received {
+  padding: 3px 15px 3px 20px;
+  gap: 5px;
+  border-radius: 25px 25px 0;
+  border: 1px solid #adb0d9;
+  background: #fff;
+  top: 0;
+  z-index: 3;
+  display: none;
+  position: absolute;
+}
+
+/* on hover => show .emoji-box-received */
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container:hover
+  .emoji-box-received {
+  display: flex;
+  align-items: center;
+  top: -20px;
+  right: 0;
+}
+
+/* .emoji-box-received .image-wrapper */
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .emoji-box-received
+  .image-wrapper {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .emoji-box-received
+  .image-wrapper:hover {
+  background-color: $lightblue;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .emoji-box-received
+  .image-wrapper:hover
+  img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .emoji-box-received
+  .image-wrapper
+  img {
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* message-container (in received) */
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .message-container {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 45px;
+  position: relative;
+  background-color: transparent;
+  width: 100%;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .message-container:hover {
+  background-color: $lightblue;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .message-container:hover
+  .message-content {
+  background-color: white;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .message-container:hover
+  .message-content
+  p {
+  color: black;
+}
+
+/* .message-box (in received) */
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .message-container
+  .message-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  padding-left:30px;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container
+  .message-container
+  .message-box
+  .message-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+
+/* message-content (shared) */
+.channel-input-box .channel-box .message-list .message-content {
+  background-color: $middleblue;
+  padding: 15px;
+  border-radius: 0px 30px 30px 30px;
+  word-break: break-all;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .message-content
+  .sent-message {
+  color: white;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .message-content
+  p {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+  color: white;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .message-content.text-message {
+  color: white;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .message-content.image-message {
+  background-color: transparent;
+}
+
+.channel-input-box
+  .channel-box
+  .message-list
+  .message-content.image-message
+  img {
+  max-width: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* -------------------------------------------------------
+   CHAT-INPUT-CONTAINER
+   ------------------------------------------------------- */
+.chat-input-container {
+  position: relative; /* wichtig für absolute Elemente der Kinder */
+}
+
+/* emoji-picker */
+.chat-input-container .emoji-picker {
+  position: absolute;
+  bottom: 210px;
+  z-index: 10000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background-color: white;
+  width: 300px;
+  height: 300px;
+}
+
+/* chat-input */
+.chat-input-container .chat-input {
+  display: flex;
+  align-items: center;
+  padding: 0px 20px;
+}
+
+.chat-input-container .chat-input .textarea-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* textarea */
+.chat-input-container .chat-input .textarea-wrapper textarea {
+  flex-grow: 1;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  resize: none;
+  width: 100%;
+  min-height: 145px;
+  font-size: 18px;
+  font-weight: 400;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  font-family: "Segoe UI Emoji", sans-serif;
+}
+
+.chat-input-container .chat-input .textarea-wrapper textarea:hover {
+  border-color: $button-blue;
+  transition: border-color 0.3s;
+}
+
+.chat-input-container .chat-input .textarea-wrapper textarea:focus,
+.chat-input-container .chat-input .textarea-wrapper textarea:focus-within {
+  outline: none;
+  border-color: $button-blue;
+}
+
+.chat-input-container
+  .chat-input
+  .textarea-wrapper
+  textarea:not(:focus):has(+ input:focus) {
+  border-color: blue;
+}
+
+/* image-preview */
+.chat-input-container .chat-input .textarea-wrapper .image-preview {
+  position: absolute;
+  bottom: 75px;
+  left: 25px;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  transition: background-color 0.3s ease, filter 0.3s ease;
+  gap: 10px;
+}
+
+.chat-input-container
+  .chat-input
+  .textarea-wrapper
+  .image-preview:hover {
+  background-color: white;
+}
+
+.chat-input-container
+  .chat-input
+  .textarea-wrapper
+  .image-preview:hover
+  img {
+  filter: brightness(0.8);
+}
+
+.chat-input-container
+  .chat-input
+  .textarea-wrapper
+  .image-preview
+  .image-border {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 1.25rem;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  border: 1px solid $button-blue;
+}
+
+.chat-input-container
+  .chat-input
+  .textarea-wrapper
+  .image-preview
+  .img-wrapper:hover
+  img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+/* input-buttons */
+.chat-input-container .chat-input .input-buttons {
+  position: absolute;
+  bottom: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-container .chat-input .input-buttons .input-image {
+  transition: filter 0.3s ease;
+}
+
+.chat-input-container .chat-input .input-buttons:hover .input-image {
+  filter: brightness(0);
+}
+
+.chat-input-container .chat-input .input-buttons .input-image:hover {
+  filter: brightness(1);
+}
+
+.chat-input-container .chat-input .input-buttons label,
+.chat-input-container .chat-input .input-buttons button {
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.chat-input-container
+  .chat-input
+  .input-buttons
+  label:hover,
+.chat-input-container
+  .chat-input
+  .input-buttons
+  button:hover {
+  background-color: $lightblue;
+}
+
+.chat-input-container
+  .chat-input
+  .input-buttons
+  label:hover
+  img,
+.chat-input-container
+  .chat-input
+  .input-buttons
+  button:hover
+  img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+/* send-button */
+.chat-input-container .chat-input .send-button {
+  position: absolute;
+  bottom: 10px;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-input-container .chat-input .send-button button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, filter 0.3s ease;
+}
+
+.chat-input-container .chat-input .send-button button:hover {
+  background-color: #ffffff;
+}
+
+.chat-input-container
+  .chat-input
+  .send-button
+  button:hover
+  img {
+  filter: brightness(1.8);
+}
+
+.chat-input-container .chat-input .send-button button img {
+  transition: filter 0.3s ease;
+}
+
+/* img-wrapper (close icon) */
+.chat-input-container .img-wrapper {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ddd;
+}
+
+.chat-input-container .img-wrapper:hover {
+  background-color: $lightblue;
+  transform: scale(1.1);
+}
+
+.chat-input-container .img-wrapper img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.chat-input-container .img-wrapper img:hover {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+/* -------------------------------------------------------
+   SEPERATOR
+   ------------------------------------------------------- */
+.seperator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 20px auto;
+  padding: 0px 25px 0px 25px;
+}
+
+.seperator::before,
+.seperator::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: $button-border;
+}
+
+.seperator .date-separator {
+  font-size: 14px;
+  font-weight: 400;
+  color: black;
+  padding: 5px 15px;
+  background-color: #fff;
+  z-index: 1;
+  border-radius: 30px;
+  border: 1px solid $button-border;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------
+   EDIT-MESSAGE-BOX
+   ------------------------------------------------------- */
+.edit-message-box {
+  position: relative;
+  width: 100%;
+  max-width: 698px;
+  margin: 0 auto;
+}
+
+.edit-message-box .edit-textarea {
+  width: 100%;
+  padding: 20px;
+  font-size: 18px;
+  border: 1px solid $lightblue;
+  border-radius: 20px;
+  resize: none;
+  color: $lightgray;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  font-family: "Segoe UI Emoji", sans-serif;
+}
+
+.edit-message-box .edit-textarea:hover {
+  border-color: $button-blue;
+  transition: border-color 0.3s;
+}
+
+.edit-message-box .edit-textarea:focus,
+.edit-message-box .edit-textarea:focus-within {
+  outline: none;
+  border-color: $button-blue;
+}
+
+.edit-message-box .edit-textarea:not(:focus):has(+ input:focus) {
+  border-color: blue;
+}
+
+.edit-message-box .edit-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.edit-message-box .edit-buttons .save-button,
+.edit-message-box .edit-buttons .cancel-button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* -------------------------------------------------------
+   EDIT-OPTIONS
+   ------------------------------------------------------- */
+.edit-options {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 0px 30px 30px 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  margin-top: 5px;
+  left: 220px;
+  top: 15px;
+}
+
+.edit-options button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: black;
+  font-size: 20px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 30px;
+  height: 45px;
+  width: 268px;
+}
+
+.edit-options button:hover {
+  background-color: $lightblue;
+  border-radius: 100px;
+  color: $hoverColor;
+}
+
+/* -------------------------------------------------------
+   EMOJI-BOX (Positionierung)
+   ------------------------------------------------------- */
+.emoji-box {
+  position: relative;
+}
+
+.emoji-pickere {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* emoji-picker-received */
+.emoji-picker-received {
+  position: absolute;
+  top: 10%;
+  z-index: 100;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  right: 25px;
+}
+
+/* -------------------------------------------------------
+   TOOLTIP
+   ------------------------------------------------------- */
+.tooltip {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $button-blue;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  z-index: 1000;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  transform: translate(0%, -100%);
+  padding: 15px 10px;
+  border-radius: 30px 30px 30px 0px;
+  width: 158px;
+  
+  text-align: center;
+}
+
+.emoji-icon {
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sender-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.reaction-text {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+/* -------------------------------------------------------
+   REPLY-COUNT
+   ------------------------------------------------------- */
+.reply-count {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: 20px;
+  color: $hoverColor;
+  font-family: 400;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.reply-count:hover {
+  transform: scale(1.05);
+  color: $button-blue;
+}
+
+.reply-count:hover .reply-time {
+  color: #000;
+}
+
+.reply-time {
+  font-size: 14px;
+  color: $lightgray;
+  font-family: 400;
+  text-align: right;
+  transition: color 0.2s ease;
+}
+
+/* -------------------------------------------------------
+   HIGHLIGHT
+   ------------------------------------------------------- */
+.message-item.highlight {
+  background-color: yellow;
+  transition: background-color 1s ease-in-out;
+}
+
+/* -------------------------------------------------------
+   AVATAR-BOX
+   ------------------------------------------------------- */
+.avatar-box {
+  display: flex;
+  align-items: center;
+}
+
+/* -------------------------------------------------------
+   EMOJI-ITEM
+   ------------------------------------------------------- */
+.emoji-item {
+  border: 1px solid $hoverColor;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: white;
+  cursor: pointer;
+}
+
+.emoji-item .emoji-count {
+  margin-left: 4px;
+  font-size: 0.85em;
+  color: #666;
+}
+
+/* -------------------------------------------------------
+   NAV (inner Tag)
+   ------------------------------------------------------- */
+nav {
+  color: black;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* -------------------------------------------------------
+   EMOJI-MESSAGE-CONTAINER
+   ------------------------------------------------------- */
+.emoji-message-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.emoji-message-container:hover {
+  background-color: $lightblue;
+}
+
+.emoji-message-container:hover img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+.emoji-message-container .emoji-plus-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+/* -------------------------------------------------------
+   EMOJI-POPUP
+   ------------------------------------------------------- */
+.emoji-popup {
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  padding: 12px;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ddd;
+  background: #fff;
+  height: auto;
+  max-height: 290px;
+  overflow: auto;
+  width: 100%;
+  max-width: 368px;
+}
+
+.emoji-popup .emoji-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.emoji-popup .emoji-list .emoji-plus-icon-in-list {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.emoji-popup .toggle-more,
+.emoji-popup .toggle-less {
+  margin-top: 4px;
+  cursor: pointer;
+  color: #0066cc;
+  border-radius: 20px;
+  padding: 5px 10px;
+  border: 1px solid $button-border;
+  width: 105px;
+}
+
+.emoji-popup .toggle-box {
+  display: flex;
+
+  img{
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------
+   EDIT-SQUARE
+   ------------------------------------------------------- */
+.edit-square {
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-square:hover {
+  background-color: $lightblue;
+}
+
+.edit-square:hover img {
+  filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
+    hue-rotate(230deg) brightness(100%) contrast(90%);
+}
+
+.edit-square img {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+/* -------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------- */
+@media (max-width: 1278px) {
+  .letzte-antwort-label {
+    display: none;
+  }
+
+  .tooltip{
+    width:unset;
+  }
+
+
+  .channel-input-box
+  .channel-box 
+  .message-list
+  .received-message-container
+  .emoji-box-received{
+    padding:unset;
+  }
+
+  .channel-input-box 
+  .channel-box
+  .message-list 
+  .message-container
+  .emoji-box{
+    padding:unset;
+  }
+  .channel-input-box
+  .channel-box
+  .message-list
+  .received-message-container 
+  .message-container
+  .message-box{
+    padding-left:16px;
+  }
+
+  .channel-input-box 
+  .channel-box
+  .message-list 
+  .received-message-container 
+  .message-container{
+    padding:10px 16px;
+  }
+
+  .channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container 
+  .message-box{
+    padding-right:16px;
+  }
+
+  .channel-input-box
+  .channel-box
+  .message-list
+  .sent-message-container
+  .message-container{
+    padding:10px 16px;
+  }
+
+}
+
+
+@import "./../../styles.scss";

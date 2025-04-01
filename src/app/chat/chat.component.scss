@@ -1,0 +1,238 @@
+@import "./../../styles.scss";
+
+section {
+  display: flex;
+  background-color: #eceefe;
+  gap: 20px;
+  padding: 0 20px 20px 20px;
+  height: calc(100vh - 10.35rem);
+  position: relative;
+
+  .work-space {
+    position: fixed; 
+    left: 0; 
+    top: 50%; 
+    width: 60px; 
+    height: 347px; 
+    border-radius: 0px 30px 30px 0px; 
+    background-color: white; 
+    cursor: pointer;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    transition: background-color 0.3s ease-in-out;
+    padding: 23px 14px;
+    box-shadow: 4px 4px 7px 0px #00000033;
+    gap: 10px; 
+    text-align: center;
+    z-index: 9999;
+  }
+
+  .work-space img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease-in-out; 
+  }
+  
+  .work-space span {
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+    transform: rotate(-90deg); 
+    transform-origin: center;
+    white-space: nowrap; 
+    position: relative;
+    z-index: 2; 
+    display: flex;
+    gap: 10px;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; 
+  }
+  
+  .work-space:hover img {
+    transform: scale(1.1); 
+    filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+  }
+  
+  .work-space:hover span {
+    transform: rotate(-90deg) scale(1.1);
+    color: $hoverColor;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 366px;
+    border-radius: 30px;
+    background-color: white;
+    padding: 32px 30px;
+    opacity: 1;
+    gap: 25px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+    
+  .team-container {
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+    min-width:480px;
+  }
+
+  .welcome-container{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+  }
+
+  .privat-chat-container{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+    min-width:480px;
+  }
+
+  .search-container{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+  }
+
+  .scrollable-area {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 10rem);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    overflow-x: hidden;
+    scrollbar-width: thin ; 
+    scrollbar-color: black white; 
+  }
+  
+  .scrollable-area:hover {
+    scrollbar-color: $hoverColor white; 
+  }
+
+  app-inner-channel,
+  app-direct-messages {
+    flex: none; 
+    padding: 15px;
+  }
+
+  .thread-area {
+    width: 100%;        
+    max-width:525px;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem); 
+    overflow: hidden;
+    min-width:480px;
+
+    &.thread-activ {
+      max-width: none; 
+    }
+  }
+
+  .thread-activ{
+    width: 100%;
+    border-radius: 30px;
+    background-color: white;
+    opacity: 1;
+    height: calc(100vh - 10.35rem);
+    overflow: hidden;
+  }
+
+  .property-box{
+    display: none;
+   }
+
+
+
+
+
+   
+
+
+
+
+
+  @media (max-width: 1278px) {
+    .container,
+    .work-space,
+    .team-container,
+    .privat-chat-container,
+    .thread-area,
+    .welcome-container {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .show-mobile {
+      display: block !important; 
+    }
+
+     .container {
+      height:calc(100vh - 8.2rem);
+      padding:20px;
+      border-radius:unset !important
+     }
+
+     .team-container{
+      height:calc(100vh - 5.7rem);
+      border-radius:unset !important;
+      min-width: unset !important;
+     }
+
+     .privat-chat-container{
+      height:calc(100vh - 5.7rem);
+      border-radius:unset !important;
+      min-width: unset !important;
+     }
+
+     .thread-area{
+      height:calc(100vh - 5.7rem);
+      border-radius:unset !important;
+      min-width: unset !important;
+     }
+
+     .search-container{
+      height:calc(100vh - 5.7rem);
+      border-radius:unset !important;
+     }
+
+     .welcome-container{
+      height:calc(100vh - 5.7rem);
+      border-radius:unset !important;
+     }
+
+       .property-box {
+        display: block;
+        position: absolute;
+        bottom: 0px;
+        right: 15px;
+       
+        img{
+          width:60px;
+          height:60px;
+        }
+      }
+  }
+}
+
+

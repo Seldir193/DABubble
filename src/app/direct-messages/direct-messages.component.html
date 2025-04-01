@@ -1,0 +1,50 @@
+<div class="selection">
+  <div class="channel-box">
+    <div class="hover-container" (click)="toggleChannels()">
+      <img
+        class="channel-left"
+        [ngClass]="isChannelsVisible ? 'rotate-up' : 'rotate-down'"
+        src="assets/img/channel-left.png"
+        alt="Channel"
+      />
+
+      <div class="work-box">
+        <img
+          class="edit-workspace"
+          src="assets/img/vollständigername.png"
+          alt="Workspace"
+        />
+
+        <h1>Direktnachrichten</h1>
+      </div>
+    </div>
+
+    <div *ngIf="isChannelsVisible">
+      <div class="mitglieder-box">
+        <div
+          class="mitglieder"
+          *ngFor="let member of members"
+          (click)="openDirectMessage(member)"
+        >
+          <div class="avatar-container">
+            <img [src]="member.avatarUrl || 'assets/img/avatar.png'" alt="" />
+
+            <img
+              *ngIf="member.userStatus === 'Aktiv'"
+              src="assets/img/online.png"
+              class="status-icon"
+              alt="Online"
+            />
+            <img
+              *ngIf="member.userStatus === 'Abwesend'"
+              src="assets/img/offline.png"
+              class="status-icon"
+              alt="Offline"
+            />
+          </div>
+          <h2>{{ member.name }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

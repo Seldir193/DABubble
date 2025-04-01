@@ -1,0 +1,118 @@
+@import "./../../styles.scss";
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+
+  .register {
+    @include dFlex(null, flex-end, 10px, null);
+    flex-direction: column;
+    padding: 4rem 2rem;
+    .box {
+      @include dFlex(null, flex-end, 5px, null);
+      flex-direction: column;
+    }
+
+    h3 {
+      margin: 0;
+      color: black;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    button {
+      color: $middleblue;
+      border: none;
+      border-radius: 100px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 400;
+      background-color: $lightblue;
+      transition: border-color 0.3s ease-in-out;
+      border: 1px solid transparent;
+
+      &:hover {
+        border-color: $button-blue;
+        transform: scale(1.01);
+        transition: transform 0.3s ease-in-out;
+      }
+    }
+  }
+}
+
+h1 {
+  color: black;
+  font-size: 32px;
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  margin-left: 20px;
+  margin: 0;
+}
+
+.container-box {
+  @include dFlex(null, null, 0px);
+  flex-direction: column;
+
+  img {
+    width: 70px;
+  }
+}
+
+.content-container {
+  @include dFlex(null, null, 16px);
+  padding: 4rem 2rem;
+  position: absolute;
+  top: 0;
+  opacity: 1;
+  align-items: center;
+}
+
+@keyframes moveDiagonal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50vw, -50vh);
+  }
+}
+
+@keyframes moveVertical {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50vh);
+  }
+}
+
+@media (max-width: 850px) {
+  .content-container {
+    @include dFlex(center, center, null);
+    max-width: 0px;
+    padding: 4rem 0rem;
+    //animation: moveVertical 1s ease-in-out forwards;
+  }
+
+  .container .register {
+    display: none;
+  }
+
+  .container-box {
+    img {
+      width: 56px;
+    }
+  }
+
+  .container {
+    padding: 4rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

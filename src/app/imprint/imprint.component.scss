@@ -1,0 +1,219 @@
+@import "./../../styles.scss";
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-container {
+  text-align: center;
+  max-height: 669px;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  max-width: 606px;
+  padding: 2rem;
+
+  .login {
+    max-width: 500px;
+    width: 100%;
+
+    .box {
+      @include dFlex(null, null, 30px);
+      flex-direction: column;
+    }
+
+    .konto-container {
+      @include dFlex(flex-end, center, null);
+      flex-direction: row-reverse;
+    }
+
+    .image-container {
+      @include dFlex(center, center, null);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      transition: background-color 0.3s;
+      overflow: hidden;
+
+      &:hover {
+        filter: brightness(100%);
+        background-color: $lightblue;
+      }
+    }
+
+    img {
+      object-fit: cover;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        filter: brightness(0) saturate(100%) invert(35%) sepia(62%)
+          saturate(2733%) hue-rotate(225deg) brightness(93%) contrast(104%);
+      }
+    }
+
+    h2 {
+      color: $button-blue;
+      font-size: 46px;
+      font-weight: 700;
+      margin: 0;
+      flex-grow: 1;
+      text-align: left;
+      line-height: 55.2px;
+      width: 486px;
+    }
+
+    h3 {
+      color: $button-blue;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      flex-grow: 1;
+      text-align: left;
+      line-height: 55.2px;
+      width: 486px;
+    }
+
+    h4 {
+      color: black;
+      font-size: 20px;
+      font-weight: 700;
+      width: 486px;
+      margin: 0;
+      text-align: left;
+    }
+
+    p {
+      color: black;
+      font-size: 20px;
+      font-weight: 400;
+      width: 486px;
+      margin: 0;
+      text-align: left;
+    }
+
+    a {
+      color: $middleblue;
+      font-size: 18px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+    }
+  }
+}
+
+@media (max-width: 1278px) {
+  .container {
+    padding: 8px 0 0 0;
+  }
+}
+
+@media (max-width: 780px) {
+  .container {
+    box-sizing: border-box;
+  }
+
+  .login-container .login p {
+    margin: 0 auto;
+    padding: unset;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    max-width: 320px;
+  }
+
+  .login-container .login .box {
+    gap: 20px;
+  }
+
+  .login-container .login .form {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .login-container .login {
+    max-width: 320px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+    width: unset;
+  }
+
+  .main {
+    overflow: hidden;
+    max-width: 320px;
+  }
+
+  .login-container .login h3 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-container .login .box {
+    gap: 10px;
+  }
+
+  .login-container {
+    padding: 20px;
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+  }
+
+  .main .headline h2 {
+    font-size: 22px;
+  }
+
+  .login-container .login h3 {
+    font-size: 20px;
+  }
+
+  .login-container .login {
+    max-width: 300px;
+  }
+
+  .main {
+    overflow: hidden;
+    max-width: 300px;
+  }
+
+  .login-container .login form {
+    max-width: 300px;
+  }
+
+  .login-container .login .image-container {
+    width: unset;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container .login p {
+    width: 260px;
+  }
+
+  .main {
+    overflow: hidden;
+    max-width: 260px;
+  }
+}

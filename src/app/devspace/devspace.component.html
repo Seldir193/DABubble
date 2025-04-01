@@ -1,0 +1,88 @@
+<div class="dev-box">
+  <div class="center-section" *ngIf="!isDesktop">
+    <input
+      type="text"
+      placeholder="Gehe zu..."
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (keyup)="onSearchChange()"
+    />
+    <img src="assets/img/search.png" class="search-icon" alt="Suche" />
+  </div>
+
+  <div class="search-dropdown" *ngIf="dropdownOpen">
+    <ul>
+      <li *ngFor="let result of searchResults" (click)="onSelectResult(result)">
+        <div class="channel-container" *ngIf="result.type === 'channel'">
+          <img src="assets/img/tag-black.png" />
+          <span class="text-truncate">{{ result.name }}</span>
+        </div>
+
+        <div *ngIf="result.type === 'user'" class="avatar-container">
+          <img
+            [src]="
+              result.avatarUrl &&
+              result.avatarUrl !== 'assets/img/avatar.png' &&
+              result.avatarUrl !== 'assets/default-avatar.png'
+                ? result.avatarUrl
+                : 'assets/img/avatar.png'
+            "
+            alt="{{ result.name }}"
+            class="avatar"
+          />
+          <div class="status-box">
+            <img
+              *ngIf="result.isOnline"
+              src="assets/img/online.png"
+              class="status-icon"
+              alt="Online"
+            />
+            <img
+              *ngIf="!result.isOnline"
+              src="assets/img/offline.png"
+              class="status-icon"
+              alt="Offline"
+            />
+          </div>
+
+          <span class="text-truncate">{{ result.name }}</span>
+        </div>
+
+        <div
+          *ngIf="
+            result.type === 'thread' ||
+            result.type === 'message' ||
+            result.type === 'private-message' ||
+            result.type === 'thread-channel'
+          "
+        >
+          <span class="message-preview">
+            {{ result.text | slice : 0 : 15 }}
+            <ng-container *ngIf="(result.text?.length || 0) > 15"
+              >...</ng-container
+            >
+          </span>
+          <span>
+            {{ result.formattedTimestamp | date : "dd.MM.yyyy HH:mm" }}
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="noResultsFound" class="no-results">
+    Keine Ergebnisse gefunden.
+  </div>
+
+  <div class="desktop-content" *ngIf="isDesktop">
+    <img src="assets/img/dev_logo.png" alt="Dev Space" />
+    <h1>Devspace</h1>
+    <div class="edit-square">
+      <img
+        src="assets/img/edit_square.png"
+        alt="Square"
+        (click)="onEditSquareClick()"
+      />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,340 @@
+@import "./../../styles.scss";
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-container {
+  text-align: center;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  max-width: 692px;
+  width: 100%;
+  position: relative;
+
+  .login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 40px;
+
+    .box {
+      @include dFlex(null, null, 20px);
+      flex-direction: column;
+      max-width: 512px;
+      width: 100%;
+    }
+
+    .konto-container {
+      @include dFlex(null, center, null);
+      flex-direction: row-reverse;
+    }
+
+    .image-container {
+      position: absolute;
+      top: 45px;
+      left: 32px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      transition: background-color 0.3s;
+      overflow: hidden;
+      z-index: 1;
+      align-content: center;
+
+      &:hover {
+        filter: brightness(100%);
+        background-color: $lightblue;
+      }
+
+      img {
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s;
+        cursor: pointer;
+
+        &:hover {
+          filter: brightness(0) saturate(100%) invert(35%) sepia(62%)
+            saturate(2733%) hue-rotate(225deg) brightness(93%) contrast(104%);
+        }
+      }
+    }
+
+    h2 {
+      color: $button-blue;
+      font-size: 46px;
+      font-weight: 700;
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+      max-width: 491px;
+      width: 100%;
+      line-height: 55.2px;
+    }
+
+    p {
+      color: black;
+      font-size: 20px;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    a {
+      color: $middleblue;
+      font-size: 18px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+    }
+
+    .button-container {
+      @include dFlex(flex-end, null, null);
+      max-width: 500px;
+      width: 100%;
+
+      .error-message p {
+        color: red !important;
+        font-weight: bold;
+        width: 70%;
+      }
+
+      .success-message p {
+        color: green;
+        font-weight: bold;
+      }
+    }
+
+    form {
+      max-width: 500px;
+      width: 100%;
+
+      input {
+        background: $lightblue;
+        border-radius: 100px;
+        color: #686868;
+        font-size: 18px;
+        font-weight: 500;
+        height: 60px;
+        width: 100%;
+        border: 1px solid transparent;
+        cursor: pointer;
+        box-sizing: border-box;
+        max-width: 500px;
+        padding: 18px 40px;
+
+        &:hover {
+          border-color: #686868;
+          transition: border-color 0.3s;
+        }
+
+        &:focus,
+        &:focus-within {
+          outline: none;
+          border-color: $button-blue;
+        }
+
+        &:not(:focus) {
+          &:has(+ input:focus) {
+            border-color: blue;
+          }
+        }
+      }
+
+      .error-message {
+        font-size: 14px;
+        color: #ed1e79;
+        font-weight: 400;
+        text-align: left;
+        text-align: center;
+        width: 100%;
+        max-width: 320px;
+        align-items: flex-end;
+        display: flex;
+        padding-left:50px;
+      }
+
+      .input-container {
+        margin-top: 40px;
+      }
+    }
+  }
+}
+
+.button-anmelden {
+  width: 188px;
+  font-size: 16px;
+  margin-top: 40px;
+}
+
+.registration-ok {
+  gap: 28px;
+}
+
+@media (max-width: 1278px) {
+   .container{
+      padding:8px 0 0 0;
+    }
+}
+
+@media (max-width: 780px) {
+  .login-container .login .image-container {
+    width: unset;
+  }
+
+  .box {
+    @include dFlex(null, null, 10px);
+    flex-direction: column;
+    max-width: 345px;
+    width: 100px;
+  }
+
+  .login-container .login .image-container {
+    left: 22px;
+  }
+
+  .login-container {
+    width: unset;
+  }
+
+  .container {
+    box-sizing: border-box;
+  }
+
+  .login-container .login p {
+    margin: 0 auto;
+    padding: unset;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    max-width: 320px;
+  }
+
+  .login-container .login form .error-message {
+    font-size: 11px;
+  }
+
+  .login-container .login form .input-container input {
+    font-size: 14px;
+  }
+
+  .login-container .login form .input-container {
+    margin-top: 20px;
+  }
+
+  .button-container {
+    gap: 30px;
+  }
+
+  .login-container .login .box {
+    gap: 20px;
+    max-width: 346px;
+  }
+
+  .login-container .login form {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .login-container .login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-container .login h2 {
+    line-height: 35.2px;
+  }
+
+  .login-container .login h2 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 780px) {
+  .button-anmelden {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-container .login .image-container {
+    top: unset;
+  }
+
+  .registration-ok {
+    padding: unset;
+    gap: unset;
+    img {
+      padding: 10px;
+    }
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+    width: 100%;
+    max-width: 300px;
+    line-height: 35.2px;
+  }
+
+  .login-container .login .box {
+    gap: 10px;
+  }
+
+  .login-container .login .image-container {
+    height: 30px;
+  }
+
+  .login-container .login .konto-container {
+    flex-direction: column;
+  }
+
+  .login-container .login p {
+    width: 300px;
+    justify-content: center;
+  }
+
+  .login-container .login .button-container {
+    gap: 10px;
+  }
+
+  .login-container .login {
+    padding: unset;
+  }
+
+  .login-container {
+    padding: 20px;
+  }
+
+  .login-container .login form .input-container input {
+    height: 40px;
+  }
+
+  .login-container .login form {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container .login {
+    width: 260px;
+  }
+
+  .login-container .login p {
+    width: 260px;
+  }
+}

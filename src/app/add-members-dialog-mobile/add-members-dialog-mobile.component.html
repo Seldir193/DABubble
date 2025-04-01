@@ -1,0 +1,99 @@
+<div class="container">
+  <div class="handle-bar"></div>
+  <div class="close-dialog">
+    <h1>Leute hinzufügen</h1>
+    <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />
+  </div>
+
+  <div class="input-button-box">
+    <div class="member-selection">
+      <div class="specific-members">
+        <input
+          type="text"
+          [(ngModel)]="specificMemberName"
+          placeholder="Name eingeben"
+          (focus)="showAllMembers()"
+          (blur)="hideMembersList()"
+          (input)="onSearchMembers()"
+          autocomplete="off"
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin"
+        />
+
+        <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="trigger"
+          [cdkConnectedOverlayOpen]="
+            filteredMembers.length > 0 && isMembersListVisible
+          "
+          [cdkConnectedOverlayHasBackdrop]="false"
+          [cdkConnectedOverlayPositions]="[
+            {
+              originX: 'start',
+              originY: 'bottom',
+              overlayX: 'start',
+              overlayY: 'top'
+            }
+          ]"
+        >
+          <div class="overlay-box">
+            <ul *ngIf="filteredMembers.length > 0 && isMembersListVisible">
+              <li
+                *ngFor="let user of filteredMembers"
+                (click)="selectMember(user)"
+              >
+                <div class="avatar-container">
+                  <img
+                    [src]="user.avatarUrl || 'assets/img/avatar.png'"
+                    alt="{{ user.name }}"
+                    class="avatar"
+                  />
+                  <img
+                    *ngIf="user.isOnline"
+                    src="assets/img/online.png"
+                    class="status-icon"
+                    alt="Online"
+                  />
+                  <img
+                    *ngIf="!user.isOnline"
+                    src="assets/img/offline.png"
+                    class="status-icon"
+                    alt="Offline"
+                  />
+                </div>
+                <span>{{ user.name }}</span>
+              </li>
+            </ul>
+          </div>
+        </ng-template>
+
+        <div *ngIf="selectedMembers.length > 0" class="selected-member">
+          <img
+            [src]="selectedMembers[0].avatarUrl || 'assets/img/avatar.png'"
+            alt="{{ selectedMembers[0].name }}"
+            class="avatar"
+          />
+          <span>{{ selectedMembers[0].name }}</span>
+
+          <button class="remove-btn" (click)="removeMember(selectedMembers[0])">
+            ×
+          </button>
+
+          <div *ngIf="selectedMembers.length > 1" class="more-members">
+            +{{ selectedMembers.length - 1 }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-box">
+    <button
+      class="primary-button"
+      (click)="onCreate()"
+      [disabled]="selectedMembers.length === 0"
+    >
+      Hinzufügen
+    </button>
+  </div>
+</div>

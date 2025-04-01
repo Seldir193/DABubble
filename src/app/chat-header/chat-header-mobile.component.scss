@@ -1,0 +1,66 @@
+@media (max-width: 1278px) {
+  .center-section {
+    display: none;
+  }
+
+  .container {
+    padding: 15px 16px;
+    h1 {
+      font-size: 20px;
+      margin-left: 10px;
+    }
+  }
+
+  .avatar-container
+  {
+    .status-icon{
+      width:14px;
+      height:14px;
+    }
+  }
+
+  .desktop-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 30px;
+
+    .left{
+      width:25px;
+      height:25px;
+    }
+   
+    img {
+      width: 50px;
+      height: 50px;
+    }
+  
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-left:15px;
+    }
+  }
+
+  .right-section {
+    gap: unset;
+    .menu-toggle {
+      display: none;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+  }
+  
+}
+
+@media (max-width: 850px) {
+    .user-name {
+      display: none;
+    }
+  }
+  
+

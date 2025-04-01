@@ -1,0 +1,270 @@
+<div class="container" *ngIf="isDesktop">
+  <div class="close-dialog">
+    <h1 mat-dialog-title>Leute hinzufügen</h1>
+    <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />
+  </div>
+
+  <div mat-dialog-content>
+    <div class="member-selection">
+      <div class="option">
+        <input
+          type="radio"
+          id="allMembers"
+          name="memberSelection"
+          value="all"
+          [(ngModel)]="selectedOption"
+          (change)="onRadioChange()"
+        />
+        <label for="allMembers"
+          >Alle Mitglieder von
+          <span class="blue-text">OfficeTeam</span> hinzufügen</label
+        >
+      </div>
+
+      <div class="option">
+        <input
+          type="radio"
+          id="specificMembers"
+          name="memberSelection"
+          value="specific"
+          [(ngModel)]="selectedOption"
+          (change)="onRadioChange()"
+        />
+        <label for="specificMembers">Bestimmte Leute hinzufügen</label>
+      </div>
+
+      <div *ngIf="selectedOption === 'specific'" class="specific-members">
+        <input
+          type="text"
+          id="specificMemberInput"
+          [(ngModel)]="specificMemberName"
+          placeholder="Name eingeben"
+          (focus)="showAllMembers()"
+          (input)="onSearchMembers()"
+          (focus)="onFocusInput()"
+          autocomplete="off"
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin"
+        />
+
+        <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="trigger"
+          [cdkConnectedOverlayOpen]="filteredMembers.length > 0"
+          [cdkConnectedOverlayHasBackdrop]="false"
+          [cdkConnectedOverlayPositions]="[
+            {
+              originX: 'start',
+              originY: 'bottom',
+              overlayX: 'start',
+              overlayY: 'top'
+            }
+          ]"
+        >
+          <ul
+            *ngIf="filteredMembers.length > 0"
+            class="dropdown-list scrollable-area"
+          >
+            <li
+              *ngFor="let member of filteredMembers"
+              (click)="selectMember(member)"
+            >
+              <div class="avatar-container">
+                <img
+                  [src]="member.avatarUrl || 'assets/img/avatar.png'"
+                  alt="{{ member.name }}"
+                  class="avatar"
+                />
+              
+                <img
+                  *ngIf="member.isOnline"
+                  src="assets/img/online.png"
+                  class="status-icon"
+                  alt="Online"
+                />
+                <img
+                  *ngIf="!member.isOnline"
+                  src="assets/img/offline.png"
+                  class="status-icon"
+                  alt="Offline"
+                />
+              </div>
+
+              <span>{{ member.name }}</span>
+            </li>
+          </ul>
+        </ng-template>
+
+        <div *ngIf="selectedMembers.length > 0" class="selected-member">
+          <img
+            [src]="selectedMembers[0].avatarUrl || 'assets/img/avatar.png'"
+            alt="{{ selectedMembers[0].name }}"
+            class="avatar"
+          />
+          <span>{{ selectedMembers[0].name }}</span>
+
+          <button class="remove-btn" (click)="removeMember(selectedMembers[0])">
+            ×
+          </button>
+
+          <div
+            *ngIf="selectedMembers.length > 1"
+            class="more-members"
+            (click)="openMembersDialog()"
+          >
+            +{{ selectedMembers.length - 1 }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="button-box">
+    <button
+      class="primary-button"
+      (click)="onCreate()"
+      [disabled]="isButtonDisabled"
+    >
+      Erstellen
+    </button>
+  </div>
+</div>
+
+<div class="mobile-wrapper" *ngIf="!isDesktop">
+  <div class="mobile-container" [class.expanded]="isInputFocused">
+    <div class="handle-bar"></div>
+    <div class="close-dialog">
+      <h1 mat-dialog-title>Leute hinzufügen</h1>
+      <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />
+    </div>
+
+    <div mat-dialog-content>
+      <div class="member-selection">
+        <div class="option">
+          <input
+            type="radio"
+            id="allMembers"
+            name="memberSelection"
+            value="all"
+            [(ngModel)]="selectedOption"
+            (change)="onRadioChange()"
+          />
+          <label for="allMembers"
+            >Alle Mitglieder von
+            <span class="blue-text">OfficeTeam</span> hinzufügen</label
+          >
+        </div>
+
+        <div class="option">
+          <input
+            type="radio"
+            id="specificMembers"
+            name="memberSelection"
+            value="specific"
+            [(ngModel)]="selectedOption"
+            (change)="onRadioChange()"
+          />
+          <label for="specificMembers">Bestimmte Leute hinzufügen</label>
+        </div>
+
+        <div *ngIf="selectedOption === 'specific'" class="specific-members">
+          <input
+            type="text"
+            id="specificMemberInput"
+            [(ngModel)]="specificMemberName"
+            placeholder="Name eingeben"
+            (input)="onSearchMembers()"
+            (focus)="showAllMembers(); disableButton(); onFocus()"
+            (blur)="enableButton(); onBlur()"
+            autocomplete="off"
+            cdkOverlayOrigin
+            #trigger="cdkOverlayOrigin"
+          />
+
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="trigger"
+            [cdkConnectedOverlayOpen]="filteredMembers.length > 0"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            (backdropClick)="closeDropdown()"
+            [cdkConnectedOverlayPositions]="[
+              {
+                originX: 'start',
+                originY: 'bottom',
+                overlayX: 'start',
+                overlayY: 'top'
+              }
+            ]"
+          >
+            <ul
+              *ngIf="filteredMembers.length > 0"
+              class="dropdown-list scrollable-area"
+            >
+              <li
+                *ngFor="let member of filteredMembers"
+                (click)="selectMember(member)"
+              >
+                <div class="avatar-container">
+                  <img
+                    [src]="member.avatarUrl || 'assets/img/avatar.png'"
+                    alt="{{ member.name }}"
+                    class="avatar"
+                  />
+
+                  <img
+                    *ngIf="member.isOnline"
+                    src="assets/img/online.png"
+                    class="status-icon"
+                    alt="Online"
+                  />
+                  <img
+                    *ngIf="!member.isOnline"
+                    src="assets/img/offline.png"
+                    class="status-icon"
+                    alt="Offline"
+                  />
+                </div>
+
+                <span>{{ member.name }}</span>
+              </li>
+            </ul>
+          </ng-template>
+
+          <div *ngIf="selectedMembers.length > 0" class="selected-member">
+            <img
+              [src]="selectedMembers[0].avatarUrl || 'assets/img/avatar.png'"
+              alt="{{ selectedMembers[0].name }}"
+              class="avatar"
+            />
+            <span>{{ selectedMembers[0].name }}</span>
+
+            <button
+              class="remove-btn"
+              (click)="removeMember(selectedMembers[0])"
+            >
+              ×
+            </button>
+
+            <div
+              *ngIf="selectedMembers.length > 1"
+              class="more-members"
+              (click)="openMembersDialog()"
+            >
+              +{{ selectedMembers.length - 1 }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div mat-dialog-actions class="button-box">
+      <button
+        class="primary-button"
+        (click)="onCreate()"
+        [disabled]="isButtonDisabled"
+      >
+        Erstellen
+      </button>
+    </div>
+  </div>
+</div>

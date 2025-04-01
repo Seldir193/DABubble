@@ -1,0 +1,172 @@
+<div class="page">
+  <app-header></app-header>
+
+  <div class="container">
+    <div class="login-container">
+      <div class="login">
+        <div class="box">
+          <h2>Anmeldung</h2>
+          <p>
+            Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der
+            Arbeit verwendest.
+          </p>
+        </div>
+
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+          <div
+            class="input-container icon-wrapper"
+            [ngClass]="{ filled: filledStates['emailFilled'] }"
+          >
+            <img
+              [src]="
+                filledStates['emailFilled']
+                  ? 'assets/img/black-mail.png'
+                  : 'assets/img/mail.png'
+              "
+              alt="Email Icon"
+            />
+
+            <input
+              [ngClass]="{
+                'email-icon': true,
+                filled: filledStates['emailFilled']
+              }"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="beispielname@email.com"
+              formControlName="email"
+              (focus)="onFocus('email')"
+              (blur)="onBlur('email')"
+              required
+            />
+          </div>
+
+          <div class="error-message">
+            <ng-container *ngIf="errorMessage">
+              {{ errorMessage }}
+            </ng-container>
+
+            <ng-container *ngIf="!errorMessage">
+              <ng-container *ngIf="myForm.get('email')?.touched">
+                <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
+                  *Bitte füllen Sie das E-Mail-Feld aus.
+                </ng-container>
+
+                <ng-container
+                  *ngIf="!myForm.get('email')?.errors?.['required'] && myForm.get('email')?.errors?.['invalidEmail']"
+                >
+                  Diese E-Mail-Adresse ist leider ungültig.
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <div class="input-container icon-wrapper">
+            <img
+              [src]="
+                filledStates['passwordFilled']
+                  ? 'assets/img/black-passwort.png'
+                  : 'assets/img/passwort.png'
+              "
+              alt="Passwort Icon"
+            />
+
+            <input
+              [ngClass]="{
+                'passwort-icon': true,
+                filled: filledStates['passwordFilled']
+              }"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Passwort"
+              required
+              formControlName="password"
+              (focus)="onFocus('password')"
+              (blur)="onBlur('password')"
+            />
+          </div>
+
+          <div class="error-message">
+            <ng-container *ngIf="errorPassword">
+              {{ errorPassword }}
+            </ng-container>
+
+            <ng-container *ngIf="!errorPassword">
+              <ng-container
+                *ngIf="
+                  myForm.get('password')?.invalid &&
+                  myForm.get('password')?.touched
+                "
+              >
+                <ng-container
+                  *ngIf="myForm.get('password')?.errors?.['required']"
+                >
+                  *Bitte füllen Sie das Passwordfeld aus.
+                </ng-container>
+                <ng-container
+                  *ngIf="myForm.get('password')?.errors?.['minlength']"
+                  >Das Passwort muss mindestens 6 Zeichen lang
+                  sein.</ng-container
+                >
+
+                <ng-container
+                  *ngIf="!myForm.get('password')?.errors?.['required'] && myForm.get('password')?.errors?.['invalid-password']"
+                >
+                  Passwort ist falsch.
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </div>
+          <div class="passwort-vergessen-box">
+            <a class="forgot-password" [routerLink]="['/passwort-reset']"
+              >Passwort vergessen?</a
+            >
+          </div>
+
+          <div class="line-container">
+            <span class="lineleft">ODER</span>
+          </div>
+
+          <div class="google-container">
+            <button
+              class="google-icon"
+              type="button"
+              (click)="signInWithGoogle()"
+            >
+              Anmelden mit Google
+            </button>
+          </div>
+
+          <div class="button-container">
+            <button
+              class="button-anmelden button-anmelden-mobile"
+              type="submit"
+              [ngClass]="{ 'ng-invalid': !myForm.valid }"
+            >
+              Anmelden
+            </button>
+            <button
+              class="button-gäste-login button-gäste-mobile"
+              type="button"
+              (click)="navigateToGuestLogin()"
+            >
+              Gäste-Login
+            </button>
+          </div>
+        </form>
+        <div class="registration-ok" *ngIf="successMessage">
+          <p style="color: white; font-size: 36px; font-weight: 700">
+            {{ successMessage }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="register">
+      <h3>Neu bei DABubble?</h3>
+      <button (click)="navigateToSignup()">Konto erstellen</button>
+    </div>
+  </div>
+  <app-footer></app-footer>
+</div>

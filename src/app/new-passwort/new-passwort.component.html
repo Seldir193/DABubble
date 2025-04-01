@@ -1,0 +1,69 @@
+<div class="page">
+  <app-header></app-header>
+  <div class="container">
+    <div class="login-container">
+      <div class="login">
+        <div class="box">
+          <div class="konto-container">
+            <h2>Passwort zurücksetzen</h2>
+            <div class="image-container">
+              <a [routerLink]="['/login']">
+                <img src="assets/img/leftfile.png" alt="Zurück zum Login" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <form [formGroup]="newPasswordForm" (ngSubmit)="onSubmit()">
+          <div class="input-container">
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              placeholder="Neues Passwort"
+              formControlName="newPassword"
+            />
+          </div>
+
+          <div class="input-container">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Neues Kennwort bestätigen"
+              formControlName="confirmPassword"
+            />
+          </div>
+
+          <div class="error-message" *ngIf="submitted && errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="error-message" *ngIf="errorMessage && !submitted">
+            {{ errorMessage }}
+          </div>
+
+          <div class="button-container">
+            <button
+              class="button-anmelden"
+              type="submit"
+              [disabled]="!newPasswordForm.valid"
+              [ngClass]="{
+                'disabled-button': !newPasswordForm.valid
+              }"
+            >
+              Passwort ändern
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="registration-ok" *ngIf="successMessage">
+      <img src="assets/img/send.png" />
+      <p style="color: white; font-size: 36px; font-weight: 700">
+        {{ successMessage }}
+      </p>
+    </div>
+  </div>
+  <app-footer></app-footer>
+</div>

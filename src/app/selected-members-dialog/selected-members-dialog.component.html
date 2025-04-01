@@ -1,0 +1,19 @@
+<div class="container">
+  <div mat-dialog-content>
+    <div class="close-dialog">
+      <h1>Ausgewählte Mitglieder</h1>
+      <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />
+    </div>
+    <ul>
+      <li *ngFor="let member of selectedMembers; let i = index">
+        <img
+          [src]="member.avatarUrl || 'assets/img/avatar.png'"
+          alt="{{ member.name }}"
+          class="avatar"
+        />
+        <span>{{ member.name }}</span>
+        <button (click)="removeMember(i)" class="remove-btn">×</button>
+      </li>
+    </ul>
+  </div>
+</div>

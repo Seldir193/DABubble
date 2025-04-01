@@ -1,0 +1,25 @@
+<app-header></app-header>
+<div class="container">
+  <h2>Verifizierung der E-Mail-Adresse</h2>
+  <p *ngIf="!email">
+    Bitte geben Sie Ihre E-Mail-Adresse ein, um den Verifizierungsprozess
+    abzuschließen:
+  </p>
+  <p *ngIf="email">Verifiziere E-Mail für: {{ email }}</p>
+
+  <form *ngIf="!email" (ngSubmit)="onSubmit()">
+    <label for="email">E-Mail-Adresse:</label>
+    <input
+      type="email"
+      id="email"
+      [(ngModel)]="editableUserEmail"
+      name="email"
+      required
+    />
+    <button type="submit">E-Mail bestätigen</button>
+  </form>
+
+  <p *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p *ngIf="successMessage">{{ successMessage }}</p>
+</div>
+<app-footer></app-footer>

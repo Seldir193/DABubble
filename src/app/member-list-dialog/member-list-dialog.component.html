@@ -1,0 +1,40 @@
+<div class="container">
+  <div mat-dialog-content>
+    <div class="close-dialog">
+      <h1>Mitglieder</h1>
+      <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />
+    </div>
+    <ul>
+      <li *ngFor="let member of members; let i = index">
+        <div class="avatar-container">
+          <img
+            [src]="member.avatarUrl || 'assets/img/avatar.png'"
+            alt="{{ member.name }}"
+            class="avatar"
+            (click)="openProfileDialog(member)"
+          />
+          <img
+            *ngIf="member.isOnline"
+            src="assets/img/online.png"
+            class="status-icon"
+            alt="Online"
+          />
+          <img
+            *ngIf="!member.isOnline"
+            src="assets/img/offline.png"
+            class="status-icon"
+            alt="Offline"
+          />
+        </div>
+        <span  class="text-truncate" (click)="openProfileDialog(member)">{{ member.name }}</span>
+
+      </li>
+      <div class="member-box"  (click)="openAddMembersOverlayMethod()">
+        <div class="img-container">
+          <img src="assets/img/member.png" alt="Member" />
+        </div>
+        <h2>Mitglieder Hinzufügen</h2>
+      </div>
+    </ul>
+  </div>
+</div>

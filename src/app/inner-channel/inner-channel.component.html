@@ -1,0 +1,43 @@
+<div class="selection">
+  <div class="channel-box">
+    <div class="hover-container" (click)="toggleChannels()">
+      <img
+        class="channel-left"
+        [ngClass]="isChannelsVisible ? 'rotate-up' : 'rotate-down'"
+        src="assets/img/channel-left.png"
+        alt="Channel"
+      />
+
+      <div class="work-box">
+        <img
+          class="edit-workspace"
+          src="assets/img/workspaces.png"
+          alt="Workspace"
+        />
+
+        <h1>Channels</h1>
+      </div>
+    </div>
+    <div class="edit-channel">
+      <img src="assets/img/channel-add.png" alt="Add" (click)="openDialog()" />
+    </div>
+  </div>
+
+  <div class="channel-distanz" *ngIf="isChannelsVisible">
+    <div class="channel-detail-distanz" *ngIf="entwicklerTeams.length > 0">
+      <div
+        *ngFor="let team of entwicklerTeams; let i = index"
+        [ngClass]="{ 'first-channel': i === 0, 'entwickler-box': true }"
+        (click)="selectChannel(team)"
+      >
+        <img src="assets/img/tag-black.png" />
+        <p>{{ team.name }}</p>
+      </div>
+    </div>
+
+    <div class="add-channel" (click)="openDialog()">
+      <img src="assets/img/plus.png" alt="Add" />
+      <p>Channel hinzufügen</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,861 @@
+<div class="entwickler-box">
+  <div *ngIf="!isEditingChannel">
+    <div *ngFor="let channel of channels" class="channel-container">
+      <div class="office-box">
+        <div class="hover-box">
+          <img
+            src="assets/img/tag-black.png"
+            alt="Tag Icon"
+            (click)="openEditChannelDialog(channel)"
+          />
+          <h1 (click)="openEditChannelDialog(channel)">{{ channel.name }}</h1>
+          <img
+            class="arrow"
+            src="assets/img/keyboard_arrow_down-1.png"
+            (click)="openEditChannelDialog(channel)"
+          />
+        </div>
+      </div>
+
+      <!-- A) DESKTOP-BLOCK -->
+      <!-- Zeigt Avatare + cdkOverlay (MemberList, AddMembers) -->
+
+      <div *ngIf="isDesktop" class="avatar-box">
+        <div
+          cdkOverlayOrigin
+          #desktopTrigger="cdkOverlayOrigin"
+          (click)="isOverlayOpen = !isOverlayOpen"
+        >
+          <ul class="avatar-list" *ngIf="selectedChannel?.members?.length">
+            <li *ngFor="let member of selectedChannel!.members.slice(0, 3)">
+              <img
+                [src]="member.avatarUrl || 'assets/img/avatar.png'"
+                alt="{{ member.name }}"
+                class="avatar"
+              />
+            </li>
+            <li
+              *ngIf="selectedChannel!.members.length > 3"
+              class="member-counter"
+            >
+              +{{ selectedChannel!.members.length - 3 }}
+            </li>
+          </ul>
+        </div>
+
+        <ng-template
+          cdkConnectedOverlay
+          #membersOverlay="cdkConnectedOverlay"
+          [cdkConnectedOverlayOrigin]="desktopTrigger"
+          [cdkConnectedOverlayOpen]="isOverlayOpen"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          (backdropClick)="isOverlayOpen = false"
+          [cdkConnectedOverlayPositions]="positions"
+        >
+          <app-member-list-dialog
+            [channelId]="selectedChannel?.id ?? ''"
+            [members]="selectedChannel?.members ?? []"
+            (close)="closeOverlay()"
+            (openAddMembersOverlay)="toggleAddMembersOverlay()"
+            (openPrivateChat)="onOpenPrivateChat($event)"
+            (openProfileRequested)="onOpenProfile($event)"
+          ></app-member-list-dialog>
+        </ng-template>
+
+        <!-- 2) Add-Members-Overlay (Desktop) -->
+        <div
+          class="edit-square"
+          cdkOverlayOrigin
+          #desktopAddTrigger="cdkOverlayOrigin"
+          (click)="toggleAddMembersOverlay()"
+        >
+          <img src="assets/img/member.png" alt="Add Member (Desktop)" />
+        </div>
+
+        <ng-template
+          cdkConnectedOverlay
+          #addMembersOverlay="cdkConnectedOverlay"
+          [cdkConnectedOverlayOrigin]="desktopAddTrigger"
+          [cdkConnectedOverlayOpen]="isAddMembersOverlayOpen"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          (backdropClick)="closeAddMembersOverlay()"
+          [cdkConnectedOverlayPositions]="positionsAddMembers"
+        >
+          <app-add-members-dialog
+            [channelId]="selectedChannel?.id ?? ''"
+            [members]="selectedChannel?.members ?? []"
+            (close)="closeAddMembersOverlay()"
+          ></app-add-members-dialog>
+        </ng-template>
+      </div>
+
+      <!-- B) MOBILE-BLOCK -->
+      <!-- Keine Overlays mehr – statt dessen ein Klick, der Material-Dialog öffnet -->
+
+      <ng-container *ngIf="!isDesktop">
+        <!-- Nur ein Icon, das die MemberListDialog im Material-Dialog öffnet -->
+        <div (click)="openMemberListDialogMobile()">
+          <img src="assets/img/member.png" alt="Member Icon (Mobile)" />
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+<div *ngIf="currentUser" >
+  <div div   *ngFor="let channel of channels"    class="channel-input-box">
+    <div class="channel-box">
+      <div *ngIf="!isEditingChannel"  class="message-list" #messageList>
+        <div
+          *ngFor="let msg of messages; trackBy: trackByMsgId; let i = index"
+          [id]="'message-' + msg.id"
+          class="message-item"
+          [ngClass]="{ highlight: msg.isHighlighted }"
+        >
+          <div *ngIf="msg && msg.content">
+            <div
+              *ngIf="
+                i === 0 || messages[i - 1]?.date !== msg.date;
+                then dateSeparator;
+                else normalLine
+              "
+            ></div>
+
+            <ng-template #dateSeparator>
+              <div class="seperator">
+                <span class="date-separator">
+                  {{ getFormattedDate(msg.date) }}
+                </span>
+              </div>
+            </ng-template>
+
+            <ng-template #normalLine>
+              <div class="seperator"></div>
+            </ng-template>
+
+            <div
+              *ngIf="msg.senderId === currentUser?.id"
+              class="sent-message-container"
+            >
+              <div
+                class="message-container sent-message"
+                (click)="closePopup(msg)"
+              >
+                <img
+                  class="avatar"
+                  [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
+                  alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
+                />
+                <div class="message-box">
+                  <span class="message-info">
+                    <span class="sender-name">{{
+                      userMap[msg.senderId]?.name
+                    }}</span>
+
+                    <span class="message-time"
+                      >{{ getFormattedTime(msg.time) }} Uhr</span
+                    >
+                  </span>
+
+                  <div
+                    class="message-content"
+                    [ngClass]="{
+                      'image-message': msg.type === 'image',
+                      'text-message': msg.type === 'text'
+                    }"
+                  >
+                    <p
+                      *ngIf="!msg.isEditing && msg.content?.text"
+                      class="sent-message"
+                    >
+                      {{ msg.content.text }}
+                    </p>
+
+                    <div *ngIf="msg.isEditing" class="edit-message-box">
+                      <textarea
+                        [(ngModel)]="msg.content.text"
+                        rows="3"
+                        class="edit-textarea"
+                      ></textarea>
+                      <div class="edit-buttons">
+                        <button
+                          (click)="cancelEditing(msg)"
+                          class="cancel-button button-gäste-login"
+                        >
+                          Abbrechen
+                        </button>
+                        <button
+                          (click)="saveMessage(msg)"
+                          class="save-button button-anmelden"
+                        >
+                          Speichern
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <img
+                    *ngIf="msg.content?.image"
+                    [src]="msg.content.image"
+                    class="sent-image"
+                    (click)="
+                      openLargeImage(msg.content.image!);
+                      $event.stopPropagation()
+                    "
+                  />
+
+                  <div
+                    class="image-modal-overlay"
+                    *ngIf="showLargeImage"
+                    (click)="closeLargeImage()"
+                  >
+                    <div
+                      class="image-modal-content"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <img [src]="largeImageUrl" class="large-image" />
+                      <button class="close-button" (click)="closeLargeImage()">
+                        X
+                      </button>
+                    </div>
+                  </div>
+
+                  <div
+                    class="emoji-message-container"
+                    *ngIf="msg.content.emojis && msg.content.emojis.length > 0"
+                    (click)="closePopup(msg)"
+                  >
+                    <ng-container *ngIf="!msg.showAllEmojisList">
+                      <span
+                        class="emoji-item"
+                        *ngFor="
+                          let emojiObj of msg.content.emojis | slice : 0 : 2
+                        "
+                        (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
+                        (mouseleave)="hideTooltip()"
+                        (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
+                      >
+                        {{ emojiObj.emoji }}
+                        <nav class="emoji-count">{{ emojiObj.count }}</nav>
+                      </span>
+
+                      <img
+                        *ngIf="msg.content.emojis.length > 2"
+                        src="assets/img/emojiplus.png"
+                        alt="Mehr Emojis anzeigen"
+                        class="emoji-plus-icon"
+                        (click)="
+                          toggleEmojiPopup(msg); $event.stopPropagation()
+                        "
+                      />
+                    </ng-container>
+
+                    <div
+                      class="emoji-popup"
+                      *ngIf="msg.showAllEmojisList"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <div class="emoji-list">
+                        <span
+                          class="emoji-item"
+                          *ngFor="
+                            let emojiObj of msg.expanded
+                              ? msg.content.emojis
+                              : (msg.content.emojis | slice : 0 : 10)
+                          "
+                        >
+                          {{ emojiObj.emoji }}
+                          <span class="emoji-count">{{ emojiObj.count }}</span>
+                        </span>
+                      </div>
+
+                      <div class="toggle-box">
+                        <div
+                          class="toggle-more"
+                          *ngIf="
+                            msg.content.emojis.length > 10 && !msg.expanded
+                          "
+                          (click)="
+                            msg.expanded = true; $event.stopPropagation()
+                          "
+                        >
+                          [+ {{ msg.content.emojis.length - 10 }} weitere]
+                        </div>
+
+                        <div
+                          class="toggle-less"
+                          *ngIf="msg.content.emojis.length > 10 && msg.expanded"
+                          (click)="
+                            msg.expanded = false; $event.stopPropagation()
+                          "
+                        >
+                          [- 10 weniger]
+                        </div>
+
+                       
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="reply-count"
+                    *ngIf="msg.replyCount !== undefined && msg.replyCount > 0"
+                    (click)="openThreadEvent(msg)"
+                  >
+                    {{ msg.replyCount }} Antworten
+
+                    <span class="reply-time">
+                      <span class="letzte-antwort-label">Letzte Antwort:</span>
+                      {{
+                        convertFirestoreTimestampToDate(msg.lastReplyTime)
+                          | date : "HH:mm"
+                      }}
+                      Uhr
+                    </span>
+                  </div>
+
+                  <div
+                    class="tooltip"
+                    *ngIf="tooltipVisible"
+                    [style.top.px]="tooltipPosition.y"
+                    [style.left.px]="tooltipPosition.x"
+                  >
+                    <div class="emoji-icon">{{ tooltipEmoji }}</div>
+                    <div class="tooltip-content">
+                      <span class="sender-name">{{ tooltipSenderName }}</span>
+                      <span class="reaction-text">hat mit reagiert</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="emoji-container">
+                  <div class="emoji-box">
+                    <ng-container
+                      *ngIf="
+                        (lastUsedEmojisSent?.length || 0) === 0;
+                        else customEmojis
+                      "
+                    >
+                      <div class="image-wrapper">
+                        <span
+                          (click)="
+                            addEmojiToMessage({ emoji: { native: '✅' } }, msg)
+                          "
+                        >
+                          ✅
+                        </span>
+                      </div>
+                      <div class="image-wrapper">
+                        <span
+                          (click)="
+                            addEmojiToMessage({ emoji: { native: '👍' } }, msg)
+                          "
+                        >
+                          👍
+                        </span>
+                      </div>
+                    </ng-container>
+
+                    <ng-template #customEmojis>
+                      <div class="image-wrapper">
+                        <span
+                          *ngIf="lastUsedEmojisSent.length > 0"
+                          (click)="
+                            addEmojiToMessage(
+                              { emoji: { native: lastUsedEmojisSent[0] } },
+                              msg
+                            )
+                          "
+                        >
+                          {{ lastUsedEmojisSent[0] }}
+                        </span>
+                      </div>
+                      <div class="image-wrapper">
+                        <span
+                          *ngIf="lastUsedEmojisSent.length > 1"
+                          (click)="
+                            addEmojiToMessage(
+                              { emoji: { native: lastUsedEmojisSent[1] } },
+                              msg
+                            )
+                          "
+                        >
+                          {{ lastUsedEmojisSent[1] }}
+                        </span>
+                      </div>
+                    </ng-template>
+
+                    <div
+                      class="image-wrapper"
+                      (click)="toggleEmojiPickerForMessage(msg)"
+                    >
+                      <img src="assets/img/emojiplus.png" alt="Reaction" />
+                    </div>
+
+                    <div *ngIf="msg.isEmojiPickerVisible" class="emoji-pickere">
+                      <emoji-mart
+                        (emojiSelect)="addEmojiToMessage($event, msg)"
+                      ></emoji-mart>
+                    </div>
+
+                    <div class="image-wrapper">
+                      <img
+                        src="assets/img/comment.png"
+                        alt="Comment"
+                        (click)="openThreadEvent(msg)"
+                      />
+                    </div>
+
+                    <div class="image-wrapper">
+                      <img
+                        src="assets/img/more.png"
+                        alt="Mehr Optionen"
+                        (click)="toggleEditOptions(msg.id)"
+                      />
+
+                      <div
+                        *ngIf="showEditOptions && currentMessageId === msg.id"
+                        class="edit-options"
+                      >
+                        <button (click)="startEditing(msg)">
+                          Nachricht bearbeiten
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              *ngIf="msg.senderId !== currentUser?.id"
+              class="received-message-container"
+            >
+              <div
+                class="message-container received-message"
+                (click)="closePopup(msg)"
+              >
+                <img
+                  class="avatar"
+                   [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
+                  alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
+                />
+                <div class="message-box">
+                  <span class="message-info">
+                    <span class="sender-name">
+                      {{ userMap[msg.senderId]?.name || "Unbekannt" }}</span
+                    >
+
+                    <span class="message-time"
+                      >{{ getFormattedTime(msg.time) }} Uhr</span
+                    >
+                  </span>
+                  <div
+                    class="message-content"
+                    [ngClass]="{
+                      'image-message': msg.type === 'image',
+                      'text-message': msg.type === 'text'
+                    }"
+                  >
+                    <p
+                      *ngIf="msg.content && msg.content.text"
+                      class="received-message"
+                    >
+                      {{ msg.content.text }}
+                    </p>
+                  </div>
+                  <img
+                    *ngIf="msg.content && msg.content.image"
+                    [src]="msg.content.image"
+                    class="received-image"
+                    (click)="
+                      openLargeImage(msg.content.image);
+                      $event.stopPropagation()
+                    "
+                  />
+
+                  <div
+                    class="image-modal-overlay"
+                    *ngIf="showLargeImage"
+                    (click)="closeLargeImage()"
+                  >
+                    <div
+                      class="image-modal-content"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <img [src]="largeImageUrl" class="large-image" />
+                      <button class="close-button" (click)="closeLargeImage()">
+                        X
+                      </button>
+                    </div>
+                  </div>
+
+                  <div
+                    class="emoji-message-container"
+                    *ngIf="msg.content.emojis && msg.content.emojis.length > 0"
+                    (click)="closePopup(msg)"
+                  >
+                    <ng-container *ngIf="!msg.showAllEmojisList">
+                      <img
+                        *ngIf="msg.content.emojis.length > 2"
+                        src="assets/img/emojiplus.png"
+                        alt="Mehr Emojis anzeigen"
+                        class="emoji-plus-icon"
+                        (click)="
+                          toggleEmojiPopup(msg); $event.stopPropagation()
+                        "
+                      />
+
+                      <span
+                        class="emoji-item"
+                        *ngFor="
+                          let emojiObj of msg.content.emojis | slice : 0 : 2
+                        "
+                        (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
+                       (mouseleave)="hideTooltip()"
+                       (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
+                      >
+                        {{ emojiObj.emoji }}
+                        <nav class="emoji-count">{{ emojiObj.count }}</nav>
+                      </span>
+                    </ng-container>
+
+                    <div
+                      class="emoji-popup"
+                      *ngIf="msg.showAllEmojisList"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <div class="emoji-list">
+                        <span
+                          class="emoji-item"
+                          *ngFor="
+                            let emojiObj of msg.expanded
+                              ? msg.content.emojis
+                              : (msg.content.emojis | slice : 0 : 10)
+                          "
+                        >
+                          {{ emojiObj.emoji }}
+                          <span class="emoji-count">{{ emojiObj.count }}</span>
+                        </span>
+                      </div>
+
+                      <div class="toggle-box">
+                        <div
+                          class="toggle-more"
+                          *ngIf="
+                            msg.content.emojis.length > 10 && !msg.expanded
+                          "
+                          (click)="
+                            msg.expanded = true; $event.stopPropagation()
+                          "
+                        >
+                          [+ {{ msg.content.emojis.length - 10 }} weitere]
+                        </div>
+
+                        <div
+                          class="toggle-less"
+                          *ngIf="msg.content.emojis.length > 10 && msg.expanded"
+                          (click)="
+                            msg.expanded = false; $event.stopPropagation()
+                          "
+                        >
+                          [- 10 weniger]
+                        </div>
+
+                        <img
+                          src="assets/img/emojiplus.png"
+                          alt="Plus Icon in Popup"
+                          class="emoji-plus-icon-in-list"
+                        />
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div
+                    class="reply-count"
+                    *ngIf="msg.replyCount !== undefined && msg.replyCount > 0"
+                    (click)="openThreadEvent(msg)"
+                  >
+                    {{ msg.replyCount }} Antworten
+                    <span class="reply-time">
+                      <span class="letzte-antwort-label">Letzte Antwort:</span>
+                      {{
+                        convertFirestoreTimestampToDate(msg.lastReplyTime)
+                          | date : "HH:mm"
+                      }}
+                      Uhr
+                    </span>
+                  </div>
+
+                  <div
+                    class="tooltip"
+                    *ngIf="tooltipVisible"
+                    [style.top.px]="tooltipPosition.y"
+                    [style.left.px]="tooltipPosition.x"
+                  >
+                    <div class="emoji-icon">{{ tooltipEmoji }}</div>
+                    <div class="tooltip-content">
+                      <span class="sender-name">{{ tooltipSenderName }}</span>
+                      <span class="reaction-text">hat mit reagiert</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="emoji-container-received">
+                  <div class="emoji-box-received">
+                    <ng-container
+                      *ngIf="
+                        (lastUsedEmojisSent?.length || 0) === 0;
+                        else customEmojis
+                      "
+                    >
+                      <div class="image-wrapper">
+                        <span
+                          (click)="
+                            addEmojiToMessage({ emoji: { native: '✅' } }, msg)
+                          "
+                        >
+                          ✅
+                        </span>
+                      </div>
+                      <div class="image-wrapper">
+                        <span
+                          (click)="
+                            addEmojiToMessage({ emoji: { native: '👍' } }, msg)
+                          "
+                        >
+                          👍
+                        </span>
+                      </div>
+                    </ng-container>
+
+                    <ng-template #customEmojis>
+                      <div class="image-wrapper">
+                        <span
+                          *ngIf="lastUsedEmojisSent.length > 0"
+                          (click)="
+                            addEmojiToMessage(
+                              { emoji: { native: lastUsedEmojisSent[0] } },
+                              msg
+                            )
+                          "
+                        >
+                          {{ lastUsedEmojisSent[0] }}
+                        </span>
+                      </div>
+                      <div class="image-wrapper">
+                        <span
+                          *ngIf="lastUsedEmojisSent.length > 1"
+                          (click)="
+                            addEmojiToMessage(
+                              { emoji: { native: lastUsedEmojisSent[1] } },
+                              msg
+                            )
+                          "
+                        >
+                          {{ lastUsedEmojisSent[1] }}
+                        </span>
+                      </div>
+                    </ng-template>
+
+                    <div
+                      class="image-wrapper"
+                      (click)="toggleEmojiPickerForMessage(msg)"
+                    > 
+                    <img src="assets/img/emojiplus.png" alt="Reaction" />
+                    </div>
+
+                    <div
+                      *ngIf="msg.isEmojiPickerVisible"
+                      class="emoji-picker-received"
+                    >
+                      <emoji-mart
+                        (emojiSelect)="addEmojiToMessage($event, msg)"
+                      ></emoji-mart>
+                    </div>
+
+                    <div class="image-wrapper">
+                      <img
+                        src="assets/img/comment.png"
+                        alt="Comment"
+                        (click)="openThreadEvent(msg)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <div class="chat-input-container">
+      <div class="chat-input">
+        <div class="textarea-wrapper">
+          <textarea
+            placeholder="Nachricht an #{{ selectedChannel?.name }}"
+            [(ngModel)]="message"
+            #textArea
+            (keydown)="handleKeyDown($event, textArea)"
+            (input)="onTextareaInput($event)"
+          ></textarea>
+          <div class="image-preview" *ngIf="imageUrl">
+            <img
+              class="image-border"
+              [src]="imageUrl"
+              alt="Hochgeladenes Bild"
+              (click)="openImageModal()"
+            />
+            <div class="img-wrapper">
+              <img
+                (click)="closeProfileCard(textArea); $event.stopPropagation()"
+                src="assets/img/close.png"
+                alt="Schließen"
+              />
+            </div>
+          </div>
+          <div class="buttons-wrapper">
+            <div class="input-buttons">
+              <label
+                for="image-upload"
+                *ngIf="isDesktop"
+                class="image-upload-button"
+              >
+                <img
+                  class="input-image"
+                  src="assets/img/add-pic.png"
+                  alt="Bild hinzufügen"
+                />
+                <input
+                  type="file"
+                  id="image-upload"
+                  (change)="onImageSelected($event, textArea)"
+                  style="display: none"
+                />
+              </label>
+              <button (click)="toggleEmojiPicker($event)">
+                <img
+                  class="input-image"
+                  src="assets/img/emoji.png"
+                  alt="Emoji hinzufügen"
+                />
+              </button>
+
+              <div class="dropdown-container" (click)="onSelfClick($event)">
+                <button class="at-button" (click)="toggleDropdown($event)">
+                  <img
+                    class="input-image"
+                    src="assets/img/qr.png"
+                    alt="@ hinzufügen"
+                  />
+                </button>
+
+                <div *ngIf="dropdownState !== 'hidden'">
+                  <ul
+                    *ngIf="dropdownState === 'user'"
+                    class="my-user-dropdown pm-scrollable"
+                  >
+                    <li
+                      *ngFor="let user of allUsers"
+                      (click)="addUserSymbol(user)"
+                    >
+                      <div class="avatar-container">
+                        <img
+                          [src]="user.avatarUrl || 'assets/img/avatar.png'"
+                          alt="Avatar"
+                          class="avatar"
+                        />
+                        <img
+                          *ngIf="user.isOnline"
+                          src="assets/img/online.png"
+                          class="status-icon"
+                          alt="Online"
+                        />
+                        <img
+                          *ngIf="!user.isOnline"
+                          src="assets/img/offline.png"
+                          class="status-icon"
+                          alt="Offline"
+                        />
+                      </div>
+
+                     <span class="text-truncate"> {{ user.name }}</span>
+                    </li>
+                  </ul>
+
+                  <ul
+                    *ngIf="dropdownState === 'channel'"
+                    class="my-user-dropdown pm-scrollable"
+                  >
+                    <li
+                    *ngFor="let ch of filteredChannels"
+                      (click)="selectChannel(ch)"
+                    >
+                      <div class="tag-container">
+                        <img src="assets/img/tag-black.png" />
+                      </div>
+                      
+                      <span class="text-truncate"> {{ ch.name }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="send-button">
+              <button (click)="sendMessage(textArea)">
+                <img src="assets/img/send-button.png" alt="Senden" />
+              </button>
+            </div>
+
+            <div
+              class="emoji-picker"
+              *ngIf="isEmojiPickerVisible"
+              (click)="onEmojiPickerClick($event)"
+            >
+              <emoji-mart
+                [emojiTooltip]="false"
+                [showPreview]="false"
+                (emojiSelect)="addEmoji($event)"
+              >
+              </emoji-mart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
