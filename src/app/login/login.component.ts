@@ -295,10 +295,14 @@ export class LoginComponent implements OnInit {
           uid: cred.user.uid,
           name: guestName,
           isOnline: true,
+          avatarUrl: '', 
           createdAt: new Date(),
+          isGuest: true,
         });
 
-        this.router.navigate(['/chat']);
+        this.router.navigate(['/avatar']);
+
+        //this.router.navigate(['/chat']);
       })
       .catch(() => {});
   }

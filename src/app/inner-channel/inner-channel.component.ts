@@ -8,7 +8,7 @@ import {
   ViewChild,
   Output,
   EventEmitter,
-  ChangeDetectorRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
@@ -24,7 +24,7 @@ import { UserService } from '../user.service';
   templateUrl: './inner-channel.component.html',
   styleUrls: ['./inner-channel.component.scss'],
 })
-export class InnerChannelComponent {
+export class InnerChannelComponentimplements   {
   /**
    * A ViewChild reference to the EntwicklerteamComponent for interacting with its instance.
    */
@@ -57,6 +57,7 @@ export class InnerChannelComponent {
   /** Stores the currently selected channel. */
   selectedChannel: any = null;
 
+ 
   /**
    * Constructor injecting services for dialogs, channel data, user data,
    * and change detection if needed.
@@ -66,12 +67,13 @@ export class InnerChannelComponent {
     private channelService: ChannelService,
     private userService: UserService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   /**
    * Loads channels on init, then subscribes to currentChannels
    * to filter those that include the current user.
    */
+
   ngOnInit(): void {
     this.channelService.loadChannels();
     this.channelService.currentChannels.subscribe((channels) => {

@@ -100,6 +100,7 @@ export class ChannelService {
    */
   constructor(private firestore: Firestore, private userService: UserService) {}
 
+ 
   /**
    * addChannel creates a new channel in Firestore, storing both 'members' and 'membersUid' (UID array).
    * After creation, it calls loadChannels to refresh local state and sets the newly created channel as current.
@@ -122,10 +123,28 @@ export class ChannelService {
       // 3) Construct the local channel object, refresh channels, and set this new one as current
       const newChannel = this.buildNewChannelObj(channel, docRef.id);
       await this.loadChannels();
+     
       this.changeChannel(newChannel);
     } catch (error) {
       // Handle or log the error as needed
     }
+  }
+
+   /**
+   * loadChannels fetches all channel documents from Firestore and updates the local BehaviorSubject.
+   */
+   async loadChannels(): Promise<void> {
+    try {
+      const channelsCollection = collection(this.firestore, 'channels');
+      const querySnapshot = await getDocs(channelsCollection);
+      const channels: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        channels.push({ id: doc.id, ...doc.data() });
+      });
+
+      this.channelsSource.next(channels);
+    } catch (error) {}
   }
 
   /**
@@ -314,23 +333,7 @@ export class ChannelService {
     }
   }
 
-  /**
-   * loadChannels fetches all channel documents from Firestore and updates the local BehaviorSubject.
-   */
-  async loadChannels(): Promise<void> {
-    try {
-      const channelsCollection = collection(this.firestore, 'channels');
-      const querySnapshot = await getDocs(channelsCollection);
-      const channels: any[] = [];
-
-      querySnapshot.forEach((doc) => {
-        channels.push({ id: doc.id, ...doc.data() });
-      });
-
-      this.channelsSource.next(channels);
-    } catch (error) {}
-  }
-
+ 
   /**
    * removeChannelLocally removes a channel from the local channelsSource by its ID,
    * useful after a channel has been deleted or the user has left it.

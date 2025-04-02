@@ -60,31 +60,6 @@ export class AvatarComponent implements OnInit {
     this.isSmallScreen = window.innerWidth < 780;
   }
 
-  /**
-   * Loads user data from Firestore and sets local state.
-   * If the user or email is missing, or Firestore has no result,
-   * navigates to /login.
-   */
-  async loadUserData(): Promise<void> {
-    const user = getAuth().currentUser;
-    if (!user || !user.email) {
-      this.errorMessage = 'No user logged in.';
-      this.router.navigate(['/login']);
-      return;
-    }
-    const ref = collection(this.firestore, 'users');
-    const snap = await getDocs(query(ref, where('email', '==', user.email)));
-    if (snap.empty) {
-      this.errorMessage = 'User not found.';
-      this.router.navigate(['/login']);
-      return;
-    }
-    const data = snap.docs[0].data();
-    this.userName = data['name'] || 'User';
-    this.userAvatarUrl = data['avatarUrl'] || 'assets/img/avatar.png';
-    this.selectedAvatar = this.userAvatarUrl;
-  }
-
   selectAvatar(avatar: string): void {
     this.selectedAvatar = avatar;
     this.errorMessage = '';
@@ -112,6 +87,44 @@ export class AvatarComponent implements OnInit {
     };
     reader.readAsDataURL(file);
   }
+  async loadUserData(): Promise<void> {
+    const authUser = getAuth().currentUser;
+  
+    if (!authUser) {
+      this.errorMessage = 'No user logged in.';
+      this.router.navigate(['/login']);
+      return;
+    }
+  
+    
+    const ref = collection(this.firestore, 'users');
+  
+    let snap;
+   
+    if (authUser.isAnonymous) {
+      
+      snap = await getDocs(query(ref, where('uid', '==', authUser.uid)));
+    } else {
+      
+      if (!authUser.email) {
+        this.errorMessage = 'Missing E-Mail?';
+        this.router.navigate(['/login']);
+        return;
+      }
+      snap = await getDocs(query(ref, where('email', '==', authUser.email)));
+    }
+  
+    if (snap.empty) {
+      this.errorMessage = 'User not found.';
+      this.router.navigate(['/login']);
+      return;
+    }
+  
+    const data = snap.docs[0].data();
+    this.userName = data['name'] || 'User';
+    this.userAvatarUrl = data['avatarUrl'] || 'assets/img/avatar.png';
+    this.selectedAvatar = this.userAvatarUrl;
+  }
 
   async confirmSelection(): Promise<void> {
     if (!this.selectedAvatar) {
@@ -119,28 +132,44 @@ export class AvatarComponent implements OnInit {
       return;
     }
     try {
-      const current = getAuth().currentUser;
-      if (current && current.email) {
-        const ref = collection(this.firestore, 'users');
-        const snap = await getDocs(
-          query(ref, where('email', '==', current.email))
-        );
-        if (!snap.empty) {
-          await updateDoc(snap.docs[0].ref, {
-            avatarUrl: this.selectedAvatar,
-            name: this.userName,
-          });
-          this.successMessage = 'Account successfully updated!';
-          setTimeout(() => {
-            this.successMessage = '';
-            this.router.navigate(['/chat']);
-          }, 3000);
-        } else {
-          this.errorMessage = 'User not found.';
-        }
+      const currentUser = getAuth().currentUser;
+      if (!currentUser) {
+        this.errorMessage = 'No user logged in.';
+        return;
       }
+  
+      const ref = collection(this.firestore, 'users');
+      let snap;
+  
+      if (currentUser.isAnonymous) {
+        snap = await getDocs(query(ref, where('uid', '==', currentUser.uid)));
+      } else {
+        if (!currentUser.email) {
+          this.errorMessage = 'Missing E-Mail?';
+          return;
+        }
+        snap = await getDocs(query(ref, where('email', '==', currentUser.email)));
+      }
+  
+      if (snap.empty) {
+        this.errorMessage = 'User not found in Firestore.';
+        return;
+      }
+  
+      await updateDoc(snap.docs[0].ref, {
+        avatarUrl: this.selectedAvatar,
+        name: this.userName,
+      });
+  
+      this.successMessage = 'Account successfully updated!';
+      setTimeout(() => {
+        this.successMessage = '';
+        this.router.navigate(['/chat']);
+      }, 3000);
+  
     } catch {
       this.errorMessage = 'Error confirming selection.';
     }
   }
+  
 }
