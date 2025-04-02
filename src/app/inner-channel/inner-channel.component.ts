@@ -8,7 +8,9 @@ import {
   ViewChild,
   Output,
   EventEmitter,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
@@ -24,7 +26,7 @@ import { UserService } from '../user.service';
   templateUrl: './inner-channel.component.html',
   styleUrls: ['./inner-channel.component.scss'],
 })
-export class InnerChannelComponentimplements   {
+export class InnerChannelComponent implements OnInit, OnDestroy {
   /**
    * A ViewChild reference to the EntwicklerteamComponent for interacting with its instance.
    */
@@ -57,7 +59,8 @@ export class InnerChannelComponentimplements   {
   /** Stores the currently selected channel. */
   selectedChannel: any = null;
 
- 
+  private unsubscribeFn = () => {};
+
   /**
    * Constructor injecting services for dialogs, channel data, user data,
    * and change detection if needed.
@@ -67,21 +70,26 @@ export class InnerChannelComponentimplements   {
     private channelService: ChannelService,
     private userService: UserService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {}
 
   /**
    * Loads channels on init, then subscribes to currentChannels
    * to filter those that include the current user.
    */
 
-  ngOnInit(): void {
-    this.channelService.loadChannels();
-    this.channelService.currentChannels.subscribe((channels) => {
-      const userId = this.userService.getCurrentUserId();
-      this.entwicklerTeams = channels.filter((ch) =>
-        ch.members.some((m: any) => m.uid === userId)
-      );
-    });
+  ngOnInit() {
+    this.unsubscribeFn = this.channelService.listenChannelsLive(
+      (allChannels) => {
+        const userId = this.userService.getCurrentUserId();
+        this.entwicklerTeams = allChannels.filter((ch) =>
+          ch.membersUid.includes(userId)
+        );
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeFn();
   }
 
   /**

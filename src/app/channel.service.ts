@@ -100,7 +100,6 @@ export class ChannelService {
    */
   constructor(private firestore: Firestore, private userService: UserService) {}
 
- 
   /**
    * addChannel creates a new channel in Firestore, storing both 'members' and 'membersUid' (UID array).
    * After creation, it calls loadChannels to refresh local state and sets the newly created channel as current.
@@ -122,29 +121,11 @@ export class ChannelService {
 
       // 3) Construct the local channel object, refresh channels, and set this new one as current
       const newChannel = this.buildNewChannelObj(channel, docRef.id);
-      await this.loadChannels();
-     
+
       this.changeChannel(newChannel);
     } catch (error) {
       // Handle or log the error as needed
     }
-  }
-
-   /**
-   * loadChannels fetches all channel documents from Firestore and updates the local BehaviorSubject.
-   */
-   async loadChannels(): Promise<void> {
-    try {
-      const channelsCollection = collection(this.firestore, 'channels');
-      const querySnapshot = await getDocs(channelsCollection);
-      const channels: any[] = [];
-
-      querySnapshot.forEach((doc) => {
-        channels.push({ id: doc.id, ...doc.data() });
-      });
-
-      this.channelsSource.next(channels);
-    } catch (error) {}
   }
 
   /**
@@ -333,7 +314,6 @@ export class ChannelService {
     }
   }
 
- 
   /**
    * removeChannelLocally removes a channel from the local channelsSource by its ID,
    * useful after a channel has been deleted or the user has left it.
@@ -559,6 +539,27 @@ export class ChannelService {
       const channels: any[] = [];
       snapshot.forEach((doc) => {
         channels.push({ id: doc.id, ...doc.data() });
+      });
+      callback(channels);
+    });
+    return unsubscribe;
+  }
+
+  /**
+   * Sets up a realtime listener on the 'channels' collection in Firestore.
+   * Whenever documents in this collection are created, updated, or deleted,
+   * the provided callback function is invoked with the updated list of channels.
+   *
+   * @param {(channels: any[]) => void} callback - A function that receives the current channel array on each Firestore update.
+   * @returns {() => void} - A function that, when called, unsubscribes from the Firestore listener.
+   */
+
+  public listenChannelsLive(callback: (channels: any[]) => void): () => void {
+    const channelsColl = collection(this.firestore, 'channels');
+    const unsubscribe = onSnapshot(channelsColl, (snapshot) => {
+      const channels: any[] = [];
+      snapshot.forEach((docSnap) => {
+        channels.push({ id: docSnap.id, ...docSnap.data() });
       });
       callback(channels);
     });
