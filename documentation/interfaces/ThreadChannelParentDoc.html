@@ -1,0 +1,1568 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  ThreadChannelParentDoc</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/chat/chat.component.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#channelId" 
+>
+                                            channelId
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#channelName" 
+>
+                                            channelName
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#content" 
+>
+                                            content
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#replyCount" 
+>
+                                            replyCount
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#senderAvatar" 
+>
+                                            senderAvatar
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#senderName" 
+>
+                                            senderName
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#timestamp" 
+>
+                                            timestamp
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="channelId"></a>
+                                        <span class="name "><b>channelId</b>
+                                            <a href="#channelId">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>channelId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="channelName"></a>
+                                        <span class="name "><b>channelName</b>
+                                            <a href="#channelName">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>channelName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="content"></a>
+                                        <span class="name "><b>content</b>
+                                            <a href="#content">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>content:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="replyCount"></a>
+                                        <span class="name "><b>replyCount</b>
+                                            <a href="#replyCount">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>replyCount:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="senderAvatar"></a>
+                                        <span class="name "><b>senderAvatar</b>
+                                            <a href="#senderAvatar">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>senderAvatar:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="senderName"></a>
+                                        <span class="name "><b>senderName</b>
+                                            <a href="#senderName">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>senderName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="timestamp"></a>
+                                        <span class="name "><b>timestamp</b>
+                                            <a href="#timestamp">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>timestamp:         <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  OnInit,
+  ViewChild,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+} from &#x27;@angular/core&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { ChatHeaderComponent } from &#x27;../chat-header/chat-header.component&#x27;;
+import { DevspaceComponent } from &#x27;../devspace/devspace.component&#x27;;
+import { EntwicklerteamComponent } from &#x27;../entwicklerteam/entwicklerteam.component&#x27;;
+import { InnerChannelComponent } from &#x27;../inner-channel/inner-channel.component&#x27;;
+import { DirectMessagesComponent } from &#x27;../direct-messages/direct-messages.component&#x27;;
+import { PrivateMessagesComponent } from &#x27;../private-messages/private-messages.component&#x27;;
+import { WelcomeScreenComponent } from &#x27;../welcome-screen/welcome-screen.component&#x27;;
+import { AppStateService } from &#x27;../app-state.service&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+import { SearchFieldComponent } from &#x27;../search-field/search-field.component&#x27;;
+import { ThreadComponent } from &#x27;../thread/thread.component&#x27;;
+import { ThreadChannelComponent } from &#x27;../thread-channel/thread-channel.component&#x27;;
+import { MessageService } from &#x27;../message.service&#x27;;
+
+interface ThreadChannelParentDoc {
+  senderName?: string;
+  senderAvatar?: string;
+  content?: {
+    text?: string;
+    emojis?: any[];
+  };
+  timestamp?: any;
+  replyCount?: number;
+  channelName?: string;
+  channelId?: string;
+}
+
+@Component({
+  selector: &#x27;app-chat&#x27;,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ChatHeaderComponent,
+    DevspaceComponent,
+    EntwicklerteamComponent,
+    InnerChannelComponent,
+    DirectMessagesComponent,
+    PrivateMessagesComponent,
+    WelcomeScreenComponent,
+    SearchFieldComponent,
+    ThreadComponent,
+    ThreadChannelComponent,
+  ],
+  templateUrl: &#x27;./chat.component.html&#x27;,
+  styleUrls: [&#x27;./chat.component.scss&#x27;],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class ChatComponent implements OnInit {
+  isPrivateMessage: boolean &#x3D; false;
+  selectedMemberId: string &#x3D; &#x27;&#x27;;
+  selectedMemberName: string &#x3D; &#x27;&#x27;;
+  isEditingChannel: boolean &#x3D; false;
+  isPrivateChat: boolean &#x3D; false;
+  selectedMember: any &#x3D; null;
+  showWelcomeContainer: boolean &#x3D; false;
+  selectedChannel: any &#x3D; null;
+  isSearchActive: boolean &#x3D; false;
+  selectedThread: any &#x3D; null;
+  selectedThreadChannel: any &#x3D; null;
+  isWorkspaceVisible: boolean &#x3D; true;
+  isThreadFromSearch: boolean &#x3D; false;
+  isThreadChannelFromSearch: boolean &#x3D; false;
+  isThreadActive: boolean &#x3D; false;
+  threadData: any &#x3D; null; // Even if unused, left as is to not alter logic.
+  private recipientCache: Map&lt;string, string&gt; &#x3D; new Map();
+
+  currentMobileView:
+    | &#x27;container&#x27;
+    | &#x27;team&#x27;
+    | &#x27;private&#x27;
+    | &#x27;thread&#x27;
+    | &#x27;threadChannel&#x27;
+    | &#x27;welcome&#x27;
+    | &#x27;search&#x27; &#x3D; &#x27;container&#x27;;
+  previousView:
+    | &#x27;container&#x27;
+    | &#x27;team&#x27;
+    | &#x27;private&#x27;
+    | &#x27;thread&#x27;
+    | &#x27;threadChannel&#x27;
+    | &#x27;welcome&#x27;
+    | &#x27;search&#x27; &#x3D; &#x27;container&#x27;;
+
+  showDesktopHeader &#x3D; false;
+  showMemberListDialog &#x3D; false;
+
+  @ViewChild(&#x27;chatHeaderRef&#x27;) chatHeaderRef!: ChatHeaderComponent;
+  @Output() editSquareClicked &#x3D; new EventEmitter&lt;void&gt;();
+  @ViewChild(&#x27;devspaceRef&#x27;) devspaceRef!: DevspaceComponent;
+  @ViewChild(ChatComponent) chatComponent!: ChatComponent;
+  @ViewChild(EntwicklerteamComponent) entwicklerteam!: EntwicklerteamComponent;
+
+  private forcedMobileActive &#x3D; false;
+  private oldDesktopView:
+    | &#x27;container&#x27;
+    | &#x27;team&#x27;
+    | &#x27;private&#x27;
+    | &#x27;thread&#x27;
+    | &#x27;threadChannel&#x27;
+    | &#x27;welcome&#x27;
+    | &#x27;search&#x27; &#x3D; &#x27;container&#x27;;
+  private oldIsSearchActive &#x3D; false;
+  private oldIsWorkspaceVisible &#x3D; true;
+
+  shouldShowContainer &#x3D; false;
+
+  /**
+   * Constructor for the ChatComponent. Injects services needed
+   * for managing application state, users, channels, messages, and
+   * the change detection reference.
+   *
+   * @param {AppStateService} appStateService - Manages global state across the app.
+   * @param {UserService} userService - Provides user-related operations.
+   * @param {ChannelService} channelService - Provides channel-related operations.
+   * @param {MessageService} messageService - Provides message-related operations.
+   * @param {ChangeDetectorRef} cdr - Detects and triggers UI updates.
+   */
+  constructor(
+    private appStateService: AppStateService,
+    private userService: UserService,
+    private channelService: ChannelService,
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  /**
+   * Lifecycle hook. Initializes the component,
+   * sets the welcome screen visibility, and checks screen size.
+   */
+  ngOnInit(): void {
+    this.showWelcomeContainer &#x3D; this.appStateService.getShowWelcomeContainer();
+    this.checkScreenSize();
+    this.updateContainerVisibility();
+  }
+
+  /**
+   * Opens a private chat with the specified member, hiding the member list
+   * and updating relevant component states. If on a small screen, switches
+   * to &#x27;private&#x27; mobile view and displays the header.
+   *
+   * @param {{ id: string; name: string }} payload - Contains the member&#x27;s ID and name.
+   */
+  onOpenPrivateChat(payload: { id: string; name: string }) {
+    this.showMemberListDialog &#x3D; false;
+    this.isPrivateChat &#x3D; true;
+    this.selectedMember &#x3D; { id: payload.id, name: payload.name };
+    this.isSearchActive &#x3D; false;
+    this.selectedChannel &#x3D; null;
+
+    if (window.innerWidth &lt; 1278) {
+      this.currentMobileView &#x3D; &#x27;private&#x27;;
+      this.showDesktopHeader &#x3D; true;
+    }
+  }
+
+  /**
+   * Triggered when the edit icon (square) is clicked. Logs a message
+   * and, in mobile view, triggers the Devspace component&#x27;s edit logic.
+   * Also displays the desktop header if under a certain width.
+   */
+  onEditSquareIconClick(): void {
+    if (window.innerWidth &lt; 1278) {
+      this.devspaceRef.onEditSquareClick();
+      this.showDesktopHeader &#x3D; true;
+    }
+    this.previousView &#x3D; this.currentMobileView;
+  }
+
+  /**
+   * Checks the current screen size and updates &#x60;isWorkspaceVisible&#x60;
+   * accordingly for desktop mode if the width is above 1278.
+   */
+  private checkScreenSize(): void {
+    const width &#x3D; window.innerWidth;
+    if (width &gt;&#x3D; 1278) {
+      this.isWorkspaceVisible &#x3D; true;
+    } else {
+      // Additional mobile handling if needed
+    }
+  }
+
+  /**
+   * HostListener that triggers on window resize events.
+   * Enters or exits forced mobile mode depending on screen width.
+   */
+  @HostListener(&#x27;window:resize&#x27;)
+  onResize() {
+    const width &#x3D; window.innerWidth;
+    if (width &lt; 1278) {
+      this.isWorkspaceVisible &#x3D; true;
+      if (!this.forcedMobileActive) {
+        this.enterForcedMobileMode();
+      }
+    } else {
+      if (this.forcedMobileActive) {
+        this.exitForcedMobileMode();
+        this.showDesktopHeader &#x3D; false;
+      }
+    }
+    this.updateContainerVisibility();
+  }
+
+  private updateContainerVisibility(): void {
+    const width &#x3D; window.innerWidth;
+    // Zeige Container, wenn &lt; 1278 oder &gt;&#x3D; 1470
+    this.shouldShowContainer &#x3D;
+      width &lt; 1278 ||
+      width &gt;&#x3D; 1470 ||
+      this.showWelcomeContainer ||
+      this.isSearchActive;
+    // this.shouldShowContainer &#x3D; (width &gt;&#x3D; 1470) || this.showWelcomeContainer;
+  }
+
+  openWelcome() {
+    this.showWelcomeContainer &#x3D; true;
+    this.updateContainerVisibility(); // Erneut prüfen
+  }
+
+  closeWelcome() {
+    this.showWelcomeContainer &#x3D; false;
+    this.updateContainerVisibility(); // Erneut prüfen
+  }
+
+  /**
+   * Activates forced mobile mode by storing the current view
+   * and search/workspace states, then switches to &#x27;container&#x27; view.
+   */
+  private enterForcedMobileMode() {
+    this.forcedMobileActive &#x3D; true;
+    this.oldDesktopView &#x3D; this.currentMobileView;
+    this.oldIsSearchActive &#x3D; this.isSearchActive;
+    this.oldIsWorkspaceVisible &#x3D; this.isWorkspaceVisible;
+    this.currentMobileView &#x3D; &#x27;container&#x27;;
+  }
+
+  /**
+   * Exits forced mobile mode by restoring the previously stored
+   * desktop view and search/workspace states.
+   */
+  private exitForcedMobileMode() {
+    this.forcedMobileActive &#x3D; false;
+    if (this.oldDesktopView &#x3D;&#x3D;&#x3D; &#x27;search&#x27;) {
+      this.currentMobileView &#x3D; &#x27;search&#x27;;
+      this.showDesktopHeader &#x3D; true;
+    } else {
+      this.currentMobileView &#x3D; this.oldDesktopView;
+      this.isSearchActive &#x3D; this.oldIsSearchActive;
+      this.showDesktopHeader &#x3D; false;
+    }
+    this.isWorkspaceVisible &#x3D; this.oldIsWorkspaceVisible;
+  }
+
+  /**
+   * Handles the back navigation from the header in mobile view.
+   * Resets to the &#x27;container&#x27; view and hides the desktop header.
+   */
+  onHeaderBackClicked() {
+    this.showDesktopHeader &#x3D; false;
+    if (this.isPrivateChat &amp;&amp; this.selectedMember) {
+    } else if (this.selectedChannel) {
+    } else if (this.selectedThread) {
+    } else {
+    }
+    this.showDesktopHeader &#x3D; false;
+    this.currentMobileView &#x3D; &#x27;container&#x27;;
+  }
+
+  /**
+   * Simple method to switch the current mobile view
+   * back to &#x27;container&#x27;, typically used in mobile contexts.
+   */
+  backToContainer() {
+    this.currentMobileView &#x3D; &#x27;container&#x27;;
+  }
+
+  /**
+   * Opens a thread channel view from a search result, orchestrating
+   * sub-steps like loading data and adjusting UI state.
+   *
+   * @param {any} result - The search result with details to open the thread channel.
+   */
+  async openThreadChannelFromSearch(result: any): Promise&lt;void&gt; {
+    this.prepThreadChannelSearch(result);
+    const threadChannelId &#x3D; this.getThreadChannelId(result);
+    if (!threadChannelId) return;
+    const { parentDoc, channelName } &#x3D; await this.prepareParentDoc(
+      threadChannelId
+    );
+    const formattedMessages &#x3D; await this.prepareChildMessages(threadChannelId);
+
+    const parentMessage &#x3D; this.buildParentMessage(
+      parentDoc,
+      result,
+      channelName,
+      threadChannelId
+    );
+
+    this.assignThreadChannel(result, parentMessage, formattedMessages);
+    this.addFallbackMessageIfNeeded(result, threadChannelId);
+    this.handleResponsiveThreadChannelView();
+  }
+
+  /**
+   * Loads the parent document from the message service
+   * and determines its channel name if needed.
+   *
+   * @param {string} threadChannelId - The ID for the thread channel.
+   * @returns {Promise&lt;{ parentDoc: ThreadChannelParentDoc | null; channelName: string }&gt;}
+   */
+  private async prepareParentDoc(threadChannelId: string) {
+    const parentDoc &#x3D; await this.loadParentDoc(threadChannelId);
+    const channelName &#x3D; await this.loadChannelNameIfNeeded(parentDoc);
+    return { parentDoc, channelName };
+  }
+
+  /**
+   * Loads child messages and formats them into a normalized structure.
+   *
+   * @param {string} threadChannelId - The ID for the thread channel.
+   * @returns {Promise&lt;any[]&gt;} The formatted messages.
+   */
+  private async prepareChildMessages(threadChannelId: string): Promise&lt;any[]&gt; {
+    const childMessages &#x3D; await this.loadChildMessages(threadChannelId);
+    return this.formatThreadMessages(childMessages);
+  }
+
+  /**
+   * Assigns the final data to &#x27;selectedThreadChannel&#x27;.
+   *
+   * @param {any} result - The original search result or context.
+   * @param {any} parentMessage - The built parent message object.
+   * @param {any[]} formattedMessages - The list of formatted child messages.
+   */
+  private assignThreadChannel(
+    result: any,
+    parentMessage: any,
+    formattedMessages: any[]
+  ): void {
+    this.selectedThreadChannel &#x3D; {
+      ...result,
+      parentMessage,
+      messages: formattedMessages,
+    };
+  }
+
+  /** Prepares the component state for opening a thread channel from search */
+  private prepThreadChannelSearch(result: any): void {
+    if (this.selectedThread) {
+      this.closeThread();
+    }
+    this.isThreadChannelFromSearch &#x3D; true;
+    this.isPrivateChat &#x3D; false;
+    this.isSearchActive &#x3D; false;
+    this.showWelcomeContainer &#x3D; false;
+    this.selectedChannel &#x3D; null;
+    this.selectedMember &#x3D; null;
+    // Logically no change, just moved code out of original method
+  }
+
+  /** Retrieves the correct threadChannel ID from the search result */
+  private getThreadChannelId(result: any): string | null {
+    const threadChannelId &#x3D;
+      result.threadChannelId || result.parentId || result.id;
+    if (!threadChannelId) {
+      return null;
+    }
+    return threadChannelId;
+  }
+
+  /** Loads the parent document from the message service */
+  private async loadParentDoc(
+    threadChannelId: string
+  ): Promise&lt;ThreadChannelParentDoc | null&gt; {
+    const doc &#x3D; (await this.messageService.getMessage(
+      &#x27;thread-channel&#x27;,
+      threadChannelId
+    )) as ThreadChannelParentDoc | null;
+    if (!doc) {
+    }
+    return doc;
+  }
+
+  /** Loads the channel name if missing in the parentDoc */
+  private async loadChannelNameIfNeeded(
+    parentDoc: ThreadChannelParentDoc | null
+  ): Promise&lt;string&gt; {
+    let channelName &#x3D; parentDoc?.channelName || &#x27;Unbekannt&#x27;;
+    if (!parentDoc?.channelName &amp;&amp; parentDoc?.channelId) {
+      const channelData &#x3D; await this.channelService.getChannelById(
+        parentDoc.channelId
+      );
+      channelName &#x3D; channelData?.name || &#x27;Unbekannt&#x27;;
+    }
+    return channelName;
+  }
+
+  /** Loads child messages from the message service */
+  private async loadChildMessages(threadChannelId: string): Promise&lt;any[]&gt; {
+    const msgs &#x3D; await this.messageService.getMessagesOnce(
+      &#x27;thread-channel&#x27;,
+      threadChannelId
+    );
+    return msgs || [];
+  }
+
+  /** Formats child messages to ensure certain properties exist */
+  private formatThreadMessages(childMessages: any[]): any[] {
+    return (childMessages || []).map((msg) &#x3D;&gt; ({
+      ...msg,
+      content: msg.content ?? { text: &#x27;Kein Text&#x27;, emojis: [] },
+      timestamp: msg.timestamp || new Date(),
+    }));
+  }
+
+  /** Builds the parent message object from doc + result data */
+  private buildParentMessage(
+    parentDoc: ThreadChannelParentDoc | null,
+    result: any,
+    channelName: string,
+    threadChannelId: string
+  ) {
+    return {
+      id: threadChannelId,
+      text: parentDoc?.content?.text ?? result?.content?.text ?? &#x27;Kein Text&#x27;,
+      senderName: parentDoc?.senderName || result.senderName || &#x27;Unbekannt&#x27;,
+      senderAvatar:
+        parentDoc?.senderAvatar ||
+        result.senderAvatar ||
+        &#x27;assets/img/default-avatar.png&#x27;,
+      timestamp: parentDoc?.timestamp || result.timestamp || new Date(),
+      replyCount: parentDoc?.replyCount || result.replyCount || 0,
+      channelName,
+      channelId: parentDoc?.channelId || null,
+      content: parentDoc?.content ?? { text: &#x27;Kein Text&#x27;, emojis: [] },
+    };
+  }
+
+  /** If the search result has a different ID than the threadChannelId, add fallback data */
+  private addFallbackMessageIfNeeded(
+    result: any,
+    threadChannelId: string
+  ): void {
+    if (result.id !&#x3D;&#x3D; threadChannelId) {
+      const fallbackContent &#x3D; result.content ?? {
+        text: &#x27;Kein Text&#x27;,
+        emojis: [],
+      };
+      const fallbackTimestamp &#x3D; result.timestamp || new Date();
+      this.selectedThreadChannel.messages.push({
+        ...result,
+        content: fallbackContent,
+        timestamp: fallbackTimestamp,
+      });
+    }
+  }
+
+  /** Adjusts UI if on a small screen */
+  private handleResponsiveThreadChannelView(): void {
+    if (window.innerWidth &lt; 1278) {
+      this.currentMobileView &#x3D; &#x27;threadChannel&#x27;;
+      this.showDesktopHeader &#x3D; true;
+    }
+  }
+
+  /**
+   * Toggles the visibility of the workspace area (channel/team list).
+   */
+  toggleWorkspace(): void {
+    this.isWorkspaceVisible &#x3D; !this.isWorkspaceVisible;
+  }
+
+  // ------------------------------------------------------------------------------------
+  // 2) SPLIT METHODS FOR: onChannelSelected (~25+ lines)
+  // ------------------------------------------------------------------------------------
+
+  /**
+   * Handles selection of a channel by updating various state flags,
+   * resetting threads, and displaying the channel UI. In mobile view,
+   * it switches to &#x27;team&#x27; mode.
+   *
+   * @param {any} channel - The channel object selected by the user.
+   */
+  onChannelSelected(channel: any): void {
+    if (channel) {
+      this.handleChannelSelection(channel);
+    } else {
+      this.handleChannelDeselection();
+    }
+    this.adjustMobileViewAfterChannel();
+  }
+
+  /**
+   * Handles the scenario where a valid channel is selected.
+   * Decides mobile vs. desktop, optionally closes threads,
+   * and sets final state for the selected channel.
+   */
+  private handleChannelSelection(channel: any): void {
+    this.setTeamViewDependingOnWidth();
+    this.clearThreadIfSearching();
+    this.applyChannelSelection(channel);
+  }
+
+  /** Decides between mobile/desktop view for &#x27;team&#x27; mode */
+  private setTeamViewDependingOnWidth(): void {
+    this.previousView &#x3D; this.currentMobileView;
+    this.currentMobileView &#x3D; &#x27;team&#x27;;
+    if (window.innerWidth &lt; 1278) {
+      this.showDesktopHeader &#x3D; true;
+    }
+  }
+
+  /** Closes thread if we came from a search thread, resets flags */
+  private clearThreadIfSearching(): void {
+    if (this.isThreadFromSearch) {
+      this.closeThread();
+    }
+    this.isThreadFromSearch &#x3D; false;
+    this.selectedThread &#x3D; null;
+    this.isThreadActive &#x3D; false;
+    this.selectedThreadChannel &#x3D; null;
+  }
+
+  /** Applies the final state for channel selection (overrides private chat etc.) */
+  private applyChannelSelection(channel: any): void {
+    this.isPrivateChat &#x3D; false;
+    this.selectedChannel &#x3D; channel;
+    this.selectedMember &#x3D; null;
+    this.isSearchActive &#x3D; false;
+    this.showWelcomeContainer &#x3D; false;
+    this.appStateService.setShowWelcomeContainer(false);
+  }
+
+  /** Handles the scenario where no channel is selected */
+  private handleChannelDeselection(): void {
+    this.selectedChannel &#x3D; null;
+    this.showWelcomeContainer &#x3D; true;
+    this.appStateService.setShowWelcomeContainer(true);
+  }
+
+  /** Sets or resets the mobile view after channel selection */
+  private adjustMobileViewAfterChannel(): void {
+    if (window.innerWidth &lt; 1278) {
+      this.currentMobileView &#x3D; &#x27;team&#x27;;
+    }
+  }
+
+  // ------------------------------------------------------------------------------------
+  // 3) SPLIT METHODS FOR: onMemberSelected (~25+ lines)
+  // ------------------------------------------------------------------------------------
+
+  /**
+   * Handles selection of a member for private chat, resetting any
+   * threads or channel data. In mobile view, switches to &#x27;private&#x27;.
+   *
+   * @param {any} member - The member object that has been selected.
+   */
+  onMemberSelected(member: any): void {
+    if (!member || !member.id) {
+      return;
+    }
+    this.resetThreadIfNeeded();
+    this.isPrivateChat &#x3D; true;
+    this.selectedMember &#x3D; member;
+    this.handleMobileViewForMember();
+    this.selectedChannel &#x3D; null;
+    this.isSearchActive &#x3D; false;
+    this.showWelcomeContainer &#x3D; false;
+    if (this.selectedThread) {
+      this.selectedThread &#x3D; null;
+    }
+  }
+
+  /** Closes any open thread or thread channel when a member is selected */
+  private resetThreadIfNeeded(): void {
+    if (this.isThreadFromSearch) {
+      this.closeThread();
+    }
+    if (this.selectedThreadChannel) {
+      this.closeThreadChannel();
+    }
+  }
+
+  /** Adapts view for mobile when a member is selected */
+  private handleMobileViewForMember(): void {
+    if (window.innerWidth &lt; 1278) {
+      this.previousView &#x3D; this.currentMobileView;
+      this.currentMobileView &#x3D; &#x27;private&#x27;;
+      this.showDesktopHeader &#x3D; true;
+    } else {
+      this.previousView &#x3D; this.currentMobileView;
+      this.currentMobileView &#x3D; &#x27;private&#x27;;
+    }
+  }
+
+  /**
+   * Receives member selection event (e.g. from a list) and updates
+   * private message state accordingly.
+   *
+   * @param {{ uid: string; name: string }} event - Contains the unique ID
+   * and name of the selected member.
+   */
+  handleMemberSelected(event: { uid: string; name: string }): void {
+    this.selectedMemberId &#x3D; event.uid;
+    this.selectedMemberName &#x3D; event.name;
+    this.isPrivateMessage &#x3D; true;
+  }
+
+  /**
+   * Stops the private message mode by clearing member info
+   * and resetting the isPrivateMessage flag.
+   */
+  stopPrivateMessage(): void {
+    this.isPrivateMessage &#x3D; false;
+    this.selectedMemberId &#x3D; &#x27;&#x27;;
+    this.selectedMemberName &#x3D; &#x27;&#x27;;
+  }
+
+  /**
+   * Handles changes in channel editing state. Disables private chat mode
+   * and resets the selected member. (Parameter removed)
+   */
+  handleEditChannelChange(): void {
+    this.isPrivateChat &#x3D; false;
+    this.selectedMember &#x3D; null;
+  }
+
+  /**
+   * Opens the search field UI. In mobile view, switches to &#x27;search&#x27;
+   * mode and optionally handles a search query.
+   *
+   * @param {string} [searchQuery] - An optional search term to pass along.
+   */
+  openSearchField(searchQuery?: string): void {
+    this.resetThreadsForSearch();
+    this.setupSearchView();
+    this.activateSearchMode();
+
+    this.isSearchActive &#x3D; true;
+    this.updateContainerVisibility();
+    if (searchQuery) {
+      // handle the query if needed
+    }
+  }
+
+  /** Resets any currently open threads so search can start fresh */
+  private resetThreadsForSearch(): void {
+    this.selectedThread &#x3D; null;
+    this.selectedThreadChannel &#x3D; null;
+  }
+
+  /** Determines whether we use mobile or desktop search view */
+  private setupSearchView(): void {
+    this.previousView &#x3D; this.currentMobileView;
+    this.currentMobileView &#x3D; &#x27;search&#x27;;
+
+    if (window.innerWidth &lt; 1278) {
+      this.showDesktopHeader &#x3D; true;
+      if (this.forcedMobileActive) {
+        this.oldDesktopView &#x3D; &#x27;search&#x27;;
+        this.oldIsSearchActive &#x3D; true;
+      }
+    } else {
+      this.showDesktopHeader &#x3D; false;
+    }
+  }
+
+  /** Activates the search mode flags, disabling private chat, etc. */
+  private activateSearchMode(): void {
+    this.isSearchActive &#x3D; true;
+    this.isPrivateChat &#x3D; false;
+    this.selectedChannel &#x3D; null;
+    this.showWelcomeContainer &#x3D; false;
+  }
+
+  /**
+   * Closes the search field UI, returning to the previous view
+   * and disabling the search functionality.
+   */
+  closeSearchField(): void {
+    this.showDesktopHeader &#x3D; false;
+    this.currentMobileView &#x3D; this.previousView;
+    this.isSearchActive &#x3D; false;
+    this.updateContainerVisibility();
+
+    if (!this.selectedChannel &amp;&amp; !this.isPrivateChat) {
+      this.showWelcomeContainer &#x3D; true;
+    }
+  }
+
+  /**
+   * Handles selection of a member within the app, e.g. from
+   * a search result, to open a private chat.
+   *
+   * @param {any} member - The member object that was selected.
+   */
+  handleMemberSelection(member: any): void {
+    this.isSearchActive &#x3D; false;
+    this.isPrivateChat &#x3D; true;
+    this.selectedChannel &#x3D; null;
+    this.selectedMember &#x3D; member;
+  }
+
+  /**
+   * Opens a thread channel in the chat by setting &#x60;selectedThreadChannel&#x60;
+   * to the passed-in data. In mobile view, updates the current view to &#x27;threadChannel&#x27;.
+   *
+   * @param {any} threadData - The data object representing the thread channel.
+   */
+  openThreadChannel(threadData: any): void {
+    this.selectedThreadChannel &#x3D; threadData;
+    if (window.innerWidth &lt; 1278) {
+      this.currentMobileView &#x3D; &#x27;threadChannel&#x27;;
+    }
+  }
+
+  /**
+   * Closes the currently open thread channel, resetting the UI to either
+   * the channel view, private chat view, or welcome screen.
+   */
+  closeThreadChannel(): void {
+    this.selectedThreadChannel &#x3D; null;
+    this.isThreadChannelFromSearch &#x3D; false;
+
+    if (this.selectedChannel) {
+    } else {
+      this.showWelcomeContainer &#x3D; true;
+    }
+
+    if (this.selectedChannel) {
+      this.currentMobileView &#x3D; &#x27;team&#x27;;
+    } else if (this.isPrivateChat &amp;&amp; this.selectedMember) {
+      this.currentMobileView &#x3D; &#x27;private&#x27;;
+    } else {
+      this.currentMobileView &#x3D; &#x27;container&#x27;;
+    }
+  }
+
+  /**
+   * Called when the search closes. Logs a message and disables
+   * the search mode flag.
+   */
+  onCloseSearch(): void {
+    this.isSearchActive &#x3D; false;
+  }
+
+  /**
+   * Scrolls smoothly to a message within the DOM if it exists. Retries a number of times
+   * in case the element isn&#x27;t available immediately.
+   *
+   * @param {string} messageId - The identifier of the message element to scroll to.
+   * @param {number} [retries&#x3D;5] - How many retries to attempt if the element isn&#x27;t found.
+   */
+  private scrollToMessage(messageId: string, retries &#x3D; 5): void {
+    setTimeout(() &#x3D;&gt; {
+      const element &#x3D; document.getElementById(&#x60;message-${messageId}&#x60;);
+      if (element) {
+        element.scrollIntoView({ behavior: &#x27;smooth&#x27;, block: &#x27;center&#x27; });
+        element.classList.add(&#x27;highlight&#x27;);
+        setTimeout(() &#x3D;&gt; element.classList.remove(&#x27;highlight&#x27;), 2000);
+      } else if (retries &gt; 0) {
+        this.scrollToMessage(messageId, retries - 1);
+      }
+    }, 300);
+  }
+
+  /**
+   * Opens a thread view for a specific message within the chat.
+   * If on mobile, switches to &#x27;thread&#x27;.
+   *
+   * @param {any} message - The message object to open as a thread.
+   */
+  openThread(message: any): void {
+    this.resetThreadState();
+    if (this.isThreadAlreadyOpen(message)) return;
+
+    this.setupSelectedThread(message);
+    this.highlightThreadMessageAsync(message);
+
+    if (window.innerWidth &lt; 1278) {
+      this.currentMobileView &#x3D; &#x27;thread&#x27;;
+    }
+  }
+
+  /** Resets the current thread/channel flags from a search context */
+  private resetThreadState(): void {
+    this.selectedThreadChannel &#x3D; null;
+    this.isThreadFromSearch &#x3D; false;
+  }
+
+  /** Checks if the same thread is already open */
+  private isThreadAlreadyOpen(message: any): boolean {
+    return this.selectedThread?.id &#x3D;&#x3D;&#x3D; message.id;
+  }
+
+  /** Assigns the selected thread based on the provided message data */
+  private setupSelectedThread(message: any): void {
+    // your original &quot;this.selectedThread &#x3D; null;&quot; line
+    this.selectedThread &#x3D; null;
+    this.selectedThread &#x3D; {
+      ...message,
+      recipientName: message.recipientName || message.senderName || &#x27;Unbekannt&#x27;,
+    };
+  }
+
+  /** Performs the asynchronous highlight using nested setTimeout calls */
+  private highlightThreadMessageAsync(message: any): void {
+    setTimeout(() &#x3D;&gt; {
+      this.selectedThread &#x3D; message;
+      setTimeout(() &#x3D;&gt; {
+        const threadComponent &#x3D; document.querySelector(&#x27;app-thread&#x27;) as any;
+        if (threadComponent?.highlightThreadMessage) {
+          threadComponent.highlightThreadMessage(message.id);
+        }
+      }, 300);
+    }, 50);
+  }
+
+  // ------------------------------------------------------------------------------------
+  // 4) SPLIT METHODS FOR: openThreadFromSearch (~40 lines)
+  // ------------------------------------------------------------------------------------
+
+  /**
+   * Opens a thread from a search result, deactivating private/chat contexts
+   * and setting up the thread environment. On mobile, switches to &#x27;thread&#x27;.
+   *
+   * @param {any} message - The message object found in the search to open as a thread.
+   */
+  async openThreadFromSearch(message: any): Promise&lt;void&gt; {
+    this.resetContextForSearchThread();
+    const threadId &#x3D; this.determineThreadId(message);
+
+    let recipientName &#x3D; message.recipientName || message.senderName;
+    if (!recipientName &amp;&amp; message.recipientId) {
+      recipientName &#x3D; await this.fetchRecipientName(message.recipientId);
+    }
+
+    this.selectedThread &#x3D; {
+      ...message,
+      recipientName: recipientName || &#x27;Unbekannt&#x27;,
+      recipientId: message.recipientId || message.senderId,
+      threadId: threadId,
+    };
+
+    this.isThreadActive &#x3D; true;
+    this.isThreadFromSearch &#x3D; true;
+    this.handleMobileViewForSearchThread();
+  }
+
+  /** Resets the environment before opening a search thread */
+  private resetContextForSearchThread(): void {
+    this.closeThreadChannel();
+    this.isPrivateChat &#x3D; false;
+    this.showWelcomeContainer &#x3D; false;
+    this.selectedChannel &#x3D; null;
+    this.selectedMember &#x3D; null;
+  }
+
+  /** Determines the correct thread ID from the message */
+  private determineThreadId(message: any): string {
+    return message.threadId || message.parentId || message.id;
+  }
+
+  /** Adjusts the mobile view and header for a search-based thread */
+  private handleMobileViewForSearchThread(): void {
+    if (window.innerWidth &lt; 1278) {
+      this.currentMobileView &#x3D; &#x27;thread&#x27;;
+      this.showDesktopHeader &#x3D; true;
+    }
+  }
+
+  // ------------------------------------------------------------------------------------
+  // 5) SPLIT METHODS FOR: closeThread (~25 lines)
+  // ------------------------------------------------------------------------------------
+
+  /**
+   * Closes the currently active thread, resetting relevant states
+   * to either private chat, channel chat, or the welcome container.
+   */
+  closeThread(): void {
+    this.resetThreadStates();
+
+    if (this.isPrivateChat &amp;&amp; this.selectedMember) {
+    } else if (this.selectedChannel) {
+    } else {
+      this.showWelcomeContainer &#x3D; true;
+    }
+    this.determineNextViewAfterThreadClose();
+  }
+
+  /** Clears out thread-related states */
+  private resetThreadStates(): void {
+    this.selectedThread &#x3D; null;
+    this.isThreadActive &#x3D; false;
+    this.isThreadFromSearch &#x3D; false;
+    this.selectedThreadChannel &#x3D; null;
+  }
+
+  /** Checks whether to show private, team, or container view after closing a thread */
+  private determineNextViewAfterThreadClose(): void {
+    if (this.isPrivateChat &amp;&amp; this.selectedMember) {
+      this.currentMobileView &#x3D; &#x27;private&#x27;;
+    } else if (this.selectedChannel) {
+      this.currentMobileView &#x3D; &#x27;team&#x27;;
+    } else {
+      this.currentMobileView &#x3D; &#x27;container&#x27;;
+      this.showWelcomeContainer &#x3D; !this.selectedChannel &amp;&amp; !this.selectedMember;
+    }
+  }
+
+  /**
+   * Opens a thread alongside a private message container,
+   * so both the private chat and the thread UI are shown.
+   *
+   * @param {any} message - The message object to be opened in a thread.
+   */
+  openThreadFromPrivateMessage(message: any): void {
+    this.selectedThread &#x3D; message;
+    this.isThreadActive &#x3D; true;
+    this.isThreadFromSearch &#x3D; false;
+  }
+
+  /**
+   * Called when a thread is opened from a search in a scenario
+   * where neither a member nor a channel is preselected. Sets up
+   * the private chat environment with the message&#x27;s sender data
+   * and loads messages.
+   *
+   * @param {any} result - The search result containing the thread info.
+   */
+  handleThreadFromSearch(result: any): void {
+    this.activatePrivateChat();
+    this.updateSelectedMemberFromSearch(result);
+    this.updateSelectedThread(result);
+    this.fetchMessagesAndScroll(result);
+  }
+
+  /** Activates the private chat mode. */
+  private activatePrivateChat(): void {
+    this.isPrivateChat &#x3D; true;
+  }
+
+  /** Updates the selectedMember object with data from the search result. */
+  private updateSelectedMemberFromSearch(result: any): void {
+    this.selectedMember &#x3D; {
+      id: result.senderId || this.selectedMember?.id || &#x27;&#x27;,
+      name: result.senderName || this.selectedMember?.name || &#x27;Ubekannt&#x27;,
+      avatar:
+        result.senderAvatar ||
+        this.selectedMember?.avatar ||
+        &#x27;assets/img/avatar.png&#x27;,
+      conversationId:
+        result.conversationId || this.selectedMember?.conversationId,
+    };
+  }
+
+  /** Updates the selectedThread with the provided result. */
+  private updateSelectedThread(result: any): void {
+    this.selectedThread &#x3D; {
+      ...result,
+      recipientId: result.senderId,
+      recipientName: result.senderName,
+    };
+  }
+
+  /** Loads messages from the messageService, then scrolls to the new thread. */
+  private fetchMessagesAndScroll(result: any): void {
+    this.messageService
+      .getMessagesOnce(&#x27;private&#x27;, result.conversationId)
+      .then(() &#x3D;&gt; {
+        setTimeout(() &#x3D;&gt; {
+          this.scrollToMessage(result.id);
+        }, 500);
+      });
+  }
+
+  /**
+   * Fetches the recipient&#x27;s name from Firestore if it&#x27;s not already
+   * cached locally. Returns &#x27;Unbekannt&#x27; if the user is not found.
+   *
+   * @param {string} recipientId - The unique ID of the recipient to look up.
+   * @returns {Promise&lt;string&gt;} A promise that resolves to the recipient&#x27;s name
+   *                            or &quot;Unbekannt&quot; if not found.
+   */
+  private async fetchRecipientName(recipientId: string): Promise&lt;string&gt; {
+    if (!recipientId) return &#x27;Unbekannt&#x27;;
+
+    if (this.recipientCache.has(recipientId)) {
+      return this.recipientCache.get(recipientId)!;
+    }
+
+    try {
+      const user &#x3D; await this.userService.getUserById(recipientId);
+      const recipientName &#x3D; user?.name || &#x27;Unbekannt&#x27;;
+
+      this.recipientCache.set(recipientId, recipientName);
+      return recipientName;
+    } catch (error) {
+      return &#x27;Unbekannt&#x27;;
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'ThreadChannelParentDoc.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

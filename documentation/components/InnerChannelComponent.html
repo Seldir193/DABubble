@@ -1,0 +1,1920 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  InnerChannelComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/inner-channel/inner-channel.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+                <code>OnDestroy</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-inner-channel</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>MatDialogModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./inner-channel.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./inner-channel.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#channelNameExists" >channelNameExists</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#dialog" >dialog</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#entwicklerteamComponent" >entwicklerteamComponent</a>
+                            </li>
+                            <li>
+                                <a href="#entwicklerTeams" >entwicklerTeams</a>
+                            </li>
+                            <li>
+                                <a href="#isChannelsVisible" >isChannelsVisible</a>
+                            </li>
+                            <li>
+                                <a href="#selectedChannel" >selectedChannel</a>
+                            </li>
+                            <li>
+                                <a href="#showWelcomeContainer" >showWelcomeContainer</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#unsubscribeFn" >unsubscribeFn</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#buildNewChannel" >buildNewChannel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createChannel" >createChannel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#doesChannelNameExist" >doesChannelNameExist</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#ensureCurrentUserIncluded" >ensureCurrentUserIncluded</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#leaveChannel" >leaveChannel</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnDestroy" >ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#openDialog" >openDialog</a>
+                            </li>
+                            <li>
+                                <a href="#selectChannel" >selectChannel</a>
+                            </li>
+                            <li>
+                                <a href="#toggleChannels" >toggleChannels</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#channelSelected" >channelSelected</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dialog: MatDialog, channelService: <a href="../injectables/ChannelService.html" target="_self">ChannelService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, cdr: ChangeDetectorRef)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:62</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor injecting services for dialogs, channel data, user data,
+and change detection if needed.</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dialog</td>
+                                                  
+                                                        <td>
+                                                                    <code>MatDialog</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>channelService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChannelService.html" target="_self" >ChannelService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>cdr</td>
+                                                  
+                                                        <td>
+                                                                    <code>ChangeDetectorRef</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="channelSelected"></a>
+                        <b>channelSelected</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:39</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Event emitted when a new channel is selected, passing that channel data.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildNewChannel"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>buildNewChannel</b></span>
+                        <a href="#buildNewChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>buildNewChannel(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, members: any[], creatorName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="142"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:142</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Builds a new channel object with a random ID.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>members</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>creatorName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createChannel"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createChannel</b></span>
+                        <a href="#createChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createChannel(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, members: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="100"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:100</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Creates a new channel with the given name and members.
+Checks for duplicates, ensures current user is included,
+and saves the channel in Firestore.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>members</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="doesChannelNameExist"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>doesChannelNameExist</b></span>
+                        <a href="#doesChannelNameExist"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>doesChannelNameExist(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:118</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if a channel name already exists in the current array.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ensureCurrentUserIncluded"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>ensureCurrentUserIncluded</b></span>
+                        <a href="#ensureCurrentUserIncluded"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>ensureCurrentUserIncluded(members: any[], userData: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:127</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Ensures the current user is in the members array; returns the updated array.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>members</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userData</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>any[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="leaveChannel"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>leaveChannel</b></span>
+                        <a href="#leaveChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>leaveChannel(channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="187"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:187</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Allows the user to leave a channel, removing them from Firestore,
+updating local state, and emitting null as the current channel.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>channelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <span ><b>ngOnDestroy</b></span>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="91"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:91</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="80"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:80</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Loads channels on init, then subscribes to currentChannels
+to filter those that include the current user.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openDialog"></a>
+                    <span class="name">
+                        <span ><b>openDialog</b></span>
+                        <a href="#openDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>openDialog()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="168"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:168</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Opens a dialog for channel creation (ChannelDialogComponent),
+then calls createChannel upon successful dialog close.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectChannel"></a>
+                    <span class="name">
+                        <span ><b>selectChannel</b></span>
+                        <a href="#selectChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>selectChannel(channel: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:159</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Selects the specified channel, informs the ChannelService,
+and emits an event to notify other components.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>channel</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleChannels"></a>
+                    <span class="name">
+                        <span ><b>toggleChannels</b></span>
+                        <a href="#toggleChannels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleChannels()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="179"
+                                    class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:179</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Toggles visibility of the channel list UI.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="channelNameExists"></a>
+                    <span class="name">
+                        <span ><b>channelNameExists</b></span>
+                        <a href="#channelNameExists"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:54</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Flag indicating if a channel name already exists.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dialog"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>dialog</b></span>
+                        <a href="#dialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>MatDialog</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:69</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entwicklerteamComponent"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>entwicklerteamComponent</b></span>
+                        <a href="#entwicklerteamComponent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../components/EntwicklerteamComponent.html" target="_self" >EntwicklerteamComponent</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(EntwicklerteamComponent)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:34</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A ViewChild reference to the EntwicklerteamComponent for interacting with its instance.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entwicklerTeams"></a>
+                    <span class="name">
+                        <span ><b>entwicklerTeams</b></span>
+                        <a href="#entwicklerTeams"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:45</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Array of channels (teams) that the current user is a member of.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isChannelsVisible"></a>
+                    <span class="name">
+                        <span ><b>isChannelsVisible</b></span>
+                        <a href="#isChannelsVisible"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:42</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the channel list is visible or collapsed.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedChannel"></a>
+                    <span class="name">
+                        <span ><b>selectedChannel</b></span>
+                        <a href="#selectedChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:60</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stores the currently selected channel.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showWelcomeContainer"></a>
+                    <span class="name">
+                        <span ><b>showWelcomeContainer</b></span>
+                        <a href="#showWelcomeContainer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:57</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the welcome screen is shown if no channel is selected.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="unsubscribeFn"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>unsubscribeFn</b></span>
+                        <a href="#unsubscribeFn"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/inner-channel/inner-channel.component.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  ViewChild,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  OnInit,
+  OnDestroy,
+} from &#x27;@angular/core&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { MatDialogModule, MatDialog } from &#x27;@angular/material/dialog&#x27;;
+import { ChannelDialogComponent } from &#x27;../channel-dialog/channel-dialog.component&#x27;;
+import { EntwicklerteamComponent } from &#x27;../entwicklerteam/entwicklerteam.component&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+
+@Component({
+  selector: &#x27;app-inner-channel&#x27;,
+  standalone: true,
+  imports: [CommonModule, MatDialogModule],
+  templateUrl: &#x27;./inner-channel.component.html&#x27;,
+  styleUrls: [&#x27;./inner-channel.component.scss&#x27;],
+})
+export class InnerChannelComponent implements OnInit, OnDestroy {
+  /**
+   * A ViewChild reference to the EntwicklerteamComponent for interacting with its instance.
+   */
+  @ViewChild(EntwicklerteamComponent)
+  entwicklerteamComponent!: EntwicklerteamComponent;
+
+  /**
+   * Event emitted when a new channel is selected, passing that channel data.
+   */
+  @Output() channelSelected &#x3D; new EventEmitter&lt;any&gt;();
+
+  /** Whether the channel list is visible or collapsed. */
+  isChannelsVisible &#x3D; true;
+
+  /** Array of channels (teams) that the current user is a member of. */
+  entwicklerTeams: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }[] &#x3D; [];
+
+  /** Flag indicating if a channel name already exists. */
+  channelNameExists &#x3D; false;
+
+  /** Whether the welcome screen is shown if no channel is selected. */
+  showWelcomeContainer &#x3D; false;
+
+  /** Stores the currently selected channel. */
+  selectedChannel: any &#x3D; null;
+
+  private unsubscribeFn &#x3D; () &#x3D;&gt; {};
+
+  /**
+   * Constructor injecting services for dialogs, channel data, user data,
+   * and change detection if needed.
+   */
+  constructor(
+    public dialog: MatDialog,
+    private channelService: ChannelService,
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  /**
+   * Loads channels on init, then subscribes to currentChannels
+   * to filter those that include the current user.
+   */
+
+  ngOnInit() {
+    this.unsubscribeFn &#x3D; this.channelService.listenChannelsLive(
+      (allChannels) &#x3D;&gt; {
+        const userId &#x3D; this.userService.getCurrentUserId();
+        this.entwicklerTeams &#x3D; allChannels.filter((ch) &#x3D;&gt;
+          ch.membersUid.includes(userId)
+        );
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeFn();
+  }
+
+  /**
+   * Creates a new channel with the given name and members.
+   * Checks for duplicates, ensures current user is included,
+   * and saves the channel in Firestore.
+   */
+  async createChannel(name: string, members: any[]): Promise&lt;void&gt; {
+    const userData &#x3D; await this.userService.getCurrentUserData();
+    if (!userData) return;
+    if (this.doesChannelNameExist(name)) {
+      this.channelNameExists &#x3D; true;
+      return;
+    }
+    this.channelNameExists &#x3D; false;
+    members &#x3D; this.ensureCurrentUserIncluded(members, userData);
+    const newChannel &#x3D; this.buildNewChannel(name, members, userData.name);
+    this.entwicklerTeams.push(newChannel);
+    await this.channelService.addChannel(newChannel);
+    this.channelService.changeChannel(newChannel);
+  }
+
+  /**
+   * Checks if a channel name already exists in the current array.
+   */
+  private doesChannelNameExist(name: string): boolean {
+    return this.entwicklerTeams.some(
+      (ch) &#x3D;&gt; ch.name.toLowerCase() &#x3D;&#x3D;&#x3D; name.toLowerCase()
+    );
+  }
+
+  /**
+   * Ensures the current user is in the members array; returns the updated array.
+   */
+  private ensureCurrentUserIncluded(
+    members: any[],
+    userData: { uid: string; name?: string }
+  ): any[] {
+    const { uid, name &#x3D; &#x27;Unbekannt&#x27; } &#x3D; userData;
+    const isAlreadyIncluded &#x3D; members.some((m: any) &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; uid);
+    if (!isAlreadyIncluded) {
+      members.push({ uid, name });
+    }
+    return members;
+  }
+
+  /**
+   * Builds a new channel object with a random ID.
+   */
+  private buildNewChannel(
+    name: string,
+    members: any[],
+    creatorName: string
+  ): any {
+    return {
+      id: Math.random().toString(36).substring(2, 15),
+      name,
+      members,
+      createdBy: creatorName || &#x27;Unbekannt&#x27;,
+    };
+  }
+
+  /**
+   * Selects the specified channel, informs the ChannelService,
+   * and emits an event to notify other components.
+   */
+  selectChannel(channel: any): void {
+    this.channelService.changeChannel(channel);
+    this.channelSelected.emit(channel);
+  }
+
+  /**
+   * Opens a dialog for channel creation (ChannelDialogComponent),
+   * then calls createChannel upon successful dialog close.
+   */
+  openDialog(): void {
+    const dialogRef &#x3D; this.dialog.open(ChannelDialogComponent);
+    dialogRef.afterClosed().subscribe((result) &#x3D;&gt; {
+      if (result)
+        this.createChannel(result.channelName, result.selectedMembers);
+    });
+  }
+
+  /**
+   * Toggles visibility of the channel list UI.
+   */
+  toggleChannels(): void {
+    this.isChannelsVisible &#x3D; !this.isChannelsVisible;
+  }
+
+  /**
+   * Allows the user to leave a channel, removing them from Firestore,
+   * updating local state, and emitting null as the current channel.
+   */
+  async leaveChannel(channelId: string): Promise&lt;void&gt; {
+    const userId &#x3D; this.userService.getCurrentUserId();
+    if (!userId) return;
+    try {
+      await this.channelService.leaveChannel(channelId, userId);
+      this.entwicklerTeams &#x3D; this.entwicklerTeams.filter(
+        (ch) &#x3D;&gt; ch.id !&#x3D;&#x3D; channelId
+      );
+      this.channelSelected.emit(null);
+    } catch (_error) {}
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;selection&quot;&gt;
+  &lt;div class&#x3D;&quot;channel-box&quot;&gt;
+    &lt;div class&#x3D;&quot;hover-container&quot; (click)&#x3D;&quot;toggleChannels()&quot;&gt;
+      &lt;img
+        class&#x3D;&quot;channel-left&quot;
+        [ngClass]&#x3D;&quot;isChannelsVisible ? &#x27;rotate-up&#x27; : &#x27;rotate-down&#x27;&quot;
+        src&#x3D;&quot;assets/img/channel-left.png&quot;
+        alt&#x3D;&quot;Channel&quot;
+      /&gt;
+
+      &lt;div class&#x3D;&quot;work-box&quot;&gt;
+        &lt;img
+          class&#x3D;&quot;edit-workspace&quot;
+          src&#x3D;&quot;assets/img/workspaces.png&quot;
+          alt&#x3D;&quot;Workspace&quot;
+        /&gt;
+
+        &lt;h1&gt;Channels&lt;/h1&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;edit-channel&quot;&gt;
+      &lt;img src&#x3D;&quot;assets/img/channel-add.png&quot; alt&#x3D;&quot;Add&quot; (click)&#x3D;&quot;openDialog()&quot; /&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class&#x3D;&quot;channel-distanz&quot; *ngIf&#x3D;&quot;isChannelsVisible&quot;&gt;
+    &lt;div class&#x3D;&quot;channel-detail-distanz&quot; *ngIf&#x3D;&quot;entwicklerTeams.length &gt; 0&quot;&gt;
+      &lt;div
+        *ngFor&#x3D;&quot;let team of entwicklerTeams; let i &#x3D; index&quot;
+        [ngClass]&#x3D;&quot;{ &#x27;first-channel&#x27;: i &#x3D;&#x3D;&#x3D; 0, &#x27;entwickler-box&#x27;: true }&quot;
+        (click)&#x3D;&quot;selectChannel(team)&quot;
+      &gt;
+        &lt;img src&#x3D;&quot;assets/img/tag-black.png&quot; /&gt;
+        &lt;p&gt;{{ team.name }}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class&#x3D;&quot;add-channel&quot; (click)&#x3D;&quot;openDialog()&quot;&gt;
+      &lt;img src&#x3D;&quot;assets/img/plus.png&quot; alt&#x3D;&quot;Add&quot; /&gt;
+      &lt;p&gt;Channel hinzufügen&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./inner-channel.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &quot;./../../styles.scss&quot;;
+
+.selection {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+
+  .channel-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+
+    h1 {
+      margin-left: 10px;
+    }
+
+    .hover-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      &amp;:hover {
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+            saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        }
+
+        h1 {
+          color: $hoverColor;
+        }
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        object-fit: cover;
+        transition: filter 0.3s ease, transform 0.3s ease;
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        transition: color 0.3s ease, transform 0.3s ease;
+        margin: 0;
+      }
+    }
+
+    .work-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .edit-channel {
+      width: 40px;
+      height: 40px;
+      margin-left: auto;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &amp;:hover {
+        background-color: $lightblue;
+
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+            saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        }
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        object-fit: cover;
+        transition: filter 0.3s ease;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .entwickler-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0 0 40px;
+    border-radius: 100px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    height: 33px;
+    max-width: 206px;
+    cursor: pointer;
+
+    &amp;:hover {
+      background-color: $lightblue;
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+      cursor: pointer;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    &amp;.selected {
+      background-color: $lightblue; 
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+
+      p {
+        color: $hoverColor;
+      }
+    }
+  }
+
+  .add-channel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0 0 40px;
+    cursor: pointer;
+    font-size: 18px;
+
+    p {
+      margin: 0;
+    }
+
+    &amp;:hover {
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        scale: (1.1);
+      }
+
+      p {
+        color: $hoverColor;
+      }
+    }
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .entwickler-box,
+  .add-channel {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+    max-height: 500px; 
+    opacity: 1;
+  }
+
+  .entwickler-box.ng-leave,
+  .add-channel.ng-leave {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .entwickler-box.ng-enter,
+  .add-channel.ng-enter {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  .channel-left {
+    transition: transform 0.3s ease; 
+
+    &amp;.rotate-down {
+      transform: rotate(180deg); 
+    }
+  }
+
+  .channel-distanz {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .channel-detail-distanz {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+
+  @media (max-width: 1200px) {
+    .channel-box,
+    .hover-container,
+    h1 {
+      font-size: 20px !important;
+    }
+
+    .entwickler-box,
+    p {
+      font-size: 17px !important;
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="selection">  <div class="channel-box">    <div class="hover-container" (click)="toggleChannels()">      <img        class="channel-left"        [ngClass]="isChannelsVisible ? \'rotate-up\' : \'rotate-down\'"        src="assets/img/channel-left.png"        alt="Channel"      />      <div class="work-box">        <img          class="edit-workspace"          src="assets/img/workspaces.png"          alt="Workspace"        />        <h1>Channels</h1>      </div>    </div>    <div class="edit-channel">      <img src="assets/img/channel-add.png" alt="Add" (click)="openDialog()" />    </div>  </div>  <div class="channel-distanz" *ngIf="isChannelsVisible">    <div class="channel-detail-distanz" *ngIf="entwicklerTeams.length > 0">      <div        *ngFor="let team of entwicklerTeams; let i = index"        [ngClass]="{ \'first-channel\': i === 0, \'entwickler-box\': true }"        (click)="selectChannel(team)"      >        <img src="assets/img/tag-black.png" />        <p>{{ team.name }}</p>      </div>    </div>    <div class="add-channel" (click)="openDialog()">      <img src="assets/img/plus.png" alt="Add" />      <p>Channel hinzufügen</p>    </div>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'InnerChannelComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'InnerChannelComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,3029 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  EditChannelDialogComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/edit-channel-dialog/edit-channel-dialog.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Dialog component that allows editing channel details (name, description, members).</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-edit-channel-dialog</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>FormsModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./edit-channel-dialog.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./edit-channel-dialog.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#channelName" >channelName</a>
+                            </li>
+                            <li>
+                                <a href="#channelNameError" >channelNameError</a>
+                            </li>
+                            <li>
+                                <a href="#createdBy" >createdBy</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Public</span>
+                                <a href="#data" >data</a>
+                            </li>
+                            <li>
+                                <a href="#description" >description</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#dialogRef" >dialogRef</a>
+                            </li>
+                            <li>
+                                <a href="#editedChannelName" >editedChannelName</a>
+                            </li>
+                            <li>
+                                <a href="#editedDescription" >editedDescription</a>
+                            </li>
+                            <li>
+                                <a href="#isDesktop" >isDesktop</a>
+                            </li>
+                            <li>
+                                <a href="#isEditingDescription" >isEditingDescription</a>
+                            </li>
+                            <li>
+                                <a href="#isEditingName" >isEditingName</a>
+                            </li>
+                            <li>
+                                <a href="#members" >members</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#checkIfDesktop" >checkIfDesktop</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchAndFilterUsers" >fetchAndFilterUsers</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#fillCreatorIfMissing" >fillCreatorIfMissing</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#handleSheetResult" >handleSheetResult</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onCancel" >onCancel</a>
+                            </li>
+                            <li>
+                                <a href="#onChannelNameInput" >onChannelNameInput</a>
+                            </li>
+                            <li>
+                                <a href="#onLeaveChannel" >onLeaveChannel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#onResize" >onResize</a>
+                            </li>
+                            <li>
+                                <a href="#onSave" >onSave</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#openAddMembersMobile" >openAddMembersMobile</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#openMembersSheet" >openMembersSheet</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#saveChannelName" >saveChannelName</a>
+                            </li>
+                            <li>
+                                <a href="#saveDescription" >saveDescription</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#subscribeToChannelUpdates" >subscribeToChannelUpdates</a>
+                            </li>
+                            <li>
+                                <a href="#toggleEditingDescription" >toggleEditingDescription</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toggleEditingName" >toggleEditingName</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateEditedChannelName" >validateEditedChannelName</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#channelLeft" >channelLeft</a>
+                            </li>
+                            <li>
+                                <a href="#openAddMembersOverlay" >openAddMembersOverlay</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>HostListeners</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#window:resize" >window:resize</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dialogRef: MatDialogRef<EditChannelDialogComponent>, data: literal type, channelService: <a href="../injectables/ChannelService.html" target="_self">ChannelService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, dialog: MatDialog, bottomSheet: MatBottomSheet)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:87</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Creates the dialog for editing channel data, injecting related services and bottom sheets.</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dialogRef</td>
+                                                  
+                                                        <td>
+                                                                    <code>MatDialogRef&lt;EditChannelDialogComponent&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Reference to this dialog.</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>data</td>
+                                                  
+                                                        <td>
+                                                                    <code>literal type</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Channel data object containing ID, name, members, description, and creator info.</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>channelService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChannelService.html" target="_self" >ChannelService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Service handling channel data in Firestore.</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Service handling user data in Firestore.</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>dialog</td>
+                                                  
+                                                        <td>
+                                                                    <code>MatDialog</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Service to open additional dialogs (e.g., for adding members).</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>bottomSheet</td>
+                                                  
+                                                        <td>
+                                                                    <code>MatBottomSheet</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Service to open mobile-friendly bottom sheets.</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="channelLeft"></a>
+                        <b>channelLeft</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:35</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Emitted when the user leaves the channel (channel ID).</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="openAddMembersOverlay"></a>
+                        <b>openAddMembersOverlay</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:87</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Emitted if a members overlay is opened externally (optional usage).</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-methods">
+    <h3>HostListeners</h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="window:resize"></a>
+                    <span class="name">
+                        <span ><b>window:resize</b></span>
+                        <a href="#window:resize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>window:resize()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:166</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>HostListener for window resize: re-checks if the screen is in desktop mode.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkIfDesktop"></a>
+                    <span class="name">
+                        <span ><b>checkIfDesktop</b></span>
+                        <a href="#checkIfDesktop"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>checkIfDesktop()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="158"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:158</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if window width is &gt;= 1278, setting isDesktop accordingly.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchAndFilterUsers"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchAndFilterUsers</b></span>
+                        <a href="#fetchAndFilterUsers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchAndFilterUsers()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="323"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:323</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches all users from Firestore and filters out those already in this.members.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;[] | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The filtered user array or null if fetching fails.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fillCreatorIfMissing"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>fillCreatorIfMissing</b></span>
+                        <a href="#fillCreatorIfMissing"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fillCreatorIfMissing()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="147"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:147</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>If the channel has no &#39;createdBy&#39; name, fills it with the current user&#39;s name.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleSheetResult"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>handleSheetResult</b></span>
+                        <a href="#handleSheetResult"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>handleSheetResult(result: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="353"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:353</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Merges newly selected members into the existing list and updates Firestore.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>result</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The array of newly added members (if any).</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="122"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:122</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Lifecycle hook: initializes desktop check and subscribes to channel updates.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onCancel"></a>
+                    <span class="name">
+                        <span ><b>onCancel</b></span>
+                        <a href="#onCancel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onCancel()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="286"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:286</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Closes the dialog, discarding any unsaved edits.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onChannelNameInput"></a>
+                    <span class="name">
+                        <span ><b>onChannelNameInput</b></span>
+                        <a href="#onChannelNameInput"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onChannelNameInput()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="264"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:264</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Handles user input in the channel name field.
+If the trimmed input is empty, sets an error message; otherwise clears it.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onLeaveChannel"></a>
+                    <span class="name">
+                        <span ><b>onLeaveChannel</b></span>
+                        <a href="#onLeaveChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onLeaveChannel()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="294"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:294</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Lets the user leave the channel, removing them from its member list in Firestore.
+Closes the dialog afterward and emits channelLeft.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onResize"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>onResize</b></span>
+                        <a href="#onResize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onResize()</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@HostListener(&#x27;window:resize&#x27;)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:166</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>HostListener for window resize: re-checks if the screen is in desktop mode.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSave"></a>
+                    <span class="name">
+                        <span ><b>onSave</b></span>
+                        <a href="#onSave"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSave()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:173</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Saves channel edits (name/description), updates Firestore, then closes this dialog.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openAddMembersMobile"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>openAddMembersMobile</b></span>
+                        <a href="#openAddMembersMobile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openAddMembersMobile()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="311"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:311</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Opens a bottom sheet for adding members on mobile. Once dismissed,
+merges the newly selected members and updates Firestore.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openMembersSheet"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>openMembersSheet</b></span>
+                        <a href="#openMembersSheet"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openMembersSheet(filteredUsers: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="334"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:334</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Opens the mobile bottom sheet with the filtered user list, then handles the result.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filteredUsers</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The array of users not in this.members.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveChannelName"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>saveChannelName</b></span>
+                        <a href="#saveChannelName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveChannelName()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="210"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:210</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Saves the name if valid. @returns {Promise<boolean>}</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveDescription"></a>
+                    <span class="name">
+                        <span ><b>saveDescription</b></span>
+                        <a href="#saveDescription"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>saveDescription()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="227"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:227</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Persists the new channel description if one was entered, then ends editing mode.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="subscribeToChannelUpdates"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>subscribeToChannelUpdates</b></span>
+                        <a href="#subscribeToChannelUpdates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>subscribeToChannelUpdates()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="131"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Subscribes to channel updates from the ChannelService and
+refreshes local properties if the current channel changes.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleEditingDescription"></a>
+                    <span class="name">
+                        <span ><b>toggleEditingDescription</b></span>
+                        <a href="#toggleEditingDescription"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleEditingDescription()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="276"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:276</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Toggles editing for the channel description. If turning off, triggers saveDescription().</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleEditingName"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toggleEditingName</b></span>
+                        <a href="#toggleEditingName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toggleEditingName()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="242"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:242</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Toggles editing for the channel name. If turning off, triggers saveChannelName().</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateEditedChannelName"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateEditedChannelName</b></span>
+                        <a href="#validateEditedChannelName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateEditedChannelName()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="193"
+                                    class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:193</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validates the edited channel name. @private @returns {Promise<boolean>}</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="channelName"></a>
+                    <span class="name">
+                        <span ><b>channelName</b></span>
+                        <a href="#channelName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:40</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Channel name to be displayed/edited.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="channelNameError"></a>
+                    <span class="name">
+                        <span ><b>channelNameError</b></span>
+                        <a href="#channelNameError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:82</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createdBy"></a>
+                    <span class="name">
+                        <span ><b>createdBy</b></span>
+                        <a href="#createdBy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:50</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Indicates the channel creator&#39;s display name.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="data"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Public</span>
+                        <span ><b>data</b></span>
+                        <a href="#data"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Inject(MAT_DIALOG_DATA)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:101</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description">Channel data object containing ID, name, members, description, and creator info.</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="description"></a>
+                    <span class="name">
+                        <span ><b>description</b></span>
+                        <a href="#description"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:45</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Channel description to be displayed/edited.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dialogRef"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>dialogRef</b></span>
+                        <a href="#dialogRef"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>MatDialogRef&lt;EditChannelDialogComponent&gt;</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:99</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description">Reference to this dialog.</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="editedChannelName"></a>
+                    <span class="name">
+                        <span ><b>editedChannelName</b></span>
+                        <a href="#editedChannelName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:70</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temporary name while editing the channel name.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="editedDescription"></a>
+                    <span class="name">
+                        <span ><b>editedDescription</b></span>
+                        <a href="#editedDescription"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:75</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Temporary value while editing the channel description.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isDesktop"></a>
+                    <span class="name">
+                        <span ><b>isDesktop</b></span>
+                        <a href="#isDesktop"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:80</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>True if the screen is considered desktop-sized (&gt;= 1278px).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isEditingDescription"></a>
+                    <span class="name">
+                        <span ><b>isEditingDescription</b></span>
+                        <a href="#isEditingDescription"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:65</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the channel description is being edited.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isEditingName"></a>
+                    <span class="name">
+                        <span ><b>isEditingName</b></span>
+                        <a href="#isEditingName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:60</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the channel name is being edited.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="members"></a>
+                    <span class="name">
+                        <span ><b>members</b></span>
+                        <a href="#members"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>any[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/edit-channel-dialog/edit-channel-dialog.component.ts:55</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>List of members currently in the channel.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Inject,
+  OnInit,
+  EventEmitter,
+  Output,
+  HostListener,
+} from &#x27;@angular/core&#x27;;
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog,
+} from &#x27;@angular/material/dialog&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+import { MatBottomSheet } from &#x27;@angular/material/bottom-sheet&#x27;;
+import { AddMembersDialogMobileComponent } from &#x27;../add-members-dialog-mobile/add-members-dialog-mobile.component&#x27;;
+
+/**
+ * Dialog component that allows editing channel details (name, description, members).
+ */
+@Component({
+  selector: &#x27;app-edit-channel-dialog&#x27;,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: &#x27;./edit-channel-dialog.component.html&#x27;,
+  styleUrls: [&#x27;./edit-channel-dialog.component.scss&#x27;],
+})
+export class EditChannelDialogComponent implements OnInit {
+  /**
+   * Emitted when the user leaves the channel (channel ID).
+   */
+  @Output() channelLeft &#x3D; new EventEmitter&lt;string&gt;();
+
+  /**
+   * Channel name to be displayed/edited.
+   */
+  channelName: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Channel description to be displayed/edited.
+   */
+  description: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Indicates the channel creator&#x27;s display name.
+   */
+  createdBy: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * List of members currently in the channel.
+   */
+  members: any[] &#x3D; [];
+
+  /**
+   * Whether the channel name is being edited.
+   */
+  isEditingName: boolean &#x3D; false;
+
+  /**
+   * Whether the channel description is being edited.
+   */
+  isEditingDescription: boolean &#x3D; false;
+
+  /**
+   * Temporary name while editing the channel name.
+   */
+  editedChannelName: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Temporary value while editing the channel description.
+   */
+  editedDescription: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * True if the screen is considered desktop-sized (&gt;&#x3D; 1278px).
+   */
+  isDesktop &#x3D; false;
+
+  channelNameError: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Emitted if a members overlay is opened externally (optional usage).
+   */
+  @Output() openAddMembersOverlay &#x3D; new EventEmitter&lt;void&gt;();
+
+  /**
+   * Creates the dialog for editing channel data, injecting related services and bottom sheets.
+   * @param dialogRef Reference to this dialog.
+   * @param data Channel data object containing ID, name, members, description, and creator info.
+   * @param channelService Service handling channel data in Firestore.
+   * @param userService Service handling user data in Firestore.
+   * @param dialog Service to open additional dialogs (e.g., for adding members).
+   * @param bottomSheet Service to open mobile-friendly bottom sheets.
+   */
+  constructor(
+    public dialogRef: MatDialogRef&lt;EditChannelDialogComponent&gt;,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      id: string;
+      name: string;
+      members: any[];
+      description: string;
+      createdBy: string;
+    },
+    private channelService: ChannelService,
+    private userService: UserService,
+    private dialog: MatDialog,
+    private bottomSheet: MatBottomSheet
+  ) {
+    this.channelName &#x3D; data.name;
+    this.members &#x3D; data.members;
+    this.description &#x3D; data.description;
+    this.createdBy &#x3D; data.createdBy || &#x27;Unknown&#x27;;
+  }
+
+  /**
+   * Lifecycle hook: initializes desktop check and subscribes to channel updates.
+   */
+  ngOnInit(): void {
+    this.checkIfDesktop();
+    this.subscribeToChannelUpdates();
+  }
+
+  /**
+   * Subscribes to channel updates from the ChannelService and
+   * refreshes local properties if the current channel changes.
+   */
+  private subscribeToChannelUpdates(): void {
+    this.channelService.currentChannels.subscribe((channels) &#x3D;&gt; {
+      const current &#x3D; channels.find((c) &#x3D;&gt; c.name &#x3D;&#x3D;&#x3D; this.channelName);
+      if (current) {
+        this.channelName &#x3D; current.name;
+        this.description &#x3D; current.description || &#x27;&#x27;;
+        this.members &#x3D; current.members || [];
+        this.createdBy &#x3D; current.createdBy || &#x27;&#x27;;
+        this.fillCreatorIfMissing();
+      }
+    });
+  }
+
+  /**
+   * If the channel has no &#x27;createdBy&#x27; name, fills it with the current user&#x27;s name.
+   */
+  private fillCreatorIfMissing(): void {
+    this.userService.getCurrentUserData().then((userData) &#x3D;&gt; {
+      if (userData &amp;&amp; userData.name &amp;&amp; !this.createdBy) {
+        this.createdBy &#x3D; userData.name;
+      }
+    });
+  }
+
+  /**
+   * Checks if window width is &gt;&#x3D; 1278, setting isDesktop accordingly.
+   */
+  checkIfDesktop(): void {
+    this.isDesktop &#x3D; window.innerWidth &gt;&#x3D; 1278;
+  }
+
+  /**
+   * HostListener for window resize: re-checks if the screen is in desktop mode.
+   */
+  @HostListener(&#x27;window:resize&#x27;)
+  onResize(): void {
+    this.checkIfDesktop();
+  }
+
+  /**
+   * Saves channel edits (name/description), updates Firestore, then closes this dialog.
+   */
+  onSave(): void {
+    const updatedChannel &#x3D; {
+      name: this.editedChannelName.trim()
+        ? this.editedChannelName
+        : this.channelName,
+      members: this.members,
+      description: this.editedDescription.trim()
+        ? this.editedDescription
+        : this.description,
+      createdBy: this.createdBy,
+    };
+    this.channelService.updateChannel(
+      this.data.id,
+      updatedChannel.name,
+      updatedChannel.description
+    );
+    this.dialogRef.close(updatedChannel);
+  }
+
+  /** Validates the edited channel name. @private @returns {Promise&lt;boolean&gt;} */
+  private async validateEditedChannelName(): Promise&lt;boolean&gt; {
+    this.channelNameError &#x3D; &#x27;&#x27;;
+    const nm &#x3D; this.editedChannelName.trim();
+    if (!nm) {
+      this.channelNameError &#x3D; &#x27;Bitte einen Kanalnamen eingeben.&#x27;;
+      return false;
+    }
+    if (
+      nm !&#x3D;&#x3D; this.channelName &amp;&amp;
+      (await this.channelService.channelNameExists(nm))
+    ) {
+      this.channelNameError &#x3D; &#x27;Kanalname existiert schon!&#x27;;
+      return false;
+    }
+    return true;
+  }
+  /** Saves the name if valid. @returns {Promise&lt;boolean&gt;} */
+  async saveChannelName(): Promise&lt;boolean&gt; {
+    if (!(await this.validateEditedChannelName())) return false;
+    const nm &#x3D; this.editedChannelName.trim();
+    if (nm !&#x3D;&#x3D; this.channelName) {
+      await this.channelService.updateChannel(
+        this.data.id,
+        nm,
+        this.description
+      );
+      this.channelName &#x3D; nm;
+    }
+    return true;
+  }
+
+  /**
+   * Persists the new channel description if one was entered, then ends editing mode.
+   */
+  saveDescription(): void {
+    if (this.editedDescription.trim()) {
+      this.channelService.updateChannel(
+        this.data.id,
+        this.channelName,
+        this.editedDescription
+      );
+      this.description &#x3D; this.editedDescription;
+    }
+    this.isEditingDescription &#x3D; false;
+  }
+
+  /**
+   * Toggles editing for the channel name. If turning off, triggers saveChannelName().
+   */
+  async toggleEditingName(): Promise&lt;void&gt; {
+    if (!this.isEditingName) {
+      this.isEditingName &#x3D; true;
+
+      if (!this.editedChannelName.trim()) {
+        this.channelNameError &#x3D; &#x27;Bitte einen Kanalnamen eingeben.&#x27;;
+      } else {
+        this.channelNameError &#x3D; &#x27;&#x27;;
+      }
+      return;
+    }
+    const success &#x3D; await this.saveChannelName();
+    if (!success) {
+      return;
+    }
+    this.isEditingName &#x3D; false;
+  }
+
+  /**
+   * Handles user input in the channel name field.
+   * If the trimmed input is empty, sets an error message; otherwise clears it.
+   */
+  onChannelNameInput(): void {
+    const nameTrim &#x3D; this.editedChannelName.trim();
+    if (!nameTrim) {
+      this.channelNameError &#x3D; &#x27;Bitte einen Kanalnamen eingeben.&#x27;;
+    } else {
+      this.channelNameError &#x3D; &#x27;&#x27;;
+    }
+  }
+
+  /**
+   * Toggles editing for the channel description. If turning off, triggers saveDescription().
+   */
+  toggleEditingDescription(): void {
+    this.isEditingDescription &#x3D; !this.isEditingDescription;
+    if (!this.isEditingDescription) {
+      this.saveDescription();
+    }
+  }
+
+  /**
+   * Closes the dialog, discarding any unsaved edits.
+   */
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  /**
+   * Lets the user leave the channel, removing them from its member list in Firestore.
+   * Closes the dialog afterward and emits channelLeft.
+   */
+  onLeaveChannel(): void {
+    this.userService.getCurrentUserData().then((userData) &#x3D;&gt; {
+      if (userData &amp;&amp; userData.uid) {
+        this.channelService
+          .leaveChannel(this.data.id, userData.uid)
+          .then(() &#x3D;&gt; {
+            this.channelLeft.emit();
+            this.dialogRef.close();
+          });
+      }
+    });
+  }
+
+  /**
+   * Opens a bottom sheet for adding members on mobile. Once dismissed,
+   * merges the newly selected members and updates Firestore.
+   */
+  async openAddMembersMobile(): Promise&lt;void&gt; {
+    try {
+      const filtered &#x3D; await this.fetchAndFilterUsers();
+      if (!this.data || !this.data.id || !filtered) return;
+      this.openMembersSheet(filtered);
+    } catch {}
+  }
+
+  /**
+   * Fetches all users from Firestore and filters out those already in this.members.
+   * @returns The filtered user array or null if fetching fails.
+   */
+  private async fetchAndFilterUsers(): Promise&lt;any[] | null&gt; {
+    const allUsers &#x3D; await this.userService.getAllUsers();
+    return allUsers.filter(
+      (u: any) &#x3D;&gt; !this.members.some((m: any) &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; u.uid)
+    );
+  }
+
+  /**
+   * Opens the mobile bottom sheet with the filtered user list, then handles the result.
+   * @param filteredUsers The array of users not in this.members.
+   */
+  private openMembersSheet(filteredUsers: any[]): void {
+    const bottomSheetData &#x3D; {
+      channelId: this.data.id,
+      members: [...this.members],
+      filteredMembers: filteredUsers,
+    };
+    const sheetRef &#x3D; this.bottomSheet.open(AddMembersDialogMobileComponent, {
+      panelClass: &#x27;my-custom-panel&#x27;,
+      data: bottomSheetData,
+    });
+    sheetRef
+      .afterDismissed()
+      .subscribe((result) &#x3D;&gt; this.handleSheetResult(result));
+  }
+
+  /**
+   * Merges newly selected members into the existing list and updates Firestore.
+   * @param result The array of newly added members (if any).
+   */
+  private handleSheetResult(result: any): void {
+    if (!Array.isArray(result)) return;
+    this.members &#x3D; [
+      ...this.members,
+      ...result.filter(
+        (m: any) &#x3D;&gt; !this.members.some((ex: any) &#x3D;&gt; ex.uid &#x3D;&#x3D;&#x3D; m.uid)
+      ),
+    ];
+    this.channelService.setMembers(this.data.id, this.members);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot;&gt;
+  &lt;div class&#x3D;&quot;close-dialog&quot;&gt;
+    &lt;img src&#x3D;&quot;assets/img/tag-black.png&quot; alt&#x3D;&quot;Tag Icon&quot; /&gt;
+    &lt;h1&gt;{{ channelName }}&lt;/h1&gt;
+    &lt;div class&#x3D;&quot;close-pic-box&quot; (click)&#x3D;&quot;onCancel()&quot;&gt;
+      &lt;img src&#x3D;&quot;assets/img/close.png&quot; alt&#x3D;&quot;Close&quot; /&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div
+    class&#x3D;&quot;channel-box&quot;
+    [ngClass]&#x3D;&quot;{ &#x27;hide-border&#x27;: isEditingName, &#x27;show-border&#x27;: !isEditingName }&quot;
+  &gt;
+    &lt;div class&#x3D;&quot;edit-box&quot;&gt;
+      &lt;div class&#x3D;&quot;box-container&quot;&gt;
+        &lt;div class&#x3D;&quot;header-button-box&quot;&gt;
+          &lt;label for&#x3D;&quot;channelName&quot; [ngClass]&#x3D;&quot;{ &#x27;move-left&#x27;: isEditingName }&quot;
+            &gt;Channel-Name&lt;/label
+          &gt;
+          &lt;div
+            (click)&#x3D;&quot;toggleEditingName()&quot;
+            class&#x3D;&quot;profil-settings-button&quot;
+            *ngIf&#x3D;&quot;isDesktop&quot;
+            [ngClass]&#x3D;&quot;{
+              &#x27;move-right&#x27;: isEditingName,
+              &#x27;move-initial&#x27;: !isEditingName
+            }&quot;
+          &gt;
+            {{ isEditingName ? &quot;Speichern&quot; : &quot;Bearbeiten&quot; }}
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;img-wrapper&quot;&gt;
+            &lt;img
+              [src]&#x3D;&quot;
+                isEditingName
+                  ? &#x27;assets/img/check_edit.png&#x27;
+                  : &#x27;assets/img/edit.png&#x27;
+              &quot;
+              (click)&#x3D;&quot;toggleEditingName()&quot;
+              *ngIf&#x3D;&quot;!isDesktop&quot;
+            /&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class&#x3D;&quot;channel-name-box&quot;&gt;
+          &lt;span class&#x3D;&quot;input-icon&quot;&gt;#&lt;/span&gt;
+          &lt;h1 *ngIf&#x3D;&quot;!isEditingName&quot;&gt;{{ channelName }}&lt;/h1&gt;
+          &lt;input
+            *ngIf&#x3D;&quot;isEditingName&quot;
+            id&#x3D;&quot;channelName&quot;
+            [placeholder]&#x3D;&quot;channelName || &#x27;Channel Name bearbeiten&#x27;&quot;
+            [(ngModel)]&#x3D;&quot;editedChannelName&quot;
+            class&#x3D;&quot;visible&quot;
+            (input)&#x3D;&quot;onChannelNameInput()&quot;
+          /&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div *ngIf&#x3D;&quot;channelNameError&quot; class&#x3D;&quot;error-message&quot;&gt;
+        {{ channelNameError }}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div
+    class&#x3D;&quot;channel-box&quot;
+    [ngClass]&#x3D;&quot;{
+      &#x27;hide-border&#x27;: isEditingDescription,
+      &#x27;show-border&#x27;: !isEditingDescription
+    }&quot;
+  &gt;
+    &lt;div class&#x3D;&quot;edit-box&quot;&gt;
+      &lt;div class&#x3D;&quot;box-container&quot;&gt;
+        &lt;div class&#x3D;&quot;header-button-box&quot;&gt;
+          &lt;label
+            for&#x3D;&quot;description&quot;
+            [ngClass]&#x3D;&quot;{ &#x27;move-left&#x27;: isEditingDescription }&quot;
+            &gt;Beschreibung&lt;/label
+          &gt;
+          &lt;div
+            (click)&#x3D;&quot;toggleEditingDescription()&quot;
+            class&#x3D;&quot;profil-settings-button&quot;
+            *ngIf&#x3D;&quot;isDesktop&quot;
+            [ngClass]&#x3D;&quot;{
+              &#x27;move-right&#x27;: isEditingDescription,
+              &#x27;move-initial&#x27;: !isEditingDescription
+            }&quot;
+          &gt;
+            {{ isEditingDescription ? &quot;Speichern&quot; : &quot;Bearbeiten&quot; }}
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;img-wrapper&quot;&gt;
+            &lt;img
+              [src]&#x3D;&quot;
+                isEditingDescription
+                  ? &#x27;assets/img/check_edit.png&#x27;
+                  : &#x27;assets/img/edit.png&#x27;
+              &quot;
+              (click)&#x3D;&quot;toggleEditingDescription()&quot;
+              *ngIf&#x3D;&quot;!isDesktop&quot;
+            /&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class&#x3D;&quot;channel-name-box&quot;&gt;
+          &lt;h1 *ngIf&#x3D;&quot;!isEditingDescription&quot;&gt;{{ description }}&lt;/h1&gt;
+
+          &lt;textarea
+            *ngIf&#x3D;&quot;isEditingDescription&quot;
+            id&#x3D;&quot;channel-description&quot;
+            [(ngModel)]&#x3D;&quot;editedDescription&quot;
+            placeholder&#x3D;&quot;Dein Text hier&quot;
+            class&#x3D;&quot;visible&quot;
+          &gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+        &lt;div class&#x3D;&quot;seperator&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;info-box&quot;&gt;
+      &lt;p&gt;Erstellt von&lt;/p&gt;
+      &lt;strong&gt;{{ createdBy }}&lt;/strong&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class&#x3D;&quot;desktop-off&quot;&gt;
+    &lt;div mat-dialog-content&gt;
+      &lt;div class&#x3D;&quot;box&quot;&gt;
+        &lt;h1&gt;Mitglieder&lt;/h1&gt;
+        &lt;img (click)&#x3D;&quot;onCancel()&quot; src&#x3D;&quot;assets/img/close.png&quot; alt&#x3D;&quot;Schließen&quot; /&gt;
+      &lt;/div&gt;
+
+      &lt;ul&gt;
+        &lt;li *ngFor&#x3D;&quot;let member of members; let i &#x3D; index&quot;&gt;
+          &lt;div class&#x3D;&quot;avatar-container&quot;&gt;
+            &lt;img
+              [src]&#x3D;&quot;member.avatarUrl || &#x27;assets/img/avatar.png&#x27;&quot;
+              alt&#x3D;&quot;{{ member.name }}&quot;
+              class&#x3D;&quot;avatar&quot;
+            /&gt;
+
+            &lt;img
+              *ngIf&#x3D;&quot;member.isOnline&quot;
+              src&#x3D;&quot;assets/img/online.png&quot;
+              class&#x3D;&quot;status-icon&quot;
+              alt&#x3D;&quot;Online&quot;
+            /&gt;
+            &lt;img
+              *ngIf&#x3D;&quot;!member.isOnline&quot;
+              src&#x3D;&quot;assets/img/offline.png&quot;
+              class&#x3D;&quot;status-icon&quot;
+              alt&#x3D;&quot;Offline&quot;
+            /&gt;
+          &lt;/div&gt;
+          &lt;span&gt;{{ member.name }}&lt;/span&gt;
+        &lt;/li&gt;
+
+        &lt;div class&#x3D;&quot;member-box&quot; (click)&#x3D;&quot;openAddMembersMobile()&quot;&gt;
+          &lt;div class&#x3D;&quot;img-container&quot;&gt;
+            &lt;img src&#x3D;&quot;assets/img/member.png&quot; alt&#x3D;&quot;Member&quot; /&gt;
+          &lt;/div&gt;
+          &lt;h2&gt;Mitglieder Hinzufügen&lt;/h2&gt;
+        &lt;/div&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class&#x3D;&quot;mat-dialog-actions&quot;&gt;
+    &lt;button class&#x3D;&quot;primary-button&quot; (click)&#x3D;&quot;onLeaveChannel()&quot;&gt;
+      Channel verlassen
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./edit-channel-dialog.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &quot;./../../styles.scss&quot;;
+
+
+mat-dialog-content {
+  padding-bottom: 20px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 20px 0;
+  justify-content: flex-end;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 30px !important;
+}
+
+::ng-deep .mdc-dialog__surface {
+  border-radius: 30px !important;
+  overflow: hidden;
+}
+
+::ng-deep.mat-mdc-dialog-content .mdc-dialog__content {
+  padding: 0;
+}
+
+::ng-deep.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+  padding: 0;
+}
+
+::ng-deep.mat-mdc-dialog-title,
+.mdc-dialog__title,
+.mat-mdc-dialog-container .mat-mdc-dialog-content,
+.mdc-dialog .mdc-dialog__content {
+  padding: 0;
+  margin: 0;
+}
+
+::ng-deep.mat-mdc-dialog-title,
+.mdc-dialog__title {
+  margin: 0 0 20px !important ;
+}
+
+::ng-deep .mat-bottom-sheet-container-medium {
+  min-width: 100vw;
+}
+
+.container {
+  width: 792px;
+  padding: 40px;
+  gap: 20px;
+  border-radius: 40px 0px 0px 0px;
+  border: 1px 0px 0px 0px;
+  display: flex;
+  flex-direction: column;
+
+  .close-dialog,
+  .edit-box {
+    width: 100%;
+  }
+
+  .info-box {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    p {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    strong {
+      font-size: 24px;
+      font-weight: 400;
+      color: $hoverColor;
+    }
+  }
+}
+
+.close-dialog {
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  gap: 15px;
+
+  h1 {
+    margin-right: 20px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  img {
+    cursor: pointer;
+    transition: filter 0.3s ease, background-color 0.3s ease;
+    border-radius: 50%;
+
+    &amp;:hover {
+      background-color: $lightblue;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+  }
+
+  .close-pic-box {
+    display: flex;
+    margin-left: auto;
+  }
+}
+
+.edit-box {
+  display: flex;
+  flex-direction: column;
+  border-radius: 40px;
+  padding: 20px 0;
+
+  .input-icon {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: filter 0.3s ease;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  input,
+  textarea {
+    display: none;
+    background: $lightblue;
+    border-radius: 100px;
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    height: 60px;
+    width: 100%;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    padding-left: 60px;
+    align-content: center;
+
+    &amp;.visible {
+      display: block;
+    }
+
+    &amp;:hover {
+      border-color: #686868;
+      transition: border-color 0.3s;
+    }
+
+    &amp;:focus,
+    &amp;:focus-within {
+      outline: none;
+      border-color: $button-blue;
+    }
+  }
+}
+
+.channel-box {
+  gap: 20px;
+  border-radius: 20px;
+  border: 1px solid $button-border;
+
+  &amp;.show-border {
+    border: 1px solid $button-border;
+  }
+
+  &amp;.hide-border {
+    border: none;
+  }
+
+  label {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .channel-name-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+
+    h1 {
+      font-size: 18px;
+      font-weight: 400;
+      color: black;
+      padding-left: 50px;
+      margin: 0;
+    }
+  }
+
+  .edit-button,
+  .save-button {
+    background: $button-blue;
+    border: none;
+    border-radius: 100px;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+
+    &amp;:hover {
+      background-color: #5b5ffc;
+    }
+
+    &amp;.save-button {
+      background: #28a745;
+
+      &amp;:hover {
+        background-color: #218838;
+      }
+    }
+  }
+}
+
+.header-button-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+
+  label {
+    font-size: 18px;
+    font-weight: 700;
+    transition: all 0.5s ease-in-out;
+
+    &amp;.move-left {
+      transform: translate(-20px, -0px);
+    }
+  }
+}
+
+.profil-settings-button {
+  font-size: 18px;
+  font-weight: 600;
+  color: $hoverColor;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.6s ease;
+
+  &amp;:hover {
+    color: $hoverColor;
+    font-weight: 700;
+    transform: scale(1.05);
+  }
+
+  &amp;.move-initial {
+    transform: translate(0, 0);
+    margin-left: auto;
+  }
+
+  &amp;.move-right {
+    transform: translate(20px, -0px);
+    margin-left: auto;
+  }
+}
+
+.box-container {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.primary-button {
+  background: $button-blue;
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 25px;
+
+  height: 49px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &amp;:hover {
+    background: #5b5ffc;
+  }
+
+  &amp;:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+}
+
+.seperator {
+  border: 1px solid $button-border;
+  width: 100%;
+  max-width: 739px;
+  margin: 0 auto;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  gap: 13px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 15px;
+  width: fit-content;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &amp;:hover {
+    background-color: $lightblue;
+    border-radius: 100px;
+  }
+}
+
+span {
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.member-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 29px;
+  width: fit-content;
+  border-radius: 100px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  .img-container {
+    width: 32px;
+    height: 32px;
+    background-color: $lightblue;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+
+    img {
+      width: 24px;
+      height: 24px;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 400;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+
+  &amp;:hover {
+    background-color: $lightblue;
+    border-radius: 100px;
+
+    h2 {
+      color: $hoverColor;
+    }
+
+    .img-container {
+      background-color: transparent;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+          saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+      }
+    }
+  }
+}
+
+.avatar-container {
+  position: relative;
+
+  .status-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+}
+
+.error-message{
+  color: red;
+}
+
+@media (max-width: 1278px) {
+  .header-button-box {
+    .img-wrapper {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      overflow: hidden;
+
+      transition: background-color 0.3s ease, transform 0.3s ease,
+        filter 0.3s ease;
+
+      &amp;:hover {
+        background-color: $lightblue;
+        transform: scale(1.1);
+        cursor: pointer;
+
+        img {
+          filter: brightness(0) saturate(100%) invert(34%) sepia(39%)
+            saturate(6834%) hue-rotate(230deg) brightness(100%) contrast(90%);
+        }
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+
+        transition: filter 0.3s ease;
+      }
+    }
+  }
+
+  .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    max-width: 100%;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    background-color: white;
+  }
+
+  .mdc-dialog__content &gt; :first-child {
+    font-size: 17px;
+  }
+
+  .seperator {
+    width: calc(100% - 40px);
+    max-width: none;
+    margin: 0 auto;
+  }
+
+  .desktop-off {
+    padding: 20px;
+    border: 1px solid $button-border;
+    border-radius: 20px;
+    overflow-y: overlay;
+  }
+}
+
+@media (min-width: 1278px) {
+  .desktop-off {
+    display: none;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="container">  <div class="close-dialog">    <img src="assets/img/tag-black.png" alt="Tag Icon" />    <h1>{{ channelName }}</h1>    <div class="close-pic-box" (click)="onCancel()">      <img src="assets/img/close.png" alt="Close" />    </div>  </div>  <div    class="channel-box"    [ngClass]="{ \'hide-border\': isEditingName, \'show-border\': !isEditingName }"  >    <div class="edit-box">      <div class="box-container">        <div class="header-button-box">          <label for="channelName" [ngClass]="{ \'move-left\': isEditingName }"            >Channel-Name</label          >          <div            (click)="toggleEditingName()"            class="profil-settings-button"            *ngIf="isDesktop"            [ngClass]="{              \'move-right\': isEditingName,              \'move-initial\': !isEditingName            }"          >            {{ isEditingName ? "Speichern" : "Bearbeiten" }}          </div>          <div class="img-wrapper">            <img              [src]="                isEditingName                  ? \'assets/img/check_edit.png\'                  : \'assets/img/edit.png\'              "              (click)="toggleEditingName()"              *ngIf="!isDesktop"            />          </div>        </div>        <div class="channel-name-box">          <span class="input-icon">#</span>          <h1 *ngIf="!isEditingName">{{ channelName }}</h1>          <input            *ngIf="isEditingName"            id="channelName"            [placeholder]="channelName || \'Channel Name bearbeiten\'"            [(ngModel)]="editedChannelName"            class="visible"            (input)="onChannelNameInput()"          />        </div>      </div>      <div *ngIf="channelNameError" class="error-message">        {{ channelNameError }}      </div>    </div>  </div>  <div    class="channel-box"    [ngClass]="{      \'hide-border\': isEditingDescription,      \'show-border\': !isEditingDescription    }"  >    <div class="edit-box">      <div class="box-container">        <div class="header-button-box">          <label            for="description"            [ngClass]="{ \'move-left\': isEditingDescription }"            >Beschreibung</label          >          <div            (click)="toggleEditingDescription()"            class="profil-settings-button"            *ngIf="isDesktop"            [ngClass]="{              \'move-right\': isEditingDescription,              \'move-initial\': !isEditingDescription            }"          >            {{ isEditingDescription ? "Speichern" : "Bearbeiten" }}          </div>          <div class="img-wrapper">            <img              [src]="                isEditingDescription                  ? \'assets/img/check_edit.png\'                  : \'assets/img/edit.png\'              "              (click)="toggleEditingDescription()"              *ngIf="!isDesktop"            />          </div>        </div>        <div class="channel-name-box">          <h1 *ngIf="!isEditingDescription">{{ description }}</h1>          <textarea            *ngIf="isEditingDescription"            id="channel-description"            [(ngModel)]="editedDescription"            placeholder="Dein Text hier"            class="visible"          ></textarea>        </div>        <div class="seperator"></div>      </div>    </div>    <div class="info-box">      <p>Erstellt von</p>      <strong>{{ createdBy }}</strong>    </div>  </div>  <div class="desktop-off">    <div mat-dialog-content>      <div class="box">        <h1>Mitglieder</h1>        <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />      </div>      <ul>        <li *ngFor="let member of members; let i = index">          <div class="avatar-container">            <img              [src]="member.avatarUrl || \'assets/img/avatar.png\'"              alt="{{ member.name }}"              class="avatar"            />            <img              *ngIf="member.isOnline"              src="assets/img/online.png"              class="status-icon"              alt="Online"            />            <img              *ngIf="!member.isOnline"              src="assets/img/offline.png"              class="status-icon"              alt="Offline"            />          </div>          <span>{{ member.name }}</span>        </li>        <div class="member-box" (click)="openAddMembersMobile()">          <div class="img-container">            <img src="assets/img/member.png" alt="Member" />          </div>          <h2>Mitglieder Hinzufügen</h2>        </div>      </ul>    </div>  </div>  <div class="mat-dialog-actions">    <button class="primary-button" (click)="onLeaveChannel()">      Channel verlassen    </button>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'EditChannelDialogComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'EditChannelDialogComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

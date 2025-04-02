@@ -1,0 +1,2951 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  LoginComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/login/login.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-login</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>FormsModule</code>
+                            <code>CommonModule</code>
+                                <code><a href="../components/FooterComponent.html" target="_self" >FooterComponent</a></code>
+                                <code><a href="../components/HeaderComponent.html" target="_self" >HeaderComponent</a></code>
+                            <code>ReactiveFormsModule</code>
+                            <code>RouterModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./login.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./login.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#emailFilled" >emailFilled</a>
+                            </li>
+                            <li>
+                                <a href="#emailPattern" >emailPattern</a>
+                            </li>
+                            <li>
+                                <a href="#errorMessage" >errorMessage</a>
+                            </li>
+                            <li>
+                                <a href="#errorPassword" >errorPassword</a>
+                            </li>
+                            <li>
+                                <a href="#filledStates" >filledStates</a>
+                            </li>
+                            <li>
+                                <a href="#myForm" >myForm</a>
+                            </li>
+                            <li>
+                                <a href="#passwordFilled" >passwordFilled</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#router" >router</a>
+                            </li>
+                            <li>
+                                <a href="#successMessage" >successMessage</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#attemptEmailSignIn" >attemptEmailSignIn</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#checkEmailExists" >checkEmailExists</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#clearMessages" >clearMessages</a>
+                            </li>
+                            <li>
+                                <a href="#emailValidator" >emailValidator</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#fieldsAreEmpty" >fieldsAreEmpty</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#handleLoginError" >handleLoginError</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#handleLoginSuccess" >handleLoginSuccess</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadUserData" >loadUserData</a>
+                            </li>
+                            <li>
+                                <a href="#logout" >logout</a>
+                            </li>
+                            <li>
+                                <a href="#navigateToGuestLogin" >navigateToGuestLogin</a>
+                            </li>
+                            <li>
+                                <a href="#navigateToSignup" >navigateToSignup</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onBlur" >onBlur</a>
+                            </li>
+                            <li>
+                                <a href="#onFocus" >onFocus</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#onSubmit" >onSubmit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#saveNewUser" >saveNewUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#signInWithGoogle" >signInWithGoogle</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateExistingUser" >updateExistingUser</a>
+                            </li>
+                            <li>
+                                <a href="#updateFilledState" >updateFilledState</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(firestore: Firestore, fb: FormBuilder, appStateService: <a href="../injectables/AppStateService.html" target="_self">AppStateService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, router: Router, channelService: <a href="../injectables/ChannelService.html" target="_self">ChannelService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/login/login.component.ts:75</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>firestore</td>
+                                                  
+                                                        <td>
+                                                                    <code>Firestore</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>fb</td>
+                                                  
+                                                        <td>
+                                                                    <code>FormBuilder</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>appStateService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AppStateService.html" target="_self" >AppStateService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                    <code>Router</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>channelService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChannelService.html" target="_self" >ChannelService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="attemptEmailSignIn"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>attemptEmailSignIn</b></span>
+                        <a href="#attemptEmailSignIn"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>attemptEmailSignIn()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="165"
+                                    class="link-to-prism">src/app/login/login.component.ts:165</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Attempts sign-in with email and password, handles success or error feedback.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkEmailExists"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>checkEmailExists</b></span>
+                        <a href="#checkEmailExists"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>checkEmailExists(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="122"
+                                    class="link-to-prism">src/app/login/login.component.ts:122</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks Firestore to see if a given email already exists in the &#39;users&#39; collection.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clearMessages"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>clearMessages</b></span>
+                        <a href="#clearMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>clearMessages()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/login/login.component.ts:145</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Clears all error and success messages.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emailValidator"></a>
+                    <span class="name">
+                        <span ><b>emailValidator</b></span>
+                        <a href="#emailValidator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>emailValidator(control: AbstractControl)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/login/login.component.ts:97</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validates the email format using a regex pattern.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>control</td>
+                                            <td>
+                                                        <code>AbstractControl</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ValidationErrors | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fieldsAreEmpty"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>fieldsAreEmpty</b></span>
+                        <a href="#fieldsAreEmpty"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fieldsAreEmpty()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="152"
+                                    class="link-to-prism">src/app/login/login.component.ts:152</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if email or password is empty, sets an error message if so.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleLoginError"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>handleLoginError</b></span>
+                        <a href="#handleLoginError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>handleLoginError(error)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/login/login.component.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Handles login error: sets appropriate error messages for known Firebase errors.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleLoginSuccess"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>handleLoginSuccess</b></span>
+                        <a href="#handleLoginSuccess"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>handleLoginSuccess()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/app/login/login.component.ts:181</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sets a success message and navigates to chat after a short delay.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadUserData"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>loadUserData</b></span>
+                        <a href="#loadUserData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadUserData(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, name: string | undefined, avatarUrl: string | undefined)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="206"
+                                    class="link-to-prism">src/app/login/login.component.ts:206</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Loads user data from Firestore based on the authenticated user&#39;s ID.
+If no record exists, creates a new one; otherwise updates the existing record.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                        <code>string | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>undefined</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>avatarUrl</td>
+                                            <td>
+                                                        <code>string | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>undefined</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logout"></a>
+                    <span class="name">
+                        <span ><b>logout</b></span>
+                        <a href="#logout"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>logout()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="307"
+                                    class="link-to-prism">src/app/login/login.component.ts:307</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Logs the user out via the UserService.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="navigateToGuestLogin"></a>
+                    <span class="name">
+                        <span ><b>navigateToGuestLogin</b></span>
+                        <a href="#navigateToGuestLogin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>navigateToGuestLogin()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="283"
+                                    class="link-to-prism">src/app/login/login.component.ts:283</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Signs in user as a guest (anonymous), creates a Firestore doc, then goes to /chat.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="navigateToSignup"></a>
+                    <span class="name">
+                        <span ><b>navigateToSignup</b></span>
+                        <a href="#navigateToSignup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>navigateToSignup()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="277"
+                                    class="link-to-prism">src/app/login/login.component.ts:277</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Navigates to the signup page if the user chooses to register.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="95"
+                                    class="link-to-prism">src/app/login/login.component.ts:95</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Lifecycle hook that runs after component initialization.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onBlur"></a>
+                    <span class="name">
+                        <span ><b>onBlur</b></span>
+                        <a href="#onBlur"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onBlur(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/login/login.component.ts:111</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Updates the field&#39;s filled state on blur, depending on its current value.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onFocus"></a>
+                    <span class="name">
+                        <span ><b>onFocus</b></span>
+                        <a href="#onFocus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onFocus(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/login/login.component.ts:104</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sets the form field&#39;s filled state to true when focused, clearing any error messages.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSubmit"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>onSubmit</b></span>
+                        <a href="#onSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onSubmit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="130"
+                                    class="link-to-prism">src/app/login/login.component.ts:130</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Handles the login form submission with email/password credentials.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveNewUser"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>saveNewUser</b></span>
+                        <a href="#saveNewUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveNewUser(uid: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, name?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, avatarUrl?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="229"
+                                    class="link-to-prism">src/app/login/login.component.ts:229</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Creates a new user document in Firestore with the given data if none exists.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>uid</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>avatarUrl</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="signInWithGoogle"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>signInWithGoogle</b></span>
+                        <a href="#signInWithGoogle"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>signInWithGoogle()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="256"
+                                    class="link-to-prism">src/app/login/login.component.ts:256</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Signs the user in with Google, then loads/creates their Firestore record.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateExistingUser"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>updateExistingUser</b></span>
+                        <a href="#updateExistingUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateExistingUser(userDoc: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, data: Partial<literal type>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="247"
+                                    class="link-to-prism">src/app/login/login.component.ts:247</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Updates an existing user&#39;s Firestore document with new data.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userDoc</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                        <code>Partial&lt;literal type&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateFilledState"></a>
+                    <span class="name">
+                        <span ><b>updateFilledState</b></span>
+                        <a href="#updateFilledState"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateFilledState(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/app/login/login.component.ts:117</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Updates the filled state for a given field by checking if the string is non-empty.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emailFilled"></a>
+                    <span class="name">
+                        <span ><b>emailFilled</b></span>
+                        <a href="#emailFilled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/login/login.component.ts:61</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Indicates whether the email field is currently filled.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emailPattern"></a>
+                    <span class="name">
+                        <span ><b>emailPattern</b></span>
+                        <a href="#emailPattern"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/login/login.component.ts:73</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A regex pattern used for validating email format.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorMessage"></a>
+                    <span class="name">
+                        <span ><b>errorMessage</b></span>
+                        <a href="#errorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/login/login.component.ts:67</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Displays an error message when login fails.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorPassword"></a>
+                    <span class="name">
+                        <span ><b>errorPassword</b></span>
+                        <a href="#errorPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/login/login.component.ts:71</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stores the user&#39;s email input.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filledStates"></a>
+                    <span class="name">
+                        <span ><b>filledStates</b></span>
+                        <a href="#filledStates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/login/login.component.ts:65</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A map of states for each field, indicating if it is filled or not.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="myForm"></a>
+                    <span class="name">
+                        <span ><b>myForm</b></span>
+                        <a href="#myForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>FormGroup</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/login/login.component.ts:75</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Reactive form group for validation of name, email, password, and a checkbox.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="passwordFilled"></a>
+                    <span class="name">
+                        <span ><b>passwordFilled</b></span>
+                        <a href="#passwordFilled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/login/login.component.ts:63</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Indicates whether the password field is currently filled.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="router"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>router</b></span>
+                        <a href="#router"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Router</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/login/login.component.ts:83</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="successMessage"></a>
+                    <span class="name">
+                        <span ><b>successMessage</b></span>
+                        <a href="#successMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/login/login.component.ts:69</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Displays a success message when login succeeds.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from &#x27;@angular/forms&#x27;;
+import { FirebaseError } from &#x27;@firebase/util&#x27;;
+import {
+  Firestore,
+  query,
+  where,
+  getDocs,
+  collection,
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+} from &#x27;@angular/fire/firestore&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { HeaderComponent } from &#x27;../header/header.component&#x27;;
+import { FooterComponent } from &#x27;../footer/footer.component&#x27;;
+import { RouterModule, Router } from &#x27;@angular/router&#x27;;
+
+import {
+  getAuth,
+  signInAnonymously,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  User,
+} from &#x27;@angular/fire/auth&#x27;;
+import { AppStateService } from &#x27;../app-state.service&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+@Component({
+  selector: &#x27;app-login&#x27;,
+  standalone: true,
+  imports: [
+    FormsModule,
+    CommonModule,
+    FooterComponent,
+    HeaderComponent,
+    ReactiveFormsModule,
+    RouterModule,
+  ],
+  templateUrl: &#x27;./login.component.html&#x27;,
+  styleUrls: [&#x27;./login.component.scss&#x27;],
+})
+export class LoginComponent implements OnInit {
+  /** Indicates whether the email field is currently filled. */
+  emailFilled &#x3D; false;
+  /** Indicates whether the password field is currently filled. */
+  passwordFilled &#x3D; false;
+  /** A map of states for each field, indicating if it is filled or not. */
+  filledStates: { [key: string]: boolean } &#x3D; {};
+  /** Displays an error message when login fails. */
+  errorMessage &#x3D; &#x27;&#x27;;
+  /** Displays a success message when login succeeds. */
+  successMessage &#x3D; &#x27;&#x27;;
+  /** Stores the user&#x27;s email input. */
+  errorPassword &#x3D; &#x27;&#x27;;
+  /** A regex pattern used for validating email format. */
+  emailPattern &#x3D; /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  /** Reactive form group for validation of name, email, password, and a checkbox. */
+  myForm: FormGroup;
+
+  constructor(
+    private firestore: Firestore,
+    // private router: Router,
+    private fb: FormBuilder,
+    private appStateService: AppStateService,
+    private userService: UserService,
+    public router: Router,
+    private channelService: ChannelService
+  ) {
+    this.myForm &#x3D; this.fb.group({
+      name: [&#x27;&#x27;, [Validators.required, Validators.minLength(2)]],
+      email: [&#x27;&#x27;, [Validators.required, this.emailValidator.bind(this)]],
+      password: [&#x27;&#x27;, [Validators.required, Validators.minLength(6)]],
+      checkbox: [false, Validators.requiredTrue],
+    });
+  }
+
+  /** Lifecycle hook that runs after component initialization. */
+  ngOnInit(): void {}
+  /** Validates the email format using a regex pattern. */
+  emailValidator(control: AbstractControl): ValidationErrors | null {
+    const value &#x3D; control.value;
+    if (!this.emailPattern.test(value)) return { invalidEmail: true };
+    return null;
+  }
+
+  /** Sets the form field&#x27;s filled state to true when focused, clearing any error messages. */
+  onFocus(type: string): void {
+    this.filledStates[type + &#x27;Filled&#x27;] &#x3D; true;
+    this.errorMessage &#x3D; &#x27;&#x27;;
+    this.errorPassword &#x3D; &#x27;&#x27;;
+  }
+
+  /** Updates the field&#x27;s filled state on blur, depending on its current value. */
+  onBlur(type: string): void {
+    const val &#x3D; this.myForm.get(type)?.value;
+    this.filledStates[type + &#x27;Filled&#x27;] &#x3D; !!val;
+  }
+
+  /** Updates the filled state for a given field by checking if the string is non-empty. */
+  updateFilledState(type: string, value: string): void {
+    this.filledStates[type + &#x27;Filled&#x27;] &#x3D; value !&#x3D;&#x3D; &#x27;&#x27;;
+  }
+
+  /** Checks Firestore to see if a given email already exists in the &#x27;users&#x27; collection. */
+  async checkEmailExists(email: string): Promise&lt;boolean&gt; {
+    const colRef &#x3D; collection(this.firestore, &#x27;users&#x27;);
+    const q &#x3D; query(colRef, where(&#x27;email&#x27;, &#x27;&#x3D;&#x3D;&#x27;, email));
+    const snapshot &#x3D; await getDocs(q);
+    return !snapshot.empty;
+  }
+
+  /** Handles the login form submission with email/password credentials. */
+  async onSubmit(): Promise&lt;void&gt; {
+    this.clearMessages();
+    if (this.fieldsAreEmpty()) return;
+
+    const emailVal &#x3D; this.myForm.get(&#x27;email&#x27;)?.value as string;
+
+    const emailExists &#x3D; await this.checkEmailExists(emailVal);
+    if (!emailExists) {
+      this.errorMessage &#x3D; &#x27;Diese E-Mail-Adresse ist nicht registriert.&#x27;;
+      return;
+    }
+    await this.attemptEmailSignIn();
+  }
+
+  /** Clears all error and success messages. */
+  private clearMessages(): void {
+    this.errorMessage &#x3D; &#x27;&#x27;;
+    this.successMessage &#x3D; &#x27;&#x27;;
+    this.errorPassword &#x3D; &#x27;&#x27;;
+  }
+
+  /** Checks if email or password is empty, sets an error message if so. */
+  private fieldsAreEmpty(): boolean {
+    const emailVal &#x3D; this.myForm.get(&#x27;email&#x27;)?.value;
+    const passwordVal &#x3D; this.myForm.get(&#x27;password&#x27;)?.value;
+
+    if (!emailVal || !passwordVal) {
+      this.errorMessage &#x3D; &#x27;Bitte füllen Sie alle Felder aus.&#x27;;
+      this.errorPassword &#x3D; &#x27;Bitte füllen Sie alle Felder aus.&#x27;;
+      return true;
+    }
+    return false;
+  }
+
+  /** Attempts sign-in with email and password, handles success or error feedback. */
+  private async attemptEmailSignIn(): Promise&lt;void&gt; {
+    try {
+      const auth &#x3D; getAuth();
+
+      const emailVal &#x3D; this.myForm.get(&#x27;email&#x27;)?.value;
+      const passwordVal &#x3D; this.myForm.get(&#x27;password&#x27;)?.value;
+      await signInWithEmailAndPassword(auth, emailVal, passwordVal);
+
+      this.appStateService.setShowWelcomeContainer(true);
+      this.handleLoginSuccess();
+    } catch (err) {
+      this.handleLoginError(err);
+    }
+  }
+
+  /** Sets a success message and navigates to chat after a short delay. */
+  private handleLoginSuccess(): void {
+    this.successMessage &#x3D; &#x27;Anmelden&#x27;;
+    setTimeout(() &#x3D;&gt; {
+      this.successMessage &#x3D; &#x27;&#x27;;
+      this.router.navigate([&#x27;/chat&#x27;]);
+    }, 3000);
+  }
+
+  /** Handles login error: sets appropriate error messages for known Firebase errors. */
+  private handleLoginError(error: unknown): void {
+    const fbErr &#x3D; error as FirebaseError;
+    if (fbErr.code &#x3D;&#x3D;&#x3D; &#x27;auth/invalid-password&#x27;) {
+      this.errorPassword &#x3D; &#x27;Das Passwort ist falsch.&#x27;;
+    } else if (fbErr.code &#x3D;&#x3D;&#x3D; &#x27;auth/too-many-requests&#x27;) {
+      this.errorMessage &#x3D;
+        &#x27;Ihre Anmeldung wurde vorübergehend gesperrt, weil Sie zu viele falsche Anmeldeversuche gemacht haben. Bitte versuchen Sie es später erneut oder setzen Sie Ihr Passwort zurück.&#x27;;
+    } else {
+      this.errorPassword &#x3D; &#x27;Das Passwort ist falsch.&#x27;;
+    }
+  }
+
+  /**
+   * Loads user data from Firestore based on the authenticated user&#x27;s ID.
+   * If no record exists, creates a new one; otherwise updates the existing record.
+   */
+  async loadUserData(
+    email: string,
+    name: string | undefined &#x3D; undefined,
+    avatarUrl: string | undefined &#x3D; undefined
+  ): Promise&lt;void&gt; {
+    const auth &#x3D; getAuth();
+    const user &#x3D; auth.currentUser;
+    if (user?.uid) {
+      try {
+        const ref &#x3D; doc(this.firestore, &#x27;users&#x27;, user.uid);
+        const snap &#x3D; await getDoc(ref);
+        snap.exists()
+          ? await this.updateExistingUser(ref, {
+              lastLogin: new Date(),
+              name,
+              avatarUrl,
+            })
+          : await this.saveNewUser(user.uid, email, name, avatarUrl);
+      } catch (_) {}
+    }
+  }
+
+  /** Creates a new user document in Firestore with the given data if none exists. */
+  private async saveNewUser(
+    uid: string,
+    email: string,
+    name?: string,
+    avatarUrl?: string
+  ): Promise&lt;void&gt; {
+    const user &#x3D; {
+      uid,
+      email,
+      name: name || &#x27;Unbekannt&#x27;,
+      avatarUrl: avatarUrl || &#x27;&#x27;,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+    };
+    await setDoc(doc(this.firestore, &#x27;users&#x27;, uid), user);
+  }
+
+  /** Updates an existing user&#x27;s Firestore document with new data. */
+  private async updateExistingUser(
+    userDoc: any,
+    data: Partial&lt;{ lastLogin: Date; name?: string; avatarUrl?: string }&gt;
+  ): Promise&lt;void&gt; {
+    const updateData &#x3D; { ...data, lastLogin: data.lastLogin || new Date() };
+    await updateDoc(userDoc, updateData);
+  }
+
+  /** Signs the user in with Google, then loads/creates their Firestore record. */
+  async signInWithGoogle(): Promise&lt;void&gt; {
+    try {
+      const provider &#x3D; new GoogleAuthProvider();
+      const auth &#x3D; getAuth();
+      const result &#x3D; await signInWithPopup(auth, provider);
+      const user &#x3D; result.user;
+      if (user?.email) {
+        const avatarUrl &#x3D; user.photoURL || &#x27;&#x27;;
+        await this.loadUserData(
+          user.email,
+          user.displayName || undefined,
+          avatarUrl
+        );
+        this.router.navigate([&#x27;/avatar&#x27;]);
+      }
+    } catch (_) {
+      this.errorMessage &#x3D; &#x27;Fehler bei der Google-Anmeldung.&#x27;;
+    }
+  }
+
+  /** Navigates to the signup page if the user chooses to register. */
+  navigateToSignup(): void {
+    this.router.navigate([&#x27;/signup&#x27;]);
+  }
+
+  /** Signs in user as a guest (anonymous), creates a Firestore doc, then goes to /chat. */
+
+  navigateToGuestLogin(): void {
+    const auth &#x3D; getAuth();
+    signInAnonymously(auth)
+      .then(async (cred) &#x3D;&gt; {
+        if (!cred.user) return;
+        const randomSuffix &#x3D; Math.random().toString(36).substring(2, 6);
+        const guestName &#x3D; &#x60;Guest-${randomSuffix}&#x60;;
+        const ref &#x3D; doc(this.firestore, &#x27;users&#x27;, cred.user.uid);
+
+        await setDoc(ref, {
+          uid: cred.user.uid,
+          name: guestName,
+          isOnline: true,
+          avatarUrl: &#x27;&#x27;,
+          createdAt: new Date(),
+          isGuest: true,
+        });
+
+        this.router.navigate([&#x27;/avatar&#x27;]);
+      })
+      .catch(() &#x3D;&gt; {});
+  }
+
+  /** Logs the user out via the UserService. */
+  logout(): void {
+    this.userService.logout();
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;page&quot;&gt;
+  &lt;app-header&gt;&lt;/app-header&gt;
+
+  &lt;div class&#x3D;&quot;container&quot;&gt;
+    &lt;div class&#x3D;&quot;login-container&quot;&gt;
+      &lt;div class&#x3D;&quot;login&quot;&gt;
+        &lt;div class&#x3D;&quot;box&quot;&gt;
+          &lt;h2&gt;Anmeldung&lt;/h2&gt;
+          &lt;p&gt;
+            Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der
+            Arbeit verwendest.
+          &lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;form [formGroup]&#x3D;&quot;myForm&quot; (ngSubmit)&#x3D;&quot;onSubmit()&quot;&gt;
+          &lt;div
+            class&#x3D;&quot;input-container icon-wrapper&quot;
+            [ngClass]&#x3D;&quot;{ filled: filledStates[&#x27;emailFilled&#x27;] }&quot;
+          &gt;
+            &lt;img
+              [src]&#x3D;&quot;
+                filledStates[&#x27;emailFilled&#x27;]
+                  ? &#x27;assets/img/black-mail.png&#x27;
+                  : &#x27;assets/img/mail.png&#x27;
+              &quot;
+              alt&#x3D;&quot;Email Icon&quot;
+            /&gt;
+
+            &lt;input
+              [ngClass]&#x3D;&quot;{
+                &#x27;email-icon&#x27;: true,
+                filled: filledStates[&#x27;emailFilled&#x27;]
+              }&quot;
+              type&#x3D;&quot;email&quot;
+              id&#x3D;&quot;email&quot;
+              name&#x3D;&quot;email&quot;
+              placeholder&#x3D;&quot;beispielname@email.com&quot;
+              formControlName&#x3D;&quot;email&quot;
+              (focus)&#x3D;&quot;onFocus(&#x27;email&#x27;)&quot;
+              (blur)&#x3D;&quot;onBlur(&#x27;email&#x27;)&quot;
+              required
+            /&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;error-message&quot;&gt;
+            &lt;ng-container *ngIf&#x3D;&quot;errorMessage&quot;&gt;
+              {{ errorMessage }}
+            &lt;/ng-container&gt;
+
+            &lt;ng-container *ngIf&#x3D;&quot;!errorMessage&quot;&gt;
+              &lt;ng-container *ngIf&#x3D;&quot;myForm.get(&#x27;email&#x27;)?.touched&quot;&gt;
+                &lt;ng-container *ngIf&#x3D;&quot;myForm.get(&#x27;email&#x27;)?.errors?.[&#x27;required&#x27;]&quot;&gt;
+                  *Bitte füllen Sie das E-Mail-Feld aus.
+                &lt;/ng-container&gt;
+
+                &lt;ng-container
+                  *ngIf&#x3D;&quot;!myForm.get(&#x27;email&#x27;)?.errors?.[&#x27;required&#x27;] &amp;&amp; myForm.get(&#x27;email&#x27;)?.errors?.[&#x27;invalidEmail&#x27;]&quot;
+                &gt;
+                  Diese E-Mail-Adresse ist leider ungültig.
+                &lt;/ng-container&gt;
+              &lt;/ng-container&gt;
+            &lt;/ng-container&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;input-container icon-wrapper&quot;&gt;
+            &lt;img
+              [src]&#x3D;&quot;
+                filledStates[&#x27;passwordFilled&#x27;]
+                  ? &#x27;assets/img/black-passwort.png&#x27;
+                  : &#x27;assets/img/passwort.png&#x27;
+              &quot;
+              alt&#x3D;&quot;Passwort Icon&quot;
+            /&gt;
+
+            &lt;input
+              [ngClass]&#x3D;&quot;{
+                &#x27;passwort-icon&#x27;: true,
+                filled: filledStates[&#x27;passwordFilled&#x27;]
+              }&quot;
+              type&#x3D;&quot;password&quot;
+              id&#x3D;&quot;password&quot;
+              name&#x3D;&quot;password&quot;
+              placeholder&#x3D;&quot;Passwort&quot;
+              required
+              formControlName&#x3D;&quot;password&quot;
+              (focus)&#x3D;&quot;onFocus(&#x27;password&#x27;)&quot;
+              (blur)&#x3D;&quot;onBlur(&#x27;password&#x27;)&quot;
+            /&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;error-message&quot;&gt;
+            &lt;ng-container *ngIf&#x3D;&quot;errorPassword&quot;&gt;
+              {{ errorPassword }}
+            &lt;/ng-container&gt;
+
+            &lt;ng-container *ngIf&#x3D;&quot;!errorPassword&quot;&gt;
+              &lt;ng-container
+                *ngIf&#x3D;&quot;
+                  myForm.get(&#x27;password&#x27;)?.invalid &amp;&amp;
+                  myForm.get(&#x27;password&#x27;)?.touched
+                &quot;
+              &gt;
+                &lt;ng-container
+                  *ngIf&#x3D;&quot;myForm.get(&#x27;password&#x27;)?.errors?.[&#x27;required&#x27;]&quot;
+                &gt;
+                  *Bitte füllen Sie das Passwordfeld aus.
+                &lt;/ng-container&gt;
+                &lt;ng-container
+                  *ngIf&#x3D;&quot;myForm.get(&#x27;password&#x27;)?.errors?.[&#x27;minlength&#x27;]&quot;
+                  &gt;Das Passwort muss mindestens 6 Zeichen lang
+                  sein.&lt;/ng-container
+                &gt;
+
+                &lt;ng-container
+                  *ngIf&#x3D;&quot;!myForm.get(&#x27;password&#x27;)?.errors?.[&#x27;required&#x27;] &amp;&amp; myForm.get(&#x27;password&#x27;)?.errors?.[&#x27;invalid-password&#x27;]&quot;
+                &gt;
+                  Passwort ist falsch.
+                &lt;/ng-container&gt;
+              &lt;/ng-container&gt;
+            &lt;/ng-container&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;passwort-vergessen-box&quot;&gt;
+            &lt;a class&#x3D;&quot;forgot-password&quot; [routerLink]&#x3D;&quot;[&#x27;/passwort-reset&#x27;]&quot;
+              &gt;Passwort vergessen?&lt;/a
+            &gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;line-container&quot;&gt;
+            &lt;span class&#x3D;&quot;lineleft&quot;&gt;ODER&lt;/span&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;google-container&quot;&gt;
+            &lt;button
+              class&#x3D;&quot;google-icon&quot;
+              type&#x3D;&quot;button&quot;
+              (click)&#x3D;&quot;signInWithGoogle()&quot;
+            &gt;
+              Anmelden mit Google
+            &lt;/button&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;button-container&quot;&gt;
+            &lt;button
+              class&#x3D;&quot;button-anmelden button-anmelden-mobile&quot;
+              type&#x3D;&quot;submit&quot;
+              [ngClass]&#x3D;&quot;{ &#x27;ng-invalid&#x27;: !myForm.valid }&quot;
+            &gt;
+              Anmelden
+            &lt;/button&gt;
+            &lt;button
+              class&#x3D;&quot;button-gäste-login button-gäste-mobile&quot;
+              type&#x3D;&quot;button&quot;
+              (click)&#x3D;&quot;navigateToGuestLogin()&quot;
+            &gt;
+              Gäste-Login
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+        &lt;div class&#x3D;&quot;registration-ok&quot; *ngIf&#x3D;&quot;successMessage&quot;&gt;
+          &lt;p style&#x3D;&quot;color: white; font-size: 36px; font-weight: 700&quot;&gt;
+            {{ successMessage }}
+          &lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;register&quot;&gt;
+      &lt;h3&gt;Neu bei DABubble?&lt;/h3&gt;
+      &lt;button (click)&#x3D;&quot;navigateToSignup()&quot;&gt;Konto erstellen&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;app-footer&gt;&lt;/app-footer&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./login.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &quot;./../../styles.scss&quot;;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-container {
+  text-align: center;
+  // padding: 40px 53px;
+  max-height: 769px;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  max-width: 606px;
+  padding: 2rem;
+
+  .login {
+    max-width: 500px;
+    width: 100%;
+
+    h2 {
+      color: $button-blue;
+      font-size: 46px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    p {
+      color: black;
+      font-size: 20px;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    a {
+      color: $middleblue;
+      font-size: 18px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+      padding: 10px;
+    }
+
+    .box {
+      @include dFlex(null, null, 30px);
+      flex-direction: column;
+    }
+
+    .forgot-password:hover {
+      background-color: $lightblue;
+      border-radius: 100px;
+      color: $button-blue;
+      font-weight: 700;
+    }
+
+    img {
+      float: left;
+      cursor: pointer;
+    }
+
+    .button-container {
+      @include dFlex(center, null, 30px);
+      margin-top: 40px;
+    }
+
+    form {
+      input {
+        background: $lightblue;
+        border-radius: 100px;
+        font-size: 18px;
+        font-weight: 500;
+        height: 60px;
+        width: 100%;
+        border: 1px solid transparent;
+        cursor: pointer;
+        box-sizing: border-box;
+        max-width: 500px;
+
+        &amp;:hover {
+          border-color: #686868;
+          transition: border-color 0.3s;
+        }
+
+        &amp;:focus,
+        &amp;:focus-within {
+          outline: none;
+          border-color: $button-blue;
+        }
+
+        &amp;:not(:focus) {
+          &amp;:has(+ input:focus) {
+            border-color: blue;
+          }
+        }
+      }
+
+      .input-container {
+        max-width: 500px;
+        width: 100%;
+        margin-top: 40px;
+      }
+
+      .passwort-vergessen-box {
+        margin-top: 40px;
+      }
+
+      .google-container {
+        @include dFlex(center, center, 20px);
+        background-color: $lightblue;
+        border-radius: 100px;
+        transition: border-color 0.3s ease-in-out;
+        border: 1px solid transparent;
+        max-width: 500px;
+        width: 100%;
+        height: 60px;
+        margin-top: 40px;
+
+        &amp;:hover {
+          border-color: $button-blue;
+        }
+
+        button {
+          color: $button-blue;
+          font-size: 18px;
+          font-weight: 400;
+          text-align: center;
+          border: 1px solid transparent;
+          height: 70%;
+          cursor: pointer;
+          background-color: $lightblue;
+        }
+
+        button:hover {
+          font-weight: 700;
+        }
+      }
+
+      .error-message {
+        font-size: 14px;
+        color: #ed1e79;
+        font-weight: 400;
+        margin: 0;
+        text-align: left;
+        position: absolute;
+        display: flex;
+        padding-left:50px;
+      }
+
+      .email-icon,
+      .passwort-icon,
+      .google-icon {
+        background-repeat: no-repeat;
+        background-position: 15px center;
+        background-size: 24px 24px;
+        color: black;
+        transition: background-image 0.3s ease;
+        padding-left: 70px;
+
+        &amp;.google-icon {
+          background-image: url(&quot;/assets/img/google.png&quot;);
+          background-position: -2px center;
+          background-size: 38px 38px;
+          padding-left: 50px;
+
+          &amp;:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+}
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  img {
+    position: absolute;
+    left: 15px;
+    width: 24px;
+    height: 24px;
+  }
+
+  input,
+  button {
+    padding-left: 50px;
+    height: 50px;
+    border-radius: 100px;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+}
+
+.line-container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  max-width: 500px;
+  margin-top: 40px;
+  span {
+    color: black;
+  }
+}
+
+.lineleft {
+  @include dFlex(null, center, null);
+  font-size: 18px;
+  font-weight: 400;
+  flex-grow: 1;
+  position: relative;
+  padding: 0 10px;
+
+  &amp;::before,
+  &amp;::after {
+    content: &quot;&quot;;
+    display: block;
+    height: 1px;
+    background-color: #adb0d9;
+    flex-grow: 1;
+    margin: 0 10px;
+  }
+}
+
+.registration-ok {
+  max-width: 273px;
+}
+
+
+@media (max-width: 850px) {
+  .registration-ok {
+    max-width: 166px !important;
+    width: 100%;
+  }
+
+  .container{
+    padding:8px 0 0 0;
+  }
+
+  .content-container {
+    @include dFlex(center, center, null);
+    max-width: 0px;
+    padding: 4rem 0rem;
+    animation: moveVertical 1s ease-in-out forwards;
+  }
+
+
+  .container-box {
+    img {
+      width: 56px;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 780px) {
+  .container {
+    box-sizing: border-box;
+  }
+
+  .login-container .login p {
+    margin: 0 auto;
+    width: 300px;
+    padding: unset;
+    font-size: 14px;
+  }
+
+  .login-container .login h2 {
+    font-size: 36px;
+  }
+
+  .login-container .login form .input-container input {
+    font-size: 14px;
+  }
+
+  .login-container .login form .error-message {
+    font-size: 11px;
+  }
+
+  .login-container .login form .passwort-vergessen-box {
+    margin-top: 20px;
+  }
+
+  .login-container .login form .google-container {
+    margin-top: 20px;
+  }
+
+  .line-container {
+    margin-top: 20px;
+  }
+
+  .login-container .login form .input-container {
+    margin-top: 20px;
+  }
+
+  .login-container .login .button-container {
+    margin-top: 20px;
+  }
+
+  .login-container .login a {
+    font-size: 14px;
+  }
+
+  .login-container .login .box {
+    gap: 10px;
+  }
+
+  .login-container .login form .google-container button {
+    font-size: 16px;
+  }
+
+  .box {
+    @include dFlex(null, null, 10px);
+    flex-direction: column;
+  }
+}
+
+.register {
+  @include dFlex(null, flex-end, 20px);
+  flex-direction: column;
+  padding-top: 20px;
+
+  h3 {
+    color: black;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  button {
+    color: $button-blue;
+    border: none;
+    border-radius: 100px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    background-color: $lightblue;
+    border: 1px solid transparent;
+    border-color: $button-blue;
+  }
+}
+
+@media (min-width: 850px) {
+  .register {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-container {
+    padding: 20px;
+  }
+
+  .registration-ok {
+    top: 60%;
+  }
+
+  .login-container .login p {
+    width: 300px;
+  }
+
+  .login-container .login .button-container {
+    gap: 10px;
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+  }
+
+  .login-container .login form .button-gäste-mobile {
+    font-size: 16px;
+    width: 120px;
+  }
+
+  .button-anmelden-mobile {
+    font-size: 16px;
+    width: 100px;
+    padding: 12px 12px;
+  }
+
+  .login-container .login form .google-container button {
+    height: 90%;
+  }
+
+  .login-container .login form .google-container {
+    height: 40px;
+  }
+
+  .login-container .login form .input-container input {
+    height: 40px;
+  }
+
+  .line-container {
+    .lineleft {
+      font-size: 16px;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container .login p {
+    width: 260px;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="page">  <app-header></app-header>  <div class="container">    <div class="login-container">      <div class="login">        <div class="box">          <h2>Anmeldung</h2>          <p>            Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der            Arbeit verwendest.          </p>        </div>        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">          <div            class="input-container icon-wrapper"            [ngClass]="{ filled: filledStates[\'emailFilled\'] }"          >            <img              [src]="                filledStates[\'emailFilled\']                  ? \'assets/img/black-mail.png\'                  : \'assets/img/mail.png\'              "              alt="Email Icon"            />            <input              [ngClass]="{                \'email-icon\': true,                filled: filledStates[\'emailFilled\']              }"              type="email"              id="email"              name="email"              placeholder="beispielname@email.com"              formControlName="email"              (focus)="onFocus(\'email\')"              (blur)="onBlur(\'email\')"              required            />          </div>          <div class="error-message">            <ng-container *ngIf="errorMessage">              {{ errorMessage }}            </ng-container>            <ng-container *ngIf="!errorMessage">              <ng-container *ngIf="myForm.get(\'email\')?.touched">                <ng-container *ngIf="myForm.get(\'email\')?.errors?.[\'required\']">                  *Bitte füllen Sie das E-Mail-Feld aus.                </ng-container>                <ng-container                  *ngIf="!myForm.get(\'email\')?.errors?.[\'required\'] && myForm.get(\'email\')?.errors?.[\'invalidEmail\']"                >                  Diese E-Mail-Adresse ist leider ungültig.                </ng-container>              </ng-container>            </ng-container>          </div>          <div class="input-container icon-wrapper">            <img              [src]="                filledStates[\'passwordFilled\']                  ? \'assets/img/black-passwort.png\'                  : \'assets/img/passwort.png\'              "              alt="Passwort Icon"            />            <input              [ngClass]="{                \'passwort-icon\': true,                filled: filledStates[\'passwordFilled\']              }"              type="password"              id="password"              name="password"              placeholder="Passwort"              required              formControlName="password"              (focus)="onFocus(\'password\')"              (blur)="onBlur(\'password\')"            />          </div>          <div class="error-message">            <ng-container *ngIf="errorPassword">              {{ errorPassword }}            </ng-container>            <ng-container *ngIf="!errorPassword">              <ng-container                *ngIf="                  myForm.get(\'password\')?.invalid &&                  myForm.get(\'password\')?.touched                "              >                <ng-container                  *ngIf="myForm.get(\'password\')?.errors?.[\'required\']"                >                  *Bitte füllen Sie das Passwordfeld aus.                </ng-container>                <ng-container                  *ngIf="myForm.get(\'password\')?.errors?.[\'minlength\']"                  >Das Passwort muss mindestens 6 Zeichen lang                  sein.</ng-container                >                <ng-container                  *ngIf="!myForm.get(\'password\')?.errors?.[\'required\'] && myForm.get(\'password\')?.errors?.[\'invalid-password\']"                >                  Passwort ist falsch.                </ng-container>              </ng-container>            </ng-container>          </div>          <div class="passwort-vergessen-box">            <a class="forgot-password" [routerLink]="[\'/passwort-reset\']"              >Passwort vergessen?</a            >          </div>          <div class="line-container">            <span class="lineleft">ODER</span>          </div>          <div class="google-container">            <button              class="google-icon"              type="button"              (click)="signInWithGoogle()"            >              Anmelden mit Google            </button>          </div>          <div class="button-container">            <button              class="button-anmelden button-anmelden-mobile"              type="submit"              [ngClass]="{ \'ng-invalid\': !myForm.valid }"            >              Anmelden            </button>            <button              class="button-gäste-login button-gäste-mobile"              type="button"              (click)="navigateToGuestLogin()"            >              Gäste-Login            </button>          </div>        </form>        <div class="registration-ok" *ngIf="successMessage">          <p style="color: white; font-size: 36px; font-weight: 700">            {{ successMessage }}          </p>        </div>      </div>    </div>    <div class="register">      <h3>Neu bei DABubble?</h3>      <button (click)="navigateToSignup()">Konto erstellen</button>    </div>  </div>  <app-footer></app-footer></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'LoginComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'LoginComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

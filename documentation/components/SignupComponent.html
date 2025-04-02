@@ -1,0 +1,2428 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  SignupComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/signup/signup.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>The SignupComponent manages user sign-up using Firebase Authentication.
+It includes form validation, a dynamic TOS checkbox that auto-disables on small screens,
+and navigation to an avatar selection page after successful registration.</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-signup</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>ReactiveFormsModule</code>
+                                <code><a href="../components/HeaderComponent.html" target="_self" >HeaderComponent</a></code>
+                                <code><a href="../components/FooterComponent.html" target="_self" >FooterComponent</a></code>
+                            <code>RouterModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./signup.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./signup.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#emailPattern" >emailPattern</a>
+                            </li>
+                            <li>
+                                <a href="#errorMessage" >errorMessage</a>
+                            </li>
+                            <li>
+                                <a href="#filledStates" >filledStates</a>
+                            </li>
+                            <li>
+                                <a href="#isChecked" >isChecked</a>
+                            </li>
+                            <li>
+                                <a href="#isSmallScreen" >isSmallScreen</a>
+                            </li>
+                            <li>
+                                <a href="#myForm" >myForm</a>
+                            </li>
+                            <li>
+                                <a href="#passwordFocused" >passwordFocused</a>
+                            </li>
+                            <li>
+                                <a href="#successMessage" >successMessage</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#emailValidator" >emailValidator</a>
+                            </li>
+                            <li>
+                                <a href="#getFirebaseErrorMessage" >getFirebaseErrorMessage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#handleSuccessfulSignup" >handleSuccessfulSignup</a>
+                            </li>
+                            <li>
+                                <a href="#isSubmitButtonEnabled" >isSubmitButtonEnabled</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onBlur" >onBlur</a>
+                            </li>
+                            <li>
+                                <a href="#onFocus" >onFocus</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#onSubmit" >onSubmit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#saveUser" >saveUser</a>
+                            </li>
+                            <li>
+                                <a href="#toggleCheckbox" >toggleCheckbox</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#verifyTOSforLargeScreens" >verifyTOSforLargeScreens</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(auth: Auth, firestore: Firestore, router: Router, fb: FormBuilder)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/signup/signup.component.ts:78</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructor injecting Auth, Firestore, Router, and FormBuilder services.</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>auth</td>
+                                                  
+                                                        <td>
+                                                                    <code>Auth</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Firebase Auth service.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>firestore</td>
+                                                  
+                                                        <td>
+                                                                    <code>Firestore</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Firebase Firestore service.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                    <code>Router</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Angular Router to navigate after sign-up.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>fb</td>
+                                                  
+                                                        <td>
+                                                                    <code>FormBuilder</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>FormBuilder for constructing the ReactiveForms form.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emailValidator"></a>
+                    <span class="name">
+                        <span ><b>emailValidator</b></span>
+                        <a href="#emailValidator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>emailValidator(control: AbstractControl)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="116"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:116</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A validator function for the <code>email</code> form control using <code>this.emailPattern</code>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>control</td>
+                                            <td>
+                                                        <code>AbstractControl</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The form control to validate.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ValidationErrors | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The validation result, if invalid.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFirebaseErrorMessage"></a>
+                    <span class="name">
+                        <span ><b>getFirebaseErrorMessage</b></span>
+                        <a href="#getFirebaseErrorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getFirebaseErrorMessage(error: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="270"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:270</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Translates Firebase sign-up error codes into user-friendly German messages.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The error object thrown by Firebase.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>An error message to display.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleSuccessfulSignup"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>handleSuccessfulSignup</b></span>
+                        <a href="#handleSuccessfulSignup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>handleSuccessfulSignup(user: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="219"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:219</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Handles successful sign-up by building user data, saving it to Firestore,
+and displaying a success message with a redirect to &#39;/avatar&#39;.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSubmitButtonEnabled"></a>
+                    <span class="name">
+                        <span ><b>isSubmitButtonEnabled</b></span>
+                        <a href="#isSubmitButtonEnabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isSubmitButtonEnabled()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:159</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Determines whether the submit button should be enabled.
+It&#39;s always enabled on small screens, or if the form is valid
+and the TOS checkbox is checked on large screens.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>True if the submit button should be enabled.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:108</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Lifecycle hook: detects the screen size on initialization and updates the form&#39;s state.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onBlur"></a>
+                    <span class="name">
+                        <span ><b>onBlur</b></span>
+                        <a href="#onBlur"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onBlur(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:144</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Invoked on blur of a form input, checks whether it&#39;s still filled.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The control name.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onFocus"></a>
+                    <span class="name">
+                        <span ><b>onFocus</b></span>
+                        <a href="#onFocus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onFocus(type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="130"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:130</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Invoked on focus of a form input, updates <code>filledStates</code>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The control name.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSubmit"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>onSubmit</b></span>
+                        <a href="#onSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onSubmit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:166</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Called on form submission, registers the user if valid and TOS is confirmed.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveUser"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>saveUser</b></span>
+                        <a href="#saveUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveUser(user: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:241</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Saves the user data to Firestore under the &#39;users&#39; collection,
+using the user&#39;s UID as the document ID.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>An object containing the user&#39;s UID, email, name, and timestamp.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleCheckbox"></a>
+                    <span class="name">
+                        <span ><b>toggleCheckbox</b></span>
+                        <a href="#toggleCheckbox"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleCheckbox()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="258"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:258</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Toggles the TOS checkbox for manual updates if needed.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="verifyTOSforLargeScreens"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>verifyTOSforLargeScreens</b></span>
+                        <a href="#verifyTOSforLargeScreens"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>verifyTOSforLargeScreens()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/signup/signup.component.ts:207</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if TOS (checkbox) is confirmed on larger screens.
+If not confirmed, sets an empty errorMessage and returns false.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emailPattern"></a>
+                    <span class="name">
+                        <span ><b>emailPattern</b></span>
+                        <a href="#emailPattern"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/signup/signup.component.ts:73</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A simple Regex pattern for email validation in this component.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorMessage"></a>
+                    <span class="name">
+                        <span ><b>errorMessage</b></span>
+                        <a href="#errorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/signup/signup.component.ts:53</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A string to hold error messages displayed to the user.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filledStates"></a>
+                    <span class="name">
+                        <span ><b>filledStates</b></span>
+                        <a href="#filledStates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/signup/signup.component.ts:68</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>An object tracking input fields as &quot;filled&quot; or not, for styling or placeholders.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isChecked"></a>
+                    <span class="name">
+                        <span ><b>isChecked</b></span>
+                        <a href="#isChecked"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/signup/signup.component.ts:63</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the TOS (checkbox) is checked.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSmallScreen"></a>
+                    <span class="name">
+                        <span ><b>isSmallScreen</b></span>
+                        <a href="#isSmallScreen"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>window.innerWidth &lt; 780</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/signup/signup.component.ts:78</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Detects whether the current viewport is &lt; 780px.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="myForm"></a>
+                    <span class="name">
+                        <span ><b>myForm</b></span>
+                        <a href="#myForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>FormGroup</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/signup/signup.component.ts:48</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The ReactiveForms form for capturing user sign-up details.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="passwordFocused"></a>
+                    <span class="name">
+                        <span ><b>passwordFocused</b></span>
+                        <a href="#passwordFocused"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/signup/signup.component.ts:124</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="successMessage"></a>
+                    <span class="name">
+                        <span ><b>successMessage</b></span>
+                        <a href="#successMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/signup/signup.component.ts:58</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A string to hold success messages displayed to the user.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from &#x27;@angular/forms&#x27;;
+import { Router } from &#x27;@angular/router&#x27;;
+import { Auth, createUserWithEmailAndPassword, sendEmailVerification  } from &#x27;@angular/fire/auth&#x27;;
+import { Firestore, doc, setDoc } from &#x27;@angular/fire/firestore&#x27;;
+import { HeaderComponent } from &#x27;../header/header.component&#x27;;
+import { FooterComponent } from &#x27;../footer/footer.component&#x27;;
+import { RouterModule } from &#x27;@angular/router&#x27;;
+
+/**
+ * The SignupComponent manages user sign-up using Firebase Authentication.
+ * It includes form validation, a dynamic TOS checkbox that auto-disables on small screens,
+ * and navigation to an avatar selection page after successful registration.
+ */
+@Component({
+  selector: &#x27;app-signup&#x27;,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HeaderComponent,
+    FooterComponent,
+    RouterModule,
+  ],
+  templateUrl: &#x27;./signup.component.html&#x27;,
+  styleUrls: [&#x27;./signup.component.scss&#x27;],
+})
+export class SignupComponent implements OnInit {
+  /**
+   * The ReactiveForms form for capturing user sign-up details.
+   */
+  myForm: FormGroup;
+
+  /**
+   * A string to hold error messages displayed to the user.
+   */
+  errorMessage: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * A string to hold success messages displayed to the user.
+   */
+  successMessage: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Whether the TOS (checkbox) is checked.
+   */
+  isChecked &#x3D; false;
+
+  /**
+   * An object tracking input fields as &quot;filled&quot; or not, for styling or placeholders.
+   */
+  filledStates: { [key: string]: boolean } &#x3D; {};
+
+  /**
+   * A simple Regex pattern for email validation in this component.
+   */
+  emailPattern &#x3D; /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  /**
+   * Detects whether the current viewport is &lt; 780px.
+   */
+  isSmallScreen: boolean &#x3D; window.innerWidth &lt; 780;
+
+  /**
+   * Constructor injecting Auth, Firestore, Router, and FormBuilder services.
+   *
+   * @param {Auth} auth - Firebase Auth service.
+   * @param {Firestore} firestore - Firebase Firestore service.
+   * @param {Router} router - Angular Router to navigate after sign-up.
+   * @param {FormBuilder} fb - FormBuilder for constructing the ReactiveForms form.
+   */
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore,
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.myForm &#x3D; this.fb.group({
+      name: [&#x27;&#x27;, [Validators.required, Validators.minLength(2)]],
+      email: [&#x27;&#x27;, [Validators.required, this.emailValidator.bind(this)]],
+      password: [&#x27;&#x27;, [Validators.required, Validators.minLength(6)]],
+      checkbox: [
+        { value: false, disabled: this.isSmallScreen },
+        Validators.requiredTrue,
+      ],
+    });
+  }
+
+  /**
+   * Lifecycle hook: detects the screen size on initialization and updates the form&#x27;s state.
+   */
+  ngOnInit(): void {}
+
+  /**
+   * A validator function for the &#x60;email&#x60; form control using &#x60;this.emailPattern&#x60;.
+   *
+   * @param {AbstractControl} control - The form control to validate.
+   * @returns {ValidationErrors | null} The validation result, if invalid.
+   */
+  emailValidator(control: AbstractControl): ValidationErrors | null {
+    const email &#x3D; control.value;
+    if (!this.emailPattern.test(email)) {
+      return { invalidEmail: true };
+    }
+    return null;
+  }
+
+  passwordFocused &#x3D; false;
+  /**
+   * Invoked on focus of a form input, updates &#x60;filledStates&#x60;.
+   *
+   * @param {string} type - The control name.
+   */
+  onFocus(type: string) {
+    this.filledStates[type + &#x27;Filled&#x27;] &#x3D; true;
+    this.errorMessage &#x3D; &#x27;&#x27;;
+
+    if (type &#x3D;&#x3D;&#x3D; &#x27;password&#x27;) {
+      this.passwordFocused &#x3D; true;
+    }
+  }
+
+  /**
+   * Invoked on blur of a form input, checks whether it&#x27;s still filled.
+   *
+   * @param {string} type - The control name.
+   */
+  onBlur(type: string) {
+    this.filledStates[type + &#x27;Filled&#x27;] &#x3D; Boolean(this.myForm.get(type)?.value);
+
+    if (type &#x3D;&#x3D;&#x3D; &#x27;password&#x27;) {
+      this.passwordFocused &#x3D; false;
+    }
+  }
+
+  /**
+   * Determines whether the submit button should be enabled.
+   * It&#x27;s always enabled on small screens, or if the form is valid
+   * and the TOS checkbox is checked on large screens.
+   *
+   * @returns {boolean} True if the submit button should be enabled.
+   */
+  isSubmitButtonEnabled(): boolean {
+    return this.isSmallScreen || (this.myForm.valid &amp;&amp; this.isChecked);
+  }
+
+  /**
+   * Called on form submission, registers the user if valid and TOS is confirmed.
+   */
+  async onSubmit(): Promise&lt;void&gt; {
+    // 1) Form validation check
+    if (!this.myForm.valid) return;
+
+    // 2) TOS check for large screens
+    if (!this.verifyTOSforLargeScreens()) return;
+
+    try {
+      // 3) Create user with Firebase Auth
+      const { name, email, password } &#x3D; this.myForm.value;
+      const userCredential &#x3D; await createUserWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
+
+      // NEU: Bestätigungs-E-Mail schicken
+    await sendEmailVerification(userCredential.user, {
+      
+      url: &#x27;http://localhost:4200/auth-action&#x27;,
+      handleCodeInApp: false,
+    });
+    this.successMessage &#x3D; &#x27;Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach, um deine Adresse zu bestätigen.&#x27;;
+
+
+
+      //await signOut(this.auth);
+      // 4) Handle sign-up success: build user data, save to Firestore, show success msg
+      await this.handleSuccessfulSignup(userCredential.user, name, email);
+    } catch (error: any) {
+      this.errorMessage &#x3D; this.getFirebaseErrorMessage(error);
+    }
+
+    // 5) Reset form whether success or fail
+    this.myForm.reset();
+  }
+
+  /**
+   * Checks if TOS (checkbox) is confirmed on larger screens.
+   * If not confirmed, sets an empty errorMessage and returns false.
+   */
+  private verifyTOSforLargeScreens(): boolean {
+    if (!this.isSmallScreen &amp;&amp; !this.isChecked) {
+      this.errorMessage &#x3D; &#x27;&#x27;;
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Handles successful sign-up by building user data, saving it to Firestore,
+   * and displaying a success message with a redirect to &#x27;/avatar&#x27;.
+   */
+  private async handleSuccessfulSignup(
+    user: any, // or Firebase &#x27;User&#x27;
+    name: string,
+    email: string
+  ): Promise&lt;void&gt; {
+    const userData &#x3D; {
+      uid: user.uid,
+      email,
+      name,
+      timestamp: new Date(),
+    };
+
+    await this.saveUser(userData);
+    this.successMessage &#x3D; &#x27;Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach, um deine Adresse zu bestätigen.&#x27;;
+  }
+
+  /**
+   * Saves the user data to Firestore under the &#x27;users&#x27; collection,
+   * using the user&#x27;s UID as the document ID.
+   *
+   * @param {object} user - An object containing the user&#x27;s UID, email, name, and timestamp.
+   */
+  async saveUser(user: {
+    uid: string;
+    email: string;
+    name: string;
+    timestamp: Date;
+  }) {
+    try {
+      const userRef &#x3D; doc(this.firestore, &#x27;users&#x27;, user.uid);
+      await setDoc(userRef, user);
+    } catch (e) {
+      console.error(&#x27;Fehler beim Speichern des Benutzers:&#x27;, e);
+    }
+  }
+
+  /**
+   * Toggles the TOS checkbox for manual updates if needed.
+   */
+  toggleCheckbox() {
+    const currentValue &#x3D; this.myForm.get(&#x27;checkbox&#x27;)?.value;
+    this.myForm.get(&#x27;checkbox&#x27;)?.setValue(!currentValue);
+    this.isChecked &#x3D; !currentValue;
+  }
+
+  /**
+   * Translates Firebase sign-up error codes into user-friendly German messages.
+   *
+   * @param {any} error - The error object thrown by Firebase.
+   * @returns {string} An error message to display.
+   */
+  getFirebaseErrorMessage(error: any): string {
+    switch (error.code) {
+      case &#x27;auth/email-already-in-use&#x27;:
+        return &#x27;Diese E-Mail-Adresse wird bereits verwendet.&#x27;;
+      case &#x27;auth/operation-not-allowed&#x27;:
+        return &#x27;Registrierung ist derzeit deaktiviert.&#x27;;
+      default:
+        return &#x27;Ein unbekannter Fehler ist aufgetreten.&#x27;;
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;page&quot;&gt;
+  &lt;app-header&gt;&lt;/app-header&gt;
+
+  &lt;div class&#x3D;&quot;container&quot;&gt;
+    &lt;div class&#x3D;&quot;login-container&quot;&gt;
+      &lt;div class&#x3D;&quot;login&quot;&gt;
+        &lt;div class&#x3D;&quot;box&quot;&gt;
+          &lt;div class&#x3D;&quot;konto-container&quot;&gt;
+            &lt;h2&gt;Konto erstellen&lt;/h2&gt;
+            &lt;div class&#x3D;&quot;image-container&quot;&gt;
+              &lt;a [routerLink]&#x3D;&quot;[&#x27;/login&#x27;]&quot;&gt;
+                &lt;img src&#x3D;&quot;assets/img/leftfile.png&quot; alt&#x3D;&quot;Zurück zum Login&quot; /&gt;
+              &lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;p&gt;
+            Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
+            DABubble-Konto.
+          &lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;form [formGroup]&#x3D;&quot;myForm&quot; (ngSubmit)&#x3D;&quot;onSubmit()&quot;&gt;
+          &lt;div
+            class&#x3D;&quot;input-container icon-wrapper&quot;
+            [ngClass]&#x3D;&quot;{ filled: filledStates[&#x27;nameFilled&#x27;] }&quot;
+          &gt;
+            &lt;img
+              [src]&#x3D;&quot;
+                filledStates[&#x27;nameFilled&#x27;]
+                  ? &#x27;assets/img/person-black.png&#x27;
+                  : &#x27;assets/img/person.png&#x27;
+              &quot;
+              alt&#x3D;&quot;Name Icon&quot;
+            /&gt;
+
+            &lt;input
+              [ngClass]&#x3D;&quot;{
+                &#x27;name-icon&#x27;: true,
+                filled: filledStates[&#x27;nameFilled&#x27;]
+              }&quot;
+              type&#x3D;&quot;text&quot;
+              id&#x3D;&quot;name&quot;
+              formControlName&#x3D;&quot;name&quot;
+              placeholder&#x3D;&quot;Name und Nachname&quot;
+              (focus)&#x3D;&quot;onFocus(&#x27;name&#x27;)&quot;
+              (blur)&#x3D;&quot;onBlur(&#x27;name&#x27;)&quot;
+            /&gt;
+          &lt;/div&gt;
+          &lt;div
+            class&#x3D;&quot;error-message&quot;
+            *ngIf&#x3D;&quot;myForm.get(&#x27;name&#x27;)?.invalid &amp;&amp; myForm.get(&#x27;name&#x27;)?.touched&quot;
+          &gt;
+            Bitte fülle das Feld aus.
+          &lt;/div&gt;
+
+          &lt;div
+            class&#x3D;&quot;input-container icon-wrapper&quot;
+            [ngClass]&#x3D;&quot;{ filled: filledStates[&#x27;emailFilled&#x27;] }&quot;
+          &gt;
+            &lt;img
+              [src]&#x3D;&quot;
+                filledStates[&#x27;emailFilled&#x27;]
+                  ? &#x27;assets/img/black-mail.png&#x27;
+                  : &#x27;assets/img/mail.png&#x27;
+              &quot;
+              alt&#x3D;&quot;Email Icon&quot;
+            /&gt;
+
+            &lt;input
+              [ngClass]&#x3D;&quot;{
+                &#x27;email-icon&#x27;: true,
+                filled: filledStates[&#x27;emailFilled&#x27;]
+              }&quot;
+              type&#x3D;&quot;email&quot;
+              id&#x3D;&quot;email&quot;
+              formControlName&#x3D;&quot;email&quot;
+              placeholder&#x3D;&quot;beispielname@email.com&quot;
+              (focus)&#x3D;&quot;onFocus(&#x27;email&#x27;)&quot;
+              (blur)&#x3D;&quot;onBlur(&#x27;email&#x27;)&quot;
+            /&gt;
+          &lt;/div&gt;
+          &lt;div class&#x3D;&quot;error-message&quot;&gt;
+            &lt;ng-container *ngIf&#x3D;&quot;errorMessage&quot;&gt;
+              {{ errorMessage }}
+            &lt;/ng-container&gt;
+
+            &lt;ng-container *ngIf&#x3D;&quot;!errorMessage&quot;&gt;
+              &lt;ng-container *ngIf&#x3D;&quot;myForm.get(&#x27;email&#x27;)?.touched&quot;&gt;
+                &lt;ng-container *ngIf&#x3D;&quot;myForm.get(&#x27;email&#x27;)?.errors?.[&#x27;required&#x27;]&quot;&gt;
+                  *Bitte füllen Sie das E-Mail-Feld aus.
+                &lt;/ng-container&gt;
+
+                &lt;ng-container
+                  *ngIf&#x3D;&quot;!myForm.get(&#x27;email&#x27;)?.errors?.[&#x27;required&#x27;] &amp;&amp; myForm.get(&#x27;email&#x27;)?.errors?.[&#x27;invalidEmail&#x27;]&quot;
+                &gt;
+                  Diese E-Mail-Adresse ist leider ungültig.
+                &lt;/ng-container&gt;
+              &lt;/ng-container&gt;
+            &lt;/ng-container&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;input-container&quot;&gt;
+            &lt;input
+              [ngClass]&#x3D;&quot;{
+                &#x27;passwort-icon&#x27;: true,
+                filled: filledStates[&#x27;passwordFilled&#x27;]
+              }&quot;
+              type&#x3D;&quot;password&quot;
+              id&#x3D;&quot;password&quot;
+              formControlName&#x3D;&quot;password&quot;
+              placeholder&#x3D;&quot;Passwort&quot;
+              (focus)&#x3D;&quot;onFocus(&#x27;password&#x27;)&quot;
+              (blur)&#x3D;&quot;onBlur(&#x27;password&#x27;)&quot;
+            /&gt;
+          &lt;/div&gt;
+
+          &lt;div
+            class&#x3D;&quot;error-message&quot;
+            *ngIf&#x3D;&quot;
+          passwordFocused &amp;&amp;
+          myForm.get(&#x27;password&#x27;)?.errors?.[&#x27;minlength&#x27;]
+        &quot;
+          &gt;
+            Bitte geben Sie mindestens 6 Zeichen ein.
+          &lt;/div&gt;
+
+          &lt;div
+            class&#x3D;&quot;error-message&quot;
+            *ngIf&#x3D;&quot;
+              myForm.get(&#x27;password&#x27;)?.value?.length &gt;&#x3D; 6 &amp;&amp;
+              !myForm.get(&#x27;checkbox&#x27;)?.value
+            &quot;
+          &gt;
+            Bitte stimmen Sie die Datenschutzerklärung zu ...
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;privacy-box&quot;&gt;
+            &lt;div class&#x3D;&quot;checkbox&quot; (click)&#x3D;&quot;toggleCheckbox()&quot;&gt;
+              &lt;input
+                type&#x3D;&quot;checkbox&quot;
+                formControlName&#x3D;&quot;checkbox&quot;
+                [checked]&#x3D;&quot;isChecked&quot;
+                style&#x3D;&quot;display: none&quot;
+              /&gt;
+              &lt;div
+                class&#x3D;&quot;checkmark&quot;
+                *ngIf&#x3D;&quot;myForm.get(&#x27;checkbox&#x27;)?.value&quot;
+              &gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;p&gt;
+              Ich stimme der
+              &lt;a class&#x3D;&quot;forgot-password&quot; [routerLink]&#x3D;&quot;[&#x27;/privacy&#x27;]&quot;
+                &gt;Datenschutzerklärung&lt;/a
+              &gt;
+              zu.
+            &lt;/p&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;button-container&quot;&gt;
+            &lt;button
+              class&#x3D;&quot;button-anmelden&quot;
+              type&#x3D;&quot;submit&quot;
+              [disabled]&#x3D;&quot;!myForm.valid || (!isSmallScreen &amp;&amp; !isChecked)&quot;
+              [ngClass]&#x3D;&quot;{
+                &#x27;btn-blue&#x27;: isSubmitButtonEnabled(),
+                &#x27;disabled-button&#x27;:
+                  !myForm.valid || (!isSmallScreen &amp;&amp; !isChecked)
+              }&quot;
+            &gt;
+              Weiter
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+        &lt;div class&#x3D;&quot;registration-ok&quot; *ngIf&#x3D;&quot;successMessage&quot;&gt;
+          &lt;p style&#x3D;&quot;color: white; font-size: 36px; font-weight: 700&quot;&gt;
+            {{ successMessage }}
+          &lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;app-footer&gt;&lt;/app-footer&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./signup.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &quot;./../../styles.scss&quot;;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-container {
+  text-align: center;
+  max-height: 669px;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  max-width: 606px;
+  padding: 2rem;
+
+  .login {
+    max-width: 500px;
+    width: 100%;
+
+    .box {
+      @include dFlex(null, null, 30px);
+      flex-direction: column;
+    }
+
+    .konto-container {
+      @include dFlex(flex-end, center, null);
+      flex-direction: row-reverse;
+    }
+
+    .image-container {
+      @include dFlex(center, center, null);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      transition: background-color 0.3s;
+      overflow: hidden;
+
+      &amp;:hover {
+        filter: brightness(100%);
+        background-color: $lightblue;
+      }
+    }
+
+    img {
+      object-fit: cover;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      cursor: pointer;
+
+      &amp;:hover {
+        filter: brightness(0) saturate(100%) invert(35%) sepia(62%)
+          saturate(2733%) hue-rotate(225deg) brightness(93%) contrast(104%);
+      }
+    }
+
+    h2 {
+      color: $button-blue;
+      font-size: 46px;
+      font-weight: 700;
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+      line-height: 55.2px;
+    }
+
+    p {
+      color: black;
+      font-size: 20px;
+      font-weight: 400;
+      width: 486px;
+      margin: 0;
+    }
+
+    a {
+      color: $middleblue;
+      font-size: 18px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+    }
+
+    .forgot-password:hover {
+      background-color: $lightblue;
+      border-radius: 100px;
+      color: $button-blue;
+      font-weight: 700;
+    }
+
+    .button-container {
+      @include dFlex(flex-end, null, 0px);
+      max-width: 500px;
+      width: 100%;
+      margin-top: 40px;
+
+      .error-message p {
+        color: red !important;
+        font-weight: bold;
+        width: 70%;
+      }
+
+      .success-message p {
+        color: green;
+        font-weight: bold;
+      }
+    }
+
+    form {
+      input {
+        background: $lightblue;
+        border-radius: 100px;
+        color: #686868;
+        font-size: 18px;
+        font-weight: 500;
+        height: 60px;
+        width: 100%;
+        border: 1px solid transparent;
+        cursor: pointer;
+        box-sizing: border-box;
+        max-width: 500px;
+
+        &amp;:hover {
+          border-color: #686868;
+          transition: border-color 0.3s;
+        }
+
+        &amp;:focus,
+        &amp;:focus-within {
+          outline: none;
+          border-color: $button-blue;
+        }
+
+        &amp;:not(:focus) {
+          &amp;:has(+ input:focus) {
+            border-color: blue;
+          }
+        }
+      }
+
+      .privacy-box {
+        @include dFlex(null, center, 8px);
+        width: 100%;
+        margin-top: 40px;
+
+        p {
+          @include dFlex(null, center, 4px);
+          color: #42526e;
+          font-size: 16px;
+          font-weight: 400;
+        }
+
+        .checkbox {
+          @include dFlex(center, center, null);
+          border: 2px solid $middleblue;
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          transition: all 0.3s;
+          border-radius: 4px;
+          background-color: #fff;
+          position: relative;
+
+          &amp;:hover {
+            background: $lightblue;
+            border-color: $button-blue;
+          }
+        }
+
+        .checkmark {
+          @include dFlex(center, flex-end, null);
+          width: 10px;
+          height: 10px;
+
+          &amp;::before {
+            content: &quot;&quot;;
+            width: 5px;
+            height: 10px;
+            border: solid $button-blue;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+          }
+        }
+      }
+
+      .error-message {
+        font-size: 14px;
+        color: #ed1e79;
+        display: flex;
+        font-weight: 400;
+        margin: 0;
+        position: absolute;
+        display: flex;
+        padding-left:50px;
+      }
+
+      .input-container {
+        max-width: 500px;
+        width: 100%;
+        margin-top: 40px;
+      }
+
+      .email-icon,
+      .name-icon,
+      .passwort-icon {
+        background-repeat: no-repeat;
+        background-position: 15px center;
+        background-size: 24px 24px;
+        color: black;
+        transition: background-image 0.3s ease;
+        padding-left: 70px;
+      }
+
+      .filled {
+        &amp;.passwort-icon {
+          background-image: url(&quot;/assets/img/black-passwort.png&quot;);
+        }
+      }
+
+      .passwort-icon {
+        background-image: url(&quot;/assets/img/passwort.png&quot;);
+      }
+    }
+  }
+}
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  img {
+    position: absolute;
+    left: 15px;
+    width: 24px;
+    height: 24px;
+  }
+
+  input,
+  button {
+    padding-left: 50px;
+    height: 50px;
+    border-radius: 100px;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+}
+
+.button-anmelden {
+  width: 107px;
+  font-size: 16px;
+}
+
+@media (max-width: 1278px) {
+  .registration-ok {
+    max-width: 323px !important;
+    width: 100%;
+    gap: 10px;
+  }
+
+  //.container{
+  //  flex:none;
+  //}
+
+  .container{
+    padding:8px 0 0 0;
+  }
+}
+
+@media (max-width: 780px) {
+  .container {
+    box-sizing: border-box;
+  }
+
+  .login-container .login p {
+    margin: 0 auto;
+    padding: unset;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    max-width: 320px;
+  }
+
+  .login-container .login {
+    form {
+      width: 100%;
+      max-width: 320px;
+      
+      .privacy-box {
+        margin-top:20px;
+       p{
+        font-size: 14px;
+       }
+
+       a{
+        font-size: 16px;
+       }
+
+       .checkbox{
+        width:22px;
+        height:15px;
+       }
+      }
+    }
+  }
+
+  .login-container .login form .error-message {
+    font-size: 11px;
+  }
+
+  .login-container .login form .input-container input {
+    font-size: 14px;
+  }
+
+  .login-container .login form .input-container {
+    margin-top: 20px;
+  }
+
+  .button-container {
+    gap: 30px;
+  }
+
+  .login-container .login .button-container {
+    gap: 220px;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .login-container .login .box {
+    gap: 20px;
+  }
+
+  .login-container .login .form {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .login-container .login {
+    max-width: 320px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-container .login h2 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-container .login .box {
+    gap: 10px;
+  }
+
+  .registration-ok {
+    padding: unset;
+  }
+
+  .login-container {
+    padding: 20px;
+  }
+
+  .login-container .login .button-container {
+    gap: 10px;
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+  }
+
+  .login-container .login {
+    max-width: 300px;
+  }
+
+  .login-container .login form .button-gäste-mobile {
+    font-size: 16px;
+    width: 120px;
+  }
+
+  .login-container .login form {
+    max-width: 300px;
+  }
+
+  .button-anmelden-mobile {
+    font-size: 16px;
+    width: 100px;
+    padding: 12px 12px;
+  }
+
+  .login-container .login form .google-container button {
+    height: 90%;
+  }
+
+  .login-container .login form .google-container {
+    height: 40px;
+  }
+
+  .login-container .login form .input-container input {
+    height: 40px;
+  }
+
+  .login-container .login .image-container {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container .login p {
+    width: 260px;
+  }
+
+
+  .login-container .login {
+    form {
+      width: 100%;
+      max-width: 320px;
+      
+      .privacy-box {
+        margin-top:20px;
+       p{
+        font-size: 14px;
+       }
+
+       a{
+        font-size: 14px;
+       }
+
+       .checkbox{
+        width:18px;
+        height:18px;
+       }
+      }
+    }
+  }
+
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="page">  <app-header></app-header>  <div class="container">    <div class="login-container">      <div class="login">        <div class="box">          <div class="konto-container">            <h2>Konto erstellen</h2>            <div class="image-container">              <a [routerLink]="[\'/login\']">                <img src="assets/img/leftfile.png" alt="Zurück zum Login" />              </a>            </div>          </div>          <p>            Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues            DABubble-Konto.          </p>        </div>        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">          <div            class="input-container icon-wrapper"            [ngClass]="{ filled: filledStates[\'nameFilled\'] }"          >            <img              [src]="                filledStates[\'nameFilled\']                  ? \'assets/img/person-black.png\'                  : \'assets/img/person.png\'              "              alt="Name Icon"            />            <input              [ngClass]="{                \'name-icon\': true,                filled: filledStates[\'nameFilled\']              }"              type="text"              id="name"              formControlName="name"              placeholder="Name und Nachname"              (focus)="onFocus(\'name\')"              (blur)="onBlur(\'name\')"            />          </div>          <div            class="error-message"            *ngIf="myForm.get(\'name\')?.invalid && myForm.get(\'name\')?.touched"          >            Bitte fülle das Feld aus.          </div>          <div            class="input-container icon-wrapper"            [ngClass]="{ filled: filledStates[\'emailFilled\'] }"          >            <img              [src]="                filledStates[\'emailFilled\']                  ? \'assets/img/black-mail.png\'                  : \'assets/img/mail.png\'              "              alt="Email Icon"            />            <input              [ngClass]="{                \'email-icon\': true,                filled: filledStates[\'emailFilled\']              }"              type="email"              id="email"              formControlName="email"              placeholder="beispielname@email.com"              (focus)="onFocus(\'email\')"              (blur)="onBlur(\'email\')"            />          </div>          <div class="error-message">            <ng-container *ngIf="errorMessage">              {{ errorMessage }}            </ng-container>            <ng-container *ngIf="!errorMessage">              <ng-container *ngIf="myForm.get(\'email\')?.touched">                <ng-container *ngIf="myForm.get(\'email\')?.errors?.[\'required\']">                  *Bitte füllen Sie das E-Mail-Feld aus.                </ng-container>                <ng-container                  *ngIf="!myForm.get(\'email\')?.errors?.[\'required\'] && myForm.get(\'email\')?.errors?.[\'invalidEmail\']"                >                  Diese E-Mail-Adresse ist leider ungültig.                </ng-container>              </ng-container>            </ng-container>          </div>          <div class="input-container">            <input              [ngClass]="{                \'passwort-icon\': true,                filled: filledStates[\'passwordFilled\']              }"              type="password"              id="password"              formControlName="password"              placeholder="Passwort"              (focus)="onFocus(\'password\')"              (blur)="onBlur(\'password\')"            />          </div>          <div            class="error-message"            *ngIf="          passwordFocused &&          myForm.get(\'password\')?.errors?.[\'minlength\']        "          >            Bitte geben Sie mindestens 6 Zeichen ein.          </div>          <div            class="error-message"            *ngIf="              myForm.get(\'password\')?.value?.length >= 6 &&              !myForm.get(\'checkbox\')?.value            "          >            Bitte stimmen Sie die Datenschutzerklärung zu ...          </div>          <div class="privacy-box">            <div class="checkbox" (click)="toggleCheckbox()">              <input                type="checkbox"                formControlName="checkbox"                [checked]="isChecked"                style="display: none"              />              <div                class="checkmark"                *ngIf="myForm.get(\'checkbox\')?.value"              ></div>            </div>            <p>              Ich stimme der              <a class="forgot-password" [routerLink]="[\'/privacy\']"                >Datenschutzerklärung</a              >              zu.            </p>          </div>          <div class="button-container">            <button              class="button-anmelden"              type="submit"              [disabled]="!myForm.valid || (!isSmallScreen && !isChecked)"              [ngClass]="{                \'btn-blue\': isSubmitButtonEnabled(),                \'disabled-button\':                  !myForm.valid || (!isSmallScreen && !isChecked)              }"            >              Weiter            </button>          </div>        </form>        <div class="registration-ok" *ngIf="successMessage">          <p style="color: white; font-size: 36px; font-weight: 700">            {{ successMessage }}          </p>        </div>      </div>    </div>  </div>  <app-footer></app-footer></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'SignupComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'SignupComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

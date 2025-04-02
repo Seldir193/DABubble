@@ -1,0 +1,1469 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  NewPasswortComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/new-passwort/new-passwort.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-new-passwort</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>ReactiveFormsModule</code>
+                                <code><a href="../components/HeaderComponent.html" target="_self" >HeaderComponent</a></code>
+                                <code><a href="../components/FooterComponent.html" target="_self" >FooterComponent</a></code>
+                            <code>RouterModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./new-passwort.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./new-passwort.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#errorMessage" >errorMessage</a>
+                            </li>
+                            <li>
+                                <a href="#newPasswordForm" >newPasswordForm</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#oobCode" >oobCode</a>
+                            </li>
+                            <li>
+                                <a href="#submitted" >submitted</a>
+                            </li>
+                            <li>
+                                <a href="#successMessage" >successMessage</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#getErrorMessage" >getErrorMessage</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#onSubmit" >onSubmit</a>
+                            </li>
+                            <li>
+                                <a href="#passwordsMatch" >passwordsMatch</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(auth: Auth, fb: FormBuilder, router: Router, route: ActivatedRoute)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:56</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>auth</td>
+                                                  
+                                                        <td>
+                                                                    <code>Auth</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Firebase Auth instance.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>fb</td>
+                                                  
+                                                        <td>
+                                                                    <code>FormBuilder</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Utility for creating and managing form controls.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                    <code>Router</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>The Angular router for navigation.</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>route</td>
+                                                  
+                                                        <td>
+                                                                    <code>ActivatedRoute</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <ul>
+<li>Used to read the query parameters (oobCode).</li>
+</ul>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getErrorMessage"></a>
+                    <span class="name">
+                        <span ><b>getErrorMessage</b></span>
+                        <a href="#getErrorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getErrorMessage(error: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="143"
+                                    class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:143</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves a user-friendly error message based on Firebase&#39;s error codes.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The error object caught during password reset.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <ul>
+<li>A descriptive error message for display.</li>
+</ul>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="80"
+                                    class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:80</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Lifecycle hook that initializes the component by subscribing
+to query parameters and form value changes.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSubmit"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>onSubmit</b></span>
+                        <a href="#onSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onSubmit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:97</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Called when the user submits the form. Validates password
+match and uses Firebase Auth to confirm the password reset
+if valid.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="passwordsMatch"></a>
+                    <span class="name">
+                        <span ><b>passwordsMatch</b></span>
+                        <a href="#passwordsMatch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>passwordsMatch()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="131"
+                                    class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if newPassword and confirmPassword fields contain the same value.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <ul>
+<li>True if both fields match; false otherwise.</li>
+</ul>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorMessage"></a>
+                    <span class="name">
+                        <span ><b>errorMessage</b></span>
+                        <a href="#errorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:41</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Displays any error message encountered during the password reset process.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="newPasswordForm"></a>
+                    <span class="name">
+                        <span ><b>newPasswordForm</b></span>
+                        <a href="#newPasswordForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>FormGroup</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:36</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A reactive form group containing newPassword and confirmPassword fields.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="oobCode"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>oobCode</b></span>
+                        <a href="#oobCode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:51</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The out-of-band code (oobCode) passed through query parameters for password reset.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="submitted"></a>
+                    <span class="name">
+                        <span ><b>submitted</b></span>
+                        <a href="#submitted"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:56</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Indicates whether the form has been submitted (used to manage error resetting).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="successMessage"></a>
+                    <span class="name">
+                        <span ><b>successMessage</b></span>
+                        <a href="#successMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/new-passwort/new-passwort.component.ts:46</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Displays a success message once the password is successfully reset.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
+import { FormBuilder, FormGroup, Validators } from &#x27;@angular/forms&#x27;;
+import { Router, ActivatedRoute } from &#x27;@angular/router&#x27;;
+import { Auth, confirmPasswordReset } from &#x27;@angular/fire/auth&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { ReactiveFormsModule } from &#x27;@angular/forms&#x27;;
+import { HeaderComponent } from &#x27;../header/header.component&#x27;;
+import { FooterComponent } from &#x27;../footer/footer.component&#x27;;
+import { RouterModule } from &#x27;@angular/router&#x27;;
+
+@Component({
+  selector: &#x27;app-new-passwort&#x27;,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HeaderComponent,
+    FooterComponent,
+    RouterModule
+  ],
+  templateUrl: &#x27;./new-passwort.component.html&#x27;,
+  styleUrls: [&#x27;./new-passwort.component.scss&#x27;]
+})
+export class NewPasswortComponent implements OnInit {
+  /**
+   * A reactive form group containing newPassword and confirmPassword fields.
+   */
+  newPasswordForm: FormGroup;
+
+  /**
+   * Displays any error message encountered during the password reset process.
+   */
+  errorMessage: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Displays a success message once the password is successfully reset.
+   */
+  successMessage: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * The out-of-band code (oobCode) passed through query parameters for password reset.
+   */
+  private oobCode: string | null &#x3D; null;
+
+  /**
+   * Indicates whether the form has been submitted (used to manage error resetting).
+   */
+  submitted: boolean &#x3D; false;
+
+  /**
+   * @param {Auth} auth - Firebase Auth instance.
+   * @param {FormBuilder} fb - Utility for creating and managing form controls.
+   * @param {Router} router - The Angular router for navigation.
+   * @param {ActivatedRoute} route - Used to read the query parameters (oobCode).
+   */
+  constructor(
+    private auth: Auth,
+    private fb: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.newPasswordForm &#x3D; this.fb.group({
+      newPassword: [&#x27;&#x27;, [Validators.required, Validators.minLength(6)]],
+      confirmPassword: [&#x27;&#x27;, [Validators.required, Validators.minLength(6)]]
+    });
+  }
+
+  /**
+   * Lifecycle hook that initializes the component by subscribing 
+   * to query parameters and form value changes.
+   */
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) &#x3D;&gt; {
+      this.oobCode &#x3D; params[&#x27;oobCode&#x27;] || null;
+    });
+
+    this.newPasswordForm.valueChanges.subscribe(() &#x3D;&gt; {
+      if (this.submitted) {
+        this.errorMessage &#x3D; &#x27;&#x27;;
+      }
+    });
+  }
+
+  /**
+   * Called when the user submits the form. Validates password 
+   * match and uses Firebase Auth to confirm the password reset 
+   * if valid.
+   */
+  async onSubmit() {
+    this.submitted &#x3D; true;
+
+    if (!this.passwordsMatch()) {
+      this.errorMessage &#x3D; &#x27;Die Passwörter stimmen nicht überein.&#x27;;
+      return;
+    }
+
+    if (this.newPasswordForm.valid &amp;&amp; this.oobCode) {
+      const newPassword &#x3D; this.newPasswordForm.value.newPassword;
+
+      try {
+        await confirmPasswordReset(this.auth, this.oobCode, newPassword);
+        this.successMessage &#x3D; &#x27;Ihr Passwort wurde zurückgesetzt.&#x27;;
+        this.errorMessage &#x3D; &#x27;&#x27;;
+        this.newPasswordForm.reset();
+        this.submitted &#x3D; false;
+
+        setTimeout(() &#x3D;&gt; {
+          this.router.navigate([&#x27;/login&#x27;]);
+        }, 3000);
+      } catch (error: any) {
+        this.successMessage &#x3D; &#x27;&#x27;;
+        this.errorMessage &#x3D; this.getErrorMessage(error);
+        this.newPasswordForm.reset();
+      }
+    }
+  }
+
+  /**
+   * Checks if newPassword and confirmPassword fields contain the same value.
+   *
+   * @returns {boolean} - True if both fields match; false otherwise.
+   */
+  passwordsMatch(): boolean {
+    const password &#x3D; this.newPasswordForm.get(&#x27;newPassword&#x27;)?.value;
+    const confirmPassword &#x3D; this.newPasswordForm.get(&#x27;confirmPassword&#x27;)?.value;
+    return password &#x3D;&#x3D;&#x3D; confirmPassword;
+  }
+
+  /**
+   * Retrieves a user-friendly error message based on Firebase&#x27;s error codes.
+   *
+   * @param {any} error - The error object caught during password reset.
+   * @returns {string} - A descriptive error message for display.
+   */
+  getErrorMessage(error: any): string {
+    switch (error.code) {
+      case &#x27;auth/invalid-action-code&#x27;:
+        return &#x27;Der Link ist ungültig oder abgelaufen.&#x27;;
+      case &#x27;auth/expired-action-code&#x27;:
+        return &#x27;Der Link ist abgelaufen.&#x27;;
+      default:
+        return &#x27;Ein unbekannter Fehler ist aufgetreten.&#x27;;
+    }
+  }
+}
+
+
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;page&quot;&gt;
+  &lt;app-header&gt;&lt;/app-header&gt;
+  &lt;div class&#x3D;&quot;container&quot;&gt;
+    &lt;div class&#x3D;&quot;login-container&quot;&gt;
+      &lt;div class&#x3D;&quot;login&quot;&gt;
+        &lt;div class&#x3D;&quot;box&quot;&gt;
+          &lt;div class&#x3D;&quot;konto-container&quot;&gt;
+            &lt;h2&gt;Passwort zurücksetzen&lt;/h2&gt;
+            &lt;div class&#x3D;&quot;image-container&quot;&gt;
+              &lt;a [routerLink]&#x3D;&quot;[&#x27;/login&#x27;]&quot;&gt;
+                &lt;img src&#x3D;&quot;assets/img/leftfile.png&quot; alt&#x3D;&quot;Zurück zum Login&quot; /&gt;
+              &lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;form [formGroup]&#x3D;&quot;newPasswordForm&quot; (ngSubmit)&#x3D;&quot;onSubmit()&quot;&gt;
+          &lt;div class&#x3D;&quot;input-container&quot;&gt;
+            &lt;input
+              type&#x3D;&quot;password&quot;
+              id&#x3D;&quot;newPassword&quot;
+              name&#x3D;&quot;newPassword&quot;
+              placeholder&#x3D;&quot;Neues Passwort&quot;
+              formControlName&#x3D;&quot;newPassword&quot;
+            /&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;input-container&quot;&gt;
+            &lt;input
+              type&#x3D;&quot;password&quot;
+              id&#x3D;&quot;confirmPassword&quot;
+              name&#x3D;&quot;confirmPassword&quot;
+              placeholder&#x3D;&quot;Neues Kennwort bestätigen&quot;
+              formControlName&#x3D;&quot;confirmPassword&quot;
+            /&gt;
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;error-message&quot; *ngIf&#x3D;&quot;submitted &amp;&amp; errorMessage&quot;&gt;
+            {{ errorMessage }}
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;error-message&quot; *ngIf&#x3D;&quot;errorMessage &amp;&amp; !submitted&quot;&gt;
+            {{ errorMessage }}
+          &lt;/div&gt;
+
+          &lt;div class&#x3D;&quot;button-container&quot;&gt;
+            &lt;button
+              class&#x3D;&quot;button-anmelden&quot;
+              type&#x3D;&quot;submit&quot;
+              [disabled]&#x3D;&quot;!newPasswordForm.valid&quot;
+              [ngClass]&#x3D;&quot;{
+                &#x27;disabled-button&#x27;: !newPasswordForm.valid
+              }&quot;
+            &gt;
+              Passwort ändern
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;registration-ok&quot; *ngIf&#x3D;&quot;successMessage&quot;&gt;
+      &lt;img src&#x3D;&quot;assets/img/send.png&quot; /&gt;
+      &lt;p style&#x3D;&quot;color: white; font-size: 36px; font-weight: 700&quot;&gt;
+        {{ successMessage }}
+      &lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;app-footer&gt;&lt;/app-footer&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./new-passwort.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &quot;./../../styles.scss&quot;;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  @include dFlex(center, center, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-container {
+  text-align: center;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  max-width: 692px;
+  width: 100%;
+  position: relative;
+
+  .login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 40px;
+
+    .box {
+      @include dFlex(null, null, 20px);
+      flex-direction: column;
+      max-width: 512px;
+      width: 100%;
+    }
+
+    .konto-container {
+      @include dFlex(null, center, null);
+      flex-direction: row-reverse;
+    }
+
+    .image-container {
+      position: absolute;
+      top: 45px;
+      left: 32px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      transition: background-color 0.3s;
+      overflow: hidden;
+      z-index: 1;
+      align-content: center;
+
+      &amp;:hover {
+        filter: brightness(100%);
+        background-color: $lightblue;
+      }
+
+      img {
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s;
+        cursor: pointer;
+
+        &amp;:hover {
+          filter: brightness(0) saturate(100%) invert(35%) sepia(62%)
+            saturate(2733%) hue-rotate(225deg) brightness(93%) contrast(104%);
+        }
+      }
+    }
+
+    h2 {
+      color: $button-blue;
+      font-size: 46px;
+      font-weight: 700;
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+      max-width: 491px;
+      width: 100%;
+      line-height: 55.2px;
+    }
+
+    p {
+      color: black;
+      font-size: 20px;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    a {
+      color: $middleblue;
+      font-size: 18px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+    }
+
+    .button-container {
+      @include dFlex(flex-end, null, null);
+      max-width: 500px;
+      width: 100%;
+
+      .error-message p {
+        color: red !important;
+        font-weight: bold;
+        width: 70%;
+      }
+
+      .success-message p {
+        color: green;
+        font-weight: bold;
+      }
+    }
+
+    form {
+      max-width: 500px;
+      width: 100%;
+
+      input {
+        background: $lightblue;
+        border-radius: 100px;
+        color: #686868;
+        font-size: 18px;
+        font-weight: 500;
+        height: 60px;
+        width: 100%;
+        border: 1px solid transparent;
+        cursor: pointer;
+        box-sizing: border-box;
+        max-width: 500px;
+        padding: 18px 40px;
+
+        &amp;:hover {
+          border-color: #686868;
+          transition: border-color 0.3s;
+        }
+
+        &amp;:focus,
+        &amp;:focus-within {
+          outline: none;
+          border-color: $button-blue;
+        }
+
+        &amp;:not(:focus) {
+          &amp;:has(+ input:focus) {
+            border-color: blue;
+          }
+        }
+      }
+
+      .error-message {
+        font-size: 14px;
+        color: #ed1e79;
+        font-weight: 400;
+        text-align: left;
+        text-align: center;
+        width: 100%;
+        max-width: 320px;
+        align-items: flex-end;
+        display: flex;
+        padding-left:50px;
+      }
+
+      .input-container {
+        margin-top: 40px;
+      }
+    }
+  }
+}
+
+.button-anmelden {
+  width: 188px;
+  font-size: 16px;
+  margin-top: 40px;
+}
+
+.registration-ok {
+  gap: 28px;
+}
+
+@media (max-width: 1278px) {
+   .container{
+      padding:8px 0 0 0;
+    }
+}
+
+@media (max-width: 780px) {
+  .login-container .login .image-container {
+    width: unset;
+  }
+
+  .box {
+    @include dFlex(null, null, 10px);
+    flex-direction: column;
+    max-width: 345px;
+    width: 100px;
+  }
+
+  .login-container .login .image-container {
+    left: 22px;
+  }
+
+  .login-container {
+    width: unset;
+  }
+
+  .container {
+    box-sizing: border-box;
+  }
+
+  .login-container .login p {
+    margin: 0 auto;
+    padding: unset;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    max-width: 320px;
+  }
+
+  .login-container .login form .error-message {
+    font-size: 11px;
+  }
+
+  .login-container .login form .input-container input {
+    font-size: 14px;
+  }
+
+  .login-container .login form .input-container {
+    margin-top: 20px;
+  }
+
+  .button-container {
+    gap: 30px;
+  }
+
+  .login-container .login .box {
+    gap: 20px;
+    max-width: 346px;
+  }
+
+  .login-container .login form {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .login-container .login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-container .login h2 {
+    line-height: 35.2px;
+  }
+
+  .login-container .login h2 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 780px) {
+  .button-anmelden {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-container .login .image-container {
+    top: unset;
+  }
+
+  .registration-ok {
+    padding: unset;
+    gap: unset;
+    img {
+      padding: 10px;
+    }
+  }
+
+  .login-container .login h2 {
+    font-size: 30px;
+    width: 100%;
+    max-width: 300px;
+    line-height: 35.2px;
+  }
+
+  .login-container .login .box {
+    gap: 10px;
+  }
+
+  .login-container .login .image-container {
+    height: 30px;
+  }
+
+  .login-container .login .konto-container {
+    flex-direction: column;
+  }
+
+  .login-container .login p {
+    width: 300px;
+    justify-content: center;
+  }
+
+  .login-container .login .button-container {
+    gap: 10px;
+  }
+
+  .login-container .login {
+    padding: unset;
+  }
+
+  .login-container {
+    padding: 20px;
+  }
+
+  .login-container .login form .input-container input {
+    height: 40px;
+  }
+
+  .login-container .login form {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 390px) {
+  .login-container .login {
+    width: 260px;
+  }
+
+  .login-container .login p {
+    width: 260px;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="page">  <app-header></app-header>  <div class="container">    <div class="login-container">      <div class="login">        <div class="box">          <div class="konto-container">            <h2>Passwort zurücksetzen</h2>            <div class="image-container">              <a [routerLink]="[\'/login\']">                <img src="assets/img/leftfile.png" alt="Zurück zum Login" />              </a>            </div>          </div>        </div>        <form [formGroup]="newPasswordForm" (ngSubmit)="onSubmit()">          <div class="input-container">            <input              type="password"              id="newPassword"              name="newPassword"              placeholder="Neues Passwort"              formControlName="newPassword"            />          </div>          <div class="input-container">            <input              type="password"              id="confirmPassword"              name="confirmPassword"              placeholder="Neues Kennwort bestätigen"              formControlName="confirmPassword"            />          </div>          <div class="error-message" *ngIf="submitted && errorMessage">            {{ errorMessage }}          </div>          <div class="error-message" *ngIf="errorMessage && !submitted">            {{ errorMessage }}          </div>          <div class="button-container">            <button              class="button-anmelden"              type="submit"              [disabled]="!newPasswordForm.valid"              [ngClass]="{                \'disabled-button\': !newPasswordForm.valid              }"            >              Passwort ändern            </button>          </div>        </form>      </div>    </div>    <div class="registration-ok" *ngIf="successMessage">      <img src="assets/img/send.png" />      <p style="color: white; font-size: 36px; font-weight: 700">        {{ successMessage }}      </p>    </div>  </div>  <app-footer></app-footer></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'NewPasswortComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'NewPasswortComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

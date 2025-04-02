@@ -1,0 +1,711 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  PrivacyComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/privacy/privacy.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-privacy</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/FooterComponent.html" target="_self" >FooterComponent</a></code>
+                                <code><a href="../components/HeaderComponent.html" target="_self" >HeaderComponent</a></code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./privacy.component.html</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">styleUrl</td>
+                <td class="col-md-9"><code>./privacy.component.scss</code></td>
+            </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#goBack" >goBack</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(location: Location)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/privacy/privacy.component.ts:13</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>location</td>
+                                                  
+                                                        <td>
+                                                                    <code>Location</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goBack"></a>
+                    <span class="name">
+                        <span ><b>goBack</b></span>
+                        <a href="#goBack"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goBack()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="20"
+                                    class="link-to-prism">src/app/privacy/privacy.component.ts:20</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="17"
+                                    class="link-to-prism">src/app/privacy/privacy.component.ts:17</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
+import { FooterComponent } from &#x27;../footer/footer.component&#x27;;
+import { HeaderComponent } from &#x27;../header/header.component&#x27;;
+import { Location } from &#x27;@angular/common&#x27;;
+
+@Component({
+  selector: &#x27;app-privacy&#x27;,
+  standalone: true,
+  imports: [FooterComponent,HeaderComponent],
+  templateUrl: &#x27;./privacy.component.html&#x27;,
+  styleUrl: &#x27;./privacy.component.scss&#x27;
+})
+export class PrivacyComponent implements OnInit  {
+
+  constructor(private location: Location){}
+  
+  ngOnInit(): void {
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;page&quot;&gt;
+  &lt;app-header&gt;&lt;/app-header&gt;
+
+  &lt;div class&#x3D;&quot;container &quot;&gt;
+    &lt;div class&#x3D;&quot;login-container&quot;&gt;
+      &lt;div class&#x3D;&quot;login  &quot;&gt;
+        &lt;div class&#x3D;&quot;box &quot;&gt;
+          &lt;div class&#x3D;&quot;konto-container &quot;&gt;
+            &lt;h2&gt;&lt;/h2&gt;
+            &lt;div class&#x3D;&quot;image-container&quot; (click)&#x3D;&quot;goBack()&quot;&gt;
+              &lt;img src&#x3D;&quot;assets/img/leftfile.png&quot; alt&#x3D;&quot;Zurück zum Login&quot; /&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;nav class&#x3D;&quot;main scrollable-area &quot; &gt; 
+            &lt;div class&#x3D;&quot;headline&quot;&gt;
+              &lt;h2&gt;Datenschutzerklärung&lt;/h2&gt;
+              &lt;br /&gt;
+            &lt;/div&gt;
+            &lt;div class&#x3D;&quot;textBox&quot;&gt;
+              &lt;p&gt;
+                Personenbezogene Daten (nachfolgend zumeist nur „Daten“ genannt)
+                werden von uns nur im Rahmen der Erforderlichkeit sowie zum
+                Zwecke der Bereitstellung eines funktionsfähigen und
+                nutzerfreundlichen Internetauftritts, inklusive seiner Inhalte
+                und der dort angebotenen Leistungen, verarbeitet.
+              &lt;/p&gt;
+
+              &lt;p&gt;
+                Gemäß Art. 4 Ziffer 1. der Verordnung (EU) 2016/679, also der
+                Datenschutz-Grundverordnung (nachfolgend nur „DSGVO“ genannt),
+                gilt als „Verarbeitung“ jeder mit oder ohne Hilfe
+                automatisierter Verfahren ausgeführter Vorgang oder jede solche
+                Vorgangsreihe im Zusammenhang mit personenbezogenen Daten, wie
+                das Erheben, das Erfassen, die Organisation, das Ordnen, die
+                Speicherung, die Anpassung oder Veränderung, das Auslesen, das
+                Abfragen, die Verwendung, die Offenlegung durch Übermittlung,
+                Verbreitung oder eine andere Form der Bereitstellung, den
+                Abgleich oder die Verknüpfung, die Einschränkung, das Löschen
+                oder die Vernichtung.
+              &lt;/p&gt;
+
+              &lt;p&gt;
+                Mit der nachfolgenden Datenschutzerklärung informieren wir Sie
+                insbesondere über Art, Umfang, Zweck, Dauer und Rechtsgrundlage
+                der Verarbeitung personenbezogener Daten, soweit wir entweder
+                allein oder gemeinsam mit anderen über die Zwecke und Mittel der
+                Verarbeitung entscheiden. Zudem informieren wir Sie nachfolgend
+                über die von uns zu Optimierungszwecken sowie zur Steigerung der
+                Nutzungsqualität eingesetzten Fremdkomponenten, soweit hierdurch
+                Dritte Daten in wiederum eigener Verantwortung verarbeiten.
+              &lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div class&#x3D;&quot;selectBox&quot;&gt;
+              &lt;p&gt;Unsere Datenschutzerklärung ist wie folgt gegliedert:&lt;/p&gt;
+
+              &lt;p&gt;
+                I. Informationen über uns als Verantwortliche,&lt;br /&gt;
+                II. Rechte der Nutzer und Betroffenen, &lt;br /&gt;
+                III. Informationen zur Datenverarbeitung,
+              &lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div class&#x3D;&quot;infoHeadline&quot;&gt;
+              &lt;h3&gt;I. Informationen über uns als Verantwortliche,&lt;/h3&gt;
+
+              &lt;p&gt;
+                Verantwortlicher Anbieter dieses Internetauftritts im
+                datenschutzrechtlichen Sinne ist:,
+              &lt;/p&gt;
+
+              &lt;p&gt;Selcuk Kocyigit&lt;/p&gt;
+              &lt;p&gt;Hochfelder Str.33&lt;/p&gt;
+              &lt;p&gt;47226 Duisburg&lt;/p&gt;
+
+              &lt;p&gt;Telefon: 017643203362&lt;br /&gt;E-Mail: selcuk.80&amp;#64;outlook.de&lt;/p&gt;
+
+              &lt;h4&gt;II. Rechte der Nutzer und Betroffenen,&lt;/h4&gt;
+
+              &lt;p&gt;
+                Mit Blick auf die nachfolgend noch näher beschriebene
+                Datenverarbeitung haben die Nutzer und Betroffenen das Recht,
+              &lt;/p&gt;
+              &lt;ul&gt;
+                &lt;li&gt;
+                  auf Bestätigung, ob sie betreffende Daten verarbeitet werden,
+                  auf Auskunft über die verarbeiteten Daten, auf weitere
+                  Informationen über die Datenverarbeitung sowie auf Kopien der
+                  Daten (vgl. auch Art. 15 DSGVO);,
+                &lt;/li&gt;
+
+                &lt;li&gt;
+                  auf Berichtigung oder Vervollständigung unrichtiger bzw.
+                  unvollständiger Daten (vgl. auch Art. 16 DSGVO);,
+                &lt;/li&gt;
+
+                &lt;li&gt;
+                  auf unverzügliche Löschung der sie betreffenden Daten (vgl.
+                  auch Art. 17 DSGVO), oder, alternativ, soweit eine weitere
+                  Verarbeitung gemäß Art. 17 Abs. 3 DSGVO erforderlich ist, auf
+                  Einschränkung der Verarbeitung nach Maßgabe von Art. 18
+                  DSGVO;,
+                &lt;/li&gt;
+
+                &lt;li&gt;
+                  auf Erhalt der sie betreffenden und von ihnen bereitgestellten
+                  Daten und auf Übermittlung dieser Daten an andere
+                  Anbieter/Verantwortliche (vgl. auch Art. 20 DSGVO);,
+                &lt;/li&gt;
+
+                &lt;li&gt;
+                  auf Beschwerde gegenüber der Aufsichtsbehörde, sofern sie der
+                  Ansicht sind, dass die sie betreffenden Daten durch den
+                  Anbieter unter Verstoß gegen datenschutzrechtliche
+                  Bestimmungen verarbeitet werden (vgl. auch Art. 77 DSGVO).,
+                &lt;/li&gt;
+              &lt;/ul&gt;
+              &lt;p&gt;
+                Darüber hinaus ist der Anbieter dazu verpflichtet, alle
+                Empfänger, denen gegenüber Daten durch den Anbieter offengelegt
+                worden sind, über jedwede Berichtigung oder Löschung von Daten
+                oder die Einschränkung der Verarbeitung, die aufgrund der
+                Artikel 16, 17 Abs. 1, 18 DSGVO erfolgt, zu unterrichten. Diese
+                Verpflichtung besteht jedoch nicht, soweit diese Mitteilung
+                unmöglich oder mit einem unverhältnismäßigen Aufwand verbunden
+                ist. Unbeschadet dessen hat der Nutzer ein Recht auf Auskunft
+                über diese Empfänger.,
+              &lt;/p&gt;
+
+              &lt;p&gt;
+                &lt;strong
+                  &gt;Ebenfalls haben die Nutzer und Betroffenen nach Art. 21 DSGVO
+                  das Recht auf Widerspruch gegen die künftige Verarbeitung der
+                  sie betreffenden Daten, sofern die Daten durch den Anbieter
+                  nach Maßgabe von Art. 6 Abs. 1 lit. f) DSGVO verarbeitet
+                  werden. Insbesondere ist ein Widerspruch gegen die
+                  Datenverarbeitung zum Zwecke der Direktwerbung
+                  statthaft.,&lt;/strong
+                &gt;
+              &lt;/p&gt;
+
+              &lt;h5&gt;III. Informationen zur Datenverarbeitung,&lt;/h5&gt;
+
+              &lt;p&gt;
+                Ihre bei Nutzung unseres Internetauftritts verarbeiteten Daten
+                werden gelöscht oder gesperrt, sobald der Zweck der Speicherung
+                entfällt, der Löschung der Daten keine gesetzlichen
+                Aufbewahrungspflichten entgegenstehen und nachfolgend keine
+                anderslautenden Angaben zu einzelnen Verarbeitungsverfahren
+                gemacht werden.&quot;,
+              &lt;/p&gt;
+
+              &lt;h6&gt;Kontaktanfragen / Kontaktmöglichkeit,&lt;/h6&gt;
+
+              &lt;div class&#x3D;&quot;privacy-content&quot;&gt;
+                &lt;p&gt;
+                  Sofern Sie per Kontaktformular oder E-Mail mit uns in Kontakt
+                  treten, werden die dabei von Ihnen angegebenen Daten zur
+                  Bearbeitung Ihrer Anfrage genutzt. Die Angabe der Daten ist
+                  zur Bearbeitung und Beantwortung Ihre Anfrage erforderlich –
+                  ohne deren Bereitstellung können wir Ihre Anfrage nicht oder
+                  allenfalls eingeschränkt beantworten.,
+                &lt;/p&gt;
+                &lt;p&gt;
+                  Rechtsgrundlage für diese Verarbeitung ist Art. 6 Abs. 1 lit.
+                  b DSGVO.,
+                &lt;/p&gt;
+                &lt;p&gt;
+                  Ihre Daten werden gelöscht, sofern Ihre Anfrage abschließend
+                  beantwortet worden ist und der Löschung keine gesetzlichen
+                  Aufbewahrungspflichten entgegenstehen, wie bspw. bei einer
+                  sich etwaig anschließenden Vertragsabwicklung.,
+                &lt;/p&gt;
+              &lt;/div&gt;
+
+              &lt;p class&#x3D;&quot;generatorContainer&quot;&gt;
+                &lt;a
+                  href&#x3D;&quot;https://www.generator-datenschutzerklärung.de&quot;
+                  target&#x3D;&quot;_blank&quot;
+                  rel&#x3D;&quot;noopener&quot;
+                &gt;
+                  Muster-Datenschutzerklärung,&lt;/a
+                &gt;
+
+                der,
+                &lt;a
+                  href&#x3D;&quot;https://www.bewertung-löschen24.de&quot;
+                  rel&#x3D;&quot;nofollow noopener&quot;
+                  target&#x3D;&quot;_blank&quot;
+                &gt;
+                  Anwaltskanzlei Weiß &amp; Partner
+                &lt;/a&gt;
+              &lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/nav&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+
+  &lt;app-footer&gt;&lt;/app-footer&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="page">  <app-header></app-header>  <div class="container ">    <div class="login-container">      <div class="login  ">        <div class="box ">          <div class="konto-container ">            <h2></h2>            <div class="image-container" (click)="goBack()">              <img src="assets/img/leftfile.png" alt="Zurück zum Login" />            </div>          </div>          <nav class="main scrollable-area " >             <div class="headline">              <h2>Datenschutzerklärung</h2>              <br />            </div>            <div class="textBox">              <p>                Personenbezogene Daten (nachfolgend zumeist nur „Daten“ genannt)                werden von uns nur im Rahmen der Erforderlichkeit sowie zum                Zwecke der Bereitstellung eines funktionsfähigen und                nutzerfreundlichen Internetauftritts, inklusive seiner Inhalte                und der dort angebotenen Leistungen, verarbeitet.              </p>              <p>                Gemäß Art. 4 Ziffer 1. der Verordnung (EU) 2016/679, also der                Datenschutz-Grundverordnung (nachfolgend nur „DSGVO“ genannt),                gilt als „Verarbeitung“ jeder mit oder ohne Hilfe                automatisierter Verfahren ausgeführter Vorgang oder jede solche                Vorgangsreihe im Zusammenhang mit personenbezogenen Daten, wie                das Erheben, das Erfassen, die Organisation, das Ordnen, die                Speicherung, die Anpassung oder Veränderung, das Auslesen, das                Abfragen, die Verwendung, die Offenlegung durch Übermittlung,                Verbreitung oder eine andere Form der Bereitstellung, den                Abgleich oder die Verknüpfung, die Einschränkung, das Löschen                oder die Vernichtung.              </p>              <p>                Mit der nachfolgenden Datenschutzerklärung informieren wir Sie                insbesondere über Art, Umfang, Zweck, Dauer und Rechtsgrundlage                der Verarbeitung personenbezogener Daten, soweit wir entweder                allein oder gemeinsam mit anderen über die Zwecke und Mittel der                Verarbeitung entscheiden. Zudem informieren wir Sie nachfolgend                über die von uns zu Optimierungszwecken sowie zur Steigerung der                Nutzungsqualität eingesetzten Fremdkomponenten, soweit hierdurch                Dritte Daten in wiederum eigener Verantwortung verarbeiten.              </p>            </div>            <div class="selectBox">              <p>Unsere Datenschutzerklärung ist wie folgt gegliedert:</p>              <p>                I. Informationen über uns als Verantwortliche,<br />                II. Rechte der Nutzer und Betroffenen, <br />                III. Informationen zur Datenverarbeitung,              </p>            </div>            <div class="infoHeadline">              <h3>I. Informationen über uns als Verantwortliche,</h3>              <p>                Verantwortlicher Anbieter dieses Internetauftritts im                datenschutzrechtlichen Sinne ist:,              </p>              <p>Selcuk Kocyigit</p>              <p>Hochfelder Str.33</p>              <p>47226 Duisburg</p>              <p>Telefon: 017643203362<br />E-Mail: selcuk.80&#64;outlook.de</p>              <h4>II. Rechte der Nutzer und Betroffenen,</h4>              <p>                Mit Blick auf die nachfolgend noch näher beschriebene                Datenverarbeitung haben die Nutzer und Betroffenen das Recht,              </p>              <ul>                <li>                  auf Bestätigung, ob sie betreffende Daten verarbeitet werden,                  auf Auskunft über die verarbeiteten Daten, auf weitere                  Informationen über die Datenverarbeitung sowie auf Kopien der                  Daten (vgl. auch Art. 15 DSGVO);,                </li>                <li>                  auf Berichtigung oder Vervollständigung unrichtiger bzw.                  unvollständiger Daten (vgl. auch Art. 16 DSGVO);,                </li>                <li>                  auf unverzügliche Löschung der sie betreffenden Daten (vgl.                  auch Art. 17 DSGVO), oder, alternativ, soweit eine weitere                  Verarbeitung gemäß Art. 17 Abs. 3 DSGVO erforderlich ist, auf                  Einschränkung der Verarbeitung nach Maßgabe von Art. 18                  DSGVO;,                </li>                <li>                  auf Erhalt der sie betreffenden und von ihnen bereitgestellten                  Daten und auf Übermittlung dieser Daten an andere                  Anbieter/Verantwortliche (vgl. auch Art. 20 DSGVO);,                </li>                <li>                  auf Beschwerde gegenüber der Aufsichtsbehörde, sofern sie der                  Ansicht sind, dass die sie betreffenden Daten durch den                  Anbieter unter Verstoß gegen datenschutzrechtliche                  Bestimmungen verarbeitet werden (vgl. auch Art. 77 DSGVO).,                </li>              </ul>              <p>                Darüber hinaus ist der Anbieter dazu verpflichtet, alle                Empfänger, denen gegenüber Daten durch den Anbieter offengelegt                worden sind, über jedwede Berichtigung oder Löschung von Daten                oder die Einschränkung der Verarbeitung, die aufgrund der                Artikel 16, 17 Abs. 1, 18 DSGVO erfolgt, zu unterrichten. Diese                Verpflichtung besteht jedoch nicht, soweit diese Mitteilung                unmöglich oder mit einem unverhältnismäßigen Aufwand verbunden                ist. Unbeschadet dessen hat der Nutzer ein Recht auf Auskunft                über diese Empfänger.,              </p>              <p>                <strong                  >Ebenfalls haben die Nutzer und Betroffenen nach Art. 21 DSGVO                  das Recht auf Widerspruch gegen die künftige Verarbeitung der                  sie betreffenden Daten, sofern die Daten durch den Anbieter                  nach Maßgabe von Art. 6 Abs. 1 lit. f) DSGVO verarbeitet                  werden. Insbesondere ist ein Widerspruch gegen die                  Datenverarbeitung zum Zwecke der Direktwerbung                  statthaft.,</strong                >              </p>              <h5>III. Informationen zur Datenverarbeitung,</h5>              <p>                Ihre bei Nutzung unseres Internetauftritts verarbeiteten Daten                werden gelöscht oder gesperrt, sobald der Zweck der Speicherung                entfällt, der Löschung der Daten keine gesetzlichen                Aufbewahrungspflichten entgegenstehen und nachfolgend keine                anderslautenden Angaben zu einzelnen Verarbeitungsverfahren                gemacht werden.",              </p>              <h6>Kontaktanfragen / Kontaktmöglichkeit,</h6>              <div class="privacy-content">                <p>                  Sofern Sie per Kontaktformular oder E-Mail mit uns in Kontakt                  treten, werden die dabei von Ihnen angegebenen Daten zur                  Bearbeitung Ihrer Anfrage genutzt. Die Angabe der Daten ist                  zur Bearbeitung und Beantwortung Ihre Anfrage erforderlich –                  ohne deren Bereitstellung können wir Ihre Anfrage nicht oder                  allenfalls eingeschränkt beantworten.,                </p>                <p>                  Rechtsgrundlage für diese Verarbeitung ist Art. 6 Abs. 1 lit.                  b DSGVO.,                </p>                <p>                  Ihre Daten werden gelöscht, sofern Ihre Anfrage abschließend                  beantwortet worden ist und der Löschung keine gesetzlichen                  Aufbewahrungspflichten entgegenstehen, wie bspw. bei einer                  sich etwaig anschließenden Vertragsabwicklung.,                </p>              </div>              <p class="generatorContainer">                <a                  href="https://www.generator-datenschutzerklärung.de"                  target="_blank"                  rel="noopener"                >                  Muster-Datenschutzerklärung,</a                >                der,                <a                  href="https://www.bewertung-löschen24.de"                  rel="nofollow noopener"                  target="_blank"                >                  Anwaltskanzlei Weiß & Partner                </a>              </p>            </div>          </nav>        </div>      </div>    </div>  </div>  <app-footer></app-footer></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'PrivacyComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'PrivacyComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

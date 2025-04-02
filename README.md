@@ -14,6 +14,7 @@ DABubble is an **Angular**-based chat application (TypeScript + SCSS) that uses 
 8. [Project Structure](#project-structure)  
 9. [Contributing](#contributing)  
 10. [License](#license)
+11. [Documentation (Optional, using Compodoc)](#documentation-optional-using-compodoc)
 
 ---
 
@@ -232,5 +233,16 @@ Please ensure that your code follows these guidelines:
 ## License
 
 This project is licensed under the **MIT License**. For more details, see the [LICENSE](./LICENSE) file.
+
+---
+
+## Documentation (Optional, using Compodoc)
+
+If you want to generate code documentation for the DABubble project, **Compodoc** can produce an interactive HTML site based on your Angular components, services, and JSDoc comments.
+
+1. **Install Dependencies**  
+   Make sure you have installed all dependencies, including dev dependencies:
+   ```bash
+   npm install
 
 

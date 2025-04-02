@@ -1,0 +1,1964 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  ThreadChannelParentDoc</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/entwicklerteam/entwicklerteam.component.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Describes the structure for a parent document in a thread-channel context.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#channelId" 
+>
+                                            channelId
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#channelName" 
+>
+                                            channelName
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#content" 
+>
+                                            content
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#replyCount" 
+>
+                                            replyCount
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#senderId" 
+>
+                                            senderId
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#timestamp" 
+>
+                                            timestamp
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="channelId"></a>
+                                        <span class="name "><b>channelId</b>
+                                            <a href="#channelId">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>channelId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="channelName"></a>
+                                        <span class="name "><b>channelName</b>
+                                            <a href="#channelName">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>channelName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="content"></a>
+                                        <span class="name "><b>content</b>
+                                            <a href="#content">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>content:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="replyCount"></a>
+                                        <span class="name "><b>replyCount</b>
+                                            <a href="#replyCount">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>replyCount:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="senderId"></a>
+                                        <span class="name "><b>senderId</b>
+                                            <a href="#senderId">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>senderId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="timestamp"></a>
+                                        <span class="name "><b>timestamp</b>
+                                            <a href="#timestamp">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>timestamp:         <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  OnInit,
+  OnDestroy,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ViewChild,
+  ElementRef,
+  Input,
+  EventEmitter,
+  Output,
+  SimpleChanges,
+  OnChanges,
+  HostListener,
+} from &#x27;@angular/core&#x27;;
+import { CommonModule, formatDate } from &#x27;@angular/common&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { PickerModule } from &#x27;@ctrl/ngx-emoji-mart&#x27;;
+import {
+  OverlayModule,
+  CdkConnectedOverlay,
+  ConnectionPositionPair,
+} from &#x27;@angular/cdk/overlay&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+import { MemberListDialogComponent } from &#x27;../member-list-dialog/member-list-dialog.component&#x27;;
+import { AddMembersDialogComponent } from &#x27;../add-members-dialog/add-members-dialog.component&#x27;;
+import { EditChannelDialogComponent } from &#x27;../edit-channel-dialog/edit-channel-dialog.component&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+import { MemberSectionDialogComponent } from &#x27;../member-section-dialog/member-section-dialog.component&#x27;;
+import { MessageService } from &#x27;../message.service&#x27;;
+import { ProfilDialogComponent } from &#x27;../profil-dialog/profil-dialog.component&#x27;;
+import { MatDialog } from &#x27;@angular/material/dialog&#x27;;
+import { AfterViewInit } from &#x27;@angular/core&#x27;;
+import { Subscription } from &#x27;rxjs&#x27;;
+import { ChannelMessageData, BroadcastMessageData } from &#x27;../message.models&#x27;;
+import { combineLatest } from &#x27;rxjs&#x27;;
+
+/** Defines the structure of the content in a message (text, image, emojis). */
+export interface MessageContent {
+  text?: string;
+  image?: string | ArrayBuffer | null;
+  emojis?: any[];
+}
+
+/** Describes the structure for a parent document in a thread-channel context. */
+interface ThreadChannelParentDoc {
+  senderId?: string;
+  content?: { text?: string; emojis?: any[] };
+  timestamp?: any;
+  replyCount?: number;
+  channelName?: string;
+  channelId?: string;
+}
+
+@Component({
+  selector: &#x27;app-entwicklerteam&#x27;,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    PickerModule,
+    OverlayModule,
+    MemberListDialogComponent,
+    AddMembersDialogComponent,
+  ],
+  templateUrl: &#x27;./entwicklerteam.component.html&#x27;,
+  styleUrls: [&#x27;./entwicklerteam.component.scss&#x27;],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class EntwicklerteamComponent
+  implements OnInit, OnChanges, OnDestroy, AfterViewInit
+{
+  @ViewChild(&#x27;membersOverlay&#x27;) membersOverlay?: CdkConnectedOverlay;
+  @ViewChild(&#x27;addMembersOverlay&#x27;) addMembersOverlay?: CdkConnectedOverlay;
+  @ViewChild(&#x27;messageList&#x27;) messageList!: ElementRef;
+  @ViewChild(&#x27;textArea&#x27;) textAreaRef!: ElementRef&lt;HTMLTextAreaElement&gt;;
+
+  /** Emits an event when a member is selected, carrying the member&#x27;s ID and name. */
+  @Output() memberSelected &#x3D; new EventEmitter&lt;{ uid: string; name: string }&gt;();
+
+  /** The currently selected channel (object with id, name, members, etc.). */
+  @Input() selectedChannel: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  } | null &#x3D; null;
+
+  /** If a recipient name is provided (for direct messages). */
+  @Input() recipientName: string &#x3D; &#x27;&#x27;;
+
+  /** The recipient&#x27;s unique ID if sending direct messages. */
+  @Input() recipientId: string &#x3D; &#x27;&#x27;;
+
+  /** Controls the visibility of the search field in the template. */
+  @Input() showSearchField: boolean &#x3D; false;
+
+  /** Emits an event whenever a thread is opened, passing along thread data. */
+  @Output() openThread &#x3D; new EventEmitter&lt;any&gt;();
+
+  /** If the component is working with thread data, stored here. */
+  @Input() threadData: any &#x3D; null;
+
+  /** Toggles channel editing mode if set from outside. */
+  @Input() isEditingChannel: boolean &#x3D; false;
+
+  /** Emits an event when a channel is selected. */
+  @Output() channelSelected &#x3D; new EventEmitter&lt;void&gt;();
+
+  /** Emits an event when a user leaves a channel. */
+  @Output() channelLeft &#x3D; new EventEmitter&lt;void&gt;();
+
+  /** Event emitter if a private chat is opened from the chat context. */
+  @Output() openPrivateChatInChat &#x3D; new EventEmitter&lt;{
+    id: string;
+    name: string;
+  }&gt;();
+
+  /** Event emitter if a private chat is opened specifically from Entwicklerteam context. */
+  @Output() openPrivateChatFromEntwicklerteam &#x3D; new EventEmitter&lt;{
+    id: string;
+    name: string;
+  }&gt;();
+
+  /** Tracks whether the layout is desktop (&gt;&#x3D; 1278px). */
+  isDesktop &#x3D; false;
+
+  /** The text of the current message being typed by the user in the input. */
+  message: string &#x3D; &#x27;&#x27;;
+
+  /** If the emoji picker is visible for new messages. */
+  isEmojiPickerVisible &#x3D; false;
+
+  /** Holds an image (base64/ArrayBuffer) if user uploads one. */
+  imageUrl: string | ArrayBuffer | null | undefined &#x3D; null;
+
+  /** Tracks if the textarea is expanded due to an attached image. */
+  isTextareaExpanded &#x3D; false;
+
+  /** If an image modal is open for a larger preview. */
+  isImageModalOpen &#x3D; false;
+
+  allChannels: any[] &#x3D; [];
+  dropdownState: &#x27;hidden&#x27; | &#x27;user&#x27; | &#x27;channel&#x27; &#x3D; &#x27;hidden&#x27;;
+  private cycleStep &#x3D; 1;
+  lastOpenedChar &#x3D; &#x27;&#x27;;
+
+  private channelSubscription?: Subscription;
+  broadcastMessages: any[] &#x3D; [];
+
+  /** Array of channels. Typically, only one is “selected.” */
+  channels: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }[] &#x3D; [];
+
+  /** The list of messages for the selected channel. */
+  messages: Array&lt;{
+    id: string;
+    type: string;
+    content: MessageContent;
+    senderId: string;
+    time: string;
+    date: string;
+    timestamp?: Date;
+    replyCount?: number;
+    isEditing?: boolean;
+    showAllEmojisList?: boolean;
+    expanded?: boolean;
+    threadId?: string;
+    parentId?: string;
+    lastReplyTime?: string | Date;
+    threadLastResponseTime?: string | Date | null;
+    isTimeFixed?: boolean;
+    isHighlighted?: boolean;
+    isEmojiPickerVisible?: boolean;
+  }&gt; &#x3D; [];
+
+  /** Stores the current user&#x27;s data, including name and avatar. */
+  currentUser: any;
+
+  /** Current date in &#x60;dd.MM.yyyy&#x60; format. */
+  currentDate: string &#x3D; formatDate(new Date(), &#x27;dd.MM.yyyy&#x27;, &#x27;en&#x27;);
+
+  /** Date for “yesterday,” used for date comparisons. */
+  yesterDayDate: Date &#x3D; this.getYesterdayDate();
+
+  /** A backup of the original message if a user is editing a message. */
+  originalMessage: any &#x3D; null;
+
+  /** Toggles visibility of edit options for a message. */
+  showEditOptions &#x3D; false;
+
+  /** The ID of the message currently showing edit options. */
+  currentMessageId: string | null &#x3D; null;
+
+  /** A new message text if you want to store it while editing. */
+  newMessage: string &#x3D; &#x27;&#x27;;
+
+  /** If user is sending a private message, the selected member. */
+  selectedMember: any &#x3D; null;
+
+  /** The text of a private message being typed. */
+  privateMessage: string &#x3D; &#x27;&#x27;;
+
+  /** Array of members if needed for mention or selection. */
+  members: any[] &#x3D; [];
+
+  /** Last used emojis (sent) for the current channel. */
+  lastUsedEmojisSent: string[] &#x3D; [];
+
+  /** Last used emojis (received) for the current channel. */
+  lastUsedEmojisReceived: string[] &#x3D; [];
+
+  /** Whether a welcome screen is visible (if no channel is selected). */
+  showWelcomeContainer &#x3D; false;
+
+  /** Tooltip for emoji, if visible. */
+  tooltipVisible &#x3D; false;
+
+  /** The tooltip’s (x, y) position for emojis. */
+  tooltipPosition &#x3D; { x: 0, y: 0 };
+
+  /** The emoji displayed in a tooltip. */
+  tooltipEmoji &#x3D; &#x27;&#x27;;
+
+  /** The sender’s name displayed in a tooltip. */
+  tooltipSenderName &#x3D; &#x27;&#x27;;
+
+  /** An array of all users if needed for mention. */
+  allUsers: any[] &#x3D; [];
+
+  /** If a large image is displayed in a modal overlay. */
+  showLargeImage &#x3D; false;
+
+  /** The URL of a large image for the overlay. */
+  largeImageUrl: string | null &#x3D; null;
+
+  /** Ensures scrolling to bottom only happens once initially. */
+  private hasInitialScrollDone &#x3D; false;
+
+  /** Tracks the overlay state (cdk overlay in desktop mode). */
+  isOverlayOpen &#x3D; false;
+
+  /** Tracks whether the Add Members overlay is open (desktop). */
+  isAddMembersOverlayOpen &#x3D; false;
+
+  userMap: {
+    [uid: string]:
+      | {
+          name: string;
+          avatarUrl: string;
+        }
+      | undefined;
+  } &#x3D; {};
+
+  /** Subscriptions for thread messages, reply counts, etc. */
+  private unsubscribeFromThreadMessages: (() &#x3D;&gt; void) | null &#x3D; null;
+  private unsubscribeLiveReplyCounts: (() &#x3D;&gt; void) | null &#x3D; null;
+  private unsubscribeFromThreadDetails: (() &#x3D;&gt; void) | null &#x3D; null;
+  private replyCountsUnsubscribe: (() &#x3D;&gt; void) | null &#x3D; null;
+  private unsubscribeChannels: (() &#x3D;&gt; void) | null &#x3D; null;
+  private unsubscribeUsers: (() &#x3D;&gt; void) | null &#x3D; null;
+  private unsubscribeTopLevel?: Subscription;
+  private unsubscribeSubCollection?: Subscription;
+
+  positions: ConnectionPositionPair[] &#x3D; [
+    {
+      originX: &#x27;start&#x27;,
+      originY: &#x27;bottom&#x27;,
+      overlayX: &#x27;start&#x27;,
+      overlayY: &#x27;top&#x27;,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    {
+      originX: &#x27;end&#x27;,
+      originY: &#x27;bottom&#x27;,
+      overlayX: &#x27;end&#x27;,
+      overlayY: &#x27;top&#x27;,
+      offsetX: 0,
+      offsetY: 0,
+    },
+  ];
+
+  positionsAddMembers: ConnectionPositionPair[] &#x3D; [
+    {
+      originX: &#x27;start&#x27;,
+      originY: &#x27;bottom&#x27;,
+      overlayX: &#x27;start&#x27;,
+      overlayY: &#x27;top&#x27;,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    {
+      originX: &#x27;end&#x27;,
+      originY: &#x27;bottom&#x27;,
+      overlayX: &#x27;end&#x27;,
+      overlayY: &#x27;top&#x27;,
+      offsetX: 0,
+      offsetY: 0,
+    },
+  ];
+
+  constructor(
+    private channelService: ChannelService,
+    private dialog: MatDialog,
+    private userService: UserService,
+    private messageService: MessageService
+  ) {}
+
+  /** Runs once on init: loads current user, checks layout, subscribes to channel. */
+  ngOnInit(): void {
+    this.loadCurrentUser();
+    this.checkDesktopWidth();
+    this.subscribeToCurrentChannel();
+
+    this.unsubscribeChannels &#x3D; this.channelService.getAllChannels(
+      (channels) &#x3D;&gt; {
+        this.allChannels &#x3D; channels;
+      }
+    );
+    this.unsubscribeUsers &#x3D; this.userService.getAllUsersLive((users) &#x3D;&gt; {
+      this.allUsers &#x3D; users;
+      users.forEach((u) &#x3D;&gt; {
+        this.userMap[u.id] &#x3D; {
+          name: u.name || &#x27;Unbekannt&#x27;,
+          avatarUrl: u.avatarUrl || &#x27;assets/img/avatar.png&#x27;,
+        };
+      });
+    });
+  }
+
+  /**
+   * Returns only the channels in which the current user is a member.
+   *
+   * 1. Checks if the current user (with a valid &#x60;uid&#x60;) and the &#x60;allChannels&#x60; list exist.
+   * 2. Filters &#x60;allChannels&#x60; by verifying if each channel&#x27;s &#x60;members&#x60; array
+   *    contains an object whose &#x60;uid&#x60; matches the &#x60;currentUser.uid&#x60;.
+   * 3. If either the user or channel list is unavailable, returns an empty array.
+   *
+   * @returns {any[]} An array of channels where the current user is a member.
+   */
+  get filteredChannels(): any[] {
+    if (!this.currentUser?.uid || !this.allChannels) {
+      return [];
+    }
+
+    return this.allChannels.filter((ch) &#x3D;&gt;
+      ch.members?.some((m: any) &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; this.currentUser.uid)
+    );
+  }
+
+  /** Called when @Input() properties change. */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes[&#x27;selectedChannel&#x27;] &amp;&amp;
+      !changes[&#x27;selectedChannel&#x27;].isFirstChange()
+    ) {
+      // No double loading because we rely on currentChannel subscription
+    }
+    if (changes[&#x27;threadData&#x27;] &amp;&amp; changes[&#x27;threadData&#x27;].currentValue) {
+      // ...
+    }
+  }
+
+  private focusTextArea(): void {
+    if (!this.textAreaRef) return;
+    this.textAreaRef.nativeElement.focus();
+  }
+
+  /** Cleans up on destroy, unsubscribing from any listeners. */
+  ngOnDestroy(): void {
+    this.unsubscribeFromBoth();
+    if (this.unsubscribeLiveReplyCounts) this.unsubscribeLiveReplyCounts();
+    if (this.unsubscribeFromThreadDetails) this.unsubscribeFromThreadDetails();
+    if (this.unsubscribeFromThreadMessages)
+      this.unsubscribeFromThreadMessages();
+    if (this.unsubscribeChannels) {
+      this.unsubscribeChannels();
+    }
+    if (this.unsubscribeUsers) {
+      this.unsubscribeUsers();
+    }
+
+    if (this.channelSubscription) {
+      this.channelSubscription.unsubscribe();
+    }
+  }
+
+  private unsubscribeFromBoth(): void {
+    if (this.unsubscribeTopLevel) {
+      this.unsubscribeTopLevel.unsubscribe();
+      this.unsubscribeTopLevel &#x3D; undefined;
+    }
+    if (this.unsubscribeSubCollection) {
+      this.unsubscribeSubCollection.unsubscribe();
+      this.unsubscribeSubCollection &#x3D; undefined;
+    }
+  }
+
+  /**
+   * Closes the dropdown when a click occurs outside its container.
+   * @param {MouseEvent} event - The global document click event.
+   */
+  @HostListener(&#x27;document:click&#x27;, [&#x27;$event&#x27;])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.dropdownState !&#x3D;&#x3D; &#x27;hidden&#x27;) {
+      this.dropdownState &#x3D; &#x27;hidden&#x27;;
+      this.cycleStep &#x3D; 1;
+    }
+    if (this.isEmojiPickerVisible) {
+      this.isEmojiPickerVisible &#x3D; false;
+    }
+  }
+
+  /**
+   * Prevents the dropdown from closing if clicked inside its container.
+   * @param {MouseEvent} event - The local container click event.
+   */
+  onSelfClick(event: MouseEvent): void {
+    event.stopPropagation();
+  }
+
+  private subscribeToCurrentChannel(): void {
+    this.channelService.currentChannel.subscribe((channel) &#x3D;&gt; {
+      if (!channel || !channel.id) return;
+      this.unsubscribeFromBoth();
+      this.hasInitialScrollDone &#x3D; false;
+      this.initChannel(channel);
+
+      this.messages &#x3D; [];
+
+      const topLevelMsgs$ &#x3D; this.channelService.getMessages(channel.id);
+      const subCollMsgs$ &#x3D; this.channelService.getChannelMessagesLive(
+        channel.id
+      );
+      const broadcastMsgs$ &#x3D; this.messageService.getBroadcastMessages(
+        channel.id
+      );
+
+      this.unsubscribeTopLevel &#x3D; combineLatest([
+        topLevelMsgs$,
+        subCollMsgs$,
+        broadcastMsgs$,
+      ]).subscribe(([topMsgs, subMsgs, broadcastMsgs]) &#x3D;&gt; {
+        const combined &#x3D; [...topMsgs, ...subMsgs, ...broadcastMsgs];
+        this.mergeMessages(combined);
+      });
+    });
+  }
+
+  /**
+   * Integrates newly arrived messages into an existing list,
+   * ensuring no duplicates by message ID. Sorts by timestamp.
+   * @param currentMessages - The existing message array
+   * @param newMsgs - Newly arrived messages to merge
+   * @returns A sorted array containing old and new messages
+   */
+  private mergeArraysById(currentMessages: any[], newMsgs: any[]): any[] {
+    const map &#x3D; this.buildMapFromMessages(currentMessages);
+    for (const n of newMsgs) {
+      map.set(n.id, {
+        ...n,
+        content: { ...n.content, emojis: n.content?.emojis || [] },
+        replyCount: n.replyCount || 0,
+        threadId: n.threadId || null,
+        parentId: n.parentId || null,
+      });
+    }
+    return this.sortByTimestamp(Array.from(map.values()));
+  }
+
+  /**
+   * Creates a Map keyed by the message ID from the given array.
+   * @param messages - An array of message objects
+   * @returns A Map&lt;string, any&gt; storing messages by their &#x27;id&#x27;
+   */
+  private buildMapFromMessages(messages: any[]): Map&lt;string, any&gt; {
+    const map &#x3D; new Map&lt;string, any&gt;();
+    for (const m of messages) {
+      map.set(m.id, m);
+    }
+    return map;
+  }
+
+  /**
+   * Sorts an array of messages by their timestamp (seconds or Date).
+   * @param msgs - The unsorted array of messages
+   * @returns A sorted array of messages
+   */
+  private sortByTimestamp(msgs: any[]): any[] {
+    return msgs.sort((a, b) &#x3D;&gt; {
+      const ta &#x3D; a.timestamp?.seconds || +new Date(a.timestamp || 0);
+      const tb &#x3D; b.timestamp?.seconds || +new Date(b.timestamp || 0);
+      return ta - tb;
+    });
+  }
+
+  /**
+   * Merges new messages into the main list, updates reply counts,
+   * and handles auto-scrolling if needed.
+   * @param newMsgs - The incoming messages from any data source
+   */
+  private mergeMessages(newMsgs: any[]): void {
+    const merged &#x3D; this.mergeArraysById(this.messages, newMsgs);
+    this.messages &#x3D; merged;
+    this.connectReplyCountsToMessages(this.messages);
+
+    if (!this.hasInitialScrollDone) {
+      this.scrollToBottom();
+      this.hasInitialScrollDone &#x3D; true;
+    } else {
+      const newIds &#x3D; new Set(newMsgs.map((m: any) &#x3D;&gt; m.id));
+      const oldIds &#x3D; new Set(this.messages.map((m: any) &#x3D;&gt; m.id));
+      const hasReallyNew &#x3D; Array.from(newIds).some((id) &#x3D;&gt; !oldIds.has(id));
+      if (hasReallyNew) this.scrollToBottom();
+    }
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() &#x3D;&gt; this.focusTextArea(), 1000);
+  }
+
+  /** Initializes local channel data, loads last-used emojis for the new channel. */
+  private initChannel(channel: any): void {
+    this.channels &#x3D; [
+      {
+        id: channel.id,
+        name: channel.name,
+        members: channel.members,
+        description: channel.description,
+        createdBy: channel.createdBy || &#x27;&#x27;,
+      },
+    ];
+    this.channels &#x3D; this.channels.map((c) &#x3D;&gt;
+      c.id &#x3D;&#x3D;&#x3D; channel.id
+        ? { ...c, members: channel.members, name: channel.name }
+        : c
+    );
+    this.selectedChannel &#x3D; channel;
+    this.loadLastUsedEmojis(channel.id);
+
+    setTimeout(() &#x3D;&gt; {
+      this.focusTextArea();
+    }, 0);
+  }
+
+  /** Fetches last-used emojis for “sent” and “received” from Firestore. */
+  private loadLastUsedEmojis(channelId: string): void {
+    this.channelService.getLastUsedEmojis(channelId, &#x27;sent&#x27;).then((sent) &#x3D;&gt; {
+      this.lastUsedEmojisSent &#x3D; sent || [];
+    });
+    this.channelService
+      .getLastUsedEmojis(channelId, &#x27;received&#x27;)
+      .then((recv) &#x3D;&gt; {
+        this.lastUsedEmojisReceived &#x3D; recv || [];
+      });
+  }
+
+  /** Associates each message with live reply counts from Firestore. */
+  private connectReplyCountsToMessages(msgs: any[]): void {
+    msgs.forEach((msg) &#x3D;&gt; {
+      const tId &#x3D; msg.threadId || msg.parentId || msg.id;
+      if (!tId) return;
+      this.messageService.loadReplyCountsLive([tId], &#x27;thread-channel&#x27;, (rc) &#x3D;&gt; {
+        const { count, lastResponseTime } &#x3D; rc[tId] || {
+          count: 0,
+          lastResponseTime: null,
+        };
+        msg.replyCount &#x3D; count;
+        msg.threadLastResponseTime &#x3D;
+          lastResponseTime || msg.threadLastResponseTime;
+        if (msg.threadLastResponseTime)
+          msg.lastReplyTime &#x3D; new Date(msg.threadLastResponseTime);
+      });
+    });
+  }
+
+  /** Checks the screen width to determine if the layout is desktop (&gt;&#x3D;1278px). */
+  @HostListener(&#x27;window:resize&#x27;)
+  onResize(): void {
+    const wasDesktop &#x3D; this.isDesktop;
+    this.checkDesktopWidth();
+    if (wasDesktop &amp;&amp; !this.isDesktop) {
+      this.closeOverlay();
+      this.closeAddMembersOverlay();
+    }
+  }
+
+  /** Detects if the layout is desktop sized. */
+  checkDesktopWidth(): void {
+    this.isDesktop &#x3D; window.innerWidth &gt;&#x3D; 1278;
+  }
+
+  /** Loads the current user from Firestore into &#x60;currentUser&#x60;. */
+  private loadCurrentUser(): void {
+    this.userService.getCurrentUserData().then((user) &#x3D;&gt; {
+      this.currentUser &#x3D; user;
+    });
+  }
+
+  /** Returns a Date object for &#x27;yesterday&#x27;, used for date comparisons. */
+  private getYesterdayDate(): Date {
+    const y &#x3D; new Date();
+    y.setDate(y.getDate() - 1);
+    return y;
+  }
+
+  /** Toggles the cdk overlay for the desktop view. */
+  toggleOverlay(): void {
+    this.isOverlayOpen &#x3D; !this.isOverlayOpen;
+  }
+
+  /** Closes the cdk overlay if open. */
+  closeOverlay(): void {
+    this.isOverlayOpen &#x3D; false;
+  }
+
+  /** Toggles the Add Members overlay (desktop), closing the member list overlay first. */
+  toggleAddMembersOverlay(): void {
+    this.isOverlayOpen &#x3D; false;
+    this.isAddMembersOverlayOpen &#x3D; true;
+  }
+
+  /** Closes the Add Members overlay (desktop). */
+  closeAddMembersOverlay(): void {
+    this.isAddMembersOverlayOpen &#x3D; false;
+  }
+
+  /** Opens the Add Members overlay or dialog, depending on desktop or mobile. */
+  onOpenAddMembersOverlay(): void {
+    if (this.isDesktop) this.toggleAddMembersOverlay();
+    else this.openAddMembersDialogMobile();
+  }
+
+  /** Opens the AddMembersDialog in mobile view. */
+  openAddMembersDialogMobile(): void {
+    if (!this.selectedChannel) return;
+    this.dialog.open(AddMembersDialogComponent, {
+      data: {
+        channelId: this.selectedChannel.id,
+        members: this.selectedChannel.members,
+      },
+    });
+  }
+
+  /** Opens the member list dialog in mobile view. */
+  openMemberListDialogMobile(): void {
+    if (!this.selectedChannel) return;
+    const ref &#x3D; this.dialog.open(MemberListDialogComponent, {
+      data: {
+        channelId: this.selectedChannel.id,
+        members: this.selectedChannel.members,
+      },
+    });
+    ref.afterClosed().subscribe((r) &#x3D;&gt; this.handleMobileMemberListResult(r));
+  }
+
+  /** Handles the result from MemberListDialog on mobile. */
+  private handleMobileMemberListResult(r: any): void {
+    if (!r) return;
+    if (r.addMembers) this.openAddMembersDialogMobile();
+    else if (r.openProfile) this.onOpenProfile(r.openProfile);
+    else if (r.openChatWith) {
+      const name &#x3D; r.openProfile?.name || &#x27;Unbekannt&#x27;;
+      this.onOpenPrivateChat({ id: r.openChatWith, name });
+    }
+  }
+
+  /** Opens a dialog to view a member&#x27;s profile (desktop/mobile). */
+  onOpenProfile(member: any): void {
+    const ref &#x3D; this.dialog.open(ProfilDialogComponent, {
+      width: &#x27;400px&#x27;,
+      data: {
+        userId: member.id,
+        userName: member.name,
+        userAvatarUrl: member.avatarUrl,
+        userStatus: member.isOnline ? &#x27;Aktiv&#x27; : &#x27;Abwesend&#x27;,
+        userEmail: member.email,
+      },
+    });
+    ref.afterClosed().subscribe((result) &#x3D;&gt; {
+      if (result?.openChatWith) {
+        const name &#x3D; member.name || &#x27;Unbekannt&#x27;;
+        this.onOpenPrivateChat({ id: result.openChatWith, name });
+      }
+    });
+  }
+
+  /** Emits an event to open a private chat with a given id/name payload. */
+  onOpenPrivateChat(payload: { id: string; name: string }): void {
+    this.openPrivateChatFromEntwicklerteam.emit(payload);
+  }
+
+  /** Formats a date string as “Heute,” “Gestern,” or a local date if older. */
+  getFormattedDate(ds: string): string {
+    if (!ds) return &#x27;Ungültiges Datum&#x27;;
+    const d &#x3D; this.parseDate(ds);
+    if (!d) return &#x27;Ungültiges Datum&#x27;;
+    if (this.isSameDay(d, new Date())) return &#x27;Heute&#x27;;
+    if (this.isSameDay(d, this.yesterDayDate)) return &#x27;Gestern&#x27;;
+    const opt: Intl.DateTimeFormatOptions &#x3D; {
+      weekday: &#x27;long&#x27;,
+      day: &#x27;2-digit&#x27;,
+      month: &#x27;long&#x27;,
+    };
+    return d.toLocaleDateString(&#x27;de-DE&#x27;, opt);
+  }
+
+  /** Converts a string to a Date object (dd.MM.yyyy or ISO), or returns null if invalid. */
+  private parseDate(ds: string): Date | null {
+    const parts &#x3D; ds.split(&#x27;.&#x27;);
+    let date: Date;
+    if (parts.length &#x3D;&#x3D;&#x3D; 3) {
+      const day &#x3D; parseInt(parts[0], 10);
+      const month &#x3D; parseInt(parts[1], 10) - 1;
+      const year &#x3D; parseInt(parts[2], 10);
+      date &#x3D; new Date(year, month, day);
+    } else date &#x3D; new Date(ds);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  /** Checks if two Date objects refer to the same day. */
+  private isSameDay(a: Date, b: Date): boolean {
+    return (
+      a.getDate() &#x3D;&#x3D;&#x3D; b.getDate() &amp;&amp;
+      a.getMonth() &#x3D;&#x3D;&#x3D; b.getMonth() &amp;&amp;
+      a.getFullYear() &#x3D;&#x3D;&#x3D; b.getFullYear()
+    );
+  }
+
+  /** Triggered when the user selects an image file. Adjusts textarea if needed. */
+  onImageSelected(e: Event, txtArea: HTMLTextAreaElement): void {
+    const input &#x3D; e.target as HTMLInputElement;
+    if (!input?.files?.[0]) return;
+    const file &#x3D; input.files[0];
+    const reader &#x3D; new FileReader();
+    reader.onload &#x3D; (r) &#x3D;&gt; {
+      this.imageUrl &#x3D; r?.target?.result;
+      this.adjustTextareaHeight(txtArea);
+      this.isTextareaExpanded &#x3D; true;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /** Closes the “profile card” (image preview) and resets the textarea. */
+  closeProfileCard(txtArea: HTMLTextAreaElement): void {
+    this.imageUrl &#x3D; null;
+    this.isTextareaExpanded &#x3D; false;
+    this.resetTextareaHeight(txtArea);
+  }
+
+  /** Adds bottom padding if an image is present in the textarea. */
+  adjustTextareaHeight(txtArea: HTMLTextAreaElement): void {
+    if (this.imageUrl) txtArea.style.paddingBottom &#x3D; &#x27;160px&#x27;;
+  }
+
+  /** Resets the textarea bottom padding to default. */
+  resetTextareaHeight(txtArea: HTMLTextAreaElement): void {
+    txtArea.style.paddingBottom &#x3D; &#x27;20px&#x27;;
+  }
+
+  /** Toggles the global emoji picker for the main message input. */
+  toggleEmojiPicker(event: MouseEvent) {
+    event.stopPropagation();
+    this.isEmojiPickerVisible &#x3D; !this.isEmojiPickerVisible;
+  }
+
+  /** Adds a selected emoji (from global picker) to the current typed message. */
+  addEmoji(ev: any): void {
+    if (ev?.emoji?.native) this.message +&#x3D; ev.emoji.native;
+  }
+
+  onEmojiPickerClick(e: MouseEvent): void {
+    e.stopPropagation();
+  }
+
+  /** Toggles an emoji picker for a specific message. */
+  toggleEmojiPickerForMessage(msg: any): void {
+    const visible &#x3D; msg.isEmojiPickerVisible;
+    this.messages.forEach((m) &#x3D;&gt; (m.isEmojiPickerVisible &#x3D; false));
+    msg.isEmojiPickerVisible &#x3D; !visible;
+  }
+
+  /** Adds an emoji to a specific message&#x27;s content, updates Firestore, updates last-used. */
+  addEmojiToMessage(ev: any, msg: any): void {
+    if (!ev?.emoji?.native || !msg.content?.emojis) return;
+    const e &#x3D; ev.emoji.native;
+    const existing &#x3D; msg.content.emojis.find((x: any) &#x3D;&gt; x.emoji &#x3D;&#x3D;&#x3D; e);
+    if (existing) existing.count &#x3D; 1;
+    else if (msg.content.emojis.length &lt; 20)
+      msg.content.emojis.push({ emoji: e, count: 1 });
+    this.updateLastUsedForMessage(e, msg.senderName);
+    msg.isEmojiPickerVisible &#x3D; false;
+    this.updateMsgInFirestore(msg);
+  }
+
+  /** Updates local array for last-used emojis and writes them to Firestore. */
+  private updateLastUsedForMessage(e: string, sender: string): void {
+    const me &#x3D; this.currentUser?.name || &#x27;&#x27;;
+    const isSent &#x3D; sender &#x3D;&#x3D;&#x3D; me;
+    const arr &#x3D; isSent ? this.lastUsedEmojisSent : this.lastUsedEmojisReceived;
+    const updated &#x3D; arr.filter((x) &#x3D;&gt; x !&#x3D;&#x3D; e).slice(0, 2);
+    if (!this.selectedChannel?.id) return;
+    const type &#x3D; isSent ? &#x27;sent&#x27; : &#x27;received&#x27;;
+    this.channelService.saveLastUsedEmojis(
+      this.selectedChannel.id,
+      updated,
+      type
+    );
+    if (isSent) this.lastUsedEmojisSent &#x3D; updated;
+    else this.lastUsedEmojisReceived &#x3D; updated;
+  }
+
+  /** Writes updated content to Firestore for a specific message. */
+  private updateMsgInFirestore(msg: any): void {
+    if (!this.selectedChannel?.id) return;
+    this.channelService
+      .updateMessage(this.selectedChannel.id, msg.id, msg.content)
+      .then(() &#x3D;&gt; {});
+  }
+
+  /** Sends a new message (text or image). Resets input and scrolls. */
+  sendMessage(txtArea: HTMLTextAreaElement): void {
+    if (!this.message.trim() &amp;&amp; !this.imageUrl) return;
+    const newMsg &#x3D; this.buildNewMessage();
+    this.addMessage(newMsg);
+    this.message &#x3D; &#x27;&#x27;;
+    this.imageUrl &#x3D; null;
+    this.resetTextareaHeight(txtArea);
+    this.scrollToBottom();
+  }
+
+  /** Builds the new message object from current state. */
+  private buildNewMessage(): any {
+    const hasText &#x3D; !!this.message.trim();
+    const hasImg &#x3D; !!this.imageUrl;
+
+    return {
+      messageFormat:
+        hasImg &amp;&amp; hasText ? &#x27;text_and_image&#x27; : hasImg ? &#x27;image&#x27; : &#x27;text&#x27;,
+
+      content: {
+        text: hasText ? this.message.trim() : null,
+        image: hasImg ? this.imageUrl : null,
+        emojis: [],
+      },
+      date: formatDate(new Date(), &#x27;dd.MM.yyyy&#x27;, &#x27;en&#x27;),
+      timestamp: new Date(),
+      time: new Date().toLocaleTimeString(),
+      senderId: this.currentUser?.id,
+      isEmojiPickerVisible: false,
+    };
+  }
+
+  addMessage(m: any): void {
+    if (!this.selectedChannel) return;
+
+    const messageData: ChannelMessageData &#x3D; {
+      channelId: this.selectedChannel.id,
+      date: m.date,
+      time: m.time,
+      timestamp: m.timestamp,
+      senderId: m.senderId,
+      senderName: this.currentUser?.name,
+      senderAvatar: this.currentUser?.avatarUrl || &#x27;assets/img/avatar.png&#x27;,
+      content: m.content,
+      messageFormat: m.messageFormat,
+    };
+
+    this.messageService.sendChannelMessage(messageData).then(() &#x3D;&gt; {
+      this.scrollToBottom();
+    });
+  }
+
+  addBroadcastMessage(data: BroadcastMessageData): void {
+    if (!data.broadcastChannels || data.broadcastChannels.length &#x3D;&#x3D;&#x3D; 0) {
+      return;
+    }
+
+    this.messageService
+      .sendBroadcastMessage({
+        ...data,
+      })
+      .then(() &#x3D;&gt; {
+        this.scrollToBottom();
+      });
+  }
+
+  /** Formats a time string (hh:mm:ss) to just hh:mm or returns &#x27;—&#x27; if empty. */
+  getFormattedTime(timeString: string): string {
+    if (!timeString) return &#x27;—&#x27;;
+    return timeString.split(&#x27;:&#x27;).slice(0, 2).join(&#x27;:&#x27;);
+  }
+
+  /** Opens a channel by calling channelService.changeChannel. */
+  openChannel(ch: any): void {
+    this.channelService.changeChannel(ch);
+  }
+
+  /** Scrolls the message list to bottom, with small timeouts for rendering. */
+  scrollToBottom(): void {
+    setTimeout(() &#x3D;&gt; {
+      if (this.messageList?.nativeElement) {
+        this.messageList.nativeElement.scrollTop &#x3D;
+          this.messageList.nativeElement.scrollHeight;
+      }
+      setTimeout(() &#x3D;&gt; {
+        if (this.messageList?.nativeElement) {
+          this.messageList.nativeElement.scrollTop &#x3D;
+            this.messageList.nativeElement.scrollHeight;
+        }
+      }, 200);
+    }, 100);
+  }
+
+  /** Called on keydown in the message textarea, sends the message if Enter pressed without shift. */
+  handleKeyDown(e: KeyboardEvent, txtArea: HTMLTextAreaElement): void {
+    if (e.key &#x3D;&#x3D;&#x3D; &#x27;Enter&#x27; &amp;&amp; !e.shiftKey) {
+      e.preventDefault();
+      this.sendMessage(txtArea);
+    }
+  }
+
+  /** Creates a new channel in local state if needed. */
+  receiveNewTeam(name: string, members: any[]): void {
+    const newId &#x3D; Math.random().toString(36).substring(2, 15);
+    const createdBy &#x3D; this.currentUser?.name || &#x27;&#x27;;
+    this.channels &#x3D; [{ id: newId, name, members, createdBy }];
+  }
+
+  /** Opens the EditChannelDialog for editing a channel or leaving it. */
+  openEditChannelDialog(ch: {
+    id: string;
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }): void {
+    const ref &#x3D; this.dialog.open(EditChannelDialogComponent, {
+      data: {
+        id: ch.id,
+        name: ch.name,
+        members: ch.members,
+        description: ch.description || &#x27;&#x27;,
+        createdBy: ch.createdBy || &#x27;&#x27;,
+      },
+    });
+    ref.componentInstance.channelLeft.subscribe(() &#x3D;&gt; {
+      this.onLeaveChannel(ch);
+    });
+    ref.afterClosed().subscribe((result) &#x3D;&gt; {
+      if (!result) return;
+      this.channelService.updateChannel(
+        ch.id,
+        result.name,
+        result.description || &#x27;&#x27;
+      );
+      this.channelService.setMembers(ch.id, result.members);
+    });
+  }
+
+  /** Opens a modal to display an enlarged image (already stored in largeImageUrl). */
+  openImageModal(): void {
+    this.isImageModalOpen &#x3D; true;
+  }
+
+  /** Closes the image modal if open. */
+  closeImageModal(): void {
+    this.isImageModalOpen &#x3D; false;
+  }
+
+  /** Closes the image modal on Escape key. */
+  @HostListener(&#x27;document:keydown.escape&#x27;, [&#x27;$event&#x27;])
+  onEscapePress(_: KeyboardEvent): void {
+    this.closeImageModal();
+  }
+
+  /** Toggles a message into editing mode, storing a backup in originalMessage. */
+  toggleEditMessage(msg: any): void {
+    msg.isEditing &#x3D; true;
+    this.originalMessage &#x3D; { ...msg };
+  }
+
+  /** Cancels editing, restoring original content if backup exists. */
+  cancelEditing(msg: any): void {
+    msg.isEditing &#x3D; false;
+    if (this.originalMessage) {
+      msg.content &#x3D; { ...this.originalMessage.content };
+      this.originalMessage &#x3D; null;
+    }
+    this.showEditOptions &#x3D; false;
+  }
+
+  /** Saves changes to a message in Firestore if editing was active. */
+  saveMessage(msg: any): void {
+    if (msg?.isEditing &#x3D;&#x3D;&#x3D; undefined || !msg.id || !this.selectedChannel)
+      return;
+    msg.isEditing &#x3D; false;
+    this.channelService
+      .updateMessage(this.selectedChannel.id, msg.id, msg.content)
+      .then(() &#x3D;&gt; {
+        this.messages &#x3D; this.messages.map((m) &#x3D;&gt;
+          m.id &#x3D;&#x3D;&#x3D; msg.id ? { ...msg, isEditing: false } : m
+        );
+      });
+  }
+
+  /** Toggles edit options for a single message, hiding them for others. */
+  toggleEditOptions(msgId: string): void {
+    if (this.currentMessageId &#x3D;&#x3D;&#x3D; msgId &amp;&amp; this.showEditOptions) {
+      this.showEditOptions &#x3D; false;
+      this.currentMessageId &#x3D; null;
+    } else {
+      this.showEditOptions &#x3D; true;
+      this.currentMessageId &#x3D; msgId;
+    }
+  }
+
+  /** Puts a message into editing mode, storing a deep copy as backup. */
+  startEditing(msg: any): void {
+    msg.isEditing &#x3D; true;
+    this.originalMessage &#x3D; JSON.parse(JSON.stringify(msg));
+    this.showEditOptions &#x3D; false;
+  }
+
+  /**
+   * Toggles the dropdown in a 4-step cycle:
+   * 1) hidden -&gt; user
+   * 2) user -&gt; channel
+   * 3) channel -&gt; user
+   * 4) user -&gt; hidden
+   * @param {MouseEvent} event - The button click event.
+   */
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.cycleStep &#x3D;&#x3D;&#x3D; 1) {
+      this.dropdownState &#x3D; &#x27;user&#x27;;
+      this.cycleStep &#x3D; 2;
+    } else if (this.cycleStep &#x3D;&#x3D;&#x3D; 2) {
+      this.dropdownState &#x3D; &#x27;channel&#x27;;
+      this.cycleStep &#x3D; 3;
+    } else if (this.cycleStep &#x3D;&#x3D;&#x3D; 3) {
+      this.dropdownState &#x3D; &#x27;user&#x27;;
+      this.cycleStep &#x3D; 4;
+    } else {
+      this.dropdownState &#x3D; &#x27;hidden&#x27;;
+      this.cycleStep &#x3D; 1;
+    }
+  }
+  /**
+   * Closes the dropdown, resetting its state to hidden.
+   */
+  closeDropdown(): void {
+    this.dropdownState &#x3D; &#x27;hidden&#x27;;
+    this.cycleStep &#x3D; 1;
+  }
+
+  /** Resets the dropdown to its default hidden state. */
+  private resetDropdown(): void {
+    this.dropdownState &#x3D; &#x27;hidden&#x27;;
+    this.cycleStep &#x3D; 1;
+    this.lastOpenedChar &#x3D; &#x27;&#x27;;
+  }
+
+  /**
+   * Evaluates user/channel mention state or hides it based on input events.
+   * @param {Event} event - The input event from the textarea.
+   */
+  onTextareaInput(event: Event): void {
+    const i &#x3D; event as InputEvent,
+      t &#x3D; (event.target as HTMLTextAreaElement).value;
+    if (
+      [&#x27;deleteContentBackward&#x27;, &#x27;deleteContentForward&#x27;].includes(i.inputType)
+    ) {
+      if (!t.includes(&#x27;@&#x27;) &amp;&amp; this.dropdownState &#x3D;&#x3D;&#x3D; &#x27;user&#x27;)
+        this.resetDropdown();
+      this.lastOpenedChar &#x3D; &#x27;&#x27;;
+      if (!t.includes(&#x27;#&#x27;) &amp;&amp; this.dropdownState &#x3D;&#x3D;&#x3D; &#x27;channel&#x27;)
+        this.resetDropdown();
+      this.lastOpenedChar &#x3D; &#x27;&#x27;;
+      return;
+    }
+    if (t.endsWith(&#x27;@&#x27;) &amp;&amp; this.lastOpenedChar !&#x3D;&#x3D; &#x27;@&#x27;) {
+      this.dropdownState &#x3D; &#x27;user&#x27;;
+      this.lastOpenedChar &#x3D; &#x27;@&#x27;;
+    } else if (t.endsWith(&#x27;#&#x27;) &amp;&amp; this.lastOpenedChar !&#x3D;&#x3D; &#x27;#&#x27;) {
+      this.dropdownState &#x3D; &#x27;channel&#x27;;
+      this.lastOpenedChar &#x3D; &#x27;#&#x27;;
+    } else this.lastOpenedChar &#x3D; &#x27;&#x27;;
+  }
+
+  /** Loads all users from Firestore, storing them in allUsers. */
+  loadAllUsers(): void {
+    this.userService.getAllUsers().then((users) &#x3D;&gt; {
+      this.allUsers &#x3D; users.map((u) &#x3D;&gt; ({
+        id: u.id,
+        name: u.name,
+        avatarUrl: u.avatarUrl || &#x27;assets/img/avatar.png&#x27;,
+        isOnline: u.isOnline ?? false,
+      }));
+    });
+  }
+
+  /** Inserts an &#x27;@username&#x27; mention in the typed message. */
+  addUserSymbol(member: any): void {
+    if (this.message.endsWith(&#x27;@&#x27;)) {
+      this.message &#x3D; this.privateMessage.slice(0, -1);
+    }
+    this.message +&#x3D; &#x60; @${member.name} &#x60;;
+    this.closeDropdown();
+  }
+
+  /**
+   * Inserts a channel mention into the message text, removing any trailing &#x27;#&#x27;,
+   * then closes the dropdown.
+   * @param {any} channel - The channel object to mention.
+   */
+  selectChannel(channel: any): void {
+    if (this.message.endsWith(&#x27;#&#x27;)) {
+      this.message &#x3D; this.message.slice(0, -1);
+    }
+    this.message +&#x3D; &#x60;#${channel.name} &#x60;;
+    this.closeDropdown();
+  }
+
+  /** If a private message is typed, clears it after “sending.” */
+  sendPrivateMessage(): void {
+    if (!this.privateMessage.trim() || !this.selectedMember) return;
+    this.privateMessage &#x3D; &#x27;&#x27;;
+  }
+
+  /** Called on each key typed in the message input. If it’s a letter, triggers a filter. */
+  onMessageInput(e: Event): void {
+    const val &#x3D; (e.target as HTMLInputElement).value;
+    if (!val) return;
+    const lastChar &#x3D; val.charAt(val.length - 1);
+    if (/[a-zA-Z]/.test(lastChar)) {
+      this.filterMembersByLetter(lastChar);
+    }
+  }
+
+  /** Filters members by letter, opens a selection dialog if results found. */
+  private filterMembersByLetter(letter: string): void {
+    this.userService.getUsersByFirstLetter(letter).then((res) &#x3D;&gt; {
+      this.members &#x3D; res;
+      if (this.members.length &gt; 0) this.openMemberSelectionDialog();
+    });
+  }
+
+  /** Opens a dialog listing filtered members (MemberSectionDialogComponent). */
+  openMemberSelectionDialog(): void {
+    const ref &#x3D; this.dialog.open(MemberSectionDialogComponent, {
+      width: &#x27;400px&#x27;,
+      data: { members: this.members },
+    });
+    ref.componentInstance.memberSelected.subscribe((sel) &#x3D;&gt;
+      this.handleMemberSelected(sel)
+    );
+  }
+
+  /** Sets the selectedMember once chosen in the selection dialog. */
+  handleMemberSelected(sel: { uid: string; name: string }): void {
+    this.selectedMember &#x3D; sel;
+  }
+
+  /** Fires a &#x60;memberSelected&#x60; event with uid/name. */
+  selectMember(member: any): void {
+    if (member?.uid &amp;&amp; member?.name) {
+      this.memberSelected.emit({ uid: member.uid, name: member.name });
+    }
+  }
+
+  /** Allows current user to leave a channel, removing them from membership in Firestore. */
+  onLeaveChannel(channel: any): void {
+    this.userService.getCurrentUserData().then((ud) &#x3D;&gt; {
+      if (!ud?.uid || !channel.id) return;
+      this.channelService.leaveChannel(channel.id, ud.uid).then(() &#x3D;&gt; {
+        channel.members &#x3D; channel.members.filter((m: any) &#x3D;&gt; m.uid !&#x3D;&#x3D; ud.uid);
+        this.channels &#x3D; this.channels.map((c) &#x3D;&gt;
+          c.id &#x3D;&#x3D;&#x3D; channel.id ? { ...c, members: channel.members } : c
+        );
+        this.selectedChannel &#x3D; null;
+        this.showWelcomeContainer &#x3D; true;
+        this.channelLeft.emit();
+      });
+    });
+  }
+
+  /**
+   * Displays the tooltip for a hovered emoji at a position slightly above its horizontal center.
+   *
+   * 1. Sets the tooltip visibility, the hovered emoji, and the sender name.
+   * 2. Retrieves the bounding rectangle of the hovered element to calculate its center.
+   * 3. Positions the tooltip horizontally at the midpoint, and slightly above the element (using a small offset).
+   *
+   * @param {MouseEvent} event - The mouse event triggered by hovering over the emoji.
+   * @param {string} emoji - The emoji character being hovered.
+   * @param {string} senderName - The name of the user who used the emoji.
+   * @returns {void}
+   */
+  showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+    this.tooltipVisible &#x3D; true;
+    this.tooltipEmoji &#x3D; emoji;
+    this.tooltipSenderName &#x3D; senderName;
+
+    const targetElem &#x3D; event.target as HTMLElement;
+    const rect &#x3D; targetElem.getBoundingClientRect();
+
+    const offset &#x3D; 5;
+    this.tooltipPosition &#x3D; {
+      x: rect.left + rect.width / 2 + window.scrollX, // horizontal midpoint
+      y: rect.top + window.scrollY - offset, // slightly above the element
+    };
+  }
+
+  /** Hides the emoji tooltip. */
+  hideTooltip(): void {
+    this.tooltipVisible &#x3D; false;
+  }
+
+  /** Opens a thread channel for a message, loads parent docs, child messages, sets up watchers, then emits data. */
+  async openThreadEvent(msg: any): Promise&lt;void&gt; {
+    if (!msg?.id) return;
+    if (this.unsubscribeFromThreadMessages)
+      this.unsubscribeFromThreadMessages();
+    if (this.unsubscribeFromThreadDetails) this.unsubscribeFromThreadDetails();
+    const tid &#x3D; msg.threadChannelId || msg.parentId || msg.id;
+    const parentDoc &#x3D; (await this.messageService.getMessage(
+      &#x27;thread-channel&#x27;,
+      tid
+    )) as ThreadChannelParentDoc | null;
+    const cName &#x3D; await this.resolveThreadChannelName(parentDoc, msg);
+    const kids &#x3D; await this.messageService.getMessagesOnce(
+      &#x27;thread-channel&#x27;,
+      tid
+    );
+    const dataObj &#x3D; this.buildThreadDataObj(msg, parentDoc, cName, kids);
+    this.listenThreadMessages(tid);
+    this.listenThreadReplyCounts(tid, dataObj.parentMessage);
+    if (this.messageService.listenForThreadDetails) {
+      this.unsubscribeFromThreadDetails &#x3D;
+        this.messageService.listenForThreadDetails(tid, () &#x3D;&gt; {});
+    }
+    setTimeout(() &#x3D;&gt; this.positionOverlays(), 300);
+    this.openThread.emit(dataObj);
+  }
+
+  /** Resolves the channel name for a thread, if not already on parentDoc. */
+  private async resolveThreadChannelName(
+    pd: ThreadChannelParentDoc | null,
+    msg: any
+  ): Promise&lt;string&gt; {
+    if (pd?.channelName) return pd.channelName;
+    if (!pd?.channelId) return &#x27;Unbekannt&#x27;;
+    const ch &#x3D; await this.channelService.getChannelById(pd.channelId);
+    return ch?.name || &#x27;Unbekannt&#x27;;
+  }
+
+  /** Builds a combined thread data object from parent + child messages. */
+  private buildThreadDataObj(
+    msg: any,
+    parentDoc: ThreadChannelParentDoc | null,
+    channelName: string,
+    children: any[]
+  ): any {
+    const p &#x3D; parentDoc || {};
+    const tid &#x3D; msg.threadChannelId || msg.parentId || msg.id;
+    const parentMessage &#x3D; {
+      id: tid,
+      text: (p.content?.text ?? msg.text) || &#x27;Kein Text&#x27;,
+      senderId: p.senderId || msg.senderId || &#x27;unknown&#x27;,
+      timestamp: p.timestamp || msg.timestamp || new Date(),
+      replyCount: p.replyCount || msg.replyCount || 0,
+      channelName,
+      channelId: p.channelId || null,
+      content: p.content ?? msg.content ?? { text: &#x27;Kein Text&#x27;, emojis: [] },
+    };
+    const fm &#x3D; (children || []).map((c) &#x3D;&gt; ({
+      ...c,
+      content: c.content ?? { text: &#x27;Kein Text&#x27;, emojis: [] },
+      timestamp: c.timestamp || new Date(),
+    }));
+    if (msg.id !&#x3D;&#x3D; tid) {
+      fm.push({
+        ...msg,
+        content: msg.content || { text: &#x27;Kein Text&#x27;, emojis: [] },
+        timestamp: msg.timestamp || new Date(),
+      });
+    }
+    return { parentMessage, messages: fm };
+  }
+
+  /** Sets up a listener for thread messages (no processing here). */
+  private listenThreadMessages(threadId: string): void {
+    this.unsubscribeFromThreadMessages &#x3D; this.messageService.listenForMessages(
+      &#x27;thread-channel&#x27;,
+      threadId,
+      () &#x3D;&gt; {}
+    );
+  }
+
+  /** Sets up a live listener for reply counts on the open thread. */
+  private listenThreadReplyCounts(tid: string, parentMsg: any): void {
+    this.messageService.loadReplyCountsLive([tid], &#x27;thread-channel&#x27;, (rc) &#x3D;&gt; {
+      const d &#x3D; rc[tid] || { count: 0, lastResponseTime: null };
+      parentMsg.replyCount &#x3D; d.count;
+      parentMsg.timestamp &#x3D; d.lastResponseTime || parentMsg.timestamp;
+    });
+  }
+
+  /** Adjusts overlay positions (MemberList, AddMembers) after thread open. */
+  private positionOverlays(): void {
+    this.positions.forEach((p) &#x3D;&gt; (p.offsetX &#x3D; -250));
+    this.membersOverlay?.overlayRef?.updatePosition();
+    this.positionsAddMembers.forEach((p) &#x3D;&gt; (p.offsetX &#x3D; -500));
+    this.addMembersOverlay?.overlayRef?.updatePosition();
+  }
+
+  /** Closes the currently open thread-channel view by clearing &#x60;selectedThreadChannel&#x60;. */
+  closeThreadChannel(): void {}
+
+  /** Changes the active channel to a new one, resetting the thread if any. */
+  changeChannel(_newChannel: any): void {}
+
+  /** A trackBy function for message arrays in ngFor, returning the message ID for optimization. */
+  trackByMsgId(_: number, msg: any): any {
+    return msg.id;
+  }
+
+  /** Highlights a specified message by scrolling to it and applying a highlight style temporarily. */
+  highlightMessage(id: string): void {
+    const el &#x3D; document.getElementById(&#x60;message-${id}&#x60;);
+    if (!el) return;
+    el.scrollIntoView({ behavior: &#x27;smooth&#x27;, block: &#x27;center&#x27; });
+    this.messages &#x3D; this.messages.map((m) &#x3D;&gt; ({
+      ...m,
+      isHighlighted: m.id &#x3D;&#x3D;&#x3D; id,
+    }));
+    setTimeout(() &#x3D;&gt; {
+      this.messages &#x3D; this.messages.map((m) &#x3D;&gt; ({
+        ...m,
+        isHighlighted: false,
+      }));
+    }, 2000);
+  }
+
+  /** Closes the emoji popup for a particular message. */
+  closePopup(msg: any): void {
+    if (msg.showAllEmojisList) {
+      msg.showAllEmojisList &#x3D; false;
+      msg.expanded &#x3D; false;
+    }
+  }
+
+  /** Toggles a popup listing all emojis in a message. */
+  toggleEmojiPopup(msg: any): void {
+    if (msg.showAllEmojisList &#x3D;&#x3D;&#x3D; undefined) msg.showAllEmojisList &#x3D; false;
+    msg.showAllEmojisList &#x3D; !msg.showAllEmojisList;
+    if (!msg.showAllEmojisList) msg.expanded &#x3D; false;
+    else if (msg.expanded &#x3D;&#x3D;&#x3D; undefined) msg.expanded &#x3D; false;
+  }
+
+  /** Opens a large image overlay if imageData is a string. */
+  openLargeImage(imageData: string | ArrayBuffer): void {
+    if (typeof imageData !&#x3D;&#x3D; &#x27;string&#x27;) return;
+    this.largeImageUrl &#x3D; imageData;
+    this.showLargeImage &#x3D; true;
+  }
+
+  /** Closes the large image overlay. */
+  closeLargeImage(): void {
+    this.showLargeImage &#x3D; false;
+    this.largeImageUrl &#x3D; null;
+  }
+
+  /** Converts a Firestore Timestamp or a Date to a JS Date (optional). */
+  convertFirestoreTimestampToDate(ts: any): Date | null {
+    if (!ts) return null;
+    if (ts.toDate) return ts.toDate();
+    if (ts instanceof Date) return ts;
+    return null;
+  }
+
+  /** Returns a formatted last response time for a thread message object or &#x27;—&#x27;. */
+  getFormattedThreadLastResponseTime(msg: any): string {
+    let r &#x3D; msg.lastReplyTime ?? msg.timestamp;
+    if (r?.seconds) r &#x3D; new Date(r.seconds * 1000);
+    return r ? r.toLocaleTimeString() : &#x27;—&#x27;;
+  }
+
+  /**
+   * Finds the index of a given emoji within a message&#x27;s emoji list.
+   * @param {any} message - The message object containing a content.emojis array.
+   * @param {string} emojiToRemove - The emoji to look for.
+   * @returns {number} The index of the emoji or -1 if not found.
+   */
+  private findEmojiIndex(message: any, emojiToRemove: string): number {
+    if (!message?.content?.emojis) return -1;
+    return message.content.emojis.findIndex(
+      (emojiObj: any) &#x3D;&gt; emojiObj.emoji &#x3D;&#x3D;&#x3D; emojiToRemove
+    );
+  }
+
+  /**
+   * Removes the emoji at the specified index from the message&#x27;s content.
+   * @param {any} message - The message object with a content.emojis array.
+   * @param {number} index - The position of the emoji to remove.
+   */
+  private removeEmojiAtIndex(message: any, index: number): void {
+    message.content.emojis.splice(index, 1);
+  }
+
+  /**
+   * Updates the message document in Firestore, hiding the tooltip in every scenario.
+   * @param {any} message - The message object containing the ID and updated content.
+   */
+  private updateMessageInFirestore(message: any): void {
+    if (!message.id) {
+      this.hideTooltip();
+      return;
+    }
+    this.messageService
+      .updateMessage(message.id, { content: message.content })
+      .then(() &#x3D;&gt; this.hideTooltip())
+      // Bei Fehlern ebenfalls Tooltip schließen:
+      .catch(() &#x3D;&gt; this.hideTooltip());
+  }
+
+  /**
+   * Removes a specific emoji from the message content and triggers Firestore update.
+   * @param {any} message - The message object (requires content.emojis and an ID).
+   * @param {string} emojiToRemove - The emoji to remove from the message.
+   */
+  public removeEmojiFromMessage(message: any, emojiToRemove: string): void {
+    const index &#x3D; this.findEmojiIndex(message, emojiToRemove);
+    if (index &#x3D;&#x3D;&#x3D; -1) return;
+    this.removeEmojiAtIndex(message, index);
+    this.updateMessageInFirestore(message);
+  }
+
+}
+
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'ThreadChannelParentDoc-1.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

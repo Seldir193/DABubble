@@ -1,0 +1,527 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  AddMembersMobileData</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/add-members-dialog-mobile/add-members-dialog-mobile.component.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Optional data interface if used with MatBottomSheet.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#channelId" 
+>
+                                            channelId
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#filteredMembers" 
+>
+                                            filteredMembers
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#members" 
+>
+                                            members
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="channelId"></a>
+                                        <span class="name "><b>channelId</b>
+                                            <a href="#channelId">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>channelId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="filteredMembers"></a>
+                                        <span class="name "><b>filteredMembers</b>
+                                            <a href="#filteredMembers">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>filteredMembers:     <code>any[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>any[]</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="members"></a>
+                                        <span class="name "><b>members</b>
+                                            <a href="#members">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>members:     <code>any[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>any[]</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit, Inject, Optional } from &#x27;@angular/core&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from &#x27;@angular/material/bottom-sheet&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+import { OverlayModule } from &#x27;@angular/cdk/overlay&#x27;;
+import { MatDialog } from &#x27;@angular/material/dialog&#x27;;
+
+/**
+ * Optional data interface if used with MatBottomSheet.
+ */
+export interface AddMembersMobileData {
+  channelId: string;
+  members: any[];
+  filteredMembers: any[];
+}
+
+/**
+ * A bottom sheet dialog for adding members in a mobile-friendly layout.
+ */
+@Component({
+  selector: &#x27;app-add-members-dialog-mobile&#x27;,
+  standalone: true,
+  imports: [CommonModule, FormsModule, OverlayModule],
+  templateUrl: &#x27;./add-members-dialog-mobile.component.html&#x27;,
+  styleUrls: [&#x27;./add-members-dialog-mobile.component.scss&#x27;]
+})
+export class AddMembersDialogMobileComponent implements OnInit {
+
+  /** The channel ID required to update members. */
+  channelId &#x3D; &#x27;&#x27;;
+  /** The existing members of the channel. */
+  members: any[] &#x3D; [];
+  /** An optional pre-filtered set of members. */
+  filteredMembers: any[] &#x3D; [];
+
+  /** User&#x27;s search input. */
+  specificMemberName &#x3D; &#x27;&#x27;;
+  /** Newly selected members for adding. */
+  selectedMembers: any[] &#x3D; [];
+  /** A local copy of all known users. */
+  allUsers: any[] &#x3D; [];
+  /** Controls the visibility of the members list overlay. */
+  isMembersListVisible &#x3D; false;
+
+  /**
+   * Constructor for the bottom sheet usage, optionally receiving data.
+   */
+  constructor(
+    private userService: UserService,
+    private channelService: ChannelService,
+    private dialog: MatDialog,
+    @Optional() public bottomSheetRef?: MatBottomSheetRef&lt;AddMembersDialogMobileComponent&gt;,
+    @Optional() @Inject(MAT_BOTTOM_SHEET_DATA) public data?: AddMembersMobileData
+  ) {}
+
+  /**
+   * Reads optional input data and loads all users if no filtered list was provided.
+   */
+  ngOnInit(): void {
+    if (this.data) {
+      this.channelId &#x3D; this.data.channelId;
+      this.members &#x3D; [...(this.data.members || [])];
+      this.filteredMembers &#x3D; [...(this.data.filteredMembers || [])];
+    }
+    if (this.filteredMembers.length &#x3D;&#x3D;&#x3D; 0) {
+      this.loadAllUsers();
+    }
+  }
+
+  /**
+   * Loads all users, excluding those already in &#x27;members&#x27; if needed.
+   */
+  loadAllUsers(): void {
+    this.userService.getAllUsers()
+      .then(users &#x3D;&gt; {
+        this.allUsers &#x3D; users;
+        if (this.filteredMembers.length &#x3D;&#x3D;&#x3D; 0) {
+          this.filteredMembers &#x3D; this.allUsers.filter(
+            u &#x3D;&gt; !this.members.some(m &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; u.uid)
+          );
+        }
+      })
+      .catch(() &#x3D;&gt; {});
+  }
+
+  /**
+   * Filters the user list by the current search term, excluding existing or selected members.
+   */
+  onSearchMembers(): void {
+    const term &#x3D; this.specificMemberName.toLowerCase();
+    this.filteredMembers &#x3D; this.allUsers.filter(u &#x3D;&gt;
+      u.name.toLowerCase().includes(term) &amp;&amp;
+      !this.members.some(m &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; u.uid) &amp;&amp;
+      !this.selectedMembers.some(sel &#x3D;&gt; sel.uid &#x3D;&#x3D;&#x3D; u.uid)
+    );
+  }
+
+  /**
+   * Shows the members list overlay, excluding those already in &#x27;members&#x27; or &#x27;selectedMembers&#x27;.
+   */
+  showAllMembers(): void {
+    this.isMembersListVisible &#x3D; true;
+    if (!this.allUsers || this.allUsers.length &#x3D;&#x3D;&#x3D; 0) return;
+    this.filteredMembers &#x3D; this.allUsers.filter(u &#x3D;&gt;
+      !this.members.some(m &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; u.uid) &amp;&amp;
+      !this.selectedMembers.some(s &#x3D;&gt; s.uid &#x3D;&#x3D;&#x3D; u.uid)
+    );
+  }
+
+  /**
+   * Hides the members list with a brief delay to allow UI interactions.
+   */
+  hideMembersList(): void {
+    setTimeout(() &#x3D;&gt; {
+      this.isMembersListVisible &#x3D; false;
+    }, 200);
+  }
+
+  /**
+   * Selects a member, removing them from &#x27;filteredMembers&#x27; and resetting input state.
+   */
+  selectMember(user: any): void {
+    if (!this.selectedMembers.some(m &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; user.uid)) {
+      this.selectedMembers.push(user);
+    }
+    this.specificMemberName &#x3D; &#x27;&#x27;;
+    this.isMembersListVisible &#x3D; false;
+    this.filteredMembers &#x3D; this.filteredMembers.filter(u &#x3D;&gt; u.uid !&#x3D;&#x3D; user.uid);
+  }
+
+  /**
+   * Removes a previously selected member.
+   */
+  removeMember(user: any): void {
+    this.selectedMembers &#x3D; this.selectedMembers.filter(m &#x3D;&gt; m.uid !&#x3D;&#x3D; user.uid);
+  }
+
+  /**
+   * Merges new members into the channel, saves, then closes the bottom sheet.
+   */
+  onCreate(): void {
+    const unique &#x3D; this.selectedMembers.filter(
+      sel &#x3D;&gt; !this.members.some(m &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; sel.uid)
+    );
+    if (unique.length &lt; 1) return this.bottomSheetRef?.dismiss();
+
+    const updated &#x3D; [...this.members, ...unique];
+    this.channelService.setMembers(this.channelId, updated)
+      .then(() &#x3D;&gt; {
+        this.bottomSheetRef?.dismiss(updated);
+      })
+      .catch(() &#x3D;&gt; {});
+  }
+
+  /**
+   * Cancels the dialog without adding members.
+   */
+  onCancel(): void {
+    this.bottomSheetRef?.dismiss();
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'AddMembersMobileData.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

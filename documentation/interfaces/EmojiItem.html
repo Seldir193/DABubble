@@ -1,0 +1,1451 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  EmojiItem</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/search-field/search-field.component.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Structure of an emoji item, with an emoji character and a usage count.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#count" 
+>
+                                            count
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#emoji" 
+>
+                                            emoji
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="count"></a>
+                                        <span class="name "><b>count</b>
+                                            <a href="#count">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>count:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="emoji"></a>
+                                        <span class="name "><b>emoji</b>
+                                            <a href="#emoji">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>emoji:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Output,
+  EventEmitter,
+  HostListener,
+  ViewChild,
+  ElementRef,
+  Input,
+  SimpleChanges,
+} from &#x27;@angular/core&#x27;;
+import { CommonModule, formatDate } from &#x27;@angular/common&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { UserService } from &#x27;../user.service&#x27;;
+import { ChannelService } from &#x27;../channel.service&#x27;;
+import { MatDialog } from &#x27;@angular/material/dialog&#x27;;
+import { Message } from &#x27;../message.models&#x27;;
+import { MessageService } from &#x27;../message.service&#x27;;
+import { ActivatedRoute } from &#x27;@angular/router&#x27;;
+import { PickerModule } from &#x27;@ctrl/ngx-emoji-mart&#x27;;
+import { Router } from &#x27;@angular/router&#x27;;
+import { OverlayModule } from &#x27;@angular/cdk/overlay&#x27;;
+
+import { BroadcastMessageData } from &#x27;../message.models&#x27;;
+
+/**
+ * Structure of a message&#x27;s main content, potentially containing text,
+ * an image, and an array of emojis with usage counts.
+ */
+export interface MessageContent {
+  text?: string;
+  image?: string | ArrayBuffer | null;
+}
+
+/**
+ * Structure of an emoji item, with an emoji character and a usage count.
+ */
+interface EmojiItem {
+  emoji: string;
+  count: number;
+}
+
+/**
+ * The SearchFieldComponent allows for user search,
+ * multi-selection of recipients, and sending messages
+ * (including images and emojis) to these recipients.
+ */
+@Component({
+  selector: &#x27;app-search-field&#x27;,
+  standalone: true,
+  imports: [CommonModule, FormsModule, PickerModule, OverlayModule],
+  templateUrl: &#x27;./search-field.component.html&#x27;,
+  styleUrls: [&#x27;./search-field.component.scss&#x27;],
+})
+export class SearchFieldComponent {
+  /**
+   * Emitted when this search field is closed (e.g., user
+   * has completed or canceled the search).
+   */
+  @Output() close &#x3D; new EventEmitter&lt;void&gt;();
+
+  /**
+   * Emitted when a user is selected, passing that user&#x27;s info
+   * (e.g., id, name) to the parent.
+   */
+  @Output() memberSelected &#x3D; new EventEmitter&lt;any&gt;();
+
+  /**
+   * The query text used for searching users.
+   */
+  searchQuery: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Holds the users filtered by the search query.
+   */
+  filteredMembers: any[] &#x3D; [];
+
+  /**
+   * Flag indicating if no results were found for the current query.
+   */
+  noResultsFound: boolean &#x3D; false;
+
+  /**
+   * A reference to the DOM element containing the message list,
+   * used for auto-scrolling.
+   */
+  @ViewChild(&#x27;messageList&#x27;) messageList!: ElementRef;
+
+  /**
+   * The display name of a specific recipient (if used for direct messages).
+   */
+  @Input() recipientName: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * The unique ID of that recipient (if used for direct messages).
+   */
+  @Input() recipientId: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Toggles the visibility of the search field in the UI.
+   */
+  @Input() showSearchField: boolean &#x3D; false;
+
+  /**
+   * An image URL or data URL representing a selected file to attach to a message.
+   */
+  imageUrl: string | ArrayBuffer | null &#x3D; null;
+
+  /**
+   * Text for sending as a private or group message.
+   */
+  privateMessage: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Stores the current user&#x27;s info after loading from Firestore.
+   */
+  currentUser: any;
+
+  /**
+   * Array of messages if fetching direct messages. Each item is typed
+   * as a &#x60;Message&#x60; from message.models.
+   */
+  privateMessages: any[] &#x3D; [];
+
+  /**
+   * A generated conversation ID (if used for a direct conversation).
+   */
+  conversationId: string | undefined;
+
+  /**
+   * The online/offline status of a direct chat recipient (e.g., &#x27;Aktiv&#x27;, &#x27;Abwesend&#x27;).
+   */
+  recipientStatus: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * The avatar URL of the direct chat recipient.
+   */
+  recipientAvatarUrl: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Toggles the global emoji picker for sending messages.
+   */
+  isEmojiPickerVisible: boolean &#x3D; false;
+
+  /**
+   * Indicates if an image modal is open for viewing a selected image in detail.
+   */
+  isImageModalOpen &#x3D; false;
+
+  /**
+   * Stores the current date for logic such as &quot;Heute&quot; or &quot;Gestern&quot;.
+   */
+  currentDate: Date &#x3D; new Date();
+
+  /**
+   * The &quot;yesterday&quot; date used for date comparisons.
+   */
+  yesterdayDate: Date &#x3D; this.getYesterdayDate();
+
+  /**
+   * Tracks if a textarea is expanded because an image is attached.
+   */
+  isTextareaExpanded: boolean &#x3D; false;
+
+  /**
+   * Lists of emojis frequently used in sent or received messages.
+   */
+  lastUsedEmojisReceived: string[] &#x3D; [];
+  lastUsedEmojisSent: string[] &#x3D; [];
+
+  /**
+   * Toggles edit options for a specific message.
+   */
+  showEditOptions: boolean &#x3D; false;
+
+  /**
+   * Identifies the currently edited message by its ID.
+   */
+  currentMessageId: string | null &#x3D; null;
+
+  /**
+   * Stores a backup of the original message content if the user starts editing.
+   */
+  originalMessage: any &#x3D; null;
+
+  /**
+   * Tooltip management for emojis (visibility, position, etc.).
+   */
+  tooltipVisible &#x3D; false;
+  tooltipPosition &#x3D; { x: 0, y: 0 };
+  tooltipEmoji &#x3D; &#x27;&#x27;;
+  tooltipSenderName &#x3D; &#x27;&#x27;;
+
+  /**
+   * If sending a broadcast message to multiple recipients,
+   * this array tracks which recipients are selected.
+   */
+  selectedRecipients: any[] &#x3D; [];
+
+  /**
+   * The text typed when sending a broadcast to all selected recipients.
+   */
+  messageToAll: string &#x3D; &#x27;An: #channel, oder @jemand&#x27;;
+
+  /**
+   * Toggles an &quot;@&quot; mention dropdown.
+   */
+  showAtDropdown: boolean &#x3D; false;
+
+  /**
+   * Holds all members (e.g., for mention or multi-select).
+   */
+  allMembers: any[] &#x3D; [];
+
+  /**
+   * Indicates whether the screen is in desktop mode (&gt;&#x3D; 1278px).
+   */
+  isDesktop &#x3D; false;
+  placeholderText &#x3D; &#x27;&#x27;;
+  filteredResults: any[] &#x3D; [];
+
+  /**
+   * Constructor injecting route info, user/channels, dialog, messageService, and router if needed.
+   */
+  constructor(
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private channelService: ChannelService,
+    private dialog: MatDialog,
+    private messageService: MessageService,
+    private router: Router
+  ) {}
+
+  /**
+   * Lifecycle hook. Loads current user, recipient data, sets desktop mode,
+   * and if needed, fetches messages or emojis for a direct conversation.
+   */
+  async ngOnInit(): Promise&lt;void&gt; {
+    await this.loadCurrentUser();
+    this.loadRecipientData();
+    this.checkDesktopWidth();
+    this.updatePlaceholderText(window.innerWidth);
+    this.currentUser &#x3D; await this.userService.getCurrentUserData();
+
+    if (this.currentUser &amp;&amp; this.recipientId) {
+      this.initializeDirectConversation();
+    }
+  }
+
+  private initializeDirectConversation(): void {
+    this.conversationId &#x3D; this.messageService.generateConversationId(
+      this.currentUser.id,
+      this.recipientId
+    );
+
+    this.messageService
+      .getMessagesOnce(&#x27;private&#x27;, this.conversationId)
+      .then((messages: Message[]) &#x3D;&gt; {
+        this.privateMessages &#x3D; messages.map((msg) &#x3D;&gt; ({
+          ...msg,
+          content: { ...msg.content, emojis: msg.content?.emojis || [] },
+        }));
+        this.scrollToBottom();
+      })
+      .catch(() &#x3D;&gt; {});
+
+    this.loadLastUsedEmojis();
+  }
+
+  /**
+   * HostListener tracking window resize events to update desktop mode status.
+   */
+  @HostListener(&#x27;window:resize&#x27;, [&#x27;$event&#x27;])
+  onResize(event: any): void {
+    this.checkDesktopWidth();
+    this.updatePlaceholderText(event.target.innerWidth);
+  }
+
+  /**
+   * Updates the placeholder text depending on screen width.
+   */
+  private updatePlaceholderText(width: number) {
+    if (width &gt; 1278) {
+      this.placeholderText &#x3D; &#x27;An: #channel, oder @jemand oder E-Mail Adresse&#x27;;
+    } else {
+      this.placeholderText &#x3D; &#x27;An: #channel, oder @jemand&#x27;;
+    }
+  }
+
+  /**
+   * Checks if the screen width is &gt;&#x3D; 1278px to set isDesktop to true.
+   */
+  checkDesktopWidth() {
+    this.isDesktop &#x3D; window.innerWidth &gt;&#x3D; 1278;
+  }
+
+  /**
+   * Loads the last used emojis from the conversation&#x27;s recent messages,
+   * storing them in &#x60;lastUsedEmojisSent&#x60;/&#x60;Received&#x60;.
+   */
+  private async loadLastUsedEmojis(): Promise&lt;void&gt; {
+    if (!this.conversationId) return;
+
+    try {
+      const messages &#x3D; await this.messageService.getMessagesOnce(
+        &#x27;private&#x27;,
+        this.conversationId
+      );
+      const lastMessages &#x3D; messages.slice(-10);
+
+      this.lastUsedEmojisSent &#x3D; [];
+      this.lastUsedEmojisReceived &#x3D; [];
+
+      lastMessages.forEach((msg: Message) &#x3D;&gt; {
+        if (msg.content?.emojis) {
+          if (msg.senderId &#x3D;&#x3D;&#x3D; this.currentUser.id) {
+            this.lastUsedEmojisSent.push(
+              ...msg.content.emojis.map((e) &#x3D;&gt; e.emoji)
+            );
+          } else {
+            this.lastUsedEmojisReceived.push(
+              ...msg.content.emojis.map((e) &#x3D;&gt; e.emoji)
+            );
+          }
+        }
+      });
+
+      this.lastUsedEmojisSent &#x3D; [...new Set(this.lastUsedEmojisSent)].slice(
+        0,
+        5
+      );
+      this.lastUsedEmojisReceived &#x3D; [
+        ...new Set(this.lastUsedEmojisReceived),
+      ].slice(0, 5);
+    } catch (error) {}
+  }
+
+  /**
+   * Formats a date string as &#x27;Heute&#x27;, &#x27;Gestern&#x27;, or a localized German date.
+   */
+  getFormattedDate(dateString: string): string {
+    if (!dateString) {
+      return &#x27;Ungültiges Datum&#x27;;
+    }
+
+    const date &#x3D; this.parseDateString(dateString);
+
+    if (isNaN(date.getTime())) {
+      return &#x27;Ungültiges Datum&#x27;;
+    }
+
+    if (this.isSameDay(date, new Date())) {
+      return &#x27;Heute&#x27;;
+    } else if (this.isSameDay(date, this.getYesterdayDate())) {
+      return &#x27;Gestern&#x27;;
+    }
+
+    const options: Intl.DateTimeFormatOptions &#x3D; {
+      weekday: &#x27;long&#x27;,
+      day: &#x27;2-digit&#x27;,
+      month: &#x27;long&#x27;,
+    };
+    return date.toLocaleDateString(&#x27;de-DE&#x27;, options);
+  }
+
+  /**
+   * Parses a date string in the format &#x27;dd.mm.yyyy&#x27; or a generic string date.
+   * Returns the corresponding Date object (may be invalid if the parsing fails).
+   */
+  private parseDateString(dateString: string): Date {
+    const parts &#x3D; dateString.split(&#x27;.&#x27;);
+    if (parts.length &#x3D;&#x3D;&#x3D; 3) {
+      const day &#x3D; parseInt(parts[0], 10);
+      const month &#x3D; parseInt(parts[1], 10) - 1;
+      const year &#x3D; parseInt(parts[2], 10);
+      return new Date(year, month, day);
+    }
+    return new Date(dateString);
+  }
+
+  /**
+   * Returns the date object representing &quot;yesterday&quot; for date comparison.
+   */
+  private getYesterdayDate(): Date {
+    const yesterday &#x3D; new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday;
+  }
+
+  /**
+   * Checks if two dates fall on the same calendar day.
+   */
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return (
+      date1.getDate() &#x3D;&#x3D;&#x3D; date2.getDate() &amp;&amp;
+      date1.getMonth() &#x3D;&#x3D;&#x3D; date2.getMonth() &amp;&amp;
+      date1.getFullYear() &#x3D;&#x3D;&#x3D; date2.getFullYear()
+    );
+  }
+
+  /**
+   * Loads the current user&#x27;s data from Firestore, storing it in &#x60;currentUser&#x60;.
+   */
+  async loadCurrentUser(): Promise&lt;void&gt; {
+    return this.userService
+      .getCurrentUserData()
+      .then((user) &#x3D;&gt; {
+        this.currentUser &#x3D; user;
+      })
+      .catch(() &#x3D;&gt; {});
+  }
+
+  /**
+   * If a &#x60;recipientId&#x60; is provided, loads that user&#x27;s data (status, avatar, etc.) for display.
+   */
+  loadRecipientData(): void {
+    if (this.recipientId) {
+      this.userService
+        .getUserById(this.recipientId)
+        .then((userData) &#x3D;&gt; {
+          this.recipientStatus &#x3D; userData.isOnline ? &#x27;Aktiv&#x27; : &#x27;Abwesend&#x27;;
+          this.recipientAvatarUrl &#x3D; userData.avatarUrl || &#x27;&#x27;;
+        })
+        .catch(() &#x3D;&gt; {});
+    }
+  }
+
+  /**
+   * Loads private messages once for the generated conversation ID, storing them in &#x60;privateMessages&#x60;.
+   */
+  loadPrivateMessages(): void {
+    const senderId &#x3D; this.userService.getCurrentUserId();
+    if (senderId &amp;&amp; this.recipientId) {
+      const conversationId &#x3D; this.messageService.generateConversationId(
+        senderId,
+        this.recipientId
+      );
+      this.messageService
+        .getMessagesOnce(&#x27;private&#x27;, conversationId)
+        .then((messages: Message[]) &#x3D;&gt; {
+          this.privateMessages &#x3D; messages.map((msg: Message) &#x3D;&gt; ({
+            ...msg,
+            timestamp:
+              msg.timestamp instanceof Date ? msg.timestamp : new Date(),
+          }));
+          this.scrollToBottom();
+        })
+        .catch(() &#x3D;&gt; {});
+    } else {
+    }
+  }
+
+  /**
+   * Called when an image is selected from a file input. Reads as data URL and optionally adjusts textarea height.
+   */
+  onImageSelected(event: Event, textArea?: HTMLTextAreaElement): void {
+    const input &#x3D; event.target as HTMLInputElement;
+    if (input.files &amp;&amp; input.files[0]) {
+      const file &#x3D; input.files[0];
+      const reader &#x3D; new FileReader();
+      reader.onload &#x3D; (e) &#x3D;&gt; {
+        this.imageUrl &#x3D; e.target?.result || null;
+        if (textArea) {
+          this.adjustTextareaHeight(textArea);
+        }
+        this.isTextareaExpanded &#x3D; true;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  /**
+   * Toggles the global emoji picker for the broadcast message input or other usage.
+   */
+  toggleEmojiPicker(): void {
+    this.isEmojiPickerVisible &#x3D; !this.isEmojiPickerVisible;
+  }
+
+  /**
+   * Adds a selected emoji from the global picker to &#x60;messageToAll&#x60;.
+   */
+  addEmoji(event: any): void {
+    if (event?.emoji?.native) {
+      this.messageToAll +&#x3D; event.emoji.native;
+    }
+    this.isEmojiPickerVisible &#x3D; false;
+  }
+
+  /**
+   * Opens a modal to view the selected image in larger detail.
+   */
+  openImageModal(): void {
+    this.isImageModalOpen &#x3D; true;
+  }
+
+  /**
+   * Closes the image modal.
+   */
+  closeImageModal(): void {
+    this.isImageModalOpen &#x3D; false;
+  }
+
+  /**
+   * Closes the profile card or image preview, clearing the selected image and resetting textarea height.
+   */
+  closeProfileCard(textArea: HTMLTextAreaElement): void {
+    this.imageUrl &#x3D; null;
+    this.resetTextareaHeight(textArea);
+  }
+
+  /**
+   * Increases the textarea&#x27;s bottom padding if an image is present.
+   */
+  adjustTextareaHeight(textArea: HTMLTextAreaElement): void {
+    if (this.imageUrl) {
+      textArea.style.paddingBottom &#x3D; &#x27;160px&#x27;;
+    }
+  }
+
+  /**
+   * Resets the bottom padding of the textarea to default.
+   */
+  resetTextareaHeight(textArea: HTMLTextAreaElement): void {
+    textArea.style.paddingBottom &#x3D; &#x27;20px&#x27;;
+  }
+
+  /**
+   * Handles the Enter key in the broadcast message input. If Shift is not pressed, sends the message.
+   */
+  handleKeyDown(event: KeyboardEvent, textArea: HTMLTextAreaElement): void {
+    if (event.key &#x3D;&#x3D;&#x3D; &#x27;Enter&#x27; &amp;&amp; !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessageToAll(textArea);
+    }
+  }
+
+  /**
+   * Scrolls the message list to the bottom after a brief delay, ensuring the view is updated first.
+   */
+  private scrollToBottom(): void {
+    setTimeout(() &#x3D;&gt; {
+      if (this.messageList) {
+        this.messageList.nativeElement.scrollTop &#x3D;
+          this.messageList.nativeElement.scrollHeight;
+      }
+    }, 100);
+  }
+
+  /**
+   * Inserts &#x27;@&#x27; at the end of messageToAll, potentially used to mention a user
+   * in a broadcast scenario.
+   */
+  addAtSymbolAndOpenDialog(): void {
+    this.messageToAll +&#x3D; &#x27;@&#x27;;
+  }
+
+  /**
+   * Toggles an inline emoji picker for a specific message object, ensuring only one is open at once.
+   */
+  toggleEmojiPickerForMessage(msg: any): void {
+    const isCurrentlyVisible &#x3D; msg.isEmojiPickerVisible;
+    this.privateMessages.forEach((m) &#x3D;&gt; (m.isEmojiPickerVisible &#x3D; false));
+    msg.isEmojiPickerVisible &#x3D; !isCurrentlyVisible;
+  }
+
+  /**
+   * Lifecycle hook that watches for changes to &#x60;recipientId&#x60;,
+   * reloading data if a new recipient is set.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes[&#x27;recipientId&#x27;] &amp;&amp; !changes[&#x27;recipientId&#x27;].isFirstChange()) {
+      this.loadRecipientData();
+      this.loadPrivateMessages();
+    }
+  }
+
+  /**
+   * Generates a stable conversation ID by sorting two user IDs alphabetically.
+   */
+  generateConversationId(userId1: string, userId2: string): string {
+    return [userId1, userId2].sort().join(&#x27;_&#x27;);
+  }
+
+  /**
+   * Adds an emoji to a given message, updating the local message&#x27;s emoji array.
+   * (Ohne das Schließen des Pickers und Firestore-Update)
+   */
+  addEmojiToMessage(event: any, msg: any): void {
+    if (!msg.content.emojis) {
+      msg.content.emojis &#x3D; [];
+    }
+    const newEmoji &#x3D; event.emoji.native;
+    const existingEmoji &#x3D; msg.content.emojis.find(
+      (e: any) &#x3D;&gt; e.emoji &#x3D;&#x3D;&#x3D; newEmoji
+    );
+
+    if (existingEmoji) {
+      existingEmoji.count +&#x3D; 1;
+    } else {
+      msg.content.emojis.push({ emoji: newEmoji, count: 1 });
+    }
+
+    if (msg.senderName &#x3D;&#x3D;&#x3D; this.currentUser?.name) {
+      if (!this.lastUsedEmojisSent.includes(newEmoji)) {
+        this.lastUsedEmojisSent &#x3D; [newEmoji, ...this.lastUsedEmojisSent].slice(
+          0,
+          2
+        );
+      }
+    } else {
+      if (!this.lastUsedEmojisReceived.includes(newEmoji)) {
+        this.lastUsedEmojisReceived &#x3D; [
+          newEmoji,
+          ...this.lastUsedEmojisReceived,
+        ].slice(0, 2);
+      }
+    }
+  }
+
+  /**
+   * Closes the emoji picker for the given message and saves the updated emoji array to Firestore.
+   */
+  closeEmojiPicker(msg: any): void {
+    msg.isEmojiPickerVisible &#x3D; false;
+
+    this.messageService
+      .updateMessage(msg.id, {
+        &#x27;content.emojis&#x27;: msg.content.emojis,
+      })
+      .then(() &#x3D;&gt; {
+        // console.log entfernt
+      })
+      .catch((error) &#x3D;&gt; console.error(&#x27;❌ Error adding emoji:&#x27;, error));
+  }
+
+  /**
+   * Saves an edited message to Firestore, updating the local list afterward.
+   */
+  async saveMessage(msg: any): Promise&lt;void&gt; {
+    if (msg?.isEditing !&#x3D;&#x3D; undefined) {
+      msg.isEditing &#x3D; false;
+      const messageId &#x3D; msg.id;
+      if (messageId) {
+        try {
+          await this.messageService.updateMessage(messageId, {
+            content: msg.content,
+          });
+          this.privateMessages &#x3D; this.privateMessages.map((m) &#x3D;&gt;
+            m.id &#x3D;&#x3D;&#x3D; messageId ? { ...msg, isEditing: false } : m
+          );
+        } catch (err) {}
+      } else {
+      }
+    }
+  }
+
+  /**
+   * Initializes a conversation by loading the last emojis and messages for a user/recipient combination.
+   */
+  async initializeConversation(): Promise&lt;void&gt; {
+    if (!this.currentUser || !this.recipientId) {
+      return;
+    }
+
+    const conversationId &#x3D; this.messageService.generateConversationId(
+      this.currentUser.id,
+      this.recipientId
+    );
+
+    await this.loadLastUsedEmojisForConversation(conversationId);
+    this.loadPrivateMessagesForConversation(conversationId);
+  }
+
+  /**
+   * Loads up to the last 10 messages of the conversation, extracting emojis
+   * to update &#x27;lastUsedEmojisSent&#x27; / &#x27;lastUsedEmojisReceived&#x27; for the current user.
+   */
+  private async loadLastUsedEmojisForConversation(
+    conversationId: string
+  ): Promise&lt;void&gt; {
+    try {
+      const lastMessages &#x3D; await this.fetchLastTenMessages(conversationId);
+
+      this.processEmojisFromMessages(lastMessages);
+
+      this.limitTopEmojis();
+    } catch (error: any) {
+      console.error(&#x27;❌ Error loading last emojis:&#x27;, error);
+    }
+  }
+
+  /**
+   * Fetches all messages and returns only the last 10 of them.
+   */
+  private async fetchLastTenMessages(
+    conversationId: string
+  ): Promise&lt;Message[]&gt; {
+    const messages: Message[] &#x3D; await this.messageService.getMessagesOnce(
+      &#x27;private&#x27;,
+      conversationId
+    );
+    return messages.slice(-10);
+  }
+
+  /**
+   * Pushes emojis from each message into either lastUsedEmojisSent or lastUsedEmojisReceived,
+   * depending on who sent the message.
+   */
+  private processEmojisFromMessages(lastMessages: Message[]): void {
+    this.lastUsedEmojisSent &#x3D; [];
+    this.lastUsedEmojisReceived &#x3D; [];
+
+    lastMessages.forEach((msg: Message) &#x3D;&gt; {
+      if (msg.content?.emojis) {
+        if (msg.senderId &#x3D;&#x3D;&#x3D; this.currentUser.id) {
+          this.lastUsedEmojisSent.push(
+            ...msg.content.emojis.map((e) &#x3D;&gt; e.emoji)
+          );
+        } else {
+          this.lastUsedEmojisReceived.push(
+            ...msg.content.emojis.map((e) &#x3D;&gt; e.emoji)
+          );
+        }
+      }
+    });
+  }
+
+  /**
+   * Keeps only up to the first 5 unique emojis in both
+   * lastUsedEmojisSent and lastUsedEmojisReceived.
+   */
+  private limitTopEmojis(): void {
+    this.lastUsedEmojisSent &#x3D; [...new Set(this.lastUsedEmojisSent)].slice(0, 5);
+    this.lastUsedEmojisReceived &#x3D; [
+      ...new Set(this.lastUsedEmojisReceived),
+    ].slice(0, 5);
+  }
+
+  /**
+   * Loads all messages for the conversation, normalizing the &#x27;emojis&#x27; array,
+   * then scrollt zum Ende der Liste.
+   */
+  private loadPrivateMessagesForConversation(conversationId: string): void {
+    this.messageService
+      .getMessagesOnce(&#x27;private&#x27;, conversationId)
+      .then((messages: Message[]) &#x3D;&gt; {
+        this.privateMessages &#x3D; messages.map((msg: Message) &#x3D;&gt; ({
+          ...msg,
+          content: { ...msg.content, emojis: msg.content?.emojis || [] },
+        }));
+        this.scrollToBottom();
+      })
+      .catch((error: any) &#x3D;&gt; {
+        console.error(&#x27;❌ Error retrieving private messages:&#x27;, error);
+      });
+  }
+
+  /**
+   * Toggles the edit options for a specific message based on its ID.
+   */
+  toggleEditOptions(msgId: string): void {
+    if (this.currentMessageId &#x3D;&#x3D;&#x3D; msgId &amp;&amp; this.showEditOptions) {
+      this.showEditOptions &#x3D; false;
+      this.currentMessageId &#x3D; null;
+    } else {
+      this.showEditOptions &#x3D; true;
+      this.currentMessageId &#x3D; msgId;
+    }
+  }
+
+  /**
+   * Marks a message as editing mode, storing its original for revert if canceled.
+   */
+  startEditing(msg: any): void {
+    msg.isEditing &#x3D; true;
+    this.originalMessage &#x3D; { ...msg };
+    this.showEditOptions &#x3D; false;
+  }
+
+  /**
+   * Alternative approach to open editing for a message, also saving the original content.
+   */
+  toggleEditMessage(msg: any): void {
+    msg.isEditing &#x3D; true;
+    this.originalMessage &#x3D; { ...msg };
+  }
+
+  /**
+   * Cancels editing of a message, reverting to the original text if available.
+   */
+  cancelEditing(msg: any): void {
+    msg.isEditing &#x3D; false;
+    if (this.originalMessage) {
+      msg.content &#x3D; { ...this.originalMessage.content };
+      this.originalMessage &#x3D; null;
+    }
+    this.showEditOptions &#x3D; false;
+  }
+
+  /**
+   * Displays a tooltip above an emoji, showing the emoji char and the sender&#x27;s name.
+   */
+  showTooltip(event: MouseEvent, emoji: string, senderName: string): void {
+    this.tooltipVisible &#x3D; true;
+    this.tooltipEmoji &#x3D; emoji;
+    this.tooltipSenderName &#x3D; senderName;
+    this.tooltipPosition &#x3D; {
+      x: event.clientX,
+      y: event.clientY - 40,
+    };
+  }
+
+  /**
+   * Hides the currently shown tooltip.
+   */
+  hideTooltip(): void {
+    this.tooltipVisible &#x3D; false;
+  }
+
+  /**
+   * Selects a user from the search results, emits an event to the parent, then closes the search.
+   */
+  selectMember(member: any): void {
+    this.memberSelected.emit(member);
+    this.closeSearch();
+  }
+
+  /**
+   * Closes the search field, emitting an event to the parent.
+   */
+  closeSearch(): void {
+    this.close.emit();
+  }
+
+  /**
+   * Triggers whenever the user types in the search field. Decides if it&#x27;s a user or channel query.
+   */
+  onSearchInput(): void {
+    const trimmed &#x3D; this.searchQuery.trim();
+    if (!trimmed) {
+      return this.handleEmptySearch();
+    }
+    const firstChar &#x3D; trimmed.charAt(0);
+    const rest &#x3D; trimmed.substring(1).trim();
+
+    if (firstChar &#x3D;&#x3D;&#x3D; &#x27;@&#x27;) {
+      this.handleUserSearch(rest);
+    } else if (firstChar &#x3D;&#x3D;&#x3D; &#x27;#&#x27;) {
+      this.handleChannelSearch(rest);
+    } else {
+      this.handleNoPrefix();
+    }
+  }
+
+  /** Handles an empty search input by resetting any filtered results. */
+  private handleEmptySearch(): void {
+    this.filteredResults &#x3D; [];
+    this.noResultsFound &#x3D; false;
+  }
+
+  /** Handles the case when the input doesn&#x27;t start with &#x27;@&#x27; or &#x27;#&#x27;. */
+  private handleNoPrefix(): void {
+    this.filteredResults &#x3D; [];
+    this.noResultsFound &#x3D; false;
+  }
+
+  /** Searches for users based on the given query (without the &#x27;@&#x27; prefix). */
+  private handleUserSearch(query: string): void {
+    this.userService
+      .getUsersByFirstLetter(query)
+      .then((users) &#x3D;&gt; this.updateUserResults(users))
+      .catch(() &#x3D;&gt; this.resetResultsOnError());
+  }
+
+  /** Updates filtered results with mapped user objects. */
+  private updateUserResults(users: any[]): void {
+    const mapped &#x3D; users.map((u: any) &#x3D;&gt; ({
+      type: &#x27;user&#x27;,
+      id: u.id || u.uid,
+      email: u.email,
+      name: u.name,
+      avatarUrl: u.avatarUrl || &#x27;assets/img/avatar.png&#x27;,
+    }));
+    this.filteredResults &#x3D; mapped;
+    this.noResultsFound &#x3D; mapped.length &#x3D;&#x3D;&#x3D; 0;
+  }
+
+  /** Resets filtered results in case of an error during user/channel search. */
+  private resetResultsOnError(): void {
+    this.filteredResults &#x3D; [];
+    this.noResultsFound &#x3D; true;
+  }
+
+  /** Searches for channels based on the given query (without the &#x27;#&#x27; prefix). */
+  private handleChannelSearch(query: string): void {
+    this.channelService
+      .getChannelsByName(query)
+      .then((channels) &#x3D;&gt; this.updateChannelResults(channels))
+      .catch(() &#x3D;&gt; this.resetResultsOnError());
+  }
+
+  /** Updates filtered results with mapped channel objects. */
+  private updateChannelResults(channels: any[]): void {
+    const mapped &#x3D; channels.map((ch: any) &#x3D;&gt; ({
+      type: &#x27;channel&#x27;,
+      id: ch.id,
+      name: ch.name,
+    }));
+    this.filteredResults &#x3D; mapped;
+    this.noResultsFound &#x3D; mapped.length &#x3D;&#x3D;&#x3D; 0;
+  }
+
+  /**
+   * Handles a click on one of the filtered results. If it&#x27;s a user or channel,
+   * the item is added to the recipients. Then all search data is cleared.
+   */
+  onSelectResult(item: any): void {
+    if (item.type &#x3D;&#x3D;&#x3D; &#x27;user&#x27; || item.type &#x3D;&#x3D;&#x3D; &#x27;channel&#x27;) {
+      this.addRecipient(item);
+    }
+    this.clearSearchData();
+  }
+
+  /** Resets the search query, filtered results, and the no-results state. */
+  private clearSearchData(): void {
+    this.searchQuery &#x3D; &#x27;&#x27;;
+    this.filteredResults &#x3D; [];
+    this.noResultsFound &#x3D; false;
+  }
+
+  /**
+   * Checks if sending should be canceled (no text/image or missing user).
+   */
+  private shouldCancelBroadcast(): boolean {
+    if (!this.messageToAll.trim() &amp;&amp; !this.imageUrl) return true;
+    if (!this.currentUser?.id) return true;
+    return false;
+  }
+
+  /**
+   * Sends a message to a single recipient (user or channel).
+   */
+  private async sendToSingleRecipient(recipient: any): Promise&lt;void&gt; {
+    if (recipient.type &#x3D;&#x3D;&#x3D; &#x27;user&#x27;) {
+      const convId &#x3D; this.messageService.generateConversationId(
+        this.currentUser.id,
+        recipient.id
+      );
+      const msgData &#x3D; this.createBroadcastMessageData(convId, recipient.id);
+      await this.messageService.sendMessage(msgData);
+    }
+  }
+
+  /**
+   * Creates the data for private messages, including timestamps, text, and image.
+   */
+  private createBroadcastMessageData(
+    conversationId: string,
+    recipientId: string
+  ) {
+    return {
+      type: &#x27;private&#x27; as const,
+      conversationId,
+      content: {
+        text: this.messageToAll.trim(),
+        image: typeof this.imageUrl &#x3D;&#x3D;&#x3D; &#x27;string&#x27; ? this.imageUrl : &#x27;&#x27;,
+        emojis: [],
+      },
+      date: formatDate(new Date(), &#x27;dd.MM.yyyy&#x27;, &#x27;en&#x27;),
+      timestamp: new Date(),
+      time: new Date().toLocaleTimeString(),
+      senderId: this.currentUser.id,
+      senderName: this.currentUser.name || &#x27;Unbekannt&#x27;,
+      senderAvatar: this.currentUser.avatarUrl || &#x27;&#x27;,
+      recipientId,
+    };
+  }
+
+  /**
+   * Resets the message, image, emoji picker, and scroll state after broadcast.
+   */
+  private finishBroadcast(textArea: HTMLTextAreaElement): void {
+    this.messageToAll &#x3D; &#x27;&#x27;;
+    this.imageUrl &#x3D; null;
+    if (textArea) this.resetTextareaHeight(textArea);
+    this.isEmojiPickerVisible &#x3D; false;
+    this.scrollToBottom();
+  }
+
+  private clearBroadcastInput(textArea: HTMLTextAreaElement): void {
+    this.messageToAll &#x3D; &#x27;&#x27;;
+    this.imageUrl &#x3D; null;
+    if (textArea) this.resetTextareaHeight(textArea);
+
+    this.isEmojiPickerVisible &#x3D; false;
+    this.scrollToBottom();
+  }
+
+  /**
+   * Adds a recipient to the array of selected recipients.
+   */
+  addRecipient(member: any) {
+    const alreadySelected &#x3D; this.selectedRecipients.some(
+      (m) &#x3D;&gt; m.id &#x3D;&#x3D;&#x3D; member.id
+    );
+    if (!alreadySelected) {
+      this.selectedRecipients.push(member);
+
+      // Optionally add a system message about it:
+    }
+
+    this.searchQuery &#x3D; &#x27;&#x27;;
+    this.filteredMembers &#x3D; [];
+  }
+
+  /**
+   * Removes a previously added recipient from the selectedRecipients array.
+   */
+  removeRecipient(member: any) {
+    const index &#x3D; this.selectedRecipients.findIndex((m) &#x3D;&gt; m.id &#x3D;&#x3D;&#x3D; member.id);
+    if (index &gt; -1) {
+      this.selectedRecipients.splice(index, 1);
+    }
+  }
+
+  /**
+   * (Optional) Adds a system message to the local privateMessages array or systemMessages array.
+   */
+  addSystemMessage(text: string) {
+    const sysMsg &#x3D; {
+      type: &#x27;system&#x27;,
+      content: { text },
+      timestamp: new Date(),
+    };
+    this.privateMessages.push(sysMsg);
+  }
+
+  /**
+   * Toggles the &quot;@&quot; mention dropdown, loading all members if opening for the first time.
+   */
+  toggleAtDropdown(): void {
+    if (!this.showAtDropdown) {
+      this.loadAllUsers();
+    }
+    this.showAtDropdown &#x3D; !this.showAtDropdown;
+  }
+
+  /**
+   * Loads all users from Firestore for mention or multi-recipient selection,
+   * storing them in &#x60;allMembers&#x60;.
+   */
+  loadAllUsers(): void {
+    this.userService
+      .getAllUsers()
+      .then((users) &#x3D;&gt; {
+        this.allMembers &#x3D; users.map((u) &#x3D;&gt; ({
+          id: u.id,
+          name: u.name,
+          avatarUrl: u.avatarUrl || &#x27;assets/img/avatar.png&#x27;,
+          isOnline: u.isOnline ?? false,
+        }));
+      })
+      .catch((err) &#x3D;&gt; console.error(&#x27;Error loading all users:&#x27;, err));
+  }
+
+  /**
+   * On selecting a user from the &quot;@&quot; mention dropdown, inserts their name
+   * into the messageToAll string and closes the dropdown.
+   */
+  addAtSymbolFor(member: any): void {
+    this.messageToAll +&#x3D; &#x27;@&#x27; + member.name + &#x27; &#x27;;
+    this.showAtDropdown &#x3D; false;
+  }
+
+  /**
+   * Sends private messages to all user recipients and a single broadcast
+   * message to all channel recipients.
+   * @param textArea - The textarea reference for resetting UI state
+   */
+  async sendMessageToAll(textArea: HTMLTextAreaElement): Promise&lt;void&gt; {
+    if (this.shouldCancelBroadcast()) return;
+    const channels &#x3D; this.selectedRecipients.filter(
+      (r) &#x3D;&gt; r.type &#x3D;&#x3D;&#x3D; &#x27;channel&#x27;
+    );
+    const users &#x3D; this.selectedRecipients.filter((r) &#x3D;&gt; r.type &#x3D;&#x3D;&#x3D; &#x27;user&#x27;);
+    await this.sendToAllUsers(users);
+    if (channels.length) {
+      const broadcastData &#x3D; this.buildBroadcastData(channels);
+      await this.messageService.sendBroadcastMessage(broadcastData);
+    }
+    this.finishBroadcast(textArea);
+    this.clearBroadcastInput(textArea);
+  }
+
+  /**
+   * Sends a private message (type&#x3D;&#x27;private&#x27;) to each user in the array.
+   * @param users - The array of user recipients
+   */
+  private async sendToAllUsers(users: any[]): Promise&lt;void&gt; {
+    for (const u of users) {
+      await this.sendToSingleRecipient(u);
+    }
+  }
+
+  /**
+   * Builds a broadcast message data object for the given channel recipients.
+   * @param channels - The array of channel recipients
+   * @returns A BroadcastMessageData object
+   */
+  private buildBroadcastData(channels: any[]): BroadcastMessageData {
+    const broadcastChannels &#x3D; channels.map((ch) &#x3D;&gt; ch.id);
+    return {
+      broadcastChannels,
+      senderId: this.currentUser.id,
+      senderName: this.currentUser.name || &#x27;Unbekannt&#x27;,
+      date: formatDate(new Date(), &#x27;dd.MM.yyyy&#x27;, &#x27;en&#x27;),
+      time: new Date().toLocaleTimeString(),
+      timestamp: new Date(),
+      content: {
+        text: this.messageToAll.trim(),
+        image: typeof this.imageUrl &#x3D;&#x3D;&#x3D; &#x27;string&#x27; ? this.imageUrl : &#x27;&#x27;,
+        emojis: [],
+      },
+      messageFormat: &#x27;text&#x27;,
+    };
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'EmojiItem.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

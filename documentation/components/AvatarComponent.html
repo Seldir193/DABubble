@@ -1,0 +1,2622 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>dabubble documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">dabubble documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  AvatarComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/avatar/avatar.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-avatar</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/HeaderComponent.html" target="_self" >HeaderComponent</a></code>
+                                <code><a href="../components/FooterComponent.html" target="_self" >FooterComponent</a></code>
+                            <code>CommonModule</code>
+                            <code>FormsModule</code>
+                            <code>RouterLink</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./avatar.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./avatar.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#avatars" >avatars</a>
+                            </li>
+                            <li>
+                                <a href="#errorMessage" >errorMessage</a>
+                            </li>
+                            <li>
+                                <a href="#isSmallScreen" >isSmallScreen</a>
+                            </li>
+                            <li>
+                                <a href="#selectedAvatar" >selectedAvatar</a>
+                            </li>
+                            <li>
+                                <a href="#successMessage" >successMessage</a>
+                            </li>
+                            <li>
+                                <a href="#userAvatarUrl" >userAvatarUrl</a>
+                            </li>
+                            <li>
+                                <a href="#userName" >userName</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#confirmSelection" >confirmSelection</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchUserDocs" >fetchUserDocs</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchUserDocuments" >fetchUserDocuments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#handleAvatarUpdateSuccess" >handleAvatarUpdateSuccess</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#isUserAuthenticated" >isUserAuthenticated</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#isUserValid" >isUserValid</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadUserData" >loadUserData</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#onResize" >onResize</a>
+                            </li>
+                            <li>
+                                <a href="#selectAvatar" >selectAvatar</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#setLocalUserFields" >setLocalUserFields</a>
+                            </li>
+                            <li>
+                                <a href="#updateScreenSize" >updateScreenSize</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateUserAvatar" >updateUserAvatar</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#validateAndUploadProfilePicture" >validateAndUploadProfilePicture</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#validateAvatarSelection" >validateAvatarSelection</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#validateFile" >validateFile</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>HostListeners</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#window:resize" >window:resize</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(firestore: Firestore, router: Router)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/avatar/avatar.component.ts:47</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>firestore</td>
+                                                  
+                                                        <td>
+                                                                    <code>Firestore</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                    <code>Router</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+    <section data-compodoc="block-methods">
+    <h3>HostListeners</h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="window:resize"></a>
+                    <span class="name">
+                        <span ><b>window:resize</b></span>
+                        <a href="#window:resize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <i>Arguments : </i><code>'$event' </code>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>window:resize()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="confirmSelection"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>confirmSelection</b></span>
+                        <a href="#confirmSelection"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>confirmSelection()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="184"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:184</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Confirms the selected avatar and updates Firestore with the new info.
+Displays a success message and navigates to &#39;/chat&#39; if successful,
+or sets an error message otherwise.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchUserDocs"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchUserDocs</b></span>
+                        <a href="#fetchUserDocs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchUserDocs(authUser: User)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:156</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches the user&#39;s Firestore document based on whether they are anonymous or have an email.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>authUser</td>
+                                            <td>
+                                                        <code>User</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The current, verified user object.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The Firestore snapshot or null on error.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchUserDocuments"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchUserDocuments</b></span>
+                        <a href="#fetchUserDocuments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchUserDocuments(user: User)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="233"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:233</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches the Firestore user documents, depending on whether the user is anonymous or has an email.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                        <code>User</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The currently authenticated user.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The user documents snapshot or null on error.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="handleAvatarUpdateSuccess"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>handleAvatarUpdateSuccess</b></span>
+                        <a href="#handleAvatarUpdateSuccess"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>handleAvatarUpdateSuccess()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="261"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:261</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sets a success message, clears it after 3 seconds, and navigates to &#39;/chat&#39;.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isUserAuthenticated"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>isUserAuthenticated</b></span>
+                        <a href="#isUserAuthenticated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isUserAuthenticated(user: User | null)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:220</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Verifies that a user is authenticated.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                        <code>User | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The currently authenticated user (if any).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>True if the user is authenticated, otherwise false.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isUserValid"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>isUserValid</b></span>
+                        <a href="#isUserValid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isUserValid(authUser: User | null)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="142"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:142</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if the user is authenticated and navigates to &#39;/login&#39; if not.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>authUser</td>
+                                            <td>
+                                                        <code>User | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The currently authenticated user, if any.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>True if user is valid, otherwise false.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadUserData"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>loadUserData</b></span>
+                        <a href="#loadUserData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadUserData()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:124</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves user data from Firestore and assigns local fields (userName, avatar).
+Redirects to &#39;/login&#39; if any checks fail.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onResize"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>onResize</b></span>
+                        <a href="#onResize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onResize()</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@HostListener(&#x27;window:resize&#x27;, [&#x27;$event&#x27;])<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectAvatar"></a>
+                    <span class="name">
+                        <span ><b>selectAvatar</b></span>
+                        <a href="#selectAvatar"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>selectAvatar(avatar: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="65"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:65</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>avatar</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setLocalUserFields"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>setLocalUserFields</b></span>
+                        <a href="#setLocalUserFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setLocalUserFields(snap: QuerySnapshot<DocumentData>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:173</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sets userName, userAvatarUrl, and selectedAvatar fields from the Firestore snapshot.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>snap</td>
+                                            <td>
+                                                        <code>QuerySnapshot&lt;DocumentData&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The snapshot containing the user data.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateScreenSize"></a>
+                    <span class="name">
+                        <span ><b>updateScreenSize</b></span>
+                        <a href="#updateScreenSize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateScreenSize()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateUserAvatar"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>updateUserAvatar</b></span>
+                        <a href="#updateUserAvatar"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateUserAvatar(snap: QuerySnapshot<DocumentData>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="249"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:249</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Updates the user&#39;s document in Firestore with the selected avatar and the current userName.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>snap</td>
+                                            <td>
+                                                        <code>QuerySnapshot&lt;DocumentData&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The Firestore snapshot containing the user docs.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateAndUploadProfilePicture"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>validateAndUploadProfilePicture</b></span>
+                        <a href="#validateAndUploadProfilePicture"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateAndUploadProfilePicture(e: Event)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="102"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:102</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Reads the chosen image file as a Data URL and updates selectedAvatar.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>e</td>
+                                            <td>
+                                                        <code>Event</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The change event from the file input element.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateAvatarSelection"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>validateAvatarSelection</b></span>
+                        <a href="#validateAvatarSelection"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateAvatarSelection()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:207</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if an avatar has been selected; sets an error message if not.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>True if an avatar is selected, otherwise false.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateFile"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>validateFile</b></span>
+                        <a href="#validateFile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateFile(file: File | null)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/avatar/avatar.component.ts:84</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validates the selected file for presence, type, and size.
+Returns an error message if invalid; an empty string otherwise.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>File | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="avatars"></a>
+                    <span class="name">
+                        <span ><b>avatars</b></span>
+                        <a href="#avatars"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+    &#x27;assets/img/elise.png&#x27;,
+    &#x27;assets/img/elias.png&#x27;,
+    &#x27;assets/img/frederik.png&#x27;,
+    &#x27;assets/img/steffen.png&#x27;,
+    &#x27;assets/img/sofia.png&#x27;,
+    &#x27;assets/img/noah.png&#x27;,
+  ]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/avatar/avatar.component.ts:34</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorMessage"></a>
+                    <span class="name">
+                        <span ><b>errorMessage</b></span>
+                        <a href="#errorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/avatar/avatar.component.ts:43</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSmallScreen"></a>
+                    <span class="name">
+                        <span ><b>isSmallScreen</b></span>
+                        <a href="#isSmallScreen"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>window.innerWidth &lt; 780</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/avatar/avatar.component.ts:47</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedAvatar"></a>
+                    <span class="name">
+                        <span ><b>selectedAvatar</b></span>
+                        <a href="#selectedAvatar"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/avatar/avatar.component.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="successMessage"></a>
+                    <span class="name">
+                        <span ><b>successMessage</b></span>
+                        <a href="#successMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/avatar/avatar.component.ts:46</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userAvatarUrl"></a>
+                    <span class="name">
+                        <span ><b>userAvatarUrl</b></span>
+                        <a href="#userAvatarUrl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;assets/img/avatar.png&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/avatar/avatar.component.ts:45</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userName"></a>
+                    <span class="name">
+                        <span ><b>userName</b></span>
+                        <a href="#userName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;User&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/avatar/avatar.component.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit, HostListener } from &#x27;@angular/core&#x27;;
+import {
+  Firestore,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  QuerySnapshot,
+  DocumentData,
+} from &#x27;@angular/fire/firestore&#x27;;
+import { Router } from &#x27;@angular/router&#x27;;
+import { getAuth, User } from &#x27;@angular/fire/auth&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { RouterLink } from &#x27;@angular/router&#x27;;
+import { HeaderComponent } from &#x27;../header/header.component&#x27;;
+import { FooterComponent } from &#x27;../footer/footer.component&#x27;;
+
+@Component({
+  selector: &#x27;app-avatar&#x27;,
+  standalone: true,
+  imports: [
+    HeaderComponent,
+    FooterComponent,
+    CommonModule,
+    FormsModule,
+    RouterLink,
+  ],
+  templateUrl: &#x27;./avatar.component.html&#x27;,
+  styleUrls: [&#x27;./avatar.component.scss&#x27;],
+})
+export class AvatarComponent implements OnInit {
+  avatars &#x3D; [
+    &#x27;assets/img/elise.png&#x27;,
+    &#x27;assets/img/elias.png&#x27;,
+    &#x27;assets/img/frederik.png&#x27;,
+    &#x27;assets/img/steffen.png&#x27;,
+    &#x27;assets/img/sofia.png&#x27;,
+    &#x27;assets/img/noah.png&#x27;,
+  ];
+  selectedAvatar: string | null &#x3D; null;
+  errorMessage &#x3D; &#x27;&#x27;;
+  userName &#x3D; &#x27;User&#x27;;
+  userAvatarUrl &#x3D; &#x27;assets/img/avatar.png&#x27;;
+  successMessage &#x3D; &#x27;&#x27;;
+  isSmallScreen &#x3D; window.innerWidth &lt; 780;
+
+  constructor(private firestore: Firestore, private router: Router) {}
+
+  ngOnInit(): void {
+    this.loadUserData();
+    this.updateScreenSize();
+  }
+
+  @HostListener(&#x27;window:resize&#x27;, [&#x27;$event&#x27;])
+  onResize(): void {
+    this.updateScreenSize();
+  }
+
+  updateScreenSize(): void {
+    this.isSmallScreen &#x3D; window.innerWidth &lt; 780;
+  }
+
+  selectAvatar(avatar: string): void {
+    this.selectedAvatar &#x3D; avatar;
+    this.errorMessage &#x3D; &#x27;&#x27;;
+  }
+
+  /*************************************************************
+   * Below is the refactored version of your validateAndUploadProfilePicture
+   * method, split into two functions to reduce line count and maintain
+   * single-responsibility. No logic has been altered; it is simply
+   * reorganized. All JSDoc is in English, and no console logs remain.
+   *************************************************************/
+
+  /**
+   * Validates the selected file for presence, type, and size.
+   * Returns an error message if invalid; an empty string otherwise.
+   *
+   * @param {File | null} file - The file selected from the input.
+   * @returns {string} - An error message or an empty string.
+   */
+  private validateFile(file: File | null): string {
+    if (!file) {
+      return &#x27;No file selected.&#x27;;
+    }
+    if (!file.type.startsWith(&#x27;image/&#x27;)) {
+      return &#x27;Please select an image file.&#x27;;
+    }
+    if (file.size &gt; 5 * 1024 * 1024) {
+      return &#x27;File is too large. Please choose a file under 5 MB.&#x27;;
+    }
+    return &#x27;&#x27;;
+  }
+
+  /**
+   * Reads the chosen image file as a Data URL and updates selectedAvatar.
+   *
+   * @param {Event} e - The change event from the file input element.
+   */
+  public validateAndUploadProfilePicture(e: Event): void {
+    const input &#x3D; e.target as HTMLInputElement;
+    const file &#x3D; input.files ? input.files[0] : null;
+
+    const fileError &#x3D; this.validateFile(file);
+    if (fileError) {
+      this.errorMessage &#x3D; fileError;
+      return;
+    }
+
+    this.errorMessage &#x3D; &#x27;&#x27;;
+    const reader &#x3D; new FileReader();
+    reader.onload &#x3D; () &#x3D;&gt; {
+      this.selectedAvatar &#x3D; reader.result as string;
+    };
+    reader.readAsDataURL(file as File);
+  }
+
+  /**
+   * Retrieves user data from Firestore and assigns local fields (userName, avatar).
+   * Redirects to &#x27;/login&#x27; if any checks fail.
+   */
+  public async loadUserData(): Promise&lt;void&gt; {
+    const authUser &#x3D; getAuth().currentUser;
+    if (!this.isUserValid(authUser)) return;
+
+    const snap &#x3D; await this.fetchUserDocs(authUser!);
+    if (!snap || snap.empty) {
+      this.errorMessage &#x3D; &#x27;User not found.&#x27;;
+      this.router.navigate([&#x27;/login&#x27;]);
+      return;
+    }
+    this.setLocalUserFields(snap);
+  }
+
+  /**
+   * Checks if the user is authenticated and navigates to &#x27;/login&#x27; if not.
+   * @param {User | null} authUser - The currently authenticated user, if any.
+   * @returns {boolean} True if user is valid, otherwise false.
+   */
+  private isUserValid(authUser: User | null): boolean {
+    if (!authUser) {
+      this.errorMessage &#x3D; &#x27;No user logged in.&#x27;;
+      this.router.navigate([&#x27;/login&#x27;]);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Fetches the user&#x27;s Firestore document based on whether they are anonymous or have an email.
+   * @param {User} authUser - The current, verified user object.
+   * @returns {Promise&lt;QuerySnapshot&lt;DocumentData&gt; | null&gt;} The Firestore snapshot or null on error.
+   */
+  private async fetchUserDocs(authUser: User) {
+    const ref &#x3D; collection(this.firestore, &#x27;users&#x27;);
+    if (authUser.isAnonymous) {
+      return await getDocs(query(ref, where(&#x27;uid&#x27;, &#x27;&#x3D;&#x3D;&#x27;, authUser.uid)));
+    }
+    if (!authUser.email) {
+      this.errorMessage &#x3D; &#x27;Missing E-Mail?&#x27;;
+      this.router.navigate([&#x27;/login&#x27;]);
+      return null;
+    }
+    return await getDocs(query(ref, where(&#x27;email&#x27;, &#x27;&#x3D;&#x3D;&#x27;, authUser.email)));
+  }
+
+  /**
+   * Sets userName, userAvatarUrl, and selectedAvatar fields from the Firestore snapshot.
+   * @param {QuerySnapshot&lt;DocumentData&gt;} snap - The snapshot containing the user data.
+   */
+  private setLocalUserFields(snap: QuerySnapshot&lt;DocumentData&gt;): void {
+    const data &#x3D; snap.docs[0].data();
+    this.userName &#x3D; data[&#x27;name&#x27;] || &#x27;User&#x27;;
+    this.userAvatarUrl &#x3D; data[&#x27;avatarUrl&#x27;] || &#x27;assets/img/avatar.png&#x27;;
+    this.selectedAvatar &#x3D; this.userAvatarUrl;
+  }
+  /**
+   * Confirms the selected avatar and updates Firestore with the new info.
+   * Displays a success message and navigates to &#x27;/chat&#x27; if successful,
+   * or sets an error message otherwise.
+   */
+  public async confirmSelection(): Promise&lt;void&gt; {
+    if (!this.validateAvatarSelection()) return;
+
+    try {
+      const currentUser &#x3D; getAuth().currentUser;
+      if (!this.isUserAuthenticated(currentUser)) return;
+
+      const snap &#x3D; await this.fetchUserDocuments(currentUser!);
+      if (!snap || snap.empty) {
+        this.errorMessage &#x3D; &#x27;User not found in Firestore.&#x27;;
+        return;
+      }
+      await this.updateUserAvatar(snap);
+      this.handleAvatarUpdateSuccess();
+    } catch {
+      this.errorMessage &#x3D; &#x27;Error confirming selection.&#x27;;
+    }
+  }
+
+  /**
+   * Checks if an avatar has been selected; sets an error message if not.
+   * @returns {boolean} True if an avatar is selected, otherwise false.
+   */
+  private validateAvatarSelection(): boolean {
+    if (!this.selectedAvatar) {
+      this.errorMessage &#x3D; &#x27;Please select an avatar.&#x27;;
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Verifies that a user is authenticated.
+   * @param {User | null} user - The currently authenticated user (if any).
+   * @returns {boolean} True if the user is authenticated, otherwise false.
+   */
+  private isUserAuthenticated(user: User | null): boolean {
+    if (!user) {
+      this.errorMessage &#x3D; &#x27;No user logged in.&#x27;;
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Fetches the Firestore user documents, depending on whether the user is anonymous or has an email.
+   * @param {User} user - The currently authenticated user.
+   * @returns {Promise&lt;QuerySnapshot&lt;DocumentData&gt; | null&gt;} The user documents snapshot or null on error.
+   */
+  private async fetchUserDocuments(user: User) {
+    const ref &#x3D; collection(this.firestore, &#x27;users&#x27;);
+    if (user.isAnonymous) {
+      return await getDocs(query(ref, where(&#x27;uid&#x27;, &#x27;&#x3D;&#x3D;&#x27;, user.uid)));
+    }
+    if (!user.email) {
+      this.errorMessage &#x3D; &#x27;Missing E-Mail?&#x27;;
+      return null;
+    }
+    return await getDocs(query(ref, where(&#x27;email&#x27;, &#x27;&#x3D;&#x3D;&#x27;, user.email)));
+  }
+
+  /**
+   * Updates the user&#x27;s document in Firestore with the selected avatar and the current userName.
+   * @param {QuerySnapshot&lt;DocumentData&gt;} snap - The Firestore snapshot containing the user docs.
+   */
+  private async updateUserAvatar(
+    snap: QuerySnapshot&lt;DocumentData&gt;
+  ): Promise&lt;void&gt; {
+    await updateDoc(snap.docs[0].ref, {
+      avatarUrl: this.selectedAvatar,
+      name: this.userName,
+    });
+  }
+
+  /**
+   * Sets a success message, clears it after 3 seconds, and navigates to &#x27;/chat&#x27;.
+   */
+  private handleAvatarUpdateSuccess(): void {
+    this.successMessage &#x3D; &#x27;Account successfully updated!&#x27;;
+    setTimeout(() &#x3D;&gt; {
+      this.successMessage &#x3D; &#x27;&#x27;;
+      this.router.navigate([&#x27;/chat&#x27;]);
+    }, 3000);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;page&quot;&gt;
+  &lt;app-header&gt;&lt;/app-header&gt;
+
+  &lt;div class&#x3D;&quot;container&quot;&gt;
+    &lt;div class&#x3D;&quot;login-container&quot;&gt;
+      &lt;div class&#x3D;&quot;login&quot;&gt;
+        &lt;div class&#x3D;&quot;box&quot;&gt;
+          &lt;div class&#x3D;&quot;konto-container&quot;&gt;
+            &lt;h2&gt;Wähle deinen Avatar&lt;/h2&gt;
+            &lt;div class&#x3D;&quot;image-container&quot;&gt;
+              &lt;img [routerLink]&#x3D;&quot;[&#x27;/login&#x27;]&quot; src&#x3D;&quot;assets/img/leftfile.png&quot; /&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;form (ngSubmit)&#x3D;&quot;confirmSelection()&quot; #avatarForm&#x3D;&quot;ngForm&quot;&gt;
+          &lt;div class&#x3D;&quot;avatar-container&quot;&gt;
+            &lt;div class&#x3D;&quot;profile-avatar&quot;&gt;
+              &lt;img
+                [src]&#x3D;&quot;selectedAvatar || &#x27;assets/img/avatar.png&#x27;&quot;
+                alt&#x3D;&quot;Profilbild&quot;
+              /&gt;
+            &lt;/div&gt;
+            &lt;div class&#x3D;&quot;headline&quot;&gt;
+              &lt;h3&gt;{{ userName }}&lt;/h3&gt;
+              &lt;p *ngIf&#x3D;&quot;!isSmallScreen&quot;&gt;Aus der Liste wählen&lt;/p&gt;
+              &lt;p *ngIf&#x3D;&quot;isSmallScreen&quot;&gt;Choose your avatar....&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class&#x3D;&quot;avatar-selection&quot;&gt;
+              &lt;div
+                class&#x3D;&quot;avatar&quot;
+                *ngFor&#x3D;&quot;let avatar of avatars&quot;
+                (click)&#x3D;&quot;selectAvatar(avatar)&quot;
+                [class.selected]&#x3D;&quot;avatar &#x3D;&#x3D;&#x3D; selectedAvatar&quot;
+              &gt;
+                &lt;img [src]&#x3D;&quot;avatar&quot; alt&#x3D;&quot;Avatar&quot; /&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class&#x3D;&quot;file-upload&quot;&gt;
+              &lt;input
+                type&#x3D;&quot;file&quot;
+                (change)&#x3D;&quot;validateAndUploadProfilePicture($event)&quot;
+                #fileInput
+                style&#x3D;&quot;display: none&quot;
+              /&gt;
+              &lt;span *ngIf&#x3D;&quot;!isSmallScreen&quot;&gt;eigenes Bild verwenden&lt;/span&gt;
+              &lt;span *ngIf&#x3D;&quot;isSmallScreen&quot;&gt;or you can&lt;/span&gt;
+              &lt;button
+                type&#x3D;&quot;button&quot;
+                (click)&#x3D;&quot;fileInput.click()&quot;
+                class&#x3D;&quot;button-gäste-login button-gäste-login-mobile&quot;
+                *ngIf&#x3D;&quot;!isSmallScreen&quot;
+              &gt;
+                Datei hochladen
+              &lt;/button&gt;
+              &lt;button
+                type&#x3D;&quot;button&quot;
+                (click)&#x3D;&quot;fileInput.click()&quot;
+                class&#x3D;&quot;button-gäste-login button-gäste-login-mobile&quot;
+                *ngIf&#x3D;&quot;isSmallScreen&quot;
+              &gt;
+                Upload foto
+              &lt;/button&gt;
+            &lt;/div&gt;
+
+            &lt;div class&#x3D;&quot;button-container&quot;&gt;
+              &lt;div class&#x3D;&quot;errorMessage&quot; *ngIf&#x3D;&quot;errorMessage&quot;&gt;
+                &lt;p style&#x3D;&quot;color: red; font-size: 10px&quot;&gt;{{ errorMessage }}&lt;/p&gt;
+              &lt;/div&gt;
+              &lt;button
+                class&#x3D;&quot;button-anmelden&quot;
+                type&#x3D;&quot;submit&quot;
+                [ngClass]&#x3D;&quot;{ &#x27;ng-invalid&#x27;: !avatarForm.form.valid }&quot;
+              &gt;
+                Weiter
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+        &lt;div class&#x3D;&quot;registration-ok&quot; *ngIf&#x3D;&quot;successMessage&quot;&gt;
+          &lt;p style&#x3D;&quot;color: white; font-size: 36px; font-weight: 700&quot;&gt;
+            {{ successMessage }}
+          &lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;app-footer&gt;&lt;/app-footer&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./avatar.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@import &quot;./../../styles.scss&quot;;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  @include dFlex(center, null, null);
+  width: 100%;
+  background-color: $lightblue;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.avatar-selection {
+  @include dFlex(null, null, 8px);
+  margin-top: 16px;
+}
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 472px;
+  margin-top: 16px;
+}
+
+.profile-avatar {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 50%;
+
+  img {
+    border-radius: 50%;
+    transition: 0.3s ease;
+    width: 168px;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &amp;:hover img {
+    filter: brightness(0.9);
+  }
+
+  &amp;:hover::after {
+    content: &quot;&quot;;
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    width: 178px;
+    height: 178px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
+    transform: translate(-50%, -50%);
+  }
+}
+
+.avatar {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+
+  img {
+    border-radius: 50%;
+    transition: 0.3s ease;
+    width: 72px;
+  }
+
+  &amp;:hover img {
+    filter: brightness(0.9);
+  }
+
+  &amp;:hover::after {
+    content: &quot;&quot;;
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
+    transform: translate(-50%, -50%);
+  }
+}
+
+.headline {
+  margin-top: 16px;
+
+  p {
+    display: flex;
+  }
+}
+
+.headline h3 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0px;
+}
+
+.login-container {
+  text-align: center;
+  // padding:40px 53px;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  max-width: 606px;
+  padding: 2rem;
+
+  .errorMessage {
+    @include dFlex(null, center, 0px);
+    width: 100%;
+  }
+
+  .login {
+    max-width: 500px;
+    width: 100%;
+    .box {
+      @include dFlex(null, null, 20px);
+      flex-direction: column;
+    }
+
+    .konto-container {
+      @include dFlex(flex-end, center, null);
+      flex-direction: row-reverse;
+    }
+
+    .image-container {
+      @include dFlex(null, center, null);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      transition: background-color 0.3s;
+      overflow: hidden;
+
+      &amp;:hover img {
+        filter: brightness(100%);
+        background-color: $lightblue;
+      }
+
+      &amp;:hover::after img {
+        content: &quot;&quot;;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: $lightblue;
+        z-index: 1;
+        box-shadow: 0 0 0 7px rgba(0, 0, 0, 0.1);
+        transform: translate(-50%, -50%);
+      }
+
+      img {
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s;
+        cursor: pointer;
+
+        &amp;:hover {
+          filter: brightness(100%);
+          background-color: $lightblue;
+        }
+      }
+    }
+
+    h2 {
+      @include dFlex(center, null, 0px);
+      color: $button-blue;
+      font-size: 46px;
+      font-weight: 700;
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+      line-height: 55.2px;
+      width: 486px;
+    }
+
+    p {
+      font-weight: 400;
+      margin: 0px;
+    }
+
+    a {
+      color: $middleblue;
+      font-size: 18px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background-color 0.3s, border-radius 0.3s, padding 0.3s;
+    }
+
+    .button-container {
+      @include dFlex(flex-end, null, null);
+      max-width: 500px;
+      width: 100%;
+      margin-top: 30px;
+    }
+
+    form {
+      @include dFlex(null, center, 40px);
+      flex-direction: column;
+
+      input {
+        font-size: 20px;
+        font-weight: 400;
+        height: 60px;
+        width: 100%;
+        cursor: pointer;
+        box-sizing: border-box;
+        max-width: 500px;
+      }
+
+      .button-gäste-login {
+        background: white;
+        color: $button-blue;
+        font-size: 18px;
+        font-weight: 700;
+        max-width: 187px;
+        width: 100%;
+        height: 49px;
+        transition: background-color 0.3s, color 0.3s;
+
+        &amp;:hover {
+          background: $button-blue;
+          color: white;
+        }
+      }
+
+      .file-upload {
+        @include dFlex(null, center, 24px);
+        font-size: 20px;
+        margin-top: 30px;
+      }
+
+      .file-upload input[type&#x3D;&quot;file&quot;] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+      }
+
+      .file-upload button {
+        border: 1px solid $middleblue;
+        border-radius: 100px;
+        cursor: pointer;
+
+        .file-upload button:hover {
+          background: $button-blue;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+.button-anmelden {
+  width: 107px;
+}
+
+@media (max-width: 1278px) {
+  .registration-ok {
+    max-width: 323px !important;
+    width: 100%;
+    gap: 10px;
+
+    p {
+      margin: 0 !important;
+    }
+  }
+
+  //.container{
+  // flex:none;
+  // }
+}
+
+@media (max-width: 780px) {
+  .profile-avatar {
+    &amp;:hover::after {
+      width: 128px;
+      height: 128px;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .profile-avatar img {
+    width: 120px;
+  }
+
+  .avatar {
+    &amp;:hover::after {
+      width: 42px;
+      height: 42px;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+  }
+
+  .avatar-container {
+    align-items: unset;
+  }
+
+  .login-container .login form .file-upload {
+    margin-top: 20px;
+  }
+
+  .login-container .login .image-container {
+    width: 30px;
+  }
+
+  .box {
+    @include dFlex(null, null, 10px);
+    flex-direction: column;
+  }
+
+  .avatar img {
+    width: 45px;
+  }
+
+  .login-container .login form .button-gäste-login {
+    max-width: 150px;
+  }
+
+  .container {
+    box-sizing: border-box;
+  }
+
+  .login-container .login p {
+    padding: unset;
+    display: flex;
+    align-items: center;
+    max-width: 300px;
+  }
+
+  .login-container .login h2 {
+    font-size: 36px;
+    line-height: 35.2px;
+    width: unset;
+  }
+
+  .login-container .login .button-container {
+    margin-top: 20px;
+    gap: 30px;
+  }
+
+  .login-container .login .box {
+    gap: 20px;
+  }
+
+  .login-container .login form .privacy-box {
+    display: none;
+  }
+
+  .login-container .login form .error-message {
+    font-size: 11px;
+  }
+
+  .login-container .login form .input-container {
+    margin-top: 20px;
+  }
+
+  .login-container .login form .input-container input {
+    font-size: 14px;
+  }
+
+  .login-container .login form .file-upload {
+    gap: 10px;
+  }
+
+  .login-container .login {
+    max-width: 320px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    align-items: center;
+  }
+
+  .login-container {
+    padding: 20px;
+  }
+
+  .registration-ok {
+    padding: unset;
+  }
+
+  .avatar {
+    &amp;:hover::after {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .login-container .login {
+    max-width: 300px;
+
+    form {
+      gap: 20px;
+
+      .button-gäste-mobile {
+        font-size: 16px;
+        width: 120px;
+      }
+
+      .google-container {
+        height: 40px;
+
+        button {
+          height: 90%;
+        }
+      }
+    }
+
+    h2 {
+      font-size: 30px;
+      line-height: 35.2px;
+      width: unset;
+    }
+
+    .button-container {
+      gap: 10px;
+    }
+
+    .avatar img {
+      width: 80%;
+    }
+
+    .avatar-selection {
+      gap: unset;
+    }
+
+    .button-anmelden-mobile {
+      font-size: 16px;
+      width: 100px;
+      padding: 12px;
+    }
+
+    .line-container .lineleft {
+      font-size: 16px;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .headline h3 {
+    font-size: 23px;
+  }
+
+  .avatar {
+    &amp;:hover::after {
+      width: 25px;
+      height: 25px;
+      top: 43%;
+    }
+  }
+
+  .login-container .login {
+    width: 260px;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="page">  <app-header></app-header>  <div class="container">    <div class="login-container">      <div class="login">        <div class="box">          <div class="konto-container">            <h2>Wähle deinen Avatar</h2>            <div class="image-container">              <img [routerLink]="[\'/login\']" src="assets/img/leftfile.png" />            </div>          </div>        </div>        <form (ngSubmit)="confirmSelection()" #avatarForm="ngForm">          <div class="avatar-container">            <div class="profile-avatar">              <img                [src]="selectedAvatar || \'assets/img/avatar.png\'"                alt="Profilbild"              />            </div>            <div class="headline">              <h3>{{ userName }}</h3>              <p *ngIf="!isSmallScreen">Aus der Liste wählen</p>              <p *ngIf="isSmallScreen">Choose your avatar....</p>            </div>            <div class="avatar-selection">              <div                class="avatar"                *ngFor="let avatar of avatars"                (click)="selectAvatar(avatar)"                [class.selected]="avatar === selectedAvatar"              >                <img [src]="avatar" alt="Avatar" />              </div>            </div>            <div class="file-upload">              <input                type="file"                (change)="validateAndUploadProfilePicture($event)"                #fileInput                style="display: none"              />              <span *ngIf="!isSmallScreen">eigenes Bild verwenden</span>              <span *ngIf="isSmallScreen">or you can</span>              <button                type="button"                (click)="fileInput.click()"                class="button-gäste-login button-gäste-login-mobile"                *ngIf="!isSmallScreen"              >                Datei hochladen              </button>              <button                type="button"                (click)="fileInput.click()"                class="button-gäste-login button-gäste-login-mobile"                *ngIf="isSmallScreen"              >                Upload foto              </button>            </div>            <div class="button-container">              <div class="errorMessage" *ngIf="errorMessage">                <p style="color: red; font-size: 10px">{{ errorMessage }}</p>              </div>              <button                class="button-anmelden"                type="submit"                [ngClass]="{ \'ng-invalid\': !avatarForm.form.valid }"              >                Weiter              </button>            </div>          </div>        </form>        <div class="registration-ok" *ngIf="successMessage">          <p style="color: white; font-size: 36px; font-weight: 700">            {{ successMessage }}          </p>        </div>      </div>    </div>  </div>  <app-footer></app-footer></div></div>'
+    var COMPONENTS = [{'name': 'AddMembersDialogComponent', 'selector': 'app-add-members-dialog'},{'name': 'AddMembersDialogMobileComponent', 'selector': 'app-add-members-dialog-mobile'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AuthActionComponent', 'selector': 'app-auth-action'},{'name': 'AvatarComponent', 'selector': 'app-avatar'},{'name': 'ChannelDialogComponent', 'selector': 'app-channel-dialog'},{'name': 'ChatComponent', 'selector': 'app-chat'},{'name': 'ChatHeaderComponent', 'selector': 'app-chat-header'},{'name': 'DevspaceComponent', 'selector': 'app-devspace'},{'name': 'DirectMessagesComponent', 'selector': 'app-direct-messages'},{'name': 'EditChannelDialogComponent', 'selector': 'app-edit-channel-dialog'},{'name': 'EntwicklerteamComponent', 'selector': 'app-entwicklerteam'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'ImprintComponent', 'selector': 'app-imprint'},{'name': 'InnerChannelComponent', 'selector': 'app-inner-channel'},{'name': 'IntroComponent', 'selector': 'app-intro'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MemberListDialogComponent', 'selector': 'app-member-list-dialog'},{'name': 'MembersDialogComponent', 'selector': 'app-mitglieder-dialog'},{'name': 'MemberSectionDialogComponent', 'selector': 'app-member-section-dialog'},{'name': 'NewPasswortComponent', 'selector': 'app-new-passwort'},{'name': 'PasswortResetComponent', 'selector': 'app-passwort-reset'},{'name': 'PrivacyComponent', 'selector': 'app-privacy'},{'name': 'PrivateMessagesComponent', 'selector': 'app-private-messages'},{'name': 'ProfilDialogComponent', 'selector': 'app-profil-dialog'},{'name': 'SearchFieldComponent', 'selector': 'app-search-field'},{'name': 'SelectedMembersDialogComponent', 'selector': 'app-selected-members-dialog'},{'name': 'SignupComponent', 'selector': 'app-signup'},{'name': 'ThreadChannelComponent', 'selector': 'app-thread-channel'},{'name': 'ThreadComponent', 'selector': 'app-thread'},{'name': 'VerifyEmailComponent', 'selector': 'app-verify-email'},{'name': 'WelcomeScreenComponent', 'selector': 'app-welcome-screen'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'AvatarComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AvatarComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
