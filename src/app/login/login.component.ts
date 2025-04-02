@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private firestore: Firestore,
-   // private router: Router,
+    // private router: Router,
     private fb: FormBuilder,
     private appStateService: AppStateService,
     private userService: UserService,
@@ -92,8 +92,7 @@ export class LoginComponent implements OnInit {
   }
 
   /** Lifecycle hook that runs after component initialization. */
-  ngOnInit(): void { 
-}
+  ngOnInit(): void {}
   /** Validates the email format using a regex pattern. */
   emailValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
@@ -281,7 +280,6 @@ export class LoginComponent implements OnInit {
 
   /** Signs in user as a guest (anonymous), creates a Firestore doc, then goes to /chat. */
 
-
   navigateToGuestLogin(): void {
     const auth = getAuth();
     signInAnonymously(auth)
@@ -295,18 +293,15 @@ export class LoginComponent implements OnInit {
           uid: cred.user.uid,
           name: guestName,
           isOnline: true,
-          avatarUrl: '', 
+          avatarUrl: '',
           createdAt: new Date(),
           isGuest: true,
         });
 
         this.router.navigate(['/avatar']);
-
-        //this.router.navigate(['/chat']);
       })
       .catch(() => {});
   }
-
 
   /** Logs the user out via the UserService. */
   logout(): void {
