@@ -195,7 +195,7 @@ export class LoginComponent implements OnInit {
       this.errorMessage =
         'Ihre Anmeldung wurde vorübergehend gesperrt, weil Sie zu viele falsche Anmeldeversuche gemacht haben. Bitte versuchen Sie es später erneut oder setzen Sie Ihr Passwort zurück.';
     } else {
-      this.errorPassword = 'Das Passwort ist falsch.';
+      this.errorPassword = 'Das Passwort oder die E-Mail Adresse ist falsch.';
     }
   }
 

@@ -71,7 +71,7 @@
           </ng-container>
 
           <ng-container *ngIf="recipient.type === 'channel'">
-            <img 
+            <img
               src="assets/img/tag-black.png"
               alt="Channel Icon"
               class="avatar-tag"
@@ -346,6 +346,7 @@
                 <div
                   *ngIf="msg.isEmojiPickerVisible"
                   class="emoji-picker-received"
+
                 >
                   <emoji-mart
                     (emojiSelect)="addEmojiToMessage($event, msg)"
@@ -417,7 +418,7 @@
                 style="display: none"
               />
             </label>
-            <button (click)="toggleEmojiPicker()">
+            <button (click)="toggleEmojiPicker($event)">
               <img
                 class="input-image"
                 src="assets/img/emoji.png"
@@ -425,57 +426,79 @@
               />
             </button>
 
-            <button (click)="toggleAtDropdown()" class="at-button">
-              <img
-                class="input-image"
-                src="assets/img/qr.png"
-                alt="@ hinzufügen"
-              />
-            </button>
+            <div class="dropdown-container" (click)="onSelfClick($event)">
+              <button (click)="toggleAtDropdown()" class="at-button">
+                <img
+                  class="input-image"
+                  src="assets/img/qr.png"
+                  alt="@ hinzufügen"
+                />
+              </button>
 
-            <ng-template
-              cdkConnectedOverlay
-              [cdkConnectedOverlayOrigin]="textAreaOrigin"
-              [cdkConnectedOverlayOpen]="showAtDropdown"
-              [cdkConnectedOverlayHasBackdrop]="true"
-              (backdropClick)="showAtDropdown = false"
-              [cdkConnectedOverlayPositions]="[
-                {
-                  originX: 'start',
-                  originY: 'top',
-                  overlayX: 'start',
-                  overlayY: 'bottom'
-                }
-              ]"
-            >
-              <ul class="my-user-dropdown pm-scrollable">
-                <li
-                  *ngFor="let member of allMembers"
-                  (click)="addAtSymbolFor(member)"
+              <div *ngIf="dropdownState !== 'hidden'" class="dropdown-offset">
+                <ul
+                  class="my-user-dropdown pm-scrollable"
+                  *ngIf="dropdownState === 'user'"
                 >
-                  <div class="avatar-container">
-                    <img
-                      [src]="member.avatarUrl || 'assets/img/avatar.png'"
-                      alt="Avatar"
-                      class="avatar"
-                    />
-                    <img
-                      *ngIf="member.isOnline"
-                      src="assets/img/online.png"
-                      class="status-icon"
-                      alt="Online"
-                    />
-                    <img
-                      *ngIf="!member.isOnline"
-                      src="assets/img/offline.png"
-                      class="status-icon"
-                      alt="Offline"
-                    />
-                  </div>
-                  {{ member.name }}
-                </li>
-              </ul>
-            </ng-template>
+                <ng-container *ngIf="allUsers.length > 0; else noUsersFound">
+                  <li *ngFor="let u of allUsers" (click)="addAtSymbolFor(u)">
+                    <div class="avatar-container">
+                      <img
+                        [src]="u.avatarUrl || 'assets/img/avatar.png'"
+                        alt="Avatar"
+                        class="avatar"
+                      />
+                      <img
+                        *ngIf="u.isOnline"
+                        src="assets/img/online.png"
+                        class="status-icon"
+                        alt="Online"
+                      />
+                      <img
+                        *ngIf="!u.isOnline"
+                        src="assets/img/offline.png"
+                        class="status-icon"
+                        alt="Offline"
+                      />
+                    </div>
+
+                    <span class="text-truncate"> {{ u.name }}</span>
+                  </li>
+                </ng-container>
+
+
+                <ng-template #noUsersFound>
+                  <li>Kein Benutzer gefunden</li>
+                </ng-template>
+                </ul>
+
+                <ul
+                  class="my-user-dropdown pm-scrollable"
+                  *ngIf="dropdownState === 'channel'"
+                >
+                <ng-container *ngIf="allChannels.length > 0; else noChannelsFound">
+                  <li
+                    *ngFor="let ch of allChannels"
+                    (click)="addAtSymbolFor(ch)"
+                  >
+                    <div class="avatar-containero">
+                      <img
+                        src="assets/img/tag-black.png"
+                        alt="Channel"
+                        class="avatar"
+                      />
+                    </div>
+
+                    <span class="text-truncate"> {{ ch.name }}</span>
+                  </li>
+                </ng-container>
+
+                <ng-template #noChannelsFound>
+                  <li>Kein Channel gefunden</li>
+                </ng-template>
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div class="send-button">
@@ -487,7 +510,11 @@
       </div>
 
       <div class="emoji-picker" *ngIf="isEmojiPickerVisible">
-        <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+        <emoji-mart
+         [emojiTooltip]="false"
+         [showPreview]="false"
+         (emojiSelect)="addEmoji($event)"
+         (emojiSelect)="addEmoji($event)"></emoji-mart>
       </div>
 
       <div

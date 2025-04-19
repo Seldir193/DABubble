@@ -61,7 +61,9 @@
           <div class="message-container sent-message" (click)="closePopup(msg)">
             <img
               class="avatar"
-              [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
+              [src]="
+                userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'
+              "
               alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
             />
             <div class="message-box">
@@ -80,6 +82,9 @@
               >
                 <p *ngIf="msg.content?.text && !msg.isEditing">
                   {{ msg.content.text }}
+                  <span *ngIf="msg.edited" class="edited-label">
+                    (bearbeitet)
+                  </span>
                 </p>
 
                 <div *ngIf="msg.isEditing" class="edit-message-box">
@@ -136,23 +141,32 @@
               >
                 <ng-container *ngIf="!msg.showAllEmojisList">
                   <span
-                  
-                  class="emoji-item"
-                  *ngFor="
-                    let emojiObj of msg.content?.emojis || [] | slice : 0 : 2
-                  "
-                  (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
-                   (mouseleave)="hideTooltip()"
+                    class="emoji-item"
+                    *ngFor="
+                      let emojiObj of msg.content?.emojis || [] | slice : 0 : 2
+                    "
+                    (mouseenter)="
+                      showTooltip(
+                        $event,
+                        emojiObj.emoji,
+                        userMap[msg.senderId]!.name
+                      )
+                    "
+                    (mouseleave)="hideTooltip()"
                     (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
-                >
+                  >
                     {{ emojiObj.emoji }}
                     <nav class="emoji-count">{{ emojiObj.count }}</nav>
                   </span>
 
                   <img
                     *ngIf="msg.content.emojis.length > 2"
-                    src="assets/img/emojiplus.png"
-                    alt="Mehr Emojis anzeigen"
+                    [src]="
+                      msg.showAllEmojisList
+                        ? 'assets/img/eyevisible.png'
+                        : 'assets/img/eyeoff.png'
+                    "
+                    alt="Emojis ein-/ausblenden"
                     class="emoji-plus-icon"
                     (click)="toggleEmojiPopup(msg); $event.stopPropagation()"
                   />
@@ -193,14 +207,11 @@
                     >
                       [- 10 weniger]
                     </div>
-
                     <img
-                      src="assets/img/emojiplus.png"
-                      alt="Plus Icon in Popup"
+                      [src]="'assets/img/eyevisible.png'"
+                      alt="Weniger Emojis anzeigen"
+                      (click)="closePopup(msg)"
                       class="emoji-plus-icon-in-list"
-                      (click)="
-                        onEmojiPlusInPopup(msg); $event.stopPropagation()
-                      "
                     />
                   </div>
                 </div>
@@ -209,7 +220,7 @@
               <div
                 class="reply-count"
                 *ngIf="msg.replyCount! > 0"
-                (click)="openThreadEvent(msg)"
+                (click)="loadThread(msg)"
               >
                 {{ msg.replyCount }} Antworten
 
@@ -272,7 +283,7 @@
                   <img
                     src="assets/img/comment.png"
                     alt="Comment"
-                    (click)="openThreadEvent(msg)"
+                    (click)="loadThread(msg)"
                   />
                 </div>
 
@@ -307,7 +318,9 @@
           >
             <img
               class="avatar"
-              [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
+              [src]="
+                userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'
+              "
               alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
             />
 
@@ -361,8 +374,12 @@
                 <ng-container *ngIf="!msg.showAllEmojisList">
                   <img
                     *ngIf="msg.content.emojis.length > 2"
-                    src="assets/img/emojiplus.png"
-                    alt="Mehr Emojis anzeigen"
+                    [src]="
+                      msg.showAllEmojisList
+                        ? 'assets/img/eyevisible.png'
+                        : 'assets/img/eyeoff.png'
+                    "
+                    alt="Emojis ein-/ausblenden"
                     class="emoji-plus-icon"
                     (click)="toggleEmojiPopup(msg); $event.stopPropagation()"
                   />
@@ -372,8 +389,14 @@
                     *ngFor="
                       let emojiObj of msg.content?.emojis || [] | slice : 0 : 2
                     "
-                    (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
-                   (mouseleave)="hideTooltip()"
+                    (mouseenter)="
+                      showTooltip(
+                        $event,
+                        emojiObj.emoji,
+                        userMap[msg.senderId]!.name
+                      )
+                    "
+                    (mouseleave)="hideTooltip()"
                     (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
                   >
                     {{ emojiObj.emoji }}
@@ -418,12 +441,10 @@
                     </div>
 
                     <img
-                      src="assets/img/emojiplus.png"
-                      alt="Plus Icon in Popup"
+                      [src]="'assets/img/eyevisible.png'"
+                      alt="Weniger Emojis anzeigen"
+                      (click)="closePopup(msg)"
                       class="emoji-plus-icon-in-list"
-                      (click)="
-                        onEmojiPlusInPopup(msg); $event.stopPropagation()
-                      "
                     />
                   </div>
                 </div>
@@ -432,7 +453,7 @@
               <div
                 class="reply-count"
                 *ngIf="msg.replyCount! > 0"
-                (click)="openThreadEvent(msg)"
+                (click)="loadThread(msg)"
               >
                 {{ msg.replyCount }} Antworten
 
@@ -497,7 +518,7 @@
                   <img
                     src="assets/img/comment.png"
                     alt="Comment"
-                    (click)="openThreadEvent(msg)"
+                    (click)="loadThread(msg)"
                   />
                 </div>
               </div>
@@ -580,47 +601,61 @@
                   *ngIf="dropdownState === 'user'"
                   class="my-user-dropdown pm-scrollable"
                 >
-                  <li
-                    *ngFor="let user of allUsers"
-                    (click)="addUserSymbol(user)"
-                  >
-                    <div class="avatar-container">
-                      <img
-                        [src]="user.avatarUrl || 'assets/img/avatar.png'"
-                        alt="Avatar"
-                        class="avatar"
-                      />
-                      <img
-                        *ngIf="user.isOnline"
-                        src="assets/img/online.png"
-                        class="status-icon"
-                        alt="Online"
-                      />
-                      <img
-                        *ngIf="!user.isOnline"
-                        src="assets/img/offline.png"
-                        class="status-icon"
-                        alt="Offline"
-                      />
-                    </div>
+                  <ng-container *ngIf="allUsers.length > 0; else noUsersFound">
+                    <li
+                      *ngFor="let user of allUsers"
+                      (click)="addUserSymbol(user)"
+                    >
+                      <div class="avatar-container">
+                        <img
+                          [src]="user.avatarUrl || 'assets/img/avatar.png'"
+                          alt="Avatar"
+                          class="avatar"
+                        />
+                        <img
+                          *ngIf="user.isOnline"
+                          src="assets/img/online.png"
+                          class="status-icon"
+                          alt="Online"
+                        />
+                        <img
+                          *ngIf="!user.isOnline"
+                          src="assets/img/offline.png"
+                          class="status-icon"
+                          alt="Offline"
+                        />
+                      </div>
 
-                    <span class="text-truncate"> {{ user.name }}</span>
-                  </li>
+                      <span class="text-truncate"> {{ user.name }}</span>
+                    </li>
+                  </ng-container>
+
+                  <ng-template #noUsersFound>
+                    <li>Kein Benutzer gefunden</li>
+                  </ng-template>
                 </ul>
 
                 <ul
                   *ngIf="dropdownState === 'channel'"
                   class="my-user-dropdown pm-scrollable"
                 >
-                  <li
-                    *ngFor="let ch of filteredChannels"
-                    (click)="selectChannel(ch)"
+                  <ng-container
+                    *ngIf="filteredChannels.length > 0; else noChannelsFound"
                   >
-                    <div class="tag-container">
-                      <img src="assets/img/tag-black.png" />
-                    </div>
-                    <span class="text-truncate"> {{ ch.name }}</span>
-                  </li>
+                    <li
+                      *ngFor="let ch of filteredChannels"
+                      (click)="selectChannel(ch)"
+                    >
+                      <div class="tag-container">
+                        <img src="assets/img/tag-black.png" />
+                      </div>
+                      <span class="text-truncate"> {{ ch.name }}</span>
+                    </li>
+                  </ng-container>
+
+                  <ng-template #noChannelsFound>
+                    <li>Kein Channel gefunden</li>
+                  </ng-template>
                 </ul>
               </div>
             </div>

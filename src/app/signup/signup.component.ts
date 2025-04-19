@@ -179,7 +179,6 @@ export class SignupComponent implements OnInit {
         password
       );
 
-      // NEU: Bestätigungs-E-Mail schicken
     await sendEmailVerification(userCredential.user, {
       
       url: 'http://localhost:4200/auth-action',

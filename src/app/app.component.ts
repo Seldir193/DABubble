@@ -22,20 +22,9 @@ import { NewPasswortComponent } from './new-passwort/new-passwort.component';
   standalone: true,
   imports: [
     RouterOutlet,
-    IntroComponent,
-    AvatarComponent,
-    PrivacyComponent,
-    ImprintComponent,
-    LoginComponent,
-    FooterComponent,
     CommonModule,
     FormsModule,
-    HeaderComponent,
-    SignupComponent,
-    RouterLink,
-    ChatComponent,
-    PasswortResetComponent,
-    NewPasswortComponent
+   
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

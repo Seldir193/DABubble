@@ -5,11 +5,16 @@ $hoverColor: #535af1;
 $lightgray: #686868;
 $button-border: #adb0d9;
 
+$primary: #7c3aed;          
+$primary-light: #a78bfa;     
+$bg-gradient-top: #f5f2ff;  
+$bg-gradient-bottom: #eef2ff; 
+
+
 @import "@ctrl/ngx-emoji-mart/picker";
 
 @mixin dFlex($jc: null, $ai: center, $g: 0px, $direction: row) {
   display: flex;
-  //align-items: $ai;
   gap: $g;
 
   @if $jc != null {
@@ -111,7 +116,13 @@ body {
   display: inline-block;
 }
 
-.my-user-dropdown {
+
+.my-user-dropdown.dropdown-offset {
+  left: 0px;
+  bottom: 100%;
+}
+
+.my-user-dropdown  {
   list-style-type: none;
   background-color: white;
   border: 1px solid #ccc;
@@ -122,9 +133,9 @@ body {
   position: absolute;
   bottom: calc(100% + 50px);
   left: -60px;
- 
   min-width: 0;
   transition: background-color 0.3s ease;
+  
   .text-truncate {
     display: inline-block;
     max-width: 220px;
@@ -134,8 +145,6 @@ body {
     flex: 1;
     min-width: 0;
   }
-
-
   
   &.pm-scrollable {
     overflow-y: auto;
@@ -283,6 +292,14 @@ body {
   cursor: pointer;
 }
 
+
+@media (min-width: 1460px) and (max-width: 1520px) {
+  .button-gäste-login {
+    width: 123px;
+  }
+}
+
+
 @media (max-width: 1278px) {
   .entwickler-box {
     padding: 10px 16px;
@@ -382,10 +399,6 @@ body {
     height: 30px;
   }
 
-  .edit-message-box .edit-buttons {
-    display: unset;
-  }
-
   .edit-message-box {
     position: unset;
     width: unset;
@@ -403,11 +416,6 @@ body {
     top: 30px;
   }
 
-  .edit-options button {
-    font-size: 17px !important;
-    height: 35px;
-    width: 170px;
-  }
 
   .private-message-header h1 {
     font-size: 20px;
@@ -444,6 +452,48 @@ body {
       margin: 0;
     }
   }
+
+
+
+
+
+
+  .edit-message-box{
+    position: unset !important;
+    width: unset !important;
+    max-width: unset !important;
+    margin-top: unset !important;
+  }
 }
+
+
+
+
+
+@media (max-width: 450px) {
+  .button-gäste-login{
+    font-size: 14px;
+    width:120px;
+  }
+
+  .button-anmelden{
+    font-size: 14px;
+    width:120px;
+  }
+}
+
+@media (max-width: 380px) {
+  
+
+  .edit-message-box
+   .edit-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+   }
+}
+
+
 
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");

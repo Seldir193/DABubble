@@ -150,21 +150,14 @@
 }
 
 /* SENT-MESSAGE-CONTAINER */
-.channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container {
+.channel-input-box .channel-box .message-list .sent-message-container {
   position: relative;
   display: flex;
- // justify-content: flex-end;
+  // justify-content: flex-end;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container
-  .avatar {
+.channel-input-box .channel-box .message-list .sent-message-container .avatar {
   width: 50px;
   height: 50px;
   object-fit: cover;
@@ -180,10 +173,7 @@
   object-fit: cover;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container:hover {
+.channel-input-box .channel-box .message-list .sent-message-container:hover {
   background-color: $lightblue;
 }
 
@@ -242,7 +232,7 @@
   justify-content: flex-end;
   align-items: flex-end;
   gap: 8px;
-  padding-right:30px;
+  padding-right: 30px;
 }
 
 .channel-input-box
@@ -298,11 +288,7 @@
   cursor: pointer;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .emoji-box
-  .image-wrapper:hover {
+.channel-input-box .channel-box .message-list .emoji-box .image-wrapper:hover {
   background-color: $lightblue;
 }
 
@@ -322,10 +308,7 @@
 }
 
 /* RECEIVED-MESSAGE-CONTAINER */
-.channel-input-box
-  .channel-box
-  .message-list
-  .received-message-container {
+.channel-input-box .channel-box .message-list .received-message-container {
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -497,7 +480,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   gap: 8px;
-  padding-left:30px;
+  padding-left: 30px;
 }
 
 .channel-input-box
@@ -517,40 +500,26 @@
 .channel-input-box .channel-box .message-list .message-content {
   background-color: $middleblue;
   padding: 15px;
-  border-radius: 0px 30px 30px 30px;
+  border-radius: 30px 0px 30px 30px;
   word-break: break-all;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .message-content
-  .sent-message {
+.channel-input-box .channel-box .message-list .message-content .sent-message {
   color: white;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .message-content
-  p {
+.channel-input-box .channel-box .message-list .message-content p {
   font-size: 18px;
   font-weight: 400;
   margin: 0;
   color: white;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .message-content.text-message {
+.channel-input-box .channel-box .message-list .message-content.text-message {
   color: white;
 }
 
-.channel-input-box
-  .channel-box
-  .message-list
-  .message-content.image-message {
+.channel-input-box .channel-box .message-list .message-content.image-message {
   background-color: transparent;
 }
 
@@ -642,18 +611,11 @@
   gap: 10px;
 }
 
-.chat-input-container
-  .chat-input
-  .textarea-wrapper
-  .image-preview:hover {
+.chat-input-container .chat-input .textarea-wrapper .image-preview:hover {
   background-color: white;
 }
 
-.chat-input-container
-  .chat-input
-  .textarea-wrapper
-  .image-preview:hover
-  img {
+.chat-input-container .chat-input .textarea-wrapper .image-preview:hover img {
   filter: brightness(0.8);
 }
 
@@ -714,27 +676,13 @@
   cursor: pointer;
 }
 
-.chat-input-container
-  .chat-input
-  .input-buttons
-  label:hover,
-.chat-input-container
-  .chat-input
-  .input-buttons
-  button:hover {
+.chat-input-container .chat-input .input-buttons label:hover,
+.chat-input-container .chat-input .input-buttons button:hover {
   background-color: $lightblue;
 }
 
-.chat-input-container
-  .chat-input
-  .input-buttons
-  label:hover
-  img,
-.chat-input-container
-  .chat-input
-  .input-buttons
-  button:hover
-  img {
+.chat-input-container .chat-input .input-buttons label:hover img,
+.chat-input-container .chat-input .input-buttons button:hover img {
   filter: brightness(0) saturate(100%) invert(34%) sepia(39%) saturate(6834%)
     hue-rotate(230deg) brightness(100%) contrast(90%);
 }
@@ -766,11 +714,7 @@
   background-color: #ffffff;
 }
 
-.chat-input-container
-  .chat-input
-  .send-button
-  button:hover
-  img {
+.chat-input-container .chat-input .send-button button:hover img {
   filter: brightness(1.8);
 }
 
@@ -847,13 +791,6 @@
 /* -------------------------------------------------------
    EDIT-MESSAGE-BOX
    ------------------------------------------------------- */
-.edit-message-box {
-  position: relative;
-  width: 100%;
-  max-width: 698px;
-  margin: 0 auto;
-}
-
 .edit-message-box .edit-textarea {
   width: 100%;
   padding: 20px;
@@ -883,7 +820,6 @@
 }
 
 .edit-message-box .edit-buttons {
-  display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 5px;
@@ -976,7 +912,7 @@
   padding: 15px 10px;
   border-radius: 30px 30px 30px 0px;
   width: 158px;
-  
+
   text-align: center;
 }
 
@@ -1105,8 +1041,8 @@ nav {
 }
 
 .emoji-message-container .emoji-plus-icon {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 
@@ -1142,6 +1078,11 @@ nav {
   cursor: pointer;
 }
 
+.emoji-plus-icon-in-list{
+width: 30px;
+height: 30px;
+}
+
 .emoji-popup .toggle-more,
 .emoji-popup .toggle-less {
   margin-top: 4px;
@@ -1155,10 +1096,8 @@ nav {
 
 .emoji-popup .toggle-box {
   display: flex;
-
-  img{
-    display: none;
-  }
+  gap: 10px;
+  align-items: center;
 }
 
 /* -------------------------------------------------------
@@ -1201,61 +1140,59 @@ nav {
     display: none;
   }
 
-  .tooltip{
-    width:unset;
-  }
-
-
-  .channel-input-box
-  .channel-box 
-  .message-list
-  .received-message-container
-  .emoji-box-received{
-    padding:unset;
-  }
-
-  .channel-input-box 
-  .channel-box
-  .message-list 
-  .message-container
-  .emoji-box{
-    padding:unset;
-  }
-  .channel-input-box
-  .channel-box
-  .message-list
-  .received-message-container 
-  .message-container
-  .message-box{
-    padding-left:16px;
-  }
-
-  .channel-input-box 
-  .channel-box
-  .message-list 
-  .received-message-container 
-  .message-container{
-    padding:10px 16px;
+  .tooltip {
+    width: unset;
   }
 
   .channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container
-  .message-container 
-  .message-box{
-    padding-right:16px;
+    .channel-box
+    .message-list
+    .received-message-container
+    .emoji-box-received {
+    padding: unset;
+  }
+
+  .channel-input-box .channel-box .message-list .message-container .emoji-box {
+    padding: unset;
+  }
+  .channel-input-box
+    .channel-box
+    .message-list
+    .received-message-container
+    .message-container
+    .message-box {
+    padding-left: 16px;
   }
 
   .channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container
-  .message-container{
-    padding:10px 16px;
+    .channel-box
+    .message-list
+    .received-message-container
+    .message-container {
+    padding: 10px 16px;
   }
 
+  .channel-input-box
+    .channel-box
+    .message-list
+    .sent-message-container
+    .message-container
+    .message-box {
+    padding-right: 16px;
+  }
+
+  .channel-input-box
+    .channel-box
+    .message-list
+    .sent-message-container
+    .message-container {
+    padding: 10px 16px;
+  }
+
+  .channel-input-box .channel-box .message-list .emoji-box .image-wrapper {
+    width: 30px;
+    height: 30px;
+  }
 }
-
 
 @import "./../../styles.scss";

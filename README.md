@@ -199,6 +199,16 @@ DABubble/
 │  │  │  ├─ message.service.ts
 │  │  │  ├─ channel.service.ts
 │  │  │  └─ app-state.service.ts
+│  │  │  ├─ message-crud.service.ts
+│  │  │  ├─ message-queries.service.ts
+│  │  │  ├─ reply-count.service.ts
+│  │  │  └─ thread.service.ts
+│  │  │  channel-services/
+│  │  │  ├─ channel-emoji.service.ts
+│  │  │  ├─ channel-logic-helpers.ts
+│  │  │  ├─ channel-membership.service.ts
+│  │  │  ├─ channel-queries.service.ts
+│  │  │  └─ channel-msg.service.ts
 │  │  ├─ pages/
 │  │  │  ├─ app.component.html
 │  │  │  ├─ app.component.scss
@@ -244,5 +254,7 @@ If you want to generate code documentation for the DABubble project, **Compodoc*
    Make sure you have installed all dependencies, including dev dependencies:
    ```bash
    npm install
+
+
 
 

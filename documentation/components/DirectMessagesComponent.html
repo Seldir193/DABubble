@@ -423,8 +423,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -451,8 +451,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -495,8 +495,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -534,8 +534,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -647,8 +647,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="134"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:134</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -716,8 +716,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="81"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:81</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -756,8 +756,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -793,8 +793,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="130"
-                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:130</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/app/direct-messages/direct-messages.component.ts:114</a></div>
                         </td>
                     </tr>
 
@@ -982,7 +982,7 @@
 import { CommonModule } from &#x27;@angular/common&#x27;;
 import { Router } from &#x27;@angular/router&#x27;;
 import { UserService } from &#x27;../user.service&#x27;;
-import { MessageService } from &#x27;../message.service&#x27;; // ACHTUNG: anpassen, falls anderer Pfad
+import { MessageService } from &#x27;../message.service&#x27;;
 import { getAuth, onAuthStateChanged } from &#x27;@angular/fire/auth&#x27;;
 
 @Component({
@@ -1038,14 +1038,9 @@ export class DirectMessagesComponent implements OnInit {
             userStatus: m.isOnline ? &#x27;Aktiv&#x27; : &#x27;Abwesend&#x27;,
           }));
       })
-      .catch(() &#x3D;&gt; {
-        // intentionally empty
-      });
+      .catch(() &#x3D;&gt; {});
   }
 
-  // -----------------------------------------------
-  // 2) USER (IN)ACTIVITY
-  // -----------------------------------------------
   @HostListener(&#x27;document:mousemove&#x27;)
   @HostListener(&#x27;document:keydown&#x27;)
   handleUserActivity(): void {
@@ -1057,7 +1052,6 @@ export class DirectMessagesComponent implements OnInit {
     const currentUser &#x3D; auth.currentUser;
     if (currentUser &amp;&amp; !this.userIsActive) {
       this.userIsActive &#x3D; true;
-      // --&gt; Online-Status in UserService
       this.messageService.setUserOnlineStatus(currentUser.uid, true);
     }
     if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
@@ -1072,24 +1066,17 @@ export class DirectMessagesComponent implements OnInit {
     const currentUser &#x3D; auth.currentUser;
     if (currentUser &amp;&amp; this.userIsActive) {
       this.userIsActive &#x3D; false;
-      // --&gt; Offline-Status in UserService
       await this.messageService.setUserOnlineStatus(currentUser.uid, false);
     }
   }
 
-  // -----------------------------------------------
-  // 3) AUTH CHANGES
-  // -----------------------------------------------
   private listenForAuthChanges(): void {
     const auth &#x3D; getAuth();
-    // Use onAuthStateChanged -&gt; bei login oder logout
     onAuthStateChanged(auth, async (user) &#x3D;&gt; {
       if (user &amp;&amp; user.uid) {
-        // user eingeloggt -&gt; online setzen
         await this.messageService.setUserOnlineStatus(user.uid, true);
         this.resetInactivityTimer();
       } else {
-        // user ausgeloggt -&gt; offline setzen
         const current &#x3D; auth.currentUser;
         if (current) {
           await this.messageService.setUserOnlineStatus(current.uid, false);
@@ -1098,9 +1085,6 @@ export class DirectMessagesComponent implements OnInit {
     });
   }
 
-  // -----------------------------------------------
-  // 4) DIRECT MESSAGES UI
-  // -----------------------------------------------
   toggleChannels(): void {
     this.isChannelsVisible &#x3D; !this.isChannelsVisible;
   }

@@ -104,7 +104,9 @@ export class EditChannelDialogComponent implements OnInit {
       members: any[];
       description: string;
       createdBy: string;
+      
     },
+   
     private channelService: ChannelService,
     private userService: UserService,
     private dialog: MatDialog,
@@ -124,30 +126,14 @@ export class EditChannelDialogComponent implements OnInit {
     this.subscribeToChannelUpdates();
   }
 
-  /**
-   * Subscribes to channel updates from the ChannelService and
-   * refreshes local properties if the current channel changes.
-   */
   private subscribeToChannelUpdates(): void {
     this.channelService.currentChannels.subscribe((channels) => {
-      const current = channels.find((c) => c.name === this.channelName);
+      const current = channels.find((c) => c.id === this.data.id);
       if (current) {
         this.channelName = current.name;
         this.description = current.description || '';
         this.members = current.members || [];
         this.createdBy = current.createdBy || '';
-        this.fillCreatorIfMissing();
-      }
-    });
-  }
-
-  /**
-   * If the channel has no 'createdBy' name, fills it with the current user's name.
-   */
-  private fillCreatorIfMissing(): void {
-    this.userService.getCurrentUserData().then((userData) => {
-      if (userData && userData.name && !this.createdBy) {
-        this.createdBy = userData.name;
       }
     });
   }
@@ -250,10 +236,13 @@ export class EditChannelDialogComponent implements OnInit {
       }
       return;
     }
+
+
     const success = await this.saveChannelName();
     if (!success) {
       return;
     }
+
     this.isEditingName = false;
   }
 

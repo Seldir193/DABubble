@@ -27,7 +27,7 @@
   .message-list {
     overflow-x: hidden;
     flex-grow: 1;
-    
+
     .message-time {
       font-size: 14px;
       font-weight: 400;
@@ -61,7 +61,6 @@
         .emoji-box {
           display: flex;
           align-items: center;
-
           position: absolute;
           top: -20px;
         }
@@ -96,7 +95,7 @@
           justify-content: flex-end;
           align-items: flex-end;
           gap: 8px;
-          padding-right:30px;
+          padding-right: 30px;
 
           .message-info {
             display: flex;
@@ -215,7 +214,7 @@
           justify-content: flex-start;
           align-items: flex-start;
           gap: 8px;
-          padding-left:30px;
+          padding-left: 30px;
 
           .message-info {
             display: flex;
@@ -281,7 +280,7 @@
     .message-content {
       background-color: $middleblue;
       padding: 15px;
-      border-radius: 0px 30px 30px 30px;
+      border-radius: 30px 0px 30px 30px;
       word-break: break-all;
 
       .sent-message {
@@ -600,11 +599,6 @@
 }
 
 .edit-message-box {
-  position: relative;
-  width: 100%;
-  max-width: 698px;
-  margin-top: 10px;
-
   .edit-textarea {
     width: 100%;
     padding: 20px;
@@ -738,6 +732,8 @@ nav {
   img {
     object-fit: cover;
     border-radius: 50%;
+    width:30px;
+    height:30px;
   }
 
   &:hover {
@@ -751,8 +747,8 @@ nav {
   }
 
   .emoji-plus-icon {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
   }
 }
@@ -762,7 +758,7 @@ nav {
   left: 0;
   z-index: 9999;
   width: 100%;
-  max-width:368px;
+  max-width: 368px;
   padding: 12px;
   gap: 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -798,10 +794,8 @@ nav {
 
   .toggle-box {
     display: flex;
-
-    img{
-      display: none;
-    }
+    align-items: center;
+    gap:10px;
   }
 }
 
@@ -863,7 +857,6 @@ nav {
   font-size: 16px;
   font-weight: 400;
   z-index: 1000;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
   transform: translate(0%, -100%);
   padding: 15px 10px;
   border-radius: 30px 30px 30px 0px;
@@ -941,67 +934,57 @@ nav {
     display: none;
   }
 
-  .chat-input-container .emoji-picker{
-    bottom:150px;
+  .chat-input-container .emoji-picker {
+    bottom: 150px;
   }
 
-  .tooltip{
-    width:unset;
-  }
-
-
-
-
-
-
-  
-  .channel-input-box
-  .channel-box 
-  .message-list
-  .received-message-container
-  .emoji-box-received{
-    padding:unset;
-  }
-
-  .channel-input-box 
-  .channel-box
-  .message-list 
-  .message-container
-  .emoji-box{
-    padding:unset;
-  }
-  .channel-input-box
-  .channel-box
-  .message-list
-  .received-message-container 
-  .message-container
-  .message-box{
-    padding-left:16px;
-  }
-
-  .channel-input-box 
-  .channel-box
-  .message-list 
-  .received-message-container 
-  .message-container{
-    padding:10px 16px;
+  .tooltip {
+    width: unset;
   }
 
   .channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container
-  .message-container 
-  .message-box{
-    padding-right:16px;
+    .channel-box
+    .message-list
+    .received-message-container
+    .emoji-box-received {
+    padding: unset;
+  }
+
+  .channel-input-box .channel-box .message-list .message-container .emoji-box {
+    padding: unset;
+  }
+  .channel-input-box
+    .channel-box
+    .message-list
+    .received-message-container
+    .message-container
+    .message-box {
+    padding-left: 16px;
   }
 
   .channel-input-box
-  .channel-box
-  .message-list
-  .sent-message-container
-  .message-container{
-    padding:10px 16px;
+    .channel-box
+    .message-list
+    .received-message-container
+    .message-container {
+    padding: 10px 16px;
+  }
+
+  .channel-input-box
+    .channel-box
+    .message-list
+    .sent-message-container
+    .message-container
+    .message-box {
+    padding-right: 16px;
+  }
+
+  .channel-input-box
+    .channel-box
+    .message-list
+    .sent-message-container
+    .message-container {
+    padding: 10px 16px;
   }
 }
 

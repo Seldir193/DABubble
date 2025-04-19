@@ -1,27 +1,83 @@
 @import "./../../styles.scss";
 
-.container {
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 3rem 4rem;
+  max-width: 450px;
   width: 100%;
-  border-radius: 30px;
-  background-color: white;
-  opacity: 1;
-  height: calc(100vh - 10.35rem);
-  overflow: hidden;
+  text-align: center;
+  animation: fadeIn 0.6s ease 0.15s both;
 }
 
-.row {
-  padding: 25px 45px;
-
-  h1 {
-    font-size: 24px;
-    font-weight: 700;
-  }
-
-  ul li {
-    font-size: 18px;
-  }
-
-  p {
-    font-size: 18px;
-  }
+.logo {
+  width: 140px;
+  margin-bottom: 1.5rem;
+  user-select: none;
 }
+
+h1 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  margin-bottom: .75rem;
+}
+
+h1 span { color: $primary; }
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.feature-list {
+  list-style: none;
+  text-align: left;
+  margin: 0 auto 2.5rem;
+  max-width: 280px;
+}
+
+.feature-list li {
+  position: relative;
+  padding-left: 2rem;
+  font-size: 1rem;
+  line-height: 1.8rem;
+  font-weight: 500;
+}
+
+.feature-list li + li { margin-top: .5rem; }
+
+.feature-list li::before {
+  content: "\2713"; 
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: $primary;
+  font-weight: 700;
+}
+
+.cta {
+  display: inline-block;
+  padding: .85rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, $primary 0%, $primary-light 100%);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba($primary, .45); }
+.cta:focus-visible { outline: 3px solid $primary-light; outline-offset: 3px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); }}

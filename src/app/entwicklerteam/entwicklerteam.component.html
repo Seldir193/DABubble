@@ -94,17 +94,17 @@
 
       <ng-container *ngIf="!isDesktop">
         <!-- Nur ein Icon, das die MemberListDialog im Material-Dialog öffnet -->
-        <div (click)="openMemberListDialogMobile()">
+        <div (click)="onOpenMemberListDialogMobileClick()">
           <img src="assets/img/member.png" alt="Member Icon (Mobile)" />
         </div>
       </ng-container>
     </div>
   </div>
 </div>
-<div *ngIf="currentUser" >
-  <div div   *ngFor="let channel of channels"    class="channel-input-box">
+<div *ngIf="currentUser">
+  <div div *ngFor="let channel of channels" class="channel-input-box">
     <div class="channel-box">
-      <div *ngIf="!isEditingChannel"  class="message-list" #messageList>
+      <div *ngIf="!isEditingChannel" class="message-list" #messageList>
         <div
           *ngFor="let msg of messages; trackBy: trackByMsgId; let i = index"
           [id]="'message-' + msg.id"
@@ -138,12 +138,16 @@
             >
               <div
                 class="message-container sent-message"
-                (click)="closePopup(msg)"
+                (click)="onClosePopup(msg)"
               >
                 <img
                   class="avatar"
-                  [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
-                  alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
+                  [src]="
+                    userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'
+                  "
+                  alt="{{
+                    userMap[msg.senderId]?.name || 'Unbekannt'
+                  }}'s Avatar"
                 />
                 <div class="message-box">
                   <span class="message-info">
@@ -168,6 +172,9 @@
                       class="sent-message"
                     >
                       {{ msg.content.text }}
+                      <span *ngIf="msg.edited" class="edited-label">
+                        (bearbeitet)
+                      </span>
                     </p>
 
                     <div *ngIf="msg.isEditing" class="edit-message-box">
@@ -222,7 +229,7 @@
                   <div
                     class="emoji-message-container"
                     *ngIf="msg.content.emojis && msg.content.emojis.length > 0"
-                    (click)="closePopup(msg)"
+                    (click)="onClosePopup(msg)"
                   >
                     <ng-container *ngIf="!msg.showAllEmojisList">
                       <span
@@ -230,7 +237,13 @@
                         *ngFor="
                           let emojiObj of msg.content.emojis | slice : 0 : 2
                         "
-                        (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
+                        (mouseenter)="
+                          showTooltip(
+                            $event,
+                            emojiObj.emoji,
+                            userMap[msg.senderId]!.name
+                          )
+                        "
                         (mouseleave)="hideTooltip()"
                         (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
                       >
@@ -240,11 +253,15 @@
 
                       <img
                         *ngIf="msg.content.emojis.length > 2"
-                        src="assets/img/emojiplus.png"
-                        alt="Mehr Emojis anzeigen"
+                        [src]="
+                          msg.showAllEmojisList
+                            ? 'assets/img/eyevisible.png'
+                            : 'assets/img/eyeoff.png'
+                        "
+                        alt="Emojis ein-/ausblenden"
                         class="emoji-plus-icon"
                         (click)="
-                          toggleEmojiPopup(msg); $event.stopPropagation()
+                          onToggleEmojiPopup(msg); $event.stopPropagation()
                         "
                       />
                     </ng-container>
@@ -291,7 +308,12 @@
                           [- 10 weniger]
                         </div>
 
-                       
+                        <img
+                          [src]="'assets/img/eyevisible.png'"
+                          alt="Weniger Emojis anzeigen"
+                          (click)="onClosePopup(msg)"
+                          class="emoji-plus-icon-in-list"
+                        />
                       </div>
                     </div>
                   </div>
@@ -299,7 +321,7 @@
                   <div
                     class="reply-count"
                     *ngIf="msg.replyCount !== undefined && msg.replyCount > 0"
-                    (click)="openThreadEvent(msg)"
+                    (click)="onOpenThreadEvent(msg)"
                   >
                     {{ msg.replyCount }} Antworten
 
@@ -338,7 +360,10 @@
                       <div class="image-wrapper">
                         <span
                           (click)="
-                            addEmojiToMessage({ emoji: { native: '✅' } }, msg)
+                            onAddEmojiToMessage(
+                              { emoji: { native: '✅' } },
+                              msg
+                            )
                           "
                         >
                           ✅
@@ -347,7 +372,10 @@
                       <div class="image-wrapper">
                         <span
                           (click)="
-                            addEmojiToMessage({ emoji: { native: '👍' } }, msg)
+                            onAddEmojiToMessage(
+                              { emoji: { native: '👍' } },
+                              msg
+                            )
                           "
                         >
                           👍
@@ -360,7 +388,7 @@
                         <span
                           *ngIf="lastUsedEmojisSent.length > 0"
                           (click)="
-                            addEmojiToMessage(
+                            onAddEmojiToMessage(
                               { emoji: { native: lastUsedEmojisSent[0] } },
                               msg
                             )
@@ -373,7 +401,7 @@
                         <span
                           *ngIf="lastUsedEmojisSent.length > 1"
                           (click)="
-                            addEmojiToMessage(
+                            onAddEmojiToMessage(
                               { emoji: { native: lastUsedEmojisSent[1] } },
                               msg
                             )
@@ -393,7 +421,7 @@
 
                     <div *ngIf="msg.isEmojiPickerVisible" class="emoji-pickere">
                       <emoji-mart
-                        (emojiSelect)="addEmojiToMessage($event, msg)"
+                        (emojiSelect)="onAddEmojiToMessage($event, msg)"
                       ></emoji-mart>
                     </div>
 
@@ -401,7 +429,7 @@
                       <img
                         src="assets/img/comment.png"
                         alt="Comment"
-                        (click)="openThreadEvent(msg)"
+                        (click)="onOpenThreadEvent(msg)"
                       />
                     </div>
 
@@ -432,12 +460,16 @@
             >
               <div
                 class="message-container received-message"
-                (click)="closePopup(msg)"
+                (click)="onClosePopup(msg)"
               >
                 <img
                   class="avatar"
-                   [src]="userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'"
-                  alt="{{ userMap[msg.senderId]?.name || 'Unbekannt' }}'s Avatar"
+                  [src]="
+                    userMap[msg.senderId]?.avatarUrl || 'assets/img/avatar.png'
+                  "
+                  alt="{{
+                    userMap[msg.senderId]?.name || 'Unbekannt'
+                  }}'s Avatar"
                 />
                 <div class="message-box">
                   <span class="message-info">
@@ -492,16 +524,20 @@
                   <div
                     class="emoji-message-container"
                     *ngIf="msg.content.emojis && msg.content.emojis.length > 0"
-                    (click)="closePopup(msg)"
+                    (click)="onClosePopup(msg)"
                   >
                     <ng-container *ngIf="!msg.showAllEmojisList">
                       <img
                         *ngIf="msg.content.emojis.length > 2"
-                        src="assets/img/emojiplus.png"
-                        alt="Mehr Emojis anzeigen"
+                        [src]="
+                          msg.showAllEmojisList
+                            ? 'assets/img/eyevisible.png'
+                            : 'assets/img/eyeoff.png'
+                        "
+                        alt="Emojis ein-/ausblenden"
                         class="emoji-plus-icon"
                         (click)="
-                          toggleEmojiPopup(msg); $event.stopPropagation()
+                          onToggleEmojiPopup(msg); $event.stopPropagation()
                         "
                       />
 
@@ -510,9 +546,15 @@
                         *ngFor="
                           let emojiObj of msg.content.emojis | slice : 0 : 2
                         "
-                        (mouseenter)="showTooltip($event, emojiObj.emoji, userMap[msg.senderId]!.name) "
-                       (mouseleave)="hideTooltip()"
-                       (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
+                        (mouseenter)="
+                          showTooltip(
+                            $event,
+                            emojiObj.emoji,
+                            userMap[msg.senderId]!.name
+                          )
+                        "
+                        (mouseleave)="hideTooltip()"
+                        (click)="removeEmojiFromMessage(msg, emojiObj.emoji)"
                       >
                         {{ emojiObj.emoji }}
                         <nav class="emoji-count">{{ emojiObj.count }}</nav>
@@ -562,19 +604,19 @@
                         </div>
 
                         <img
-                          src="assets/img/emojiplus.png"
-                          alt="Plus Icon in Popup"
+                          [src]="'assets/img/eyevisible.png'"
+                          alt="Weniger Emojis anzeigen"
+                          (click)="onClosePopup(msg)"
                           class="emoji-plus-icon-in-list"
                         />
                       </div>
-
                     </div>
                   </div>
 
                   <div
                     class="reply-count"
                     *ngIf="msg.replyCount !== undefined && msg.replyCount > 0"
-                    (click)="openThreadEvent(msg)"
+                    (click)="onOpenThreadEvent(msg)"
                   >
                     {{ msg.replyCount }} Antworten
                     <span class="reply-time">
@@ -612,7 +654,10 @@
                       <div class="image-wrapper">
                         <span
                           (click)="
-                            addEmojiToMessage({ emoji: { native: '✅' } }, msg)
+                            onAddEmojiToMessage(
+                              { emoji: { native: '✅' } },
+                              msg
+                            )
                           "
                         >
                           ✅
@@ -621,7 +666,10 @@
                       <div class="image-wrapper">
                         <span
                           (click)="
-                            addEmojiToMessage({ emoji: { native: '👍' } }, msg)
+                            onAddEmojiToMessage(
+                              { emoji: { native: '👍' } },
+                              msg
+                            )
                           "
                         >
                           👍
@@ -634,7 +682,7 @@
                         <span
                           *ngIf="lastUsedEmojisSent.length > 0"
                           (click)="
-                            addEmojiToMessage(
+                            onAddEmojiToMessage(
                               { emoji: { native: lastUsedEmojisSent[0] } },
                               msg
                             )
@@ -647,7 +695,7 @@
                         <span
                           *ngIf="lastUsedEmojisSent.length > 1"
                           (click)="
-                            addEmojiToMessage(
+                            onAddEmojiToMessage(
                               { emoji: { native: lastUsedEmojisSent[1] } },
                               msg
                             )
@@ -661,8 +709,8 @@
                     <div
                       class="image-wrapper"
                       (click)="toggleEmojiPickerForMessage(msg)"
-                    > 
-                    <img src="assets/img/emojiplus.png" alt="Reaction" />
+                    >
+                      <img src="assets/img/emojiplus.png" alt="Reaction" />
                     </div>
 
                     <div
@@ -670,7 +718,7 @@
                       class="emoji-picker-received"
                     >
                       <emoji-mart
-                        (emojiSelect)="addEmojiToMessage($event, msg)"
+                        (emojiSelect)="onAddEmojiToMessage($event, msg)"
                       ></emoji-mart>
                     </div>
 
@@ -678,7 +726,7 @@
                       <img
                         src="assets/img/comment.png"
                         alt="Comment"
-                        (click)="openThreadEvent(msg)"
+                        (click)="onOpenThreadEvent(msg)"
                       />
                     </div>
                   </div>
@@ -690,8 +738,6 @@
       </div>
     </div>
 
-    
-
     <div class="chat-input-container">
       <div class="chat-input">
         <div class="textarea-wrapper">
@@ -700,7 +746,7 @@
             [(ngModel)]="message"
             #textArea
             (keydown)="handleKeyDown($event, textArea)"
-            (input)="onTextareaInput($event)"
+            (input)="onTextareaInputChange($event)"
           ></textarea>
           <div class="image-preview" *ngIf="imageUrl">
             <img
@@ -711,7 +757,7 @@
             />
             <div class="img-wrapper">
               <img
-                (click)="closeProfileCard(textArea); $event.stopPropagation()"
+                (click)="onCloseProfileCard(textArea); $event.stopPropagation()"
                 src="assets/img/close.png"
                 alt="Schließen"
               />
@@ -732,7 +778,7 @@
                 <input
                   type="file"
                   id="image-upload"
-                  (change)="onImageSelected($event, textArea)"
+                  (change)="onImageSelectedClick($event, textArea)"
                   style="display: none"
                 />
               </label>
@@ -745,7 +791,7 @@
               </button>
 
               <div class="dropdown-container" (click)="onSelfClick($event)">
-                <button class="at-button" (click)="toggleDropdown($event)">
+                <button class="at-button" (click)="onToggleDropdown($event)">
                   <img
                     class="input-image"
                     src="assets/img/qr.png"
@@ -758,6 +804,8 @@
                     *ngIf="dropdownState === 'user'"
                     class="my-user-dropdown pm-scrollable"
                   >
+                  <ng-container *ngIf="allUsers.length > 0; else noUsersFound">
+                    
                     <li
                       *ngFor="let user of allUsers"
                       (click)="addUserSymbol(user)"
@@ -782,30 +830,48 @@
                         />
                       </div>
 
-                     <span class="text-truncate"> {{ user.name }}</span>
+                      <span class="text-truncate"> {{ user.name }}</span>
                     </li>
+                  </ng-container>
+
+                  <ng-template #noUsersFound>
+                    <li>Kein Benutzer gefunden</li>
+                  </ng-template>
                   </ul>
 
                   <ul
                     *ngIf="dropdownState === 'channel'"
                     class="my-user-dropdown pm-scrollable"
                   >
+
+                  <ng-container
+                  *ngIf="filteredChannels.length > 0; else noChannelsFound"
+                >
+
+
                     <li
-                    *ngFor="let ch of filteredChannels"
+                      *ngFor="let ch of filteredChannels"
                       (click)="selectChannel(ch)"
                     >
                       <div class="tag-container">
                         <img src="assets/img/tag-black.png" />
                       </div>
-                      
+
                       <span class="text-truncate"> {{ ch.name }}</span>
                     </li>
+
+                  </ng-container>
+
+                  <ng-template #noChannelsFound>
+                    <li>Kein Channel gefunden</li>
+                  </ng-template>
+
                   </ul>
                 </div>
               </div>
             </div>
             <div class="send-button">
-              <button (click)="sendMessage(textArea)">
+              <button (click)="onSendMessage(textArea)">
                 <img src="assets/img/send-button.png" alt="Senden" />
               </button>
             </div>
@@ -828,34 +894,3 @@
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

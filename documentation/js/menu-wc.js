@@ -154,6 +154,31 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                         </ul>
                     </li>
+                    <li class="chapter">
+                        <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ? 'data-bs-target="#classes-links"' :
+                            'data-bs-target="#xs-classes-links"' }>
+                            <span class="icon ion-ios-paper"></span>
+                            <span>Classes</span>
+                            <span class="icon ion-ios-arrow-down"></span>
+                        </div>
+                        <ul class="links collapse " ${ isNormalMode ? 'id="classes-links"' : 'id="xs-classes-links"' }>
+                            <li class="link">
+                                <a href="classes/BaseChatComponent.html" data-type="entity-link" >BaseChatComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/PrivateMessagesBase.html" data-type="entity-link" >PrivateMessagesBase</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/SearchFieldBase.html" data-type="entity-link" >SearchFieldBase</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/ThreadChannelBase.html" data-type="entity-link" >ThreadChannelBase</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/ThreadMessagesBase.html" data-type="entity-link" >ThreadMessagesBase</a>
+                            </li>
+                        </ul>
+                    </li>
                         <li class="chapter">
                             <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ? 'data-bs-target="#injectables-links"' :
                                 'data-bs-target="#xs-injectables-links"' }>
@@ -166,10 +191,34 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/AppStateService.html" data-type="entity-link" >AppStateService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/ChannelEmojiService.html" data-type="entity-link" >ChannelEmojiService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/ChannelMembershipService.html" data-type="entity-link" >ChannelMembershipService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/ChannelMsgService.html" data-type="entity-link" >ChannelMsgService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/ChannelQueriesService.html" data-type="entity-link" >ChannelQueriesService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/ChannelService.html" data-type="entity-link" >ChannelService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/MessageCrudService.html" data-type="entity-link" >MessageCrudService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/MessageQueriesService.html" data-type="entity-link" >MessageQueriesService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/MessageService.html" data-type="entity-link" >MessageService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/ReplyCountService.html" data-type="entity-link" >ReplyCountService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/ThreadService.html" data-type="entity-link" >ThreadService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/UserService.html" data-type="entity-link" >UserService</a>
@@ -191,13 +240,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/AddMembersMobileData.html" data-type="entity-link" >AddMembersMobileData</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/BroadcastMessageData.html" data-type="entity-link" >BroadcastMessageData</a>
+                                <a href="interfaces/BroadcastContext.html" data-type="entity-link" >BroadcastContext</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ChannelMessageData.html" data-type="entity-link" >ChannelMessageData</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/EmojiItem.html" data-type="entity-link" >EmojiItem</a>
+                                <a href="interfaces/EditState.html" data-type="entity-link" >EditState</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EmojiContext.html" data-type="entity-link" >EmojiContext</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/FirestoreMessageData.html" data-type="entity-link" >FirestoreMessageData</a>
@@ -215,22 +267,10 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/MessageContent.html" data-type="entity-link" >MessageContent</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/MessageContent-1.html" data-type="entity-link" >MessageContent</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/MessageContent-2.html" data-type="entity-link" >MessageContent</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/MessageContent-3.html" data-type="entity-link" >MessageContent</a>
+                                <a href="interfaces/MyState.html" data-type="entity-link" >MyState</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ProfileData.html" data-type="entity-link" >ProfileData</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/ThreadChannelParentDoc.html" data-type="entity-link" >ThreadChannelParentDoc</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/ThreadChannelParentDoc-1.html" data-type="entity-link" >ThreadChannelParentDoc</a>
                             </li>
                         </ul>
                     </li>
@@ -242,6 +282,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             <span class="icon ion-ios-arrow-down"></span>
                         </div>
                         <ul class="links collapse " ${ isNormalMode ? 'id="miscellaneous-links"' : 'id="xs-miscellaneous-links"' }>
+                            <li class="link">
+                                <a href="miscellaneous/functions.html" data-type="entity-link">Functions</a>
+                            </li>
                             <li class="link">
                                 <a href="miscellaneous/typealiases.html" data-type="entity-link">Type aliases</a>
                             </li>

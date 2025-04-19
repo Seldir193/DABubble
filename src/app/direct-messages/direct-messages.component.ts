@@ -8,7 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
-import { MessageService } from '../message.service'; // ACHTUNG: anpassen, falls anderer Pfad
+import { MessageService } from '../message.service';
 import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Component({
@@ -64,14 +64,9 @@ export class DirectMessagesComponent implements OnInit {
             userStatus: m.isOnline ? 'Aktiv' : 'Abwesend',
           }));
       })
-      .catch(() => {
-        // intentionally empty
-      });
+      .catch(() => {});
   }
 
-  // -----------------------------------------------
-  // 2) USER (IN)ACTIVITY
-  // -----------------------------------------------
   @HostListener('document:mousemove')
   @HostListener('document:keydown')
   handleUserActivity(): void {
@@ -83,7 +78,6 @@ export class DirectMessagesComponent implements OnInit {
     const currentUser = auth.currentUser;
     if (currentUser && !this.userIsActive) {
       this.userIsActive = true;
-      // --> Online-Status in UserService
       this.messageService.setUserOnlineStatus(currentUser.uid, true);
     }
     if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
@@ -98,24 +92,17 @@ export class DirectMessagesComponent implements OnInit {
     const currentUser = auth.currentUser;
     if (currentUser && this.userIsActive) {
       this.userIsActive = false;
-      // --> Offline-Status in UserService
       await this.messageService.setUserOnlineStatus(currentUser.uid, false);
     }
   }
 
-  // -----------------------------------------------
-  // 3) AUTH CHANGES
-  // -----------------------------------------------
   private listenForAuthChanges(): void {
     const auth = getAuth();
-    // Use onAuthStateChanged -> bei login oder logout
     onAuthStateChanged(auth, async (user) => {
       if (user && user.uid) {
-        // user eingeloggt -> online setzen
         await this.messageService.setUserOnlineStatus(user.uid, true);
         this.resetInactivityTimer();
       } else {
-        // user ausgeloggt -> offline setzen
         const current = auth.currentUser;
         if (current) {
           await this.messageService.setUserOnlineStatus(current.uid, false);
@@ -124,9 +111,6 @@ export class DirectMessagesComponent implements OnInit {
     });
   }
 
-  // -----------------------------------------------
-  // 4) DIRECT MESSAGES UI
-  // -----------------------------------------------
   toggleChannels(): void {
     this.isChannelsVisible = !this.isChannelsVisible;
   }

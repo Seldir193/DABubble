@@ -120,6 +120,24 @@
                         <li>
                             <a href="#environment" title="src/environments/environment.ts" ><b>environment</b>&nbsp;&nbsp;&nbsp;(src/.../environment.ts)</a>
                         </li>
+                        <li>
+                            <a href="#generateConversationId" title="src/app/search-field/conversation.helpers.ts" ><b>generateConversationId</b>&nbsp;&nbsp;&nbsp;(src/.../conversation.helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#initializeDirectConversation" title="src/app/search-field/conversation.helpers.ts" ><b>initializeDirectConversation</b>&nbsp;&nbsp;&nbsp;(src/.../conversation.helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#loadCurrentUserHelper" title="src/app/search-field/search-field.user.helpers.ts" ><b>loadCurrentUserHelper</b>&nbsp;&nbsp;&nbsp;(src/.../search-field.user.helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#loadRecipientDataHelper" title="src/app/search-field/search-field.user.helpers.ts" ><b>loadRecipientDataHelper</b>&nbsp;&nbsp;&nbsp;(src/.../search-field.user.helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#POSITIONS" title="src/app/entwicklerteam/positions-const.ts" ><b>POSITIONS</b>&nbsp;&nbsp;&nbsp;(src/.../positions-const.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#POSITIONS_ADD_MEMBERS" title="src/app/entwicklerteam/positions-const.ts" ><b>POSITIONS_ADD_MEMBERS</b>&nbsp;&nbsp;&nbsp;(src/.../positions-const.ts)</a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -240,6 +258,252 @@
     appId: &#x27;1:837671090070:web:f294fc70edfcf2caeccfb7&#x27;,
   },
 }</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/search-field/conversation.helpers.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateConversationId"></a>
+                    <span class="name">
+                        <span ><b>generateConversationId</b></span>
+                        <a href="#generateConversationId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  userId1: string,
+  userId2: string
+): string &#x3D;&gt; [userId1, userId2].sort().join(&#x27;_&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initializeDirectConversation"></a>
+                    <span class="name">
+                        <span ><b>initializeDirectConversation</b></span>
+                        <a href="#initializeDirectConversation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  currentUser: any,
+  recipientId: string,
+  messageService: {
+    generateConversationId: (userId1: string, userId2: string) &#x3D;&gt; string;
+    getMessagesOnce: (
+      mode: &#x27;private&#x27;,
+      conversationId: string
+    ) &#x3D;&gt; Promise&lt;Message[]&gt;;
+  },
+  updateMessages: (msgs: Message[]) &#x3D;&gt; void,
+  scrollToBottomFn: () &#x3D;&gt; void,
+  loadLastUsedEmojisFn: (
+    context: any,
+    getMessages: (mode: string, convId: string) &#x3D;&gt; Promise&lt;Message[]&gt;,
+    convId: string
+  ) &#x3D;&gt; void,
+  getEmojiContextFn: () &#x3D;&gt; any
+): string &#x3D;&gt; {
+  const conversationId &#x3D; messageService.generateConversationId(
+    currentUser.id,
+    recipientId
+  );
+
+  messageService
+    .getMessagesOnce(&#x27;private&#x27;, conversationId)
+    .then((messages: Message[]) &#x3D;&gt; {
+      const msgs &#x3D; messages.map((msg) &#x3D;&gt; ({
+        ...msg,
+        content: { ...msg.content, emojis: msg.content?.emojis || [] },
+      }));
+      updateMessages(msgs);
+      scrollToBottomFn();
+    })
+    .catch(() &#x3D;&gt; {});
+
+  loadLastUsedEmojisFn(
+    getEmojiContextFn(),
+    (mode, convId) &#x3D;&gt; messageService.getMessagesOnce(mode as &#x27;private&#x27;, convId),
+    conversationId
+  );
+
+  return conversationId;
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/search-field/search-field.user.helpers.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadCurrentUserHelper"></a>
+                    <span class="name">
+                        <span ><b>loadCurrentUserHelper</b></span>
+                        <a href="#loadCurrentUserHelper"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>async (
+  userService: { getCurrentUserData: () &#x3D;&gt; Promise&lt;any&gt; },
+  updateUser: (user: any) &#x3D;&gt; void
+): Promise&lt;void&gt; &#x3D;&gt; {
+  return userService
+    .getCurrentUserData()
+    .then((user) &#x3D;&gt; {
+      updateUser(user);
+    })
+    .catch(() &#x3D;&gt; {});
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecipientDataHelper"></a>
+                    <span class="name">
+                        <span ><b>loadRecipientDataHelper</b></span>
+                        <a href="#loadRecipientDataHelper"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  recipientId: string,
+  userService: { getUserById: (id: string) &#x3D;&gt; Promise&lt;any&gt; },
+  updateRecipientStatus: (status: string) &#x3D;&gt; void,
+  updateRecipientAvatar: (avatarUrl: string) &#x3D;&gt; void
+): void &#x3D;&gt; {
+  if (recipientId) {
+    userService
+      .getUserById(recipientId)
+      .then((userData) &#x3D;&gt; {
+        updateRecipientStatus(userData.isOnline ? &#x27;Aktiv&#x27; : &#x27;Abwesend&#x27;);
+        updateRecipientAvatar(userData.avatarUrl || &#x27;&#x27;);
+      })
+      .catch(() &#x3D;&gt; {});
+  }
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/entwicklerteam/positions-const.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="POSITIONS"></a>
+                    <span class="name">
+                        <span ><b>POSITIONS</b></span>
+                        <a href="#POSITIONS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>ConnectionPositionPair[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  {
+    originX: &#x27;start&#x27;,
+    originY: &#x27;bottom&#x27;,
+    overlayX: &#x27;start&#x27;,
+    overlayY: &#x27;top&#x27;,
+    offsetX: 0,
+    offsetY: 0,
+  },
+  {
+    originX: &#x27;end&#x27;,
+    originY: &#x27;bottom&#x27;,
+    overlayX: &#x27;end&#x27;,
+    overlayY: &#x27;top&#x27;,
+    offsetX: 0,
+    offsetY: 0,
+  },
+]</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="POSITIONS_ADD_MEMBERS"></a>
+                    <span class="name">
+                        <span ><b>POSITIONS_ADD_MEMBERS</b></span>
+                        <a href="#POSITIONS_ADD_MEMBERS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>ConnectionPositionPair[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  {
+    originX: &#x27;start&#x27;,
+    originY: &#x27;bottom&#x27;,
+    overlayX: &#x27;start&#x27;,
+    overlayY: &#x27;top&#x27;,
+    offsetX: 0,
+    offsetY: 0,
+  },
+  {
+    originX: &#x27;end&#x27;,
+    originY: &#x27;bottom&#x27;,
+    overlayX: &#x27;end&#x27;,
+    overlayY: &#x27;top&#x27;,
+    offsetX: 0,
+    offsetY: 0,
+  },
+]</code>
                     </td>
                 </tr>
 

@@ -9,7 +9,7 @@ import {
   query,
   where,
   onSnapshot,
-  deleteDoc
+  deleteDoc,
 } from '@angular/fire/firestore';
 import {
   getAuth,
@@ -25,11 +25,6 @@ import { Storage } from '@angular/fire/storage';
 import { Router } from '@angular/router';
 import { AppStateService } from './app-state.service';
 
-/**
- * UserService handles user-related logic in Firestore and Firebase Auth,
- * including profile updates, authentication state changes, and real-time listeners.
- */
-
 @Injectable({
   providedIn: 'root',
 })
@@ -41,10 +36,6 @@ export class UserService {
     private appStateService: AppStateService
   ) {}
 
-  /**
-   * getCurrentUserData retrieves the currently signed-in user's Firestore doc,
-   * sets them as online, and resolves with their user data, or rejects if no user is signed in.
-   */
   async getCurrentUserData(): Promise<any> {
     const auth = getAuth();
     return new Promise((resolve, reject) => {
@@ -58,7 +49,6 @@ export class UserService {
     });
   }
 
-  /** Handles the case of a signed-in user: fetches Firestore doc, sets isOnline to true, resolves if found. */
   private async handleSignedInUser(
     user: User,
     resolve: (value: any) => void,
@@ -67,19 +57,17 @@ export class UserService {
     try {
       const userDocRef = doc(this.firestore, 'users', user.uid);
       const userDocSnap = await getDoc(userDocRef);
-  
+
       if (!userDocSnap.exists()) {
         return reject(new Error('User not found.'));
       }
       await updateDoc(userDocRef, { isOnline: true });
       resolve({ ...userDocSnap.data(), id: user.uid });
-
     } catch (error) {
       reject(error);
     }
   }
 
-  /** Handles the case of no user being signed in: sets isOnline to false if possible, then rejects. */
   private async handleNoUserSignedIn(
     user: User | null,
     reject: (reason?: any) => void
@@ -89,16 +77,10 @@ export class UserService {
         const userRef = doc(this.firestore, 'users', user.uid);
         await updateDoc(userRef, { isOnline: false });
       }
-    } catch (error) {
-      // Intentionally empty to match original logic
-    }
+    } catch (error) {}
     reject(new Error('No user signed in.'));
   }
 
-  /**
-   * updateUserEmail re-authenticates the current user, updates their email in both Auth and Firestore,
-   * and sends a verification email with the given actionCodeSettings.
-   */
   async updateUserEmail(newEmail: string): Promise<void> {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -119,7 +101,6 @@ export class UserService {
     }
   }
 
-  /** Updates the user's email address in Firebase Auth. */
   private async performEmailUpdate(
     user: User,
     newEmail: string
@@ -127,7 +108,6 @@ export class UserService {
     await updateEmail(user, newEmail);
   }
 
-  /** Sends a verification email to the updated email address. */
   private async sendVerificationEmail(user: User): Promise<void> {
     const actionCodeSettings = {
       url: 'http://localhost:4200/verify-email',
@@ -221,7 +201,7 @@ export class UserService {
     const user = auth.currentUser;
     return user ? user.uid : null;
   }
-  
+
   async getUserById(userId: string): Promise<any> {
     const userDocRef = doc(this.firestore, 'users', userId);
     const userDocSnap = await getDoc(userDocRef);
@@ -256,10 +236,6 @@ export class UserService {
     return unsubscribe;
   }
 
-  /**
-   * logout signs out the current user, optionally deletes a 'Guest' user doc,
-   * and marks the user offline in Firestore, then navigates to the login page.
-   */
   async logout(): Promise<void> {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -269,12 +245,9 @@ export class UserService {
       await this.handleLogout(user);
       this.appStateService.setShowWelcomeContainer(true);
       this.router.navigate(['/login']);
-    } catch {
-      // Intentionally empty to match original logic
-    }
+    } catch {}
   }
 
-  /** Performs the logout steps: checks if user doc exists, deletes or marks offline, then signs out. */
   private async handleLogout(user: User): Promise<void> {
     const auth = getAuth();
     const userDocRef = doc(this.firestore, 'users', user.uid);
@@ -294,9 +267,4 @@ export class UserService {
 
     await signOut(auth);
   }
-
-  
 }
-
-
-

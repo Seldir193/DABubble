@@ -114,7 +114,7 @@
                 <ng-container
                   *ngIf="!myForm.get('password')?.errors?.['required'] && myForm.get('password')?.errors?.['invalid-password']"
                 >
-                  Passwort ist falsch.
+                  Das Passwort oder die E-Mail Adresse ist falsch.
                 </ng-container>
               </ng-container>
             </ng-container>
@@ -135,6 +135,7 @@
               type="button"
               (click)="signInWithGoogle()"
             >
+              <img src="assets/img/google.png" alt="Google" />
               Anmelden mit Google
             </button>
           </div>

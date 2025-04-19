@@ -119,15 +119,6 @@
         </p>
 
 
-            <p class="comment">
-                <h3>Description</h3>
-            </p>
-            <p class="comment">
-                <p>ChannelService handles the creation, retrieval, and updates of channels
-within the Firestore database. It also tracks membership changes and
-local channel state via BehaviorSubjects.</p>
-
-            </p>
 
 
 
@@ -193,10 +184,6 @@ local channel state via BehaviorSubjects.</p>
                             </li>
                             <li>
                                     <span class="modifier">Private</span>
-                                <a href="#buildChannelsByNameQuery" >buildChannelsByNameQuery</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
                                 <a href="#buildNewChannelObj" >buildNewChannelObj</a>
                             </li>
                             <li>
@@ -223,21 +210,10 @@ local channel state via BehaviorSubjects.</p>
                                 <a href="#deleteChannel" >deleteChannel</a>
                             </li>
                             <li>
-                                    <span class="modifier">Private</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#ensureCreatorInChannel" >ensureCreatorInChannel</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#executeChannelsByNameQuery" >executeChannelsByNameQuery</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
-                                <a href="#filterOutLeavingUser" >filterOutLeavingUser</a>
-                            </li>
-                            <li>
                                 <a href="#getAllChannels" >getAllChannels</a>
+                            </li>
+                            <li>
+                                <a href="#getAllChannelsLive" >getAllChannelsLive</a>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
@@ -258,6 +234,10 @@ local channel state via BehaviorSubjects.</p>
                                 <a href="#getChannels" >getChannels</a>
                             </li>
                             <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#getChannelsAndIndex" >getChannelsAndIndex</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#getChannelsByName" >getChannelsByName</a>
                             </li>
@@ -274,11 +254,6 @@ local channel state via BehaviorSubjects.</p>
                             <li>
                                     <span class="modifier">Async</span>
                                 <a href="#getUsersByFirstLetter" >getUsersByFirstLetter</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#handleChannelLeaving" >handleChannelLeaving</a>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
@@ -315,13 +290,17 @@ local channel state via BehaviorSubjects.</p>
                             </li>
                             <li>
                                     <span class="modifier">Private</span>
+                                <a href="#updateCurrentChannel" >updateCurrentChannel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
                                 <a href="#updateCurrentChannelIfNeeded" >updateCurrentChannelIfNeeded</a>
                             </li>
                             <li>
                                 <a href="#updateLocalChannels" >updateLocalChannels</a>
                             </li>
                             <li>
-                                    <span class="modifier">Async</span>
+                                    <span class="modifier">Public</span>
                                 <a href="#updateMessage" >updateMessage</a>
                             </li>
                         </ul>
@@ -342,19 +321,17 @@ local channel state via BehaviorSubjects.</p>
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(firestore: Firestore, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>)</code>
+<code>constructor(firestore: Firestore, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, membershipService: <a href="../injectables/ChannelMembershipService.html" target="_self">ChannelMembershipService</a>, emojiService: <a href="../injectables/ChannelEmojiService.html" target="_self">ChannelEmojiService</a>, queriesService: <a href="../injectables/ChannelQueriesService.html" target="_self">ChannelQueriesService</a>, msgService: <a href="../injectables/ChannelMsgService.html" target="_self">ChannelMsgService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/channel.service.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/channel.service.ts:64</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
-                            <div class="io-description"><p>Constructs the ChannelService, injecting Firestore for DB access and UserService to fetch user info.</p>
-</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -363,7 +340,6 @@ local channel state via BehaviorSubjects.</p>
                                                 <td>Name</td>
                                                     <td>Type</td>
                                                 <td>Optional</td>
-                                                    <td>Description</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -378,12 +354,6 @@ local channel state via BehaviorSubjects.</p>
                                                             No
                                                     </td>
                                                     
-                                                        <td>
-                                                                <ul>
-<li>The Firestore instance for DB operations.</li>
-</ul>
-
-                                                        </td>
                                                 </tr>
                                                 <tr>
                                                         <td>userService</td>
@@ -396,12 +366,54 @@ local channel state via BehaviorSubjects.</p>
                                                             No
                                                     </td>
                                                     
+                                                </tr>
+                                                <tr>
+                                                        <td>membershipService</td>
+                                                  
                                                         <td>
-                                                                <ul>
-<li>The UserService providing user-related data and utilities.</li>
-</ul>
-
+                                                                        <code><a href="../injectables/ChannelMembershipService.html" target="_self" >ChannelMembershipService</a></code>
                                                         </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>emojiService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChannelEmojiService.html" target="_self" >ChannelEmojiService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>queriesService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChannelQueriesService.html" target="_self" >ChannelQueriesService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>msgService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChannelMsgService.html" target="_self" >ChannelMsgService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -439,17 +451,14 @@ local channel state via BehaviorSubjects.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/channel.service.ts:109</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/channel.service.ts:79</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>addChannel creates a new channel in Firestore, storing both &#39;members&#39; and &#39;membersUid&#39; (UID array).
-After creation, it calls loadChannels to refresh local state and sets the newly created channel as current.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -460,7 +469,6 @@ After creation, it calls loadChannels to refresh local state and sets the newly 
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -475,12 +483,6 @@ After creation, it calls loadChannels to refresh local state and sets the newly 
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The channel object containing name, members, and optional description/createdBy fields.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -518,16 +520,14 @@ After creation, it calls loadChannels to refresh local state and sets the newly 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="363"
-                                    class="link-to-prism">src/app/channel.service.ts:363</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/app/channel.service.ts:228</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Updates the in-memory channel object with the new name and description.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -607,89 +607,6 @@ After creation, it calls loadChannels to refresh local state and sets the newly 
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="buildChannelsByNameQuery"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                        <span ><b>buildChannelsByNameQuery</b></span>
-                        <a href="#buildChannelsByNameQuery"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>buildChannelsByNameQuery(channelName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="598"
-                                    class="link-to-prism">src/app/channel.service.ts:598</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Builds the Firestore query for channels matching the given channelName and containing the current user.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>channelName</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>userId</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="buildNewChannelObj"></a>
                     <span class="name">
                             <span class="modifier">Private</span>
@@ -708,16 +625,14 @@ After creation, it calls loadChannels to refresh local state and sets the newly 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="167"
-                                    class="link-to-prism">src/app/channel.service.ts:167</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="125"
+                                    class="link-to-prism">src/app/channel.service.ts:125</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Builds a local channel object with an &#39;id&#39; property included.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -789,17 +704,14 @@ After creation, it calls loadChannels to refresh local state and sets the newly 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="400"
-                                    class="link-to-prism">src/app/channel.service.ts:400</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="270"
+                                    class="link-to-prism">src/app/channel.service.ts:270</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>changeChannel updates the channelSource, effectively indicating the user is working
-with this channel as the &quot;current&quot; channel.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -859,16 +771,14 @@ with this channel as the &quot;current&quot; channel.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="386"
-                                    class="link-to-prism">src/app/channel.service.ts:386</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="260"
+                                    class="link-to-prism">src/app/channel.service.ts:260</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>changeSelectedChannel updates a separate BehaviorSubject for a &quot;selected channel.&quot;</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -930,17 +840,14 @@ with this channel as the &quot;current&quot; channel.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="688"
-                                    class="link-to-prism">src/app/channel.service.ts:688</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="381"
+                                    class="link-to-prism">src/app/channel.service.ts:381</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Checks if a channel with the specified name already exists in Firestore.
-Returns true if at least one document has this name.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -951,7 +858,6 @@ Returns true if at least one document has this name.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -966,10 +872,6 @@ Returns true if at least one document has this name.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <p>The channel name to check.</p>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1007,16 +909,14 @@ Returns true if at least one document has this name.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="293"
-                                    class="link-to-prism">src/app/channel.service.ts:293</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/app/channel.service.ts:180</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Combines old and new members without duplicates, based on the &#39;uid&#39; field.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1091,16 +991,14 @@ Returns true if at least one document has this name.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="155"
-                                    class="link-to-prism">src/app/channel.service.ts:155</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/app/channel.service.ts:114</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Creates the channel document in Firestore and returns the DocumentReference.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1162,17 +1060,14 @@ Returns true if at least one document has this name.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="521"
-                                    class="link-to-prism">src/app/channel.service.ts:521</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="142"
+                                    class="link-to-prism">src/app/channel.service.ts:142</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>deleteChannel removes a channel document from Firestore and updates local state,
-typically used when a channel is no longer needed or an admin removes it.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1183,7 +1078,6 @@ typically used when a channel is no longer needed or an admin removes it.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1198,253 +1092,12 @@ typically used when a channel is no longer needed or an admin removes it.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The channel doc ID to delete.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="ensureCreatorInChannel"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                            <span class="modifier">Async</span>
-                        <span ><b>ensureCreatorInChannel</b></span>
-                        <a href="#ensureCreatorInChannel"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>ensureCreatorInChannel(channel: literal type)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="138"
-                                    class="link-to-prism">src/app/channel.service.ts:138</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>ensureCreatorInChannel checks if the current user (creator) is already in the channel&#39;s members list.
-If not, it loads the user&#39;s data from Firestore and pushes that user object into channel.members.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>channel</td>
-                                            <td>
-                                                        <code>literal type</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <ul>
-<li>The partial channel object that might or might not contain the current user.</li>
-</ul>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="executeChannelsByNameQuery"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                            <span class="modifier">Async</span>
-                        <span ><b>executeChannelsByNameQuery</b></span>
-                        <a href="#executeChannelsByNameQuery"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>executeChannelsByNameQuery(q: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="609"
-                                    class="link-to-prism">src/app/channel.service.ts:609</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Executes the query and maps the results to an array of channel objects.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>q</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="filterOutLeavingUser"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                        <span ><b>filterOutLeavingUser</b></span>
-                        <a href="#filterOutLeavingUser"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>filterOutLeavingUser(channelData: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="227"
-                                    class="link-to-prism">src/app/channel.service.ts:227</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Filters the leaving user out of the existing members and membersUid arrays.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>channelData</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>userId</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>literal type</code>
 
                         </div>
                             <div class="io-description">
@@ -1474,18 +1127,14 @@ If not, it loads the user&#39;s data from Firestore and pushes that user object 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="536"
-                                    class="link-to-prism">src/app/channel.service.ts:536</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="321"
+                                    class="link-to-prism">src/app/channel.service.ts:321</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getAllChannels sets up a live snapshot listener on the channels collection,
-firing a callback whenever there&#39;s a change in Firestore&#39;s channels data.
-Returns an unsubscribe function to end the snapshot subscription.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1496,7 +1145,6 @@ Returns an unsubscribe function to end the snapshot subscription.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1511,12 +1159,73 @@ Returns an unsubscribe function to end the snapshot subscription.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The function to call with the updated array of channels.</li>
-</ul>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllChannelsLive"></a>
+                    <span class="name">
+                        <span ><b>getAllChannelsLive</b></span>
+                        <a href="#getAllChannelsLive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAllChannelsLive(callback: (channels: any[]) => void)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/channel.service.ts:150</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>callback</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
                                             </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1554,17 +1263,14 @@ Returns an unsubscribe function to end the snapshot subscription.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="670"
-                                    class="link-to-prism">src/app/channel.service.ts:670</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="368"
+                                    class="link-to-prism">src/app/channel.service.ts:368</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Retrieves all channels from Firestore in which the current user is a member,
-returning an array of channel objects once (no realtime updates).</p>
-</div>
 
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
@@ -1594,18 +1300,14 @@ returning an array of channel objects once (no realtime updates).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="652"
-                                    class="link-to-prism">src/app/channel.service.ts:652</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="354"
+                                    class="link-to-prism">src/app/channel.service.ts:354</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getAllMessagesLive sets up a snapshot listener on the &#39;messages&#39; collection,
-ordered by ascending timestamp, calling the provided callback with updated messages.
-Returns an unsubscribe function to end the snapshot.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1616,7 +1318,6 @@ Returns an unsubscribe function to end the snapshot.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1631,12 +1332,6 @@ Returns an unsubscribe function to end the snapshot.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The function that receives the new array of messages upon updates.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1674,17 +1369,14 @@ Returns an unsubscribe function to end the snapshot.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="574"
-                                    class="link-to-prism">src/app/channel.service.ts:574</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="138"
+                                    class="link-to-prism">src/app/channel.service.ts:138</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getChannelById retrieves one channel document by ID from Firestore.
-Throws an error if the channel doesn&#39;t exist.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1695,7 +1387,6 @@ Throws an error if the channel doesn&#39;t exist.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1710,12 +1401,6 @@ Throws an error if the channel doesn&#39;t exist.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The Firestore doc ID of the channel.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1753,17 +1438,14 @@ Throws an error if the channel doesn&#39;t exist.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="700"
-                                    class="link-to-prism">src/app/channel.service.ts:700</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="388"
+                                    class="link-to-prism">src/app/channel.service.ts:388</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Returns a live observable of messages for the given channelId
-from the top-level &#39;messages&#39; collection, ordered by ascending timestamp.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1774,7 +1456,6 @@ from the top-level &#39;messages&#39; collection, ordered by ascending timestamp
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1789,10 +1470,6 @@ from the top-level &#39;messages&#39; collection, ordered by ascending timestamp
                                             </td>
 
 
-                                            <td>
-                                                    <p>The ID of the channel to observe.</p>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1828,21 +1505,81 @@ from the top-level &#39;messages&#39; collection, ordered by ascending timestamp
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="413"
-                                    class="link-to-prism">src/app/channel.service.ts:413</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="345"
+                                    class="link-to-prism">src/app/channel.service.ts:345</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getChannels returns the latest cached channel array from channelsSource synchronously.</p>
-</div>
 
                         <div class="io-description">
                             <b>Returns : </b>    <code>literal type[]</code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChannelsAndIndex"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>getChannelsAndIndex</b></span>
+                        <a href="#getChannelsAndIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChannelsAndIndex(channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/channel.service.ts:222</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>channelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1869,17 +1606,14 @@ from the top-level &#39;messages&#39; collection, ordered by ascending timestamp
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="590"
-                                    class="link-to-prism">src/app/channel.service.ts:590</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="294"
+                                    class="link-to-prism">src/app/channel.service.ts:294</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getChannelsByName runs a Firestore query to find channels whose names start with
-the given channelName, also ensuring that the current user is in the &#39;membersUid&#39;.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1890,7 +1624,6 @@ the given channelName, also ensuring that the current user is in the &#39;member
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1905,12 +1638,6 @@ the given channelName, also ensuring that the current user is in the &#39;member
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The partial or full string of the channel name to search.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1948,17 +1675,14 @@ the given channelName, also ensuring that the current user is in the &#39;member
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="497"
-                                    class="link-to-prism">src/app/channel.service.ts:497</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="314"
+                                    class="link-to-prism">src/app/channel.service.ts:314</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getLastUsedEmojis retrieves either the &#39;sent&#39; or &#39;received&#39; last-used emojis array
-from a given channel doc in Firestore.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1969,7 +1693,6 @@ from a given channel doc in Firestore.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1984,12 +1707,6 @@ from a given channel doc in Firestore.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The channel doc ID.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>type</td>
@@ -2002,12 +1719,6 @@ from a given channel doc in Firestore.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>&#39;sent&#39; or &#39;received&#39; to select which field to read.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2043,16 +1754,14 @@ from a given channel doc in Firestore.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="425"
-                                    class="link-to-prism">src/app/channel.service.ts:425</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="280"
+                                    class="link-to-prism">src/app/channel.service.ts:280</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getMembers returns the latest list of members from membersSource.</p>
-</div>
 
                         <div class="io-description">
                             <b>Returns : </b>    <code>any[]</code>
@@ -2082,17 +1791,14 @@ from a given channel doc in Firestore.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="434"
-                                    class="link-to-prism">src/app/channel.service.ts:434</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="284"
+                                    class="link-to-prism">src/app/channel.service.ts:284</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getMessages returns an observable that streams the messages for a given channel
-ordered by ascending timestamp.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2103,7 +1809,6 @@ ordered by ascending timestamp.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2118,12 +1823,6 @@ ordered by ascending timestamp.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The Firestore channel ID to load messages from.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2161,17 +1860,14 @@ ordered by ascending timestamp.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="626"
-                                    class="link-to-prism">src/app/channel.service.ts:626</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="298"
+                                    class="link-to-prism">src/app/channel.service.ts:298</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>getUsersByFirstLetter queries the &#39;users&#39; collection in Firestore for user documents
-whose names start with the provided letter, returning them as an array.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2182,7 +1878,6 @@ whose names start with the provided letter, returning them as an array.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2197,126 +1892,12 @@ whose names start with the provided letter, returning them as an array.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The character or string to filter by (e.g. &#39;A&#39;).</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="handleChannelLeaving"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                            <span class="modifier">Async</span>
-                        <span ><b>handleChannelLeaving</b></span>
-                        <a href="#handleChannelLeaving"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>handleChannelLeaving(channelData: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, channelDocRef: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="205"
-                                    class="link-to-prism">src/app/channel.service.ts:205</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Processes the logic of leaving a channel or deleting it if empty.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>channelData</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>channelDocRef</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>channelId</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>userId</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -2348,18 +1929,14 @@ whose names start with the provided letter, returning them as an array.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="188"
-                                    class="link-to-prism">src/app/channel.service.ts:188</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/channel.service.ts:99</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>leaveChannel allows the current user to remove themselves from a channel&#39;s membership list.
-If no members remain, the channel is deleted. This also updates Firestore fields &#39;members&#39;
-and &#39;membersUid&#39;.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2370,7 +1947,6 @@ and &#39;membersUid&#39;.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2385,12 +1961,6 @@ and &#39;membersUid&#39;.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The unique ID of the channel in Firestore.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>userId</td>
@@ -2403,12 +1973,6 @@ and &#39;membersUid&#39;.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The UID of the user leaving the channel.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2446,18 +2010,14 @@ and &#39;membersUid&#39;.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="557"
-                                    class="link-to-prism">src/app/channel.service.ts:557</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="333"
+                                    class="link-to-prism">src/app/channel.service.ts:333</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Sets up a realtime listener on the &#39;channels&#39; collection in Firestore.
-Whenever documents in this collection are created, updated, or deleted,
-the provided callback function is invoked with the updated list of channels.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2468,7 +2028,6 @@ the provided callback function is invoked with the updated list of channels.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2483,12 +2042,6 @@ the provided callback function is invoked with the updated list of channels.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>A function that receives the current channel array on each Firestore update.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2498,10 +2051,7 @@ the provided callback function is invoked with the updated list of channels.</p>
 
                         </div>
                             <div class="io-description">
-                                <ul>
-<li>A function that, when called, unsubscribes from the Firestore listener.</li>
-</ul>
-
+                                
                             </div>
                 </td>
             </tr>
@@ -2523,23 +2073,21 @@ the provided callback function is invoked with the updated list of channels.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>mergeAndSaveMembers(channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, newMembers: any[], channels: any[], channelIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                    <code>mergeAndSaveMembers(firestore: Firestore, channelsSource: BehaviorSubject<any[]>, channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, newMembers: any[])</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="267"
-                                    class="link-to-prism">src/app/channel.service.ts:267</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="164"
+                                    class="link-to-prism">src/app/channel.service.ts:164</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Merges old and new members, updates Firestore, and refreshes local state.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2553,6 +2101,30 @@ the provided callback function is invoked with the updated list of channels.</p>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                                <td>firestore</td>
+                                            <td>
+                                                        <code>Firestore</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>channelsSource</td>
+                                            <td>
+                                                        <code>BehaviorSubject&lt;any[]&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
                                         <tr>
                                                 <td>channelId</td>
                                             <td>
@@ -2569,30 +2141,6 @@ the provided callback function is invoked with the updated list of channels.</p>
                                                 <td>newMembers</td>
                                             <td>
                                                         <code>any[]</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>channels</td>
-                                            <td>
-                                                        <code>any[]</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>channelIndex</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
                                             </td>
 
                                             <td>
@@ -2638,16 +2186,14 @@ the provided callback function is invoked with the updated list of channels.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="374"
-                                    class="link-to-prism">src/app/channel.service.ts:374</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="238"
+                                    class="link-to-prism">src/app/channel.service.ts:238</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Persists the channel edits in Firestore using updateDoc.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2731,17 +2277,14 @@ the provided callback function is invoked with the updated list of channels.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="322"
-                                    class="link-to-prism">src/app/channel.service.ts:322</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/channel.service.ts:107</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>removeChannelLocally removes a channel from the local channelsSource by its ID,
-useful after a channel has been deleted or the user has left it.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2752,7 +2295,6 @@ useful after a channel has been deleted or the user has left it.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2767,12 +2309,6 @@ useful after a channel has been deleted or the user has left it.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The ID of the channel to remove.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2810,17 +2346,14 @@ useful after a channel has been deleted or the user has left it.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="472"
-                                    class="link-to-prism">src/app/channel.service.ts:472</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="302"
+                                    class="link-to-prism">src/app/channel.service.ts:302</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>saveLastUsedEmojis stores an array of last-used emojis in Firestore under either
-&#39;lastUsedEmojisSent&#39; or &#39;lastUsedEmojisReceived&#39; for the given channel.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2831,7 +2364,6 @@ useful after a channel has been deleted or the user has left it.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2846,12 +2378,6 @@ useful after a channel has been deleted or the user has left it.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The Firestore doc ID of the channel.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>lastUsedEmojis</td>
@@ -2864,12 +2390,6 @@ useful after a channel has been deleted or the user has left it.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>An array of emoji strings (short or native).</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>type</td>
@@ -2882,12 +2402,6 @@ useful after a channel has been deleted or the user has left it.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>Either &#39;sent&#39; or &#39;received&#39;, indicating which field to update.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2925,18 +2439,14 @@ useful after a channel has been deleted or the user has left it.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="252"
-                                    class="link-to-prism">src/app/channel.service.ts:252</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="154"
+                                    class="link-to-prism">src/app/channel.service.ts:154</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>setMembers merges new members with the existing membership in Firestore, updating
-both the &#39;members&#39; array of objects and the &#39;membersUid&#39; array of UIDs. The local
-channels list is also updated to reflect these changes.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -2947,7 +2457,6 @@ channels list is also updated to reflect these changes.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -2962,12 +2471,6 @@ channels list is also updated to reflect these changes.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The ID of the channel in Firestore.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>newMembers</td>
@@ -2980,12 +2483,6 @@ channels list is also updated to reflect these changes.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>An array of the new members to add to the channel.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -3023,17 +2520,14 @@ channels list is also updated to reflect these changes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="344"
-                                    class="link-to-prism">src/app/channel.service.ts:344</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/channel.service.ts:207</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>updateChannel modifies the name and description of a specific channel in Firestore,
-also updating local state in channelsSource.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -3044,7 +2538,6 @@ also updating local state in channelsSource.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -3059,12 +2552,6 @@ also updating local state in channelsSource.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The Firestore doc ID for the channel.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>newChannelName</td>
@@ -3077,12 +2564,6 @@ also updating local state in channelsSource.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The updated channel name.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>description</td>
@@ -3095,18 +2576,105 @@ also updating local state in channelsSource.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The updated channel description.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateCurrentChannel"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>updateCurrentChannel</b></span>
+                        <a href="#updateCurrentChannel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateCurrentChannel(channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, newName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, desc: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="247"
+                                    class="link-to-prism">src/app/channel.service.ts:247</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>channelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>newName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>desc</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                             <div class="io-description">
@@ -3138,16 +2706,14 @@ also updating local state in channelsSource.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="306"
-                                    class="link-to-prism">src/app/channel.service.ts:306</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/app/channel.service.ts:192</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>If the current channel is the same as channelId, refresh its members locally.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -3219,16 +2785,14 @@ also updating local state in channelsSource.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="333"
-                                    class="link-to-prism">src/app/channel.service.ts:333</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="203"
+                                    class="link-to-prism">src/app/channel.service.ts:203</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>updateLocalChannels overwrites the local channels array with a given array of channels.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -3239,7 +2803,6 @@ also updating local state in channelsSource.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -3254,12 +2817,6 @@ also updating local state in channelsSource.</p>
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The new array of channels to store in channelsSource.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -3281,7 +2838,7 @@ also updating local state in channelsSource.</p>
                 <td class="col-md-4">
                     <a name="updateMessage"></a>
                     <span class="name">
-                            <span class="modifier">Async</span>
+                            <span class="modifier">Public</span>
                         <span ><b>updateMessage</b></span>
                         <a href="#updateMessage"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -3290,24 +2847,21 @@ also updating local state in channelsSource.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>updateMessage(channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updatedContent: literal type)</code>
+                    <code>updateMessage(channelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updatedContent: literal type, markEdited: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="451"
-                                    class="link-to-prism">src/app/channel.service.ts:451</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="392"
+                                    class="link-to-prism">src/app/channel.service.ts:392</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>updateMessage allows editing the &#39;content&#39; of a message in Firestore for a specific channel.
-The message doc is found by messageId, and updated content is stored alongside an edited timestamp.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -3318,7 +2872,6 @@ The message doc is found by messageId, and updated content is stored alongside a
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -3333,12 +2886,6 @@ The message doc is found by messageId, and updated content is stored alongside a
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The channel&#39;s ID (used for logs/validation).</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>messageId</td>
@@ -3351,12 +2898,6 @@ The message doc is found by messageId, and updated content is stored alongside a
                                             </td>
 
 
-                                            <td>
-                                                    <ul>
-<li>The Firestore doc ID of the message to update.</li>
-</ul>
-
-                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>updatedContent</td>
@@ -3369,12 +2910,18 @@ The message doc is found by messageId, and updated content is stored alongside a
                                             </td>
 
 
+                                        </tr>
+                                        <tr>
+                                                <td>markEdited</td>
                                             <td>
-                                                    <ul>
-<li>The new text/image/emoji content to store.</li>
-</ul>
-
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
                                             </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -3422,16 +2969,10 @@ The message doc is found by messageId, and updated content is stored alongside a
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/channel.service.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/channel.service.ts:33</a></div>
                         </td>
                     </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>A BehaviorSubject to store the current channel object (if selected by the user).</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -3463,16 +3004,10 @@ The message doc is found by messageId, and updated content is stored alongside a
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/channel.service.ts:84</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/channel.service.ts:54</a></div>
                         </td>
                     </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>A BehaviorSubject tracking the list of all channels in Firestore, used as local cache/state.</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -3494,17 +3029,10 @@ The message doc is found by messageId, and updated content is stored alongside a
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/channel.service.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/channel.service.ts:41</a></div>
                         </td>
                     </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>currentChannel is an observable derived from channelSource, allowing components to subscribe
-to real-time changes in the currently selected channel.</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -3526,7 +3054,7 @@ to real-time changes in the currently selected channel.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/channel.service.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/channel.service.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -3551,7 +3079,7 @@ to real-time changes in the currently selected channel.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/channel.service.ts:79</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/channel.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -3577,16 +3105,10 @@ to real-time changes in the currently selected channel.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/channel.service.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/channel.service.ts:52</a></div>
                         </td>
                     </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>A BehaviorSubject to share membership data (an array of members) among interested components.</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -3608,17 +3130,10 @@ to real-time changes in the currently selected channel.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/channel.service.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/channel.service.ts:51</a></div>
                         </td>
                     </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>selectedChannel is an observable for the &quot;selected&quot; channel, which can be used to track
-channel data separately from currentChannel if the application logic demands.</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -3648,16 +3163,10 @@ channel data separately from currentChannel if the application logic demands.</p
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/channel.service.ts:60</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/channel.service.ts:42</a></div>
                         </td>
                     </tr>
 
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>A BehaviorSubject to store a separately &quot;selected&quot; channel (can differ from currentChannel).</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -3679,26 +3188,26 @@ import {
   query,
   where,
   collectionData,
-  getDoc,
-  deleteDoc,
   onSnapshot,
   orderBy,
-  serverTimestamp,
 } from &#x27;@angular/fire/firestore&#x27;;
 import { UserService } from &#x27;./user.service&#x27;;
+import {
+  getChannelById as getChannelByIdFn,
+  deleteChannel as deleteChannelFn,
+  getAllChannelsLive as getAllChannelsLiveFn,
+  setMembers as setMembersFn,
+  mergeAndSaveMembers as mergeAndSaveMembersFn,
+  ChannelMembershipService,
+  ChannelEmojiService,
+  ChannelQueriesService,
+  ChannelMsgService,
+} from &#x27;./channel-import&#x27;;
 
-/**
- * ChannelService handles the creation, retrieval, and updates of channels
- * within the Firestore database. It also tracks membership changes and
- * local channel state via BehaviorSubjects.
- */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class ChannelService {
-  /**
-   * A BehaviorSubject to store the current channel object (if selected by the user).
-   */
   private channelSource &#x3D; new BehaviorSubject&lt;{
     id: string;
     name: string;
@@ -3707,16 +3216,7 @@ export class ChannelService {
     createdBy?: string;
     membersUid?: string[];
   } | null&gt;(null);
-
-  /**
-   * currentChannel is an observable derived from channelSource, allowing components to subscribe
-   * to real-time changes in the currently selected channel.
-   */
   currentChannel &#x3D; this.channelSource.asObservable();
-
-  /**
-   * A BehaviorSubject to store a separately &quot;selected&quot; channel (can differ from currentChannel).
-   */
   private selectedChannelSource &#x3D; new BehaviorSubject&lt;{
     id: string;
     name: string;
@@ -3726,21 +3226,9 @@ export class ChannelService {
     membersUid?: string[];
   } | null&gt;(null);
 
-  /**
-   * selectedChannel is an observable for the &quot;selected&quot; channel, which can be used to track
-   * channel data separately from currentChannel if the application logic demands.
-   */
   selectedChannel &#x3D; this.selectedChannelSource.asObservable();
-
-  /**
-   * A BehaviorSubject to share membership data (an array of members) among interested components.
-   */
   private membersSource &#x3D; new BehaviorSubject&lt;any[]&gt;([]);
   currentMembers &#x3D; this.membersSource.asObservable();
-
-  /**
-   * A BehaviorSubject tracking the list of all channels in Firestore, used as local cache/state.
-   */
   private channelsSource &#x3D; new BehaviorSubject&lt;
     {
       id: string;
@@ -3753,65 +3241,54 @@ export class ChannelService {
   &gt;([]);
   currentChannels &#x3D; this.channelsSource.asObservable();
 
-  /**
-   * Constructs the ChannelService, injecting Firestore for DB access and UserService to fetch user info.
-   * @param firestore - The Firestore instance for DB operations.
-   * @param userService - The UserService providing user-related data and utilities.
-   */
-  constructor(private firestore: Firestore, private userService: UserService) {}
+  constructor(
+    private firestore: Firestore,
+    private userService: UserService,
+    private membershipService: ChannelMembershipService,
+    private emojiService: ChannelEmojiService,
+    private queriesService: ChannelQueriesService,
+    private msgService: ChannelMsgService
+  ) {
+    this.listenChannelsLive((channels) &#x3D;&gt; {
+      this.channelsSource.next(channels);
+    });
+  }
 
-  /**
-   * addChannel creates a new channel in Firestore, storing both &#x27;members&#x27; and &#x27;membersUid&#x27; (UID array).
-   * After creation, it calls loadChannels to refresh local state and sets the newly created channel as current.
-   *
-   * @param channel - The channel object containing name, members, and optional description/createdBy fields.
-   */
   async addChannel(channel: {
     name: string;
     members: any[];
     description?: string;
     createdBy?: string;
+    createdByUid?: string;
   }): Promise&lt;void&gt; {
     try {
-      // 1) Ensure the creator (current user) is included in the members list
-      await this.ensureCreatorInChannel(channel);
-
-      // 2) Create the channel document in Firestore
-      const docRef &#x3D; await this.createChannelDoc(channel);
-
-      // 3) Construct the local channel object, refresh channels, and set this new one as current
-      const newChannel &#x3D; this.buildNewChannelObj(channel, docRef.id);
-
-      this.changeChannel(newChannel);
-    } catch (error) {
-      // Handle or log the error as needed
-    }
-  }
-
-  /**
-   * ensureCreatorInChannel checks if the current user (creator) is already in the channel&#x27;s members list.
-   * If not, it loads the user&#x27;s data from Firestore and pushes that user object into channel.members.
-   *
-   * @private
-   * @param channel - The partial channel object that might or might not contain the current user.
-   */
-  private async ensureCreatorInChannel(channel: {
-    name: string;
-    members: any[];
-    description?: string;
-    createdBy?: string;
-  }): Promise&lt;void&gt; {
-    const currentUid &#x3D; this.userService.getCurrentUserId();
-    if (!currentUid) return;
-
-    const alreadyHasCreator &#x3D; channel.members.some((m) &#x3D;&gt; m.uid &#x3D;&#x3D;&#x3D; currentUid);
-    if (!alreadyHasCreator) {
+      const currentUid &#x3D; this.userService.getCurrentUserId();
+      if (!currentUid) return;
       const userData &#x3D; await this.userService.getUserById(currentUid);
-      channel.members.push({ uid: currentUid, ...userData });
-    }
+      channel.createdByUid &#x3D; currentUid;
+      channel.createdBy &#x3D; userData?.name;
+      await this.membershipService.ensureCreatorInChannel(channel);
+      const docRef &#x3D; await this.createChannelDoc(channel);
+      const newChannel &#x3D; this.buildNewChannelObj(channel, docRef.id);
+      this.changeChannel(newChannel);
+    } catch (error) {}
   }
 
-  /** Creates the channel document in Firestore and returns the DocumentReference. */
+  async leaveChannel(channelId: string, userId: string): Promise&lt;void&gt; {
+    return this.membershipService.leaveChannel(
+      channelId,
+      userId,
+      this.removeChannelLocally.bind(this)
+    );
+  }
+
+  removeChannelLocally(channelId: string): void {
+    const updatedChannels &#x3D; this.channelsSource
+      .getValue()
+      .filter((channel) &#x3D;&gt; channel.id !&#x3D;&#x3D; channelId);
+    this.channelsSource.next(updatedChannels);
+  }
+
   private async createChannelDoc(channel: {
     name: string;
     members: any[];
@@ -3823,7 +3300,6 @@ export class ChannelService {
     return await addDoc(channelsColl, { ...channel, membersUid });
   }
 
-  /** Builds a local channel object with an &#x27;id&#x27; property included. */
   private buildNewChannelObj(
     channel: {
       name: string;
@@ -3837,119 +3313,48 @@ export class ChannelService {
     return { id, ...channel, membersUid };
   }
 
-  /**
-   * leaveChannel allows the current user to remove themselves from a channel&#x27;s membership list.
-   * If no members remain, the channel is deleted. This also updates Firestore fields &#x27;members&#x27;
-   * and &#x27;membersUid&#x27;.
-   *
-   * @param channelId - The unique ID of the channel in Firestore.
-   * @param userId - The UID of the user leaving the channel.
-   */
-  async leaveChannel(channelId: string, userId: string): Promise&lt;void&gt; {
-    try {
-      const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
-      const docSnap &#x3D; await getDoc(channelDocRef);
-      if (!docSnap.exists()) return;
-      await this.handleChannelLeaving(
-        docSnap.data(),
-        channelDocRef,
-        channelId,
-        userId
-      );
-    } catch (error) {
-      throw error;
-    }
+  async getChannelById(channelId: string): Promise&lt;any&gt; {
+    return getChannelByIdFn(this.firestore, channelId);
   }
 
-  /** Processes the logic of leaving a channel or deleting it if empty. */
-  private async handleChannelLeaving(
-    channelData: any,
-    channelDocRef: any,
-    channelId: string,
-    userId: string
-  ): Promise&lt;void&gt; {
-    const { updatedMembers, updatedMembersUid } &#x3D; this.filterOutLeavingUser(
-      channelData,
-      userId
+  async deleteChannel(channelId: string): Promise&lt;void&gt; {
+    return deleteChannelFn(
+      this.firestore,
+      channelId,
+      this.removeChannelLocally.bind(this)
     );
-    if (updatedMembers.length &gt; 0) {
-      await updateDoc(channelDocRef, {
-        members: updatedMembers,
-        membersUid: updatedMembersUid,
-      });
-    } else {
-      await deleteDoc(channelDocRef);
-    }
-    this.removeChannelLocally(channelId);
   }
 
-  /** Filters the leaving user out of the existing members and membersUid arrays. */
-  private filterOutLeavingUser(
-    channelData: any,
-    userId: string
-  ): {
-    updatedMembers: any[];
-    updatedMembersUid: string[];
-  } {
-    const members &#x3D; channelData[&#x27;members&#x27;] || [];
-    const membersUid &#x3D; channelData[&#x27;membersUid&#x27;] || [];
-    const updatedMembers &#x3D; members.filter(
-      (member: any) &#x3D;&gt; member.uid !&#x3D;&#x3D; userId
-    );
-    const updatedMembersUid &#x3D; membersUid.filter(
-      (uid: string) &#x3D;&gt; uid !&#x3D;&#x3D; userId
-    );
-    return { updatedMembers, updatedMembersUid };
+  getAllChannelsLive(callback: (channels: any[]) &#x3D;&gt; void): () &#x3D;&gt; void {
+    return getAllChannelsLiveFn(this.firestore, callback);
   }
 
-  /**
-   * setMembers merges new members with the existing membership in Firestore, updating
-   * both the &#x27;members&#x27; array of objects and the &#x27;membersUid&#x27; array of UIDs. The local
-   * channels list is also updated to reflect these changes.
-   * @param channelId - The ID of the channel in Firestore.
-   * @param newMembers - An array of the new members to add to the channel.
-   */
   async setMembers(channelId: string, newMembers: any[]): Promise&lt;void&gt; {
-    try {
-      const channels &#x3D; this.channelsSource.getValue();
-      const channelIndex &#x3D; channels.findIndex((c) &#x3D;&gt; c.id &#x3D;&#x3D;&#x3D; channelId);
-      if (channelIndex &lt; 0) return;
-      await this.mergeAndSaveMembers(
-        channelId,
-        newMembers,
-        channels,
-        channelIndex
-      );
-    } catch (error) {}
+    return setMembersFn(
+      this.firestore,
+      this.channelsSource,
+      channelId,
+      newMembers,
+      this.mergeAndSaveMembers.bind(this)
+    );
   }
 
-  /** Merges old and new members, updates Firestore, and refreshes local state. */
   private async mergeAndSaveMembers(
+    firestore: Firestore,
+    channelsSource: BehaviorSubject&lt;any[]&gt;,
     channelId: string,
-    newMembers: any[],
-    channels: any[],
-    channelIndex: number
+    newMembers: any[]
   ): Promise&lt;void&gt; {
-    const channel &#x3D; channels[channelIndex];
-    const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channel.id);
-    const channelDoc &#x3D; await getDoc(channelDocRef);
-    const oldMembers &#x3D; channelDoc.exists()
-      ? channelDoc.data()?.[&#x27;members&#x27;] || []
-      : [];
-    const updatedMembers &#x3D; this.combineOldAndNew(oldMembers, newMembers);
-    const membersUid &#x3D; updatedMembers.map((m: any) &#x3D;&gt; m.uid);
-
-    await updateDoc(channelDocRef, { members: updatedMembers, membersUid });
-    channels[channelIndex] &#x3D; {
-      ...channel,
-      members: updatedMembers,
-      membersUid,
-    };
-    this.channelsSource.next([...channels]);
-    this.updateCurrentChannelIfNeeded(channelId, updatedMembers);
+    return mergeAndSaveMembersFn(
+      firestore,
+      channelsSource,
+      channelId,
+      newMembers,
+      this.combineOldAndNew.bind(this),
+      this.updateCurrentChannelIfNeeded.bind(this)
+    );
   }
 
-  /** Combines old and new members without duplicates, based on the &#x27;uid&#x27; field. */
   private combineOldAndNew(oldMembers: any[], newMembers: any[]): any[] {
     return [
       ...oldMembers,
@@ -3962,7 +3367,6 @@ export class ChannelService {
     ];
   }
 
-  /** If the current channel is the same as channelId, refresh its members locally. */
   private updateCurrentChannelIfNeeded(
     channelId: string,
     updatedMembers: any[]
@@ -3974,52 +3378,31 @@ export class ChannelService {
     }
   }
 
-  /**
-   * removeChannelLocally removes a channel from the local channelsSource by its ID,
-   * useful after a channel has been deleted or the user has left it.
-   * @param channelId - The ID of the channel to remove.
-   */
-  removeChannelLocally(channelId: string): void {
-    const updatedChannels &#x3D; this.channelsSource
-      .getValue()
-      .filter((channel) &#x3D;&gt; channel.id !&#x3D;&#x3D; channelId);
-    this.channelsSource.next(updatedChannels);
-  }
-
-  /**
-   * updateLocalChannels overwrites the local channels array with a given array of channels.
-   * @param updatedChannels - The new array of channels to store in channelsSource.
-   */
   updateLocalChannels(updatedChannels: any[]): void {
     this.channelsSource.next(updatedChannels);
   }
 
-  /**
-   * updateChannel modifies the name and description of a specific channel in Firestore,
-   * also updating local state in channelsSource.
-   * @param channelId - The Firestore doc ID for the channel.
-   * @param newChannelName - The updated channel name.
-   * @param description - The updated channel description.
-   */
   async updateChannel(
     channelId: string,
     newChannelName: string,
     description: string
   ): Promise&lt;void&gt; {
     try {
-      const channels &#x3D; this.channelsSource.getValue();
-      const index &#x3D; channels.findIndex((ch) &#x3D;&gt; ch.id &#x3D;&#x3D;&#x3D; channelId);
+      const [channels, index] &#x3D; this.getChannelsAndIndex(channelId);
       if (index &#x3D;&#x3D;&#x3D; -1) return;
-
       this.applyChannelEdits(channels, index, newChannelName, description);
       await this.persistChannelEdits(channelId, newChannelName, description);
       this.channelsSource.next([...channels]);
-    } catch (error) {
-      throw error;
-    }
+      this.updateCurrentChannel(channelId, newChannelName, description);
+    } catch (error) {}
   }
 
-  /** Updates the in-memory channel object with the new name and description. */
+  private getChannelsAndIndex(channelId: string): [any[], number] {
+    const channels &#x3D; this.channelsSource.getValue();
+    const index &#x3D; channels.findIndex((ch) &#x3D;&gt; ch.id &#x3D;&#x3D;&#x3D; channelId);
+    return [channels, index];
+  }
+
   private applyChannelEdits(
     channels: any[],
     index: number,
@@ -4030,19 +3413,28 @@ export class ChannelService {
     channels[index].description &#x3D; desc;
   }
 
-  /** Persists the channel edits in Firestore using updateDoc. */
   private async persistChannelEdits(
     channelId: string,
     newName: string,
     desc: string
   ): Promise&lt;void&gt; {
-    const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
-    await updateDoc(channelDocRef, { name: newName, description: desc });
+    const ref &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
+    await updateDoc(ref, { name: newName, description: desc });
   }
 
-  /**
-   * changeSelectedChannel updates a separate BehaviorSubject for a &quot;selected channel.&quot;
-   */
+  private updateCurrentChannel(
+    channelId: string,
+    newName: string,
+    desc: string
+  ): void {
+    const current &#x3D; this.channelSource.getValue();
+    if (current?.id &#x3D;&#x3D;&#x3D; channelId) {
+      current.name &#x3D; newName;
+      current.description &#x3D; desc;
+      this.channelSource.next({ ...current });
+    }
+  }
+
   changeSelectedChannel(channel: {
     id: string;
     name: string;
@@ -4053,10 +3445,6 @@ export class ChannelService {
     this.selectedChannelSource.next(channel);
   }
 
-  /**
-   * changeChannel updates the channelSource, effectively indicating the user is working
-   * with this channel as the &quot;current&quot; channel.
-   */
   changeChannel(channel: {
     id: string;
     name: string;
@@ -4067,30 +3455,10 @@ export class ChannelService {
     this.channelSource.next(channel);
   }
 
-  /**
-   * getChannels returns the latest cached channel array from channelsSource synchronously.
-   */
-  getChannels(): {
-    name: string;
-    members: any[];
-    description?: string;
-    createdBy?: string;
-  }[] {
-    return this.channelsSource.getValue();
-  }
-
-  /**
-   * getMembers returns the latest list of members from membersSource.
-   */
   getMembers(): any[] {
     return this.membersSource.getValue();
   }
 
-  /**
-   * getMessages returns an observable that streams the messages for a given channel
-   * ordered by ascending timestamp.
-   * @param channelId - The Firestore channel ID to load messages from.
-   */
   getMessages(channelId: string): Observable&lt;any[]&gt; {
     const messagesCollection &#x3D; collection(this.firestore, &#x27;messages&#x27;);
     const q &#x3D; query(
@@ -4101,98 +3469,33 @@ export class ChannelService {
     return collectionData(q, { idField: &#x27;id&#x27; }) as Observable&lt;any[]&gt;;
   }
 
-  /**
-   * updateMessage allows editing the &#x27;content&#x27; of a message in Firestore for a specific channel.
-   * The message doc is found by messageId, and updated content is stored alongside an edited timestamp.
-   * @param channelId - The channel&#x27;s ID (used for logs/validation).
-   * @param messageId - The Firestore doc ID of the message to update.
-   * @param updatedContent - The new text/image/emoji content to store.
-   */
-  async updateMessage(
-    channelId: string,
-    messageId: string,
-    updatedContent: { text?: string; image?: string | null; emojis?: any[] }
-  ): Promise&lt;void&gt; {
-    try {
-      const messageDocRef &#x3D; doc(this.firestore, &#x27;messages&#x27;, messageId);
-      await updateDoc(messageDocRef, {
-        content: updatedContent,
-        editedAt: serverTimestamp(),
-      });
-    } catch (error) {}
+  async getChannelsByName(channelName: string): Promise&lt;any[]&gt; {
+    return this.queriesService.getChannelsByName(channelName);
   }
 
-  /**
-   * saveLastUsedEmojis stores an array of last-used emojis in Firestore under either
-   * &#x27;lastUsedEmojisSent&#x27; or &#x27;lastUsedEmojisReceived&#x27; for the given channel.
-   * @param channelId - The Firestore doc ID of the channel.
-   * @param lastUsedEmojis - An array of emoji strings (short or native).
-   * @param type - Either &#x27;sent&#x27; or &#x27;received&#x27;, indicating which field to update.
-   */
+  async getUsersByFirstLetter(firstLetter: string): Promise&lt;any[]&gt; {
+    return this.queriesService.getUsersByFirstLetter(firstLetter);
+  }
+
   async saveLastUsedEmojis(
     channelId: string,
     lastUsedEmojis: string[],
     type: &#x27;sent&#x27; | &#x27;received&#x27;
   ): Promise&lt;void&gt; {
-    if (!channelId) return;
-
-    const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
-    try {
-      if (type &#x3D;&#x3D;&#x3D; &#x27;sent&#x27;) {
-        await updateDoc(channelDocRef, { lastUsedEmojisSent: lastUsedEmojis });
-      } else {
-        await updateDoc(channelDocRef, {
-          lastUsedEmojisReceived: lastUsedEmojis,
-        });
-      }
-    } catch (error) {}
+    return this.emojiService.saveLastUsedEmojis(
+      channelId,
+      lastUsedEmojis,
+      type
+    );
   }
 
-  /**
-   * getLastUsedEmojis retrieves either the &#x27;sent&#x27; or &#x27;received&#x27; last-used emojis array
-   * from a given channel doc in Firestore.
-   * @param channelId - The channel doc ID.
-   * @param type - &#x27;sent&#x27; or &#x27;received&#x27; to select which field to read.
-   */
   async getLastUsedEmojis(
     channelId: string,
     type: &#x27;sent&#x27; | &#x27;received&#x27;
   ): Promise&lt;string[] | undefined&gt; {
-    if (!channelId) return;
-
-    const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
-    const channelDoc &#x3D; await getDoc(channelDocRef);
-
-    if (channelDoc.exists()) {
-      const data &#x3D; channelDoc.data();
-      return type &#x3D;&#x3D;&#x3D; &#x27;sent&#x27;
-        ? data[&#x27;lastUsedEmojisSent&#x27;] || []
-        : data[&#x27;lastUsedEmojisReceived&#x27;] || [];
-    } else {
-      return [];
-    }
+    return this.emojiService.getLastUsedEmojis(channelId, type);
   }
 
-  /**
-   * deleteChannel removes a channel document from Firestore and updates local state,
-   * typically used when a channel is no longer needed or an admin removes it.
-   * @param channelId - The channel doc ID to delete.
-   */
-  async deleteChannel(channelId: string): Promise&lt;void&gt; {
-    try {
-      const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
-      await deleteDoc(channelDocRef);
-      // Remove it from local BehaviorSubject
-      this.removeChannelLocally(channelId);
-    } catch (error) {}
-  }
-
-  /**
-   * getAllChannels sets up a live snapshot listener on the channels collection,
-   * firing a callback whenever there&#x27;s a change in Firestore&#x27;s channels data.
-   * Returns an unsubscribe function to end the snapshot subscription.
-   * @param callback - The function to call with the updated array of channels.
-   */
   getAllChannels(callback: (channels: any[]) &#x3D;&gt; void): () &#x3D;&gt; void {
     const channelsCollection &#x3D; collection(this.firestore, &#x27;channels&#x27;);
     const unsubscribe &#x3D; onSnapshot(channelsCollection, (snapshot) &#x3D;&gt; {
@@ -4204,15 +3507,6 @@ export class ChannelService {
     });
     return unsubscribe;
   }
-
-  /**
-   * Sets up a realtime listener on the &#x27;channels&#x27; collection in Firestore.
-   * Whenever documents in this collection are created, updated, or deleted,
-   * the provided callback function is invoked with the updated list of channels.
-   *
-   * @param {(channels: any[]) &#x3D;&gt; void} callback - A function that receives the current channel array on each Firestore update.
-   * @returns {() &#x3D;&gt; void} - A function that, when called, unsubscribes from the Firestore listener.
-   */
 
   public listenChannelsLive(callback: (channels: any[]) &#x3D;&gt; void): () &#x3D;&gt; void {
     const channelsColl &#x3D; collection(this.firestore, &#x27;channels&#x27;);
@@ -4226,89 +3520,15 @@ export class ChannelService {
     return unsubscribe;
   }
 
-  /**
-   * getChannelById retrieves one channel document by ID from Firestore.
-   * Throws an error if the channel doesn&#x27;t exist.
-   * @param channelId - The Firestore doc ID of the channel.
-   */
-  async getChannelById(channelId: string): Promise&lt;any&gt; {
-    const channelDocRef &#x3D; doc(this.firestore, &#x27;channels&#x27;, channelId);
-    const channelDoc &#x3D; await getDoc(channelDocRef);
-
-    if (channelDoc.exists()) {
-      return { id: channelDoc.id, ...channelDoc.data() };
-    } else {
-      throw new Error(&#x27;Channel not found&#x27;);
-    }
+  getChannels(): {
+    name: string;
+    members: any[];
+    description?: string;
+    createdBy?: string;
+  }[] {
+    return this.channelsSource.getValue();
   }
 
-  /**
-   * getChannelsByName runs a Firestore query to find channels whose names start with
-   * the given channelName, also ensuring that the current user is in the &#x27;membersUid&#x27;.
-   * @param channelName - The partial or full string of the channel name to search.
-   */
-  async getChannelsByName(channelName: string): Promise&lt;any[]&gt; {
-    const currentUserId &#x3D; this.userService.getCurrentUserId();
-    if (!currentUserId) return [];
-    const q &#x3D; this.buildChannelsByNameQuery(channelName, currentUserId);
-    return await this.executeChannelsByNameQuery(q);
-  }
-
-  /** Builds the Firestore query for channels matching the given channelName and containing the current user. */
-  private buildChannelsByNameQuery(channelName: string, userId: string) {
-    const coll &#x3D; collection(this.firestore, &#x27;channels&#x27;);
-    return query(
-      coll,
-      where(&#x27;name&#x27;, &#x27;&gt;&#x3D;&#x27;, channelName),
-      where(&#x27;name&#x27;, &#x27;&lt;&#x3D;&#x27;, channelName + &#x27;\uf8ff&#x27;),
-      where(&#x27;membersUid&#x27;, &#x27;array-contains&#x27;, userId)
-    );
-  }
-
-  /** Executes the query and maps the results to an array of channel objects. */
-  private async executeChannelsByNameQuery(q: any): Promise&lt;any[]&gt; {
-    try {
-      const snapshot &#x3D; await getDocs(q);
-      return snapshot.docs.map((docSnap: any) &#x3D;&gt; ({
-        id: docSnap.id,
-        ...docSnap.data(),
-      }));
-    } catch (error) {
-      return [];
-    }
-  }
-
-  /**
-   * getUsersByFirstLetter queries the &#x27;users&#x27; collection in Firestore for user documents
-   * whose names start with the provided letter, returning them as an array.
-   * @param firstLetter - The character or string to filter by (e.g. &#x27;A&#x27;).
-   */
-  async getUsersByFirstLetter(firstLetter: string): Promise&lt;any[]&gt; {
-    const usersCollection &#x3D; collection(this.firestore, &#x27;users&#x27;);
-    const q &#x3D; query(
-      usersCollection,
-      where(&#x27;name&#x27;, &#x27;&gt;&#x3D;&#x27;, firstLetter),
-      where(&#x27;name&#x27;, &#x27;&lt;&#x3D;&#x27;, firstLetter + &#x27;\uf8ff&#x27;)
-    );
-
-    try {
-      const querySnapshot &#x3D; await getDocs(q);
-      const users &#x3D; querySnapshot.docs.map((doc) &#x3D;&gt; ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      return users;
-    } catch (error) {
-      return [];
-    }
-  }
-
-  /**
-   * getAllMessagesLive sets up a snapshot listener on the &#x27;messages&#x27; collection,
-   * ordered by ascending timestamp, calling the provided callback with updated messages.
-   * Returns an unsubscribe function to end the snapshot.
-   * @param callback - The function that receives the new array of messages upon updates.
-   */
   getAllMessagesLive(callback: (messages: any[]) &#x3D;&gt; void): () &#x3D;&gt; void {
     const messagesCollection &#x3D; collection(this.firestore, &#x27;messages&#x27;);
     const q &#x3D; query(messagesCollection, orderBy(&#x27;timestamp&#x27;, &#x27;asc&#x27;));
@@ -4323,10 +3543,6 @@ export class ChannelService {
     return unsubscribe;
   }
 
-  /**
-   * Retrieves all channels from Firestore in which the current user is a member,
-   * returning an array of channel objects once (no realtime updates).
-   */
   async getAllChannelsOnce(): Promise&lt;any[]&gt; {
     const currentUserId &#x3D; this.userService.getCurrentUserId();
     if (!currentUserId) return [];
@@ -4340,11 +3556,6 @@ export class ChannelService {
     return snap.docs.map((doc) &#x3D;&gt; ({ id: doc.id, ...doc.data() }));
   }
 
-  /**
-   * Checks if a channel with the specified name already exists in Firestore.
-   * Returns true if at least one document has this name.
-   * @param name The channel name to check.
-   */
   async channelNameExists(name: string): Promise&lt;boolean&gt; {
     const channelsColl &#x3D; collection(this.firestore, &#x27;channels&#x27;);
     const qChannelName &#x3D; query(channelsColl, where(&#x27;name&#x27;, &#x27;&#x3D;&#x3D;&#x27;, name));
@@ -4352,19 +3563,22 @@ export class ChannelService {
     return !snap.empty;
   }
 
-  /**
-   * Returns a live observable of messages for the given channelId
-   * from the top-level &#x27;messages&#x27; collection, ordered by ascending timestamp.
-   * @param channelId The ID of the channel to observe.
-   */
   public getChannelMessagesLive(channelId: string): Observable&lt;any[]&gt; {
-    const messagesRef &#x3D; collection(this.firestore, &#x27;messages&#x27;);
-    const q &#x3D; query(
-      messagesRef,
-      where(&#x27;channelId&#x27;, &#x27;&#x3D;&#x3D;&#x27;, channelId),
-      orderBy(&#x27;timestamp&#x27;, &#x27;asc&#x27;)
+    return this.msgService.getChannelMessagesLive(channelId);
+  }
+
+  public updateMessage(
+    channelId: string,
+    messageId: string,
+    updatedContent: { text?: string; image?: string | null; emojis?: any[] },
+    markEdited: boolean
+  ): Promise&lt;void&gt; {
+    return this.msgService.updateMessage(
+      channelId,
+      messageId,
+      updatedContent,
+      markEdited
     );
-    return collectionData(q, { idField: &#x27;id&#x27; }) as Observable&lt;any[]&gt;;
   }
 }
 </code></pre>

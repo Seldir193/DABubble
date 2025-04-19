@@ -24,18 +24,15 @@ export interface Message {
   lastReplyTime?: any;
   recipientName?: string;
   showDateSeparator?: boolean; 
+  edited?: boolean;
 }
-
 export interface MessageContent {
   text?: string;
   image?: string | ArrayBuffer | null;
   emojis?: Array<{ emoji: string; count: number }>;
+  edited?: boolean;
 }
 
-/**
- * FirestoreMessageData defines the structure of a message document in Firestore.
- * Add more properties as needed to reflect your Firestore schema.
- */
 export interface FirestoreMessageData {
   content?: {
     emojis?: Array<{
@@ -43,29 +40,7 @@ export interface FirestoreMessageData {
       count: number;
     }>;
   };
-  // additional fields go here, e.g. senderId, timestamp, etc.
 }
-
-
-// message.models.ts
-export interface BroadcastMessageData {
-  broadcastChannels: string[]; 
-  senderId: string;
-  date?: string;
-  time?: string;
-  timestamp?: any;
-  senderName?: string;
-  senderAvatar?: string;
-  content: {
-    text: string;
-    image?: string;
-    emojis?: any[];
-  };
-  messageFormat: string; 
-}
-
-// message.models.ts
-
 export interface ChannelMessageData {
   channelId?: string;
   date?: string;
@@ -73,9 +48,7 @@ export interface ChannelMessageData {
   timestamp?: any;
   senderId: string;
   senderName?: string;
- 
-
- senderAvatar?: string ;
+  senderAvatar?: string ;
   content: {
     text: string;
     image?: string;
@@ -83,3 +56,17 @@ export interface ChannelMessageData {
   };
   messageFormat: string; 
 }
+
+
+
+export type ReplyCountsMap = Record<
+  string,
+  { count: number; lastResponseTime: Date | null }
+>;
+
+
+
+
+
+
+

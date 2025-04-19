@@ -7,165 +7,174 @@
     </div>
   </div>
 
-  <div
-    class="channel-box"
-    [ngClass]="{ 'hide-border': isEditingName, 'show-border': !isEditingName }"
-  >
-    <div class="edit-box">
-      <div class="box-container">
-        <div class="header-button-box">
-          <label for="channelName" [ngClass]="{ 'move-left': isEditingName }"
-            >Channel-Name</label
-          >
-          <div
-            (click)="toggleEditingName()"
-            class="profil-settings-button"
-            *ngIf="isDesktop"
-            [ngClass]="{
-              'move-right': isEditingName,
-              'move-initial': !isEditingName
-            }"
-          >
-            {{ isEditingName ? "Speichern" : "Bearbeiten" }}
+  <div class="channel-container">
+    <div
+      class="channel-box"
+      [ngClass]="{
+        'hide-border': isEditingName,
+        'show-border': !isEditingName
+      }"
+    >
+      <div class="edit-box">
+        <div class="box-container">
+          <div class="header-button-box">
+            <label for="channelName" [ngClass]="{ 'move-left': isEditingName }"
+              >Channel-Name</label
+            >
+            <div
+              (click)="toggleEditingName()"
+              class="profil-settings-button"
+              *ngIf="isDesktop"
+              [ngClass]="{
+                'move-right': isEditingName,
+                'move-initial': !isEditingName
+              }"
+            >
+              {{ isEditingName ? "Speichern" : "Bearbeiten" }}
+            </div>
+
+            <div class="img-wrapper">
+              <img
+                [src]="
+                  isEditingName
+                    ? 'assets/img/check_edit.png'
+                    : 'assets/img/edit.png'
+                "
+                (click)="toggleEditingName()"
+                *ngIf="!isDesktop"
+              />
+            </div>
           </div>
 
-          <div class="img-wrapper">
-            <img
-              [src]="
-                isEditingName
-                  ? 'assets/img/check_edit.png'
-                  : 'assets/img/edit.png'
-              "
-              (click)="toggleEditingName()"
-              *ngIf="!isDesktop"
+          <div class="channel-name-box">
+            <span class="input-icon">#</span>
+            <h1 *ngIf="!isEditingName">{{ channelName }}</h1>
+            <input
+              *ngIf="isEditingName"
+              id="channelName"
+              [placeholder]="channelName || 'Channel Name bearbeiten'"
+              [(ngModel)]="editedChannelName"
+              class="visible"
+              (input)="onChannelNameInput()"
             />
           </div>
         </div>
+        <div *ngIf="channelNameError" class="error-message">
+          {{ channelNameError }}
+        </div>
+      </div>
+    </div>
 
-        <div class="channel-name-box">
-          <span class="input-icon">#</span>
-          <h1 *ngIf="!isEditingName">{{ channelName }}</h1>
-          <input
-            *ngIf="isEditingName"
-            id="channelName"
-            [placeholder]="channelName || 'Channel Name bearbeiten'"
-            [(ngModel)]="editedChannelName"
-            class="visible"
-            (input)="onChannelNameInput()"
+    <div
+      class="channel-box"
+      [ngClass]="{
+        'hide-border': isEditingDescription,
+        'show-border': !isEditingDescription
+      }"
+    >
+      <div class="edit-box">
+        <div class="box-container">
+          <div class="header-button-box">
+            <label
+              for="description"
+              [ngClass]="{ 'move-left': isEditingDescription }"
+              >Beschreibung</label
+            >
+            <div
+              (click)="toggleEditingDescription()"
+              class="profil-settings-button"
+              *ngIf="isDesktop"
+              [ngClass]="{
+                'move-right': isEditingDescription,
+                'move-initial': !isEditingDescription
+              }"
+            >
+              {{ isEditingDescription ? "Speichern" : "Bearbeiten" }}
+            </div>
+
+            <div class="img-wrapper">
+              <img
+                [src]="
+                  isEditingDescription
+                    ? 'assets/img/check_edit.png'
+                    : 'assets/img/edit.png'
+                "
+                (click)="toggleEditingDescription()"
+                *ngIf="!isDesktop"
+              />
+            </div>
+          </div>
+
+          <div class="channel-name-box">
+            <h1 *ngIf="!isEditingDescription">{{ description }}</h1>
+
+            <textarea
+              *ngIf="isEditingDescription"
+              id="channel-description"
+              [(ngModel)]="editedDescription"
+              placeholder="Dein Text hier"
+              class="visible"
+            ></textarea>
+          </div>
+          <div class="seperator"></div>
+        </div>
+      </div>
+      <div class="info-box">
+        <p>Erstellt von</p>
+        <strong>{{ createdBy }}</strong>
+      </div>
+    </div>
+
+    <div class="desktop-off">
+      <div mat-dialog-content>
+        <div class="box">
+          <h1>Mitglieder</h1>
+          <img
+            (click)="onCancel()"
+            src="assets/img/close.png"
+            alt="Schließen"
           />
         </div>
-      </div>
-      <div *ngIf="channelNameError" class="error-message">
-        {{ channelNameError }}
-      </div>
-    </div>
-  </div>
 
-  <div
-    class="channel-box"
-    [ngClass]="{
-      'hide-border': isEditingDescription,
-      'show-border': !isEditingDescription
-    }"
-  >
-    <div class="edit-box">
-      <div class="box-container">
-        <div class="header-button-box">
-          <label
-            for="description"
-            [ngClass]="{ 'move-left': isEditingDescription }"
-            >Beschreibung</label
-          >
-          <div
-            (click)="toggleEditingDescription()"
-            class="profil-settings-button"
-            *ngIf="isDesktop"
-            [ngClass]="{
-              'move-right': isEditingDescription,
-              'move-initial': !isEditingDescription
-            }"
-          >
-            {{ isEditingDescription ? "Speichern" : "Bearbeiten" }}
+        <ul>
+          <li *ngFor="let member of members; let i = index">
+            <div class="avatar-container">
+              <img
+                [src]="member.avatarUrl || 'assets/img/avatar.png'"
+                alt="{{ member.name }}"
+                class="avatar"
+              />
+
+              <img
+                *ngIf="member.isOnline"
+                src="assets/img/online.png"
+                class="status-icon"
+                alt="Online"
+              />
+              <img
+                *ngIf="!member.isOnline"
+                src="assets/img/offline.png"
+                class="status-icon"
+                alt="Offline"
+              />
+            </div>
+            <span class="text-truncate">{{ member.name }}</span>
+          </li>
+
+          <div class="member-box" (click)="openAddMembersMobile()">
+            <div class="img-container">
+              <img src="assets/img/member.png" alt="Member" />
+            </div>
+            <h2>Mitglieder Hinzufügen</h2>
           </div>
-
-          <div class="img-wrapper">
-            <img
-              [src]="
-                isEditingDescription
-                  ? 'assets/img/check_edit.png'
-                  : 'assets/img/edit.png'
-              "
-              (click)="toggleEditingDescription()"
-              *ngIf="!isDesktop"
-            />
-          </div>
-        </div>
-
-        <div class="channel-name-box">
-          <h1 *ngIf="!isEditingDescription">{{ description }}</h1>
-
-          <textarea
-            *ngIf="isEditingDescription"
-            id="channel-description"
-            [(ngModel)]="editedDescription"
-            placeholder="Dein Text hier"
-            class="visible"
-          ></textarea>
-        </div>
-        <div class="seperator"></div>
+        </ul>
       </div>
     </div>
-    <div class="info-box">
-      <p>Erstellt von</p>
-      <strong>{{ createdBy }}</strong>
+
+    <div class="mat-dialog-actions">
+      <button class="primary-button" (click)="onLeaveChannel()">
+        Channel verlassen
+      </button>
     </div>
-  </div>
-
-  <div class="desktop-off">
-    <div mat-dialog-content>
-      <div class="box">
-        <h1>Mitglieder</h1>
-        <img (click)="onCancel()" src="assets/img/close.png" alt="Schließen" />
-      </div>
-
-      <ul>
-        <li *ngFor="let member of members; let i = index">
-          <div class="avatar-container">
-            <img
-              [src]="member.avatarUrl || 'assets/img/avatar.png'"
-              alt="{{ member.name }}"
-              class="avatar"
-            />
-
-            <img
-              *ngIf="member.isOnline"
-              src="assets/img/online.png"
-              class="status-icon"
-              alt="Online"
-            />
-            <img
-              *ngIf="!member.isOnline"
-              src="assets/img/offline.png"
-              class="status-icon"
-              alt="Offline"
-            />
-          </div>
-          <span>{{ member.name }}</span>
-        </li>
-
-        <div class="member-box" (click)="openAddMembersMobile()">
-          <div class="img-container">
-            <img src="assets/img/member.png" alt="Member" />
-          </div>
-          <h2>Mitglieder Hinzufügen</h2>
-        </div>
-      </ul>
-    </div>
-  </div>
-
-  <div class="mat-dialog-actions">
-    <button class="primary-button" (click)="onLeaveChannel()">
-      Channel verlassen
-    </button>
   </div>
 </div>

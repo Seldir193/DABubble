@@ -140,6 +140,11 @@
           height: 70%;
           cursor: pointer;
           background-color: $lightblue;
+
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          
         }
 
         button:hover {
@@ -169,10 +174,9 @@
         padding-left: 70px;
 
         &.google-icon {
-          background-image: url("/assets/img/google.png");
           background-position: -2px center;
           background-size: 38px 38px;
-          padding-left: 50px;
+          padding-left: unset;
 
           &:hover {
             transform: scale(1.02);
@@ -399,6 +403,12 @@
   .login-container {
     padding: 20px;
   }
+
+  .login-container
+   .login form 
+   .error-message{
+    padding-left:10px;
+   }
 
   .registration-ok {
     top: 60%;
