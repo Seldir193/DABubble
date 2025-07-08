@@ -203,8 +203,6 @@ export class DevspaceComponent {
     this.noResultsFound = false;
   }
 
-
-
   openMessage(message: any): void {
     if (!message || !message.id) return;
     this.hasScrolledToSearchedMessage = false;

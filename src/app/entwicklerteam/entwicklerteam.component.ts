@@ -173,7 +173,6 @@ export class EntwicklerteamComponent
   ngOnInit(): void {
     this.loadCurrentUser();
     this.checkDesktopWidth();
-    //initChannelAndUserSubscriptionsUtil(this)
     subscribeToCurrentChannel(this);
     this.unsubscribeChannels = this.channelService.getAllChannels(
       (channels) => {

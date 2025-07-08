@@ -25,28 +25,19 @@ export function initPrivateConversationUtil(c: PrivateMessagesComponent) {
 }
 
 
-
-
-
-
-
-
 export function initChannelAndUserSubscriptionsUtil(c: PrivateMessagesComponent) {
   c.setChannelsUnsubscribe = c.channelService.getAllChannels((ch) => {
-    // Vollständige Channel-Liste sichern
     c.allChannels = ch;
-    c.allChannelsOriginal = [...ch]; // Kopie als "Original"
+    c.allChannelsOriginal = [...ch]; 
 
-    // Falls du willst, kannst du hier ein console.log machen:
-    // console.log('allChannelsOriginal:', c.allChannelsOriginal);
   });
 
   c.setUsersUnsubscribe = c.userService.getAllUsersLive((users) => {
-    // Vollständige User-Liste sichern
+   
     c.allUsers = users;
-    c.allUsersOriginal = [...users]; // Kopie als "Original"
+    c.allUsersOriginal = [...users]; 
 
-    // Vorhandene userMap befüllen
+
     users.forEach((u) => {
       c.userMap[u.id] = {
         name: u.name || 'Unbekannt',
@@ -54,15 +45,8 @@ export function initChannelAndUserSubscriptionsUtil(c: PrivateMessagesComponent)
       };
     });
 
-    // console.log('allUsersOriginal:', c.allUsersOriginal);
   });
 }
-
-
-
-
-
-
 
 
 export function onResizeUtil(c: PrivateMessagesComponent) {

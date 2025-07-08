@@ -97,7 +97,6 @@ export class AddMembersDialogComponent implements OnInit {
 
     this.unsubscribeAllUsers = this.messageService.onAllUsersChanged(
       (freshUsers) => {
-        // 'freshUsers' enthält jetzt ALLE User.
         // => Setze in 'this.allUsers' ab und filtere wie bisher:
         this.allUsers = freshUsers;
         this.excludeExistingAndSelected();
